@@ -1,0 +1,1584 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     base_default
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+
+/**
+ * Product view template
+ *
+ * @see Mage_Catalog_Block_Product_View
+ * @see Mage_Review_Block_Product_View
+ *
+ * @var Mage_Catalog_Block_Product_View $this
+ *
+ */
+?>
+<link rel="stylesheet" type="text/css" href="<?php echo $this->getSkinUrl('css/slick-theme-detail.css'); ?>"/>
+<?php $_helper = $this->helper('catalog/output'); ?>
+<?php $_product = $this->getProduct(); ?>
+<?php $oldPrice = $_product->getPrice();
+$newPrice = $_product->getFinalPrice(); ?>
+
+<?php
+$catArray = ['667', '662', '665', '721', '722', '663', '664', '723', '668', '669', '660', '659', '650'];
+$productCatIds = $_product->getCategoryIds();
+?>
+
+<script>
+    dataLayer = [];
+</script>
+
+<?php
+$products = [];
+$productObj = new stdClass();
+$productObj->name = (string)$_product->getName();
+$productObj->id = (string)$_product->getId();
+$productObj->price = (string)$_product->getFinalPrice();
+$productObj->brand = (string)$_product->getAttributeText('manufacturer');
+$products[] = $productObj;
+?>
+<?php $bundleItems = array(); ?>
+
+<?php
+$cartItems = [];
+?>
+
+<style>
+    span.price-notice {
+        display: none !important;
+    }
+</style>
+<script type="text/javascript">
+    var optionsPrice = new Product.OptionsPrice(<?php echo $this->getJsonConfig() ?>);
+</script>
+
+<div id="messages_product_view">
+    <ul class="messages add_to_cart_messages">
+    </ul>
+    <ul class="messages purchase_request_messages">
+    </ul>
+</div>
+
+<div class="product-view">
+
+    <div class="product-essential">
+        <form action="<?php echo $this->getUrl('checkout/cart/addAjax') ?>" method="post"
+              id="product_addtocart_form"<?php if ($_product->getOptions()): ?> enctype="multipart/form-data"<?php endif; ?>>
+            <?php echo $this->getBlockHtml('formkey') ?>
+            <div class="no-display">
+                <input type="hidden" name="product" value="<?php echo $_product->getId() ?>"/>
+                <input type="hidden" name="related_product" id="related-products-field" value=""/>
+            </div>
+            <div class="col-md-9 mobile-view">
+                <div class="col-md-6 col-xs-12 product-img-box">
+                    <?php echo $this->getChildHtml('media') ?>
+                </div>
+
+                <div class="col-md-6 col-xs-12 product-shop">
+                    <div class="col-md-12 product-name product-name-detail-page">
+                        <h1><?php echo $_helper->productAttribute($_product, $_product->getName(), 'name') ?></h1>
+                    </div>
+                    <div class="col-md-12 old-price-block">
+
+                        <?php if ($oldPrice != $newPrice) : ?>
+                            <div class="product-att">
+
+                                <span class="old-price">
+                                <span class="cart-price">
+                                    <?php echo number_format($oldPrice, 0, ",", ".") . ' <sup>đ</sup>'; ?>
+                                </span>
+                            </span>
+                            </div>
+                        <?php endif ?>
+
+
+                    </div>
+                    <div class="clearfix clearfix-mobile"></div>
+                    <div class="col-md-10 price-block">
+                        <span class="regular-price regular-price-view">
+                                <span class="price dt-regular-price">
+						            <?php echo number_format($newPrice, 0, ",", ".") . ' <sup>đ</sup>'; ?>
+					            </span>
+				            </span>
+                    </div>
+                    <div class="col-md-2">
+                        <!--                        <button type="button" class="btn btn-default btn-share">Share</button>-->
+                    </div>
+
+                    <div class="col-md-12 old-price-text">
+
+                        <?php if ($oldPrice != $newPrice) : ?>
+                            <div class="product-att">
+                                <?php
+                                $product_discount_value = $oldPrice - $newPrice;
+                                $product_discount = ($product_discount_value / $oldPrice) * 100;
+                                ?>
+                                Tiết kiệm:
+                                <span class="old-price">
+                                    <span class="product-discount-value">
+                                        <?php echo number_format($product_discount_value, 0, ",", ".") . " <sup>đ</sup>"; ?>
+                                    </span>
+                                    <span class="product-discount">(<?php echo round($product_discount); ?>%)</span>
+                                </span>
+                            </div>
+
+                        <?php endif ?>
+
+                    </div>
+                    <div class="col-md-12">
+                        <?php if ($_product->getAttributeText('manufacturer')): ?>
+                        <?php endif; ?>
+
+                        <?php echo $this->getChildHtml('other'); ?>
+
+                        <?php if ($_product->isSaleable() && $this->hasOptions()): ?>
+                            <?php echo $this->getChildChildHtml('container1', '', true, true) ?>
+                        <?php endif; ?>
+
+                        <?php if ($_product->isSaleable() && $this->hasOptions()): ?>
+                            <div class="product-included">
+                                <?php if ($_product->getTypeId() == 'bundle') : ?>
+                                    <h3>Sản phẩm bao gồm:</h3>
+                                    <?php
+                                    $catBuildPC = Mage::getModel('catalog/category')
+                                        ->getCollection()
+                                        ->addAttributeToFilter('url_key', 'build-pc')
+                                        ->getFirstItem();
+                                    $childrenIds = $catBuildPC->getResource()->getChildren($catBuildPC);
+                                    array_push($childrenIds, $catBuildPC->getId());
+                                    ?>
+                                    <?php if (count($childrenIds) > 0 && count($productCatIds) > 0): ?>
+                                        <?php if (in_array($catBuildPC->getId(), $productCatIds)): ?>
+                                            <?php
+                                            $bundleCollection = $_product->getTypeInstance(true)
+                                                ->getSelectionsCollection($_product->getTypeInstance(true)->getOptionsIds($_product), $_product);
+                                            foreach ($bundleCollection as $item) {
+                                                $shareArray = array_intersect($item->getCategoryIds(), $catArray);
+                                                if (count($shareArray) > 0) {
+                                                    $itemCatId = array_shift($shareArray);
+                                                    $productTemp = Mage::getModel('catalog/product')->load($item->getId());
+                                                    $itemImageUrl = Mage::helper('catalog/image')->init($productTemp, 'small_image')->resize(150, 150);
+                                                    if (isset($itemCatId)) {
+                                                        $bundleItems[] = (object)array(
+                                                            'catId' => $itemCatId,
+                                                            'catUrl' => Mage::getModel('catalog/category')->load($itemCatId)->getUrl(),
+                                                            'productId' => $item->getId(),
+                                                            'productName' => $item->getName(),
+                                                            'productPrice' => intval($item->getFinalPrice()),
+                                                            'productUrl' => $item->getProductUrl(),
+                                                            'productImageUrl' => "$itemImageUrl",
+                                                            'productQty' => intval($item->getSelectionQty())
+                                                        );
+                                                    }
+                                                }
+                                            }
+                                            ?>
+                                            <div class="build-pc-block a-right">
+                                                <button type="button"
+                                                        class="btn btn-info bp-table-btn bp-customize-btn"
+                                                        onclick="customizeBuildPC()">
+                                                    <img class="bp-ajax-loader-view" title="Đang tải"
+                                                         src="<?php echo $this->getSkinUrl('images/ajax-loader.gif') ?>"
+                                                         width="14" height="14"/>
+                                                    <span class="hidden-1200">Tùy chỉnh cấu hình</span>
+                                                    <span class="display-1200">Tùy chỉnh</span>
+                                                </button>
+                                            </div>
+                                        <?php endif; ?>
+                                    <?php endif; ?>
+                                <?php endif; ?>
+                                <?php echo $this->getChildChildHtml('container2', '', true, true) ?>
+                            </div>
+                        <?php endif; ?>
+
+                        <?php if (!$this->hasOptions()): ?>
+                            <div class="add-to-box">
+                                <?php if ($_product->isSaleable()): ?>
+                                    <?php echo $this->getChildHtml('addtocart') ?>
+                                    <?php if ($this->helper('wishlist')->isAllow() || $_compareUrl = $this->helper('catalog/product_compare')->getAddUrl($_product)): ?>
+                                        <span class="or"><?php echo $this->__('OR') ?></span>
+                                    <?php endif; ?>
+                                <?php endif; ?>
+                                <?php echo $this->getChildHtml('addto') ?>
+                            </div>
+                            <?php echo $this->getChildHtml('extra_buttons') ?>
+                        <?php elseif (!$_product->isSaleable()): ?>
+                            <div class="add-to-box">
+                                <?php echo $this->getChildHtml('addto') ?>
+                            </div>
+                        <?php endif; ?>
+
+                    </div>
+
+                    <?php if ($this->canEmailToFriend()): ?>
+                        <p class="email-friend"><a
+                                    href="<?php echo $this->helper('catalog/product')->getEmailToFriendUrl($_product) ?>"><?php echo $this->__('Email to a Friend') ?></a>
+                        </p>
+                    <?php endif; ?>
+
+                    <?php echo $this->getReviewsSummaryHtml($_product, false, true) ?>
+                    <?php echo $this->getChildHtml('alert_urls') ?>
+                    <div class="clearfix"></div>
+                    <?php if ($_product->getShortDescription()): ?>
+
+                        <div class="short-description col-md-12">
+                            <h2>Mô tả</h2>
+                            <div class="short_description">
+                                <?php echo $_helper->productAttribute($_product, nl2br($_product->getShortDescription()), 'short_description') ?>
+                            </div>
+
+
+                        </div>
+                    <?php endif; ?>
+                </div>
+
+                <div class="clearfix"></div>
+                <!-- Product detail info web-->
+                <div class="col-md-12 product-detail-info hidden-mobile">
+                    <ul class="tabs">
+                        <li><a href="#tab-description" class="active">THÔNG TIN SẢN PHẨM</a></li>
+                        <li><a href="#tab-additional">THÔNG SỐ KỸ THUẬT</a></li>
+                        <?php if ($_product->getData('review')): ?>
+                            <li><a href="#tab-review">ĐÁNH GIÁ</a></li>
+                        <?php endif; ?>
+                        <?php if ($_product->getData('warranty_return')): ?>
+                            <li><a href="#tab-warranty_return">BẢO HÀNH</a></li>
+                        <?php endif; ?>
+                    </ul>
+                    <div id="tab-description" class="tab-content">
+                        <?php echo $this->getChildHtml('description') ?>
+                    </div>
+                    <div id="tab-additional" class="tab-content" style="display: none;">
+                        <?php echo $this->getChildHtml('additional') ?>
+                    </div>
+                    <?php if ($_product->getData('review')): ?>
+                        <div id="tab-review" class="tab-content" style="display: none;">
+                            <?php echo $this->getData('review') ?>
+                        </div>
+                    <?php endif; ?>
+                    <?php if ($_product->getData('warranty_return')): ?>
+                        <div id="tab-warranty_return" class="tab-content" style="display: none;">
+                            <div class="overflow-x-scroll">
+                                <?php echo $_product->getData('warranty_return') ?>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                </div>
+                <div class="clearfix"></div>
+                <!-- Product detail info mobile-->
+                <div class="display-mobile">
+                    <div class="col-md-12 additional-mobile">
+                        <div class="product-detail-title-mobile additional-mobile-title"
+                        onclick="toggleItem('additional-mobile-title')">
+                            <span>Thông tin kỹ thuật</span>
+                            <i class="fa fa-icon fa-angle-down"></i>
+                        </div>
+                        <div id="additional-mobile-content">
+                            <?php echo $this->getChildHtml('additional') ?>
+                        </div>
+                    </div>
+                    <div class="col-md-12 description-mobile">
+                        <div class="product-detail-title-mobile description-mobile-title pl-0 pr-0"
+                        onclick="toggleItem('description-mobile-title')">
+                            <span>Thông tin sản phẩm</span>
+                            <i class="fa fa-icon fa-angle-down"></i>
+                        </div>
+                        <div id="description-mobile-content">
+                            <?php echo $this->getChildHtml('description') ?>
+                        </div>
+                    </div>
+                    <?php if ($_product->getData('review')): ?>
+                        <div class="col-md-12">
+                            <div id="review-mobile-content">
+                                <?php echo $_product->getData('review'); ?>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                    <?php if ($_product->getData('warranty_return')): ?>
+                        <div class="col-md-12 warranty-mobile">
+                            <div class="product-detail-title-mobile warranty-mobile-title pl-0 pr-0" onclick="toggleItem('warranty-mobile-title')">
+                                <span>Thông tin bảo hành</span>
+                                <i class="fa fa-icon fa-angle-down"></i>
+                            </div>
+                            <div id="warranty-mobile-content">
+                                <?php echo $_product->getData('warranty_return'); ?>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                </div>
+                <!-- End product detail info-->
+            </div>
+        </form>
+        <div class="col-md-3 hidden-mobile">
+            <div class="cart">
+
+                <!-- Cart block-->
+                <div class="panel panel-default cart-block">
+                    <div class="panel-heading">
+                        <h5><i class="fa fa-shopping-cart shopping-cart-icon"></i>&nbsp;&nbsp;&nbsp;&nbsp;Giỏ hàng
+                            <span class="update-cart-loading no-display" title="Đang tải">
+                                <img src="<?php echo $this->getSkinUrl('images/ajax-loader.gif') ?>"
+                                     width="14" height="14"/></span>
+                        </h5>
+                    </div>
+                    <div id="shopping-cart-body">
+                        <div class="panel-body pt-0">
+                            <?php
+                            $itemsArray = Mage::getSingleton('checkout/session')->getQuote()->getAllVisibleItems();
+                            $params = array(
+                                'max_length' => 55,
+                                'cut_replacer' => ' <a href="#" class="dots" onclick="return false">...</a>'
+                            );
+                            $total_free_item_price = 0;
+                            ?>
+                            <input type="hidden" value="<?php echo count($itemsArray) ?>" id="items-array-count"/>
+                            <?php if (count($itemsArray) > 0): ?>
+                                <form id="cart-qty-form"
+                                      action="<?php echo $this->getUrl('checkout/cart/updatePostAjax') ?>"
+                                      method="post">
+                                    <?php foreach ($itemsArray as $item): ?>
+
+                                        <?php
+                                        $productObj = new stdClass();
+                                        $productObj->name = (string)$item->getProduct()->getName();
+                                        $productObj->id = (string)$item->getProduct()->getId();
+                                        $productObj->price = (string)$item->getProduct()->getFinalPrice();
+                                        $productObj->quantity = $item->getQty();
+                                        $cartItems[] = $productObj;
+                                        ?>
+
+                                        <?php
+                                        $total = $item->getPrice() * $item->getQty();
+                                        $freeItem = unserialize($item->getAdditionalData());
+                                        ?>
+
+                                        <div class="cart-item-row row">
+                                            <div class="row cart-pr-title">
+                                                <div class="col-md-10 col-xs-10">
+                                                    <div class="cart-pr-name product-mask"
+                                                         data-id="<?php echo $item->getProduct()->getId() ?>"
+                                                         data-name="<?php echo $item->getProduct()->getName() ?>"
+                                                         data-url="<?php echo $item->getProduct()->getProductUrl() ?>"
+                                                         data-price="<?php echo $item->getProduct()->getFinalPrice() ?>"
+                                                    ><?php echo $item->getName(); ?></div>
+                                                </div>
+                                                <div class="col-md-2 col-xs-2 cart-delete-block">
+                                                    <span class="coupon-state ajax-loader-delete"
+                                                          id="ald-<?php echo $item->getId() ?>" title="Đang tải">
+                                                        <img src="<?php echo $this->getSkinUrl('images/ajax-loader.gif') ?>"
+                                                             width="14" height="14"/>
+                                                    </span>
+                                                    <?php if (!(isset($freeItem) && isset($freeItem['parent']))): ?>
+                                                        <a class="cart-delete-btn" onclick="confirmDeleteItem(this)"
+                                                           data-id="<?php echo $item->getId() ?>"
+                                                           data-product-id="<?php echo $item->getProductId() ?>"
+                                                           data-name="<?php echo $item->getName() ?>"
+                                                           data-price="<?php echo $item->getPrice() ?>"
+                                                           data-qty="<?php echo $item->getQty() ?>"
+                                                           id="ald-btn-<?php echo $item->getId() ?>"
+                                                           data-url="<?php echo Mage::getUrl('checkout/cart/deleteAjax', array('id' => $item->getId(), 'delete_qty' => $item->getQty())); ?>"><i
+                                                                    class="fa fa-trash-o"></i></a>
+                                                    <?php endif; ?>
+                                                </div>
+                                            </div>
+                                            <div class="clearfix"></div>
+                                            <div class="cart-pr-prices">
+                                                <div class="col-md-12 no-padding">
+
+                                                    <img src="<?php echo Mage::helper('catalog/image')->init($item->getProduct(), 'small_image')->resize(50) ?>"
+                                                         width="50" height="50"/>
+
+                                                    <span class="cart-qty-text">
+                                                            <span><?php echo Mage::helper('checkout')->formatPrice($item->getPrice()); ?></span>
+                                                            <span>x</span>
+                                                        <?php echo $this->getBlockHtml('formkey'); ?>
+                                                        <input name="cart[<?php echo $item->getId() ?>][qty]"
+                                                               id="input-qty-<?php echo $item->getId() ?>"
+                                                               data-id="<?php echo $item->getId() ?>"
+                                                               data-product-id="<?php echo $item->getProductId() ?>"
+                                                               data-name="<?php echo $item->getName() ?>"
+                                                               data-price="<?php echo $item->getPrice() ?>"
+                                                               data-qty="<?php echo $item->getQty() ?>"
+                                                               onkeyup="doUpdateCart(this)"
+                                                               type="number"
+                                                               value="<?php echo (isset($freeItem) && isset($freeItem['quantity'])) ? $item->getQty() - $freeItem['quantity'] : $item->getQty(); ?>"
+                                                               size="4"
+                                                               title="<?php echo $this->__('Qty') ?>"
+                                                               class="input-text qty input-qty" maxlength="12"
+                                                            <?php echo ((isset($freeItem) && isset($freeItem['parent'])) || $item->getProduct()->getIsRecurring()) ? 'disabled' : '' ?>
+                                                        />
+                                                        <input type="hidden" id="product-is-recurring"
+                                                               value="<?php echo $item->getProduct()->getIsRecurring() ?>"/>
+                                                        <input name="cart[<?php echo $item->getId() ?>][product_id]"
+                                                               value="<?php echo $item->getProduct()->getId() ?>"
+                                                               type="hidden"/>
+                                                        <input name="cart[<?php echo $item->getId() ?>][previous_qty]"
+                                                               value="<?php echo $item->getQty(); ?>"
+                                                               type="hidden"/>
+                                                        </span>
+                                                </div>
+                                                <div class="col-md-12 no-padding cart-pr-total-price">
+                                                    <?php if (isset($freeItem) && isset($freeItem['quantity']) && isset($freeItem['price'])): ?>
+                                                        <?php $total = $total - $freeItem['quantity'] * $freeItem['price'] ?>
+                                                        <?php $total_free_item_price += $freeItem['quantity'] * $freeItem['price']; ?>
+                                                    <?php endif; ?>
+                                                    <span>=&nbsp;<?php echo Mage::helper('checkout')->formatPrice($total); ?></span>
+                                                </div>
+                                                <div class="col-md-12 no-padding">
+                                                    <span class='free-item-number'><?php echo (isset($freeItem) && isset($freeItem['quantity'])) ? "(Tặng kèm " . $freeItem['quantity'] . " sản phẩm " . $freeItem['product_name'] . ")" : ''; ?></span>
+                                                </div>
+                                            </div>
+                                            <?php if ($item->getProduct()->getTypeID() == 'bundle' && $_options = Mage::helper('bundle/catalog_product_configuration')->getOptions($item)): ?>
+                                                <dl class="item-options">
+                                                    <?php foreach ($_options as $_option) : ?>
+                                                        <?php $_formatedOptionValue = Mage::helper('catalog/product_configuration')->getFormattedOptionValue($_option, $params); ?>
+                                                        <dt><?php echo Mage::helper('core')->escapeHtml($_option['label'], null) ?></dt>
+                                                        <dd<?php if (isset($_formatedOptionValue['full_view'])): ?> class="truncated"<?php endif; ?>>
+                                                            <?php echo $_formatedOptionValue['value'] ?>
+                                                            <?php if (isset($_formatedOptionValue['full_view'])): ?>
+                                                                <div class="truncated_full_value">
+                                                                    <dl class="item-options">
+                                                                        <dt><?php echo Mage::helper('core')->escapeHtml($_option['label'], null) ?></dt>
+                                                                        <dd><?php echo $_formatedOptionValue['full_view'] ?></dd>
+                                                                    </dl>
+                                                                </div>
+                                                            <?php endif; ?>
+                                                        </dd>
+                                                    <?php endforeach; ?>
+                                                </dl>
+                                            <?php elseif ($item->getProduct()->getTypeID() != 'bundle' && $_options = Mage::helper('catalog/product_configuration')->getOptions($item)): ?>
+                                                <dl class="item-options">
+                                                    <?php foreach ($_options as $_option) : ?>
+                                                        <?php $_formatedOptionValue = Mage::helper('catalog/product_configuration')->getFormattedOptionValue($_option, $params); ?>
+                                                        <dt><?php echo Mage::helper('core')->escapeHtml($_option['label'], null) ?></dt>
+                                                        <dd<?php if (isset($_formatedOptionValue['full_view'])): ?> class="truncated"<?php endif; ?>>
+                                                            <?php echo $_formatedOptionValue['value'] ?>
+                                                            <?php if (isset($_formatedOptionValue['full_view'])): ?>
+                                                                <div class="truncated_full_value">
+                                                                    <dl class="item-options">
+                                                                        <dt><?php echo Mage::helper('core')->escapeHtml($_option['label'], null) ?></dt>
+                                                                        <dd><?php echo $_formatedOptionValue['full_view'] ?></dd>
+                                                                    </dl>
+                                                                </div>
+                                                            <?php endif; ?>
+                                                        </dd>
+                                                    <?php endforeach; ?>
+                                                </dl>
+                                            <?php endif; ?>
+                                        </div>
+
+                                    <?php endforeach; ?>
+                                </form>
+                            <?php else: ?>
+                                <div class="empty-cart text-center">
+                                    <span>Giỏ hàng trống</span>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                        <?php if (count($itemsArray) > 0): ?>
+                            <?php
+                            $sub_total = Mage::helper('checkout/cart')->getQuote()->getSubtotal();
+                            $grand_total = Mage::helper('checkout/cart')->getQuote()->getGrandTotal();
+                            $discount_value = $sub_total - $grand_total;
+                            $coupon_code = Mage::getSingleton('checkout/session')->getQuote()->getCouponCode();
+                            ?>
+                            <input type="hidden" id="discount-value" value="<?php echo $discount_value ?>">
+                            <input type="hidden" id="total-free-item-price"
+                                   value="<?php echo $total_free_item_price ?>">
+                            <div class="panel-footer">
+
+                                <!-- Sub total block-->
+                                <div class="row pl-15 pr-15 mt-8">
+                                    <div class="cart-pr-total-title col-md-5 col-xs-5 no-padding">Tạm tính:</div>
+                                    <div
+                                            class="cart-pr-subtotal col-md-7 col-xs-7 no-padding"><?php echo Mage::helper('checkout')->formatPrice($sub_total - $total_free_item_price) ?></div>
+                                </div>
+
+                                <div class="clearfix"></div>
+                                <!-- Discount block-->
+                                <div class="row pl-15 pr-15 pt-15 cart-discount-block border-top-ec">
+                                    <div class="cart-pr-discount-title col-md-5 col-xs-5 no-padding">Số tiền giảm:</div>
+                                    <div class="cart-discount-value col-md-7 col-xs-7 no-padding">-<?php echo Mage::helper('checkout')->formatPrice($discount_value - $total_free_item_price) ?></div>
+                                </div>
+                                <div class="clearfix"></div>
+
+                                <!-- Grand total block-->
+                                <div class="row pl-15 pr-15 grand-total-block">
+                                    <div class="cart-pr-total-title col-md-5 col-xs-5 no-padding">Thành tiền:</div>
+                                    <div class="cart-pr-grandtotal col-md-7 col-xs-7 no-padding"><?php echo Mage::helper('checkout')->formatPrice($grand_total) ?></div>
+                                    <div class="cart-pr-vat-included col-md-12 a-right no-padding">(đã bao gồm VAT)
+                                    </div>
+                                </div>
+
+                                <div class="totals ">
+                                    <ul class="checkout-types cart-checkout-types">
+                                        <li class="fast-pay">
+                                            <button type="button" title="Tiến hành thanh toán"
+                                                    class="btn button btn-proceed-checkout btn-checkout"
+                                                    onclick="goToCheckout()">
+                                                <span><span>
+                                                    <img class="ajax-loader-co" title="Đang tải"
+                                                         src="<?php echo $this->getSkinUrl('images/ajax-loader.gif') ?>"
+                                                         width="18" height="18"/>
+                                                    Tiến hành đặt hàng
+                                                </span></span>
+                                            </button>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+
+                    </div>
+                </div>
+                <!-- End cart block-->
+
+                <!-- Coupon block-->
+                <?php $coupon_code = Mage::getSingleton('checkout/session')->getQuote()->getCouponCode(); ?>
+                <div class="panel panel-default input-coupon-block input-coupon-block-detail">
+                    <div class="panel-heading">
+                        <h5>
+                            <i class="fa fa-tag shopping-cart-icon"></i>&nbsp;&nbsp;&nbsp;
+                            Mã giảm giá
+                        </h5>
+                    </div>
+                    <div id="shopping-cart-body">
+                        <div class="panel-body pt-0">
+                            <form id="discount-coupon-form"
+                                  action="<?php echo $this->getUrl('checkout/cart/couponPostAjax') ?>"
+                                  method="post">
+                                <div class="discount cart-discount">
+                                    <div class="discount-form">
+                                        <input type="hidden" name="remove" id="remove-coupon" value="0"/>
+                                        <div class="input-box row">
+                                            <div class="col-md-12 pl-0 pr-0 coupon-block">
+                                                <input type="text" class="input-text discount-input"
+                                                       id="coupon_code"
+                                                       placeholder="Mã giảm giá" name="coupon_code"
+                                                       value="<?php echo $this->escapeHtml($coupon_code) ?>"
+                                                       onkeyup="doCouponPost()"/>
+                                                <span class="coupon-state ajax-loader" title="Đang tải"><img
+                                                            src="<?php echo $this->getSkinUrl('images/ajax-loader.gif') ?>"
+                                                            width="14" height="14"/></span>
+                                                <a class="coupon-state remove-coupon-btn"
+                                                   onclick="applyCouponCode(true)"
+                                                   title="Nhập lại mã giảm giá"><span
+                                                            class="fa fa-times"></span></a>
+                                                <a class="coupon-state success-coupon-btn"
+                                                   title="Mã được ghi nhận"><span class="fa fa-check"></span></a>
+                                            </div>
+                                            <div class="invalid_coupon text-right"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <!-- End coupon block-->
+
+            </div>
+            <div class="clearer"></div>
+            <div>
+                <?php echo $this->getChildHtml('product_review') ?>
+            </div>
+
+            <script type="text/javascript">
+                //<![CDATA[
+                var productAddToCartForm = new VarienForm('product_addtocart_form');
+                productAddToCartForm.submit = function (button, url) {
+                    if (this.validator.validate()) {
+                        var form = this.form;
+                        var oldUrl = form.action;
+
+                        if (url) {
+                            form.action = url;
+                        }
+                        var e = null;
+                        try {
+                            this.form.submit();
+                        } catch (e) {
+                        }
+                        this.form.action = oldUrl;
+                        if (e) {
+                            throw e;
+                        }
+
+                        if (button && button != 'undefined') {
+                            button.disabled = true;
+                        }
+                    }
+                }.bind(productAddToCartForm);
+
+                productAddToCartForm.submitLight = function (button, url) {
+                    if (this.validator) {
+                        var nv = Validation.methods;
+                        delete Validation.methods['required-entry'];
+                        delete Validation.methods['validate-one-required'];
+                        delete Validation.methods['validate-one-required-by-name'];
+                        // Remove custom datetime validators
+                        for (var methodName in Validation.methods) {
+                            if (methodName.match(/^validate-datetime-.*/i)) {
+                                delete Validation.methods[methodName];
+                            }
+                        }
+
+                        if (this.validator.validate()) {
+                            if (url) {
+                                this.form.action = url;
+                            }
+                            this.form.submit();
+                        }
+                        Object.extend(Validation.methods, nv);
+                    }
+                }.bind(productAddToCartForm);
+                //]]>
+            </script>
+        </div>
+
+        <!-- Modal -->
+        <div id="purchaseRequestModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <input type="hidden" id="require-product-id" value="<?php echo $_product->getId(); ?>"/>
+                    <input type="hidden" id="require-product-name" value="<?php echo $_product->getName(); ?>"/>
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title a-center">Gửi yêu cầu hàng</h4>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="name">Họ tên <span class="red">*</span></label>
+                            <input type="text" class="form-control" id="require-name">
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Số điện thoại <span class="red">*</span></label>
+                            <input type="number" class="form-control" id="require-phone">
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Nội dung yêu cầu (tối đa 500 ký tự) <span class="red">*</span></label>
+                            <textarea class="form-control" rows="4" id="require-content" maxlength="500"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+
+                        <button type="button" class="btn btn-primary btn-send-request" onclick="sendPurchaseRequest()">
+                            <img class="ajax-loader-pr" title="Đang tải"
+                                 src="<?php echo $this->getSkinUrl('images/ajax-loader.gif') ?>"
+                                 width="18" height="18"/>
+                            &nbsp;Xác nhận
+                        </button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="related-products">
+    <?php echo $this->getChildHtml('related_products'); ?>
+</div>
+
+<div class="modal fade" id="imagemodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <img src="" class="imagepreview" style="width: 100%;" >
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src='<?php echo $this->getSkinUrl("js/shorten.js"); ?>'></script>
+<script type="text/javascript">
+    var $j = jQuery.noConflict();
+//    $j("#tabs").tabs();
+</script>
+
+<script>
+    $j(function() {
+        $j('.bonus-product-img').on('click', function() {
+            $j('.imagepreview').attr('src', $j(this).attr('src'));
+            $j('#imagemodal').modal('show');
+        });
+    });
+</script>
+
+<script type="text/javascript">
+
+    $j(window).on('resize', function() {
+        if ($j(window).width() < 500) {
+            $j('.page').css('padding-bottom', '40px');
+        } else {
+            $j('.page').css('padding-bottom', '0');
+        }
+    }).trigger('resize');
+
+    function toggleItem(className) {
+        if (className == 'additional-mobile-title') { //toggle thong so ky thuat
+            $j("#additional-mobile-content").toggle(0, function () {
+                if ($j("#additional-mobile-content").is(':hidden')) {
+                    $j('.additional-mobile-title').find("i").toggleClass('fa-angle-up fa-angle-down');
+                } else {
+                    $j('.additional-mobile-title').find("i").toggleClass('fa-angle-down fa-angle-up');
+                }
+            });
+        } else if (className == 'description-mobile-title') { //toggle thong tin san pham
+            $j("#description-mobile-content").toggle(0, function () {
+                if ($j("#description-mobile-content").is(':hidden')) {
+                    $j('.description-mobile-title').find("i").toggleClass('fa-angle-up fa-angle-down');
+                } else {
+                    $j('.description-mobile-title').find("i").toggleClass('fa-angle-down fa-angle-up');
+                }
+            });
+        }
+        else if (className == 'warranty-mobile-title') { //toggle thong tin bao hanh
+            $j("#warranty-mobile-content").toggle(0, function () {
+                if ($j("#warranty-mobile-content").is(':hidden')) {
+                    $j('.warranty-mobile-title').find("i").toggleClass('fa-angle-up fa-angle-down');
+                } else {
+                    $j('.warranty-mobile-title').find("i").toggleClass('fa-angle-down fa-angle-up');
+                }
+            });
+        }
+    }
+
+    $j('.product-custom-option').change(function () {
+        var option_value = $j('.product-custom-option').val();
+        if (option_value != '') {
+            $j('.attribute-error-message').hide();
+        }
+    });
+
+    $j('.ajax-loader-atc').hide();
+    $j('.ajax-loader-pr').hide();
+    $j('.ajax-loader-co').hide();
+    $j('.bp-ajax-loader-view').hide();
+
+    // Check if remove coupon or not
+    var discountForm = new VarienForm('discount-coupon-form');
+    discountForm.submit = function (isRemove) {
+        if (isRemove) {
+            $j('coupon_code').removeClassName('required-entry');
+            $j('remove-coupone').value = "1";
+        } else {
+            $j('coupon_code').addClassName('required-entry');
+            $j('remove-coupone').value = "0";
+        }
+        return VarienForm.prototype.submit.bind(discountForm)();
+    };
+
+    preventKeyInput();
+    checkCouponCode();
+    checkHasItemInCart();
+
+    function sendPurchaseRequest() {
+        var require_name = $j("#require-name").val().trim();
+        var require_phone = $j("#require-phone").val().trim();
+        var require_content = $j("#require-content").val().trim();
+        var require_product_id = $j("#require-product-id").val().trim();
+        var require_product_name = $j("#require-product-name").val().trim();
+
+        var url = "<?php echo $this->getUrl('stockrequest/stockrequest/saveRequest');  ?>";
+        var data = {
+            user_name: require_name,
+            phone_number: require_phone,
+            request_content: require_content,
+            product_id: require_product_id,
+            product_name: require_product_name
+        };
+
+        if (require_name === '') {
+            alert('Vui lòng nhập họ tên');
+        } else if (require_phone === '') {
+            alert('Vui lòng nhập số điện thoại');
+        } else if (require_phone !== '' && !validateVNPhoneNumber(require_phone)) {
+            alert('Số điện thoại không đúng định dạng (phải có dạng 84xxx hoặc 0xxx, chứa 10 hoặc 11 ký tự)');
+        } else if (require_content === '') {
+            alert('Vui lòng nhập nội dung cần yêu cầu');
+        } else {
+            $j('.ajax-loader-pr').show();
+            $j('.btn-send-request').prop('disabled', true);
+            $j.ajax({
+                url: url,
+                type: "POST",
+                data: data,
+                dataType: "json"
+            }).done(function (data) {
+                $j('.ajax-loader-pr').hide();
+                $j('#purchaseRequestModal').modal('hide');
+                $j('.btn-send-request').prop('disabled', false);
+                $j('.purchase_request_messages').empty();
+                if (data.success_message) {
+                    $j('.purchase_request_messages').append("<li class='success-msg'><ul><li><span>" + data.success_message + "</span></li></ul></li>");
+                } else if (data.error_message) {
+                    $j('.purchase_request_messages').append("<li class='error-msg'><ul><li><span>" + data.error_message + "</span></li></ul></li>");
+
+                }
+            });
+        }
+    }
+
+    // Prevent non-numeric character
+    function preventKeyInput() {
+        $j('input[type="number"]').keypress(function (e) {
+            if (e.which == 8) { // to allow BackSpace
+                return
+            }
+            if (e.which < 48 || e.which > 57 || e.keyCode == 13) {
+                e.preventDefault();
+            }
+        });
+
+        $j('.discount-input').keypress(function (e) {
+            if (e.keyCode === 10 || e.keyCode === 13)
+                e.preventDefault();
+        });
+    }
+
+    // Check if coupon code length >0
+    function checkCouponCode() {
+
+        var discount_value = $j('#discount-value').val();
+        var total_free_item_price = $j('#total-free-item-price').val();
+        if (discount_value - total_free_item_price > 0) {
+            $j('.remove-coupon-btn').show();
+            if (localStorage.getItem('coupon_success') == 'true') {
+                $j('.success-coupon-btn').show();
+                $j('#coupon_code').prop('disabled', true);
+                $j('#coupon_code').css('user-select', 'none');
+                $j('.cart-pr-subtotal').css('margin-bottom', '14px');
+            }
+            else if (localStorage.getItem('coupon_success') == 'false') {
+                $j('.success-coupon-btn').hide();
+                $j('.remove-coupon-btn').hide();
+                $j('#coupon_code').val('');
+                $j('#coupon_code').prop('disabled', false);
+            }
+        }
+        else {
+            $j('.cart-discount-block').hide();
+        }
+    }
+
+    function checkHasItemInCart() {
+        if ($j('#items-array-count').val() > 0) {
+            $j('.input-coupon-block').show();
+        }
+        else {
+            $j('.input-coupon-block').hide();
+        }
+    }
+
+    // Xu ly ajax them san pham vao gio hang
+    function addToCart() {
+
+        $j('.btn-proceed-checkout').prop('disabled', true);
+        var input_qty = $j('.qty-selector-input').val();
+
+        if (input_qty == 0) {
+            $j('.qty-selector-input').val(1);
+        }
+        if (input_qty > 500) {
+            $j('.qty-selector-input').val(500);
+        }
+
+        var form = $j('#product_addtocart_form');
+
+        var data = form.serializeArray();
+        $j('.btn-add-to-cart').prop('disabled', true);
+        $j('.ajax-loader-atc').show();
+
+        var purchaseQty = parseInt($j('.qty-selector-input').val());
+
+        /* Enhanced ecommerce add to cart*/
+        /**
+         * Measure adding a product to a shopping cart by using an 'add' actionFieldObject
+         * and a list of productFieldObjects.
+         */
+        dataLayer.push({
+            'event': 'addToCart',
+            'ecommerce': {
+                'currencyCode': 'VND',
+                'add': {                                // 'add' actionFieldObject measures.
+                    'products': [{                        //  adding a product to a shopping cart.
+                        'name': <?php echo json_encode($_product->getName()); ?>,
+                        'id': "<?php echo $_product->getId()?>",
+                        'price': "<?php echo $_product->getFinalPrice()?>",
+                        'quantity': purchaseQty
+                    }]
+                }
+            }
+        });
+        /* End Enhanced ecommerce add to cart*/
+
+        $j.ajax({
+            url: form.attr('action'),
+            type: form.attr('method'),
+            dataType: 'json',
+            data: data,
+            success: function (response) {
+//                    console.log(response);
+                $j('.ajax-loader-atc').hide();
+                $j('.btn-add-to-cart').prop('disabled', false);
+                if (response.message !== '') {
+                    $j('.add_to_cart_messages').empty();
+                    if (response.error_flg == 0) {
+                        if (win.width() < 500) {
+                            window.location = '<?php echo $this->getUrl('checkout/cart') ?>';
+                        }
+                        else {
+                            $j('.add_to_cart_messages').append("<li class='success-msg'><ul><li><span>" + response.message + "</span></li></ul></li>");
+                        }
+                    }
+                    else {
+                        if (response.message == 'Vui lòng lựa chọn thuộc tính sản phẩm!') {
+                            if (win.width() < 500) {
+                                alert(response.message);
+                            }
+                            else {
+                                $j('.attribute-error-message').html(response.message);
+                                $j('.attribute-error-message').show();
+                            }
+                        }
+                        else {
+                            if (win.width() < 500) {
+                                alert(response.message);
+                            }
+                            else {
+                                $j('.add_to_cart_messages').append("<li class='error-msg'><ul><li><span>" + response.message + "</span></li></ul></li>");
+                            }
+                        }
+                    }
+                }
+
+                // Update Subtotal
+                $j('.cart-pr-subtotal').empty();
+                $j('.cart-pr-subtotal').html(addCommas(response.sub_total) + ' ₫');
+
+                // Update Grandtotal
+                $j('.cart-pr-grandtotal').empty();
+                $j('.cart-pr-grandtotal').html(addCommas(response.grand_total) + ' ₫');
+
+                // Update shopping cart body
+                $j('#shopping-cart-body').empty();
+                $j('#shopping-cart-body').append(response.ex_html);
+
+                // Update shopping cart header
+                $j('#shopping-cart-header').empty();
+                $j('#shopping-cart-header').append(response.ex_header_html);
+
+                preventKeyInput();
+                checkCouponCode();
+
+                $j('.ajax-loader-co').hide();
+                $j('.btn-proceed-checkout').prop('disabled', false);
+
+                if (response.grand_total > 0) {
+                    $j('.input-coupon-block').show();
+                }
+            }
+        });
+    }
+
+    function confirmDeleteItem(value) {
+        swal({
+            title: 'Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng hay không?',
+            type: 'warning',
+            showCancelButton: true,
+            cancelButtonText: 'Hủy',
+            confirmButtonText: 'Xóa sản phẩm',
+            confirmButtonColor: '#2c9590',
+            animation: 'slide-from-top'
+        }, function () {
+            deleteItem(value)
+        })
+    }
+
+    // Xu ly ajax delete san pham khoi gio hang
+    function deleteItem(value) {
+        var url = $j(value).data("url");
+        var id = $j(value).data("id");
+        var product_id = $j(value).data("product-id");
+        var name = $j(value).data("name");
+        var price = $j(value).data("price");
+        var qty = $j(value).data("qty");
+
+        /* Enhanced Ecommerce remove from cart */
+        /**
+         * Measure the removal of a product from a shopping cart.
+         */
+        dataLayer.push({
+            'event': 'removeFromCart',
+            'ecommerce': {
+                'remove': {                               // 'remove' actionFieldObject measures.
+                    'products': [{                          //  removing a product to a shopping cart.
+                        'name': name.toString(),
+                        'id': product_id.toString(),
+                        'price': price.toString(),
+                        'quantity': qty
+                    }]
+                }
+            }
+        });
+        /* End enhanced ecommerce remove from cart */
+
+        $j('.btn-proceed-checkout').prop('disabled', true);
+
+        var ald_btn_id = "ald-btn-" + id;
+        var ald_id = "ald-" + id;
+        $j('#' + ald_btn_id).hide();
+        $j('#' + ald_id).show();
+
+        $j.ajax({
+            url: url,
+            type: "POST",
+            dataType: 'json',
+            success: function (response) {
+//                    console.log(response);
+                $j('#' + ald_id).show();
+
+                if (response.message !== '') {
+                    $j('.add_to_cart_messages').empty();
+                    if (response.error_flg == 1) {
+                        $j('.add_to_cart_messages').append("<li class='error-msg'><ul><li><span>" + response.message + "</span></li></ul></li>");
+                    }
+                    else {
+                        $j('.add_to_cart_messages').append("<li class='success-msg'><ul><li><span>" + response.message + "</span></li></ul></li>");
+                    }
+                }
+
+                // Update Subtotal
+                $j('.cart-pr-subtotal').empty();
+                $j('.cart-pr-subtotal').html(addCommas(response.sub_total) + ' ₫');
+
+                // Update Grandtotal
+                $j('.cart-pr-grandtotal').empty();
+                $j('.cart-pr-grandtotal').html(addCommas(response.grand_total) + ' ₫');
+
+                // Update shopping cart body
+                $j('#shopping-cart-body').empty();
+                $j('#shopping-cart-body').append(response.ex_html);
+
+                // Update shopping cart header
+                $j('#shopping-cart-header').empty();
+                $j('#shopping-cart-header').append(response.ex_header_html);
+
+                preventKeyInput();
+                checkCouponCode();
+
+                $j('.ajax-loader-co').hide();
+                $j('.btn-proceed-checkout').prop('disabled', false);
+
+                if (response.grand_total === 0) {
+                    $j('.success-coupon-btn').hide();
+                    $j('.remove-coupon-btn').hide();
+                    $j('#coupon_code').val('');
+                    $j('#coupon_code').prop('disabled', false);
+                    $j('.input-coupon-block').hide();
+                }
+            }
+        });
+    }
+
+    /* Start apply coupon */
+    var timeout = null;
+
+    function doCouponPost() {
+        // check ios private mode browser
+        try {
+            if ($j('#coupon_code').val() !== '') {
+                $j('.ajax-loader').show();
+                $j('.btn-proceed-checkout').prop('disabled', true);
+                $j('.fast-pay').addClass('btn-deactive');
+                $j('.remove-coupon-btn').show();
+                if (timeout) {
+                    clearTimeout(timeout);
+                }
+                timeout = setTimeout(function () {
+                    applyCouponCode(false); // false: not remove coupon code
+                }, 1000);
+            }
+            else {
+                $j('.btn-proceed-checkout').prop('disabled', false);
+                $j('.fast-pay').removeClass('btn-deactive');
+                $j('.ajax-loader').hide();
+                $j('.success-coupon-btn').hide();
+                $j('.invalid_coupon').empty();
+                $j('.remove-coupon-btn').hide();
+            }
+            localStorage.test = 2;
+
+        } catch (e) {
+            alert('Trình duyệt của bạn đang ở chế độ Private, vui lòng tắt chế độ Private để tiếp tục!');
+        }
+    }
+
+    // Xu ly ajax nhap ma code
+    function applyCouponCode(isRemove) {
+
+        if (isRemove) {
+            $j('.success-coupon-btn').hide();
+            $j('.ajax-loader').show();
+            $j('#remove-coupon').val(1);
+        } else {
+            $j('#remove-coupon').val(0);
+        }
+
+        var form = $j('#discount-coupon-form');
+        var data = form.serializeArray();
+        var total_free_item_price = $j('#total-free-item-price').val();
+
+        $j.ajax({
+            url: form.attr('action'),
+            type: form.attr('method'),
+            dataType: 'json',
+            data: data,
+            success: function (response) {
+                $j('.ajax-loader').hide();
+                $j('.btn-proceed-checkout').prop('disabled', false);
+                $j('.fast-pay').removeClass('btn-deactive');
+
+                if (!response.is_success) {
+                    localStorage.setItem('coupon_success', false);
+
+                    $j('#coupon_code').prop('disabled', false);
+                    $j('.remove-coupon-btn').show();
+                    $j('.invalid_coupon').empty();
+                    $j('.invalid_coupon').html(response.error_message);
+                    $j('.cart-discount-block').hide();
+                    if (response.is_remove == 1) {
+                        $j('#coupon_code').val('');
+                        $j('.cart-pr-subtotal').css('margin-bottom', '0');
+
+                    }
+                    if ($j('#coupon_code').val() == '') {
+                        $j('.remove-coupon-btn').hide();
+                    }
+                }
+                else {
+                    localStorage.setItem('coupon_success', true);
+                    if (response.is_remove == 1) {
+                        $j('#coupon_code').prop('disabled', false);
+                        $j('#coupon_code').val('');
+                        $j('.invalid_coupon').empty();
+                        $j('.success-coupon-btn').hide();
+                        $j('.remove-coupon-btn').hide();
+                        $j('.cart-discount-block').hide();
+                    }
+                    else {
+                        $j('#coupon_code').prop('disabled', true);
+                        $j('#coupon_code').css('user-select', 'none');
+                        $j('.invalid_coupon').empty();
+                        $j('.remove-coupon-btn').show();
+                        $j('.success-coupon-btn').show();
+                        $j('.cart-discount-block').show();
+                        $j('.cart-discount-value').empty();
+                        $j('.cart-discount-value').html("-" + addCommas(response.discount_value - total_free_item_price) + " ₫");
+                        $j('.cart-pr-subtotal').css('margin-bottom', '14px');
+                    }
+                }
+                $j('.cart-pr-grandtotal').empty();
+                $j('.cart-pr-grandtotal').html(addCommas(response.grand_total) + " ₫");
+            }
+        });
+    }
+    /* End appply coupon*/
+
+    /* Start update cart */
+    var timeout_update = null;
+
+    function doUpdateCart(value) {
+
+        preventKeyInput();
+
+        var id = $j(value).data("id");
+        var product_id = $j(value).data("product-id");
+        var name = $j(value).data("name");
+        var price = $j(value).data("price");
+        var qty = $j(value).data("qty");
+
+        $j('.input-qty').prop('readonly', true);
+
+        var input_qty = "input-qty-" + id;
+        $j('#' + input_qty).prop('readonly', false);
+
+        var qty_val = $j('#' + input_qty).val();
+
+        $j('.btn-proceed-checkout').prop('disabled', true);
+        $j('.update-cart-loading').addClass('is-display');
+        if (timeout_update) {
+            clearTimeout(timeout_update);
+        }
+        timeout_update = setTimeout(function () {
+            updateCart(product_id, name, price, qty, qty_val);
+        }, 1000);
+    }
+
+    function updateCart(product_id, name, price, qty, qty_val) {
+
+        var input_qty_val = parseInt(qty_val);
+
+        /* Xu ly enhanced ecommerce add/remove cart */
+        if (input_qty_val > 500) {
+            input_qty_val = 500;
+        }
+
+        if (qty !== input_qty_val) {
+            if (qty < input_qty_val) {
+                /* Enhanced ecommerce add to cart*/
+                /**
+                 * Measure adding a product to a shopping cart by using an 'add' actionFieldObject
+                 * and a list of productFieldObjects.
+                 */
+                dataLayer.push({
+                    'event': 'addToCart',
+                    'ecommerce': {
+                        'currencyCode': 'VND',
+                        'add': {                                // 'add' actionFieldObject measures.
+                            'products': [{                        //  adding a product to a shopping cart.
+                                'name': name.toString(),
+                                'id': product_id.toString(),
+                                'price': price.toString(),
+                                'quantity': input_qty_val - qty
+                            }]
+                        }
+                    }
+                });
+                /* End Enhanced ecommerce add to cart*/
+            }
+            else {
+                /* Enhanced Ecommerce remove from cart */
+                /**
+                 * Measure the removal of a product from a shopping cart.
+                 */
+                dataLayer.push({
+                    'event': 'removeFromCart',
+                    'ecommerce': {
+                        'remove': {                               // 'remove' actionFieldObject measures.
+                            'products': [{                          //  removing a product to a shopping cart.
+                                'name': name.toString(),
+                                'id': product_id.toString(),
+                                'price': price.toString(),
+                                'quantity': qty - input_qty_val
+                            }]
+                        }
+                    }
+                });
+                /* End enhanced ecommerce remove from cart */
+            }
+        }
+        /* End xu ly enhanced ecommerce add/remove cart */
+
+        var form = $j('#cart-qty-form');
+        var data = form.serializeArray();
+
+        $j.ajax({
+            url: form.attr('action'),
+            type: form.attr('method'),
+            dataType: 'json',
+            data: data,
+            success: function (response) {
+
+                // Update Subtotal
+                $j('.cart-pr-subtotal').empty();
+                $j('.cart-pr-subtotal').html(addCommas(response.sub_total) + ' ₫');
+
+                // Update Grandtotal
+                $j('.cart-pr-grandtotal').empty();
+                $j('.cart-pr-grandtotal').html(addCommas(response.grand_total) + ' ₫');
+
+                // Update shopping cart body
+                $j('#shopping-cart-body').empty();
+                $j('#shopping-cart-body').append(response.ex_html);
+
+                // Update shopping cart header
+                $j('#shopping-cart-header').empty();
+                $j('#shopping-cart-header').append(response.ex_header_html);
+
+                preventKeyInput();
+                checkCouponCode();
+
+                $j('.update-cart-loading').removeClass('is-display');
+                $j('.ajax-loader-co').hide();
+                $j('.btn-proceed-checkout').prop('disabled', false);
+                $j('.input-qty').prop('readonly', false);
+            }
+        });
+    }
+    /* End update cart */
+
+    function addCommas(str) {
+        var parts = (str + "").split("."),
+            main = parts[0],
+            len = main.length,
+            output = "",
+            first = main.charAt(0),
+            i;
+
+        if (first === '-') {
+            main = main.slice(1);
+            len = main.length;
+        } else {
+            first = "";
+        }
+        i = len - 1;
+        while (i >= 0) {
+            output = main.charAt(i) + output;
+            if ((len - i) % 3 === 0 && i > 0) {
+                output = "." + output;
+            }
+            --i;
+        }
+        // put sign back
+        output = first + output;
+        // put decimal part back
+        if (parts.length > 1) {
+            output += "." + parts[1];
+        }
+        return output;
+    }
+
+    function formatCurrency(n) {
+        return n.toFixed(0).replace(/./g, function (c, i, a) {
+            return i > 0 && c !== "." && (a.length - i) % 3 === 0 ? "." + c : c;
+        });
+    }
+
+    function validateVNPhoneNumber(phone_number) {
+        var phoneRe = /^\+?(84|0)([1-9]\d{8,9})$/;
+        return phoneRe.test(phone_number);
+    }
+
+    function checkQtySelector() {
+        var inputQty = $j(".qty-selector-input");
+        var oldValue = inputQty.val();
+
+        if (oldValue <= 1) {
+            $j(".dec").css('background', '#d3d3d3');
+        }
+        else {
+            $j(".dec").css('background', '#2c9590');
+        }
+    }
+
+    // Check qty selector
+    var oldValue = $j(".button").parent().find("input").val();
+    if (oldValue <= 1) {
+        $j(".dec").css('background', '#d3d3d3');
+    }
+    else {
+        $j(".dec").css('background', '#2c9590');
+    }
+
+    $j('.cart-btn-apply').css('opacity', '0.4');
+
+    // we can now rely on $j within the safety of our "bodyguard" function
+    $j(document).ready(function () {
+
+        var product_is_recurring = $j('#product-is-recurring').val();
+        if (typeof product_is_recurring !== 'undefined' && product_is_recurring == 1) {
+            $j('.input-coupon-block').hide();
+        }
+
+        var qty_val = $j('.qty-selector-input').val();
+        if (qty_val == 0) {
+            $j('.qty-selector-input').val(1);
+        }
+
+        $j('.product-options').find("select").each(function (index) {
+            $j(this).change(function () {
+                var price = <?php echo $newPrice?>;
+                $j('.product-options').find("select").each(function (index, item) {
+                    var priceChange = parseInt($j(item).find(":selected").attr("price"));
+                    if (isNaN(priceChange)) {
+                        priceChange = 0;
+                    }
+                    price += priceChange;
+                });
+                if (isNaN(price)) {
+                    price = <?php echo $newPrice?>;
+                }
+                $j(".regular-price .price").html(formatCurrency(price) + ' <sup>đ</sup>').text();
+            });
+        });
+
+        $j('.tabs li a').click(function (event) {
+            event.preventDefault();
+            $j('.tabs li a').removeClass('active');
+            $j(this).addClass('active');
+            $j('.tab-content').hide();
+            $j($j(this).attr('href')).show();
+        });
+
+        $j(document).ready(function () {
+            $j(".short_description p").shorten();
+        });
+
+        $j(".button").on("click", function () {
+
+            var $button = $j(this);
+            var oldValue = $button.parent().find("input").val();
+
+            if ($button.text() == "+") {
+                var newVal = parseFloat(oldValue) + 1;
+                if (newVal > 1) {
+                    $j(".dec").css('background', '#2c9590');
+                } else {
+                    $j(".dec").css('background', '#d3d3d3');
+                }
+            } else {
+                // Don't allow decrementing below zero
+                if (oldValue > 1) {
+                    newVal = parseFloat(oldValue) - 1;
+                    if (newVal > 1) {
+                        $j(".dec").css('background', '#2c9590');
+                    } else {
+                        $j(".dec").css('background', '#d3d3d3');
+                    }
+                } else {
+                    newVal = 1;
+                }
+            }
+
+            $button.parent().find("input").val(newVal);
+
+        });
+    });
+
+</script>
+
+<script>
+    var products = <?php echo json_encode($products); ?>;
+
+    /**
+     * Measure a view of product details. This example assumes the detail view occurs on pageload,
+     * and also tracks a standard pageview of the details page.
+     */
+    dataLayer.push({
+        'ecommerce': {
+            'detail': {
+                'actionField': {'list': 'Chi tiết sản phẩm'},
+                'products': products
+            }
+        }
+    });
+</script>
+
+<script>
+    var cartItems = <?php echo json_encode($cartItems); ?>;
+
+    /**
+     * A function to handle a click on a checkout button. This function uses the eventCallback
+     * data layer variable to handle navigation after the ecommerce data has been sent to Google Analytics.
+     */
+    function goToCheckout() {
+        $j('.ajax-loader-co').show();
+        $j('.btn-proceed-checkout').prop('disabled', true);
+
+        dataLayer.push({
+            'event': 'checkout',
+            'ecommerce': {
+                'checkout': {
+                    'actionField': {'step': 1},
+                    'products': cartItems
+                }
+            },
+            'eventCallback': function () {
+                document.location = '<?php echo $this->getUrl('checkout/shipping') ?>';
+            }
+        });
+    }
+</script>
+
+<script>
+    /**
+     * Call this function when a user clicks on a product link. This function uses the event
+     * callback datalayer variable to handle navigation after the ecommerce data has been sent
+     * to Google Analytics.
+     * @param {Object} productObj An object representing a product.
+     */
+    $j('.product-mask').click(function () {
+        var id = $j(this).data('id');
+        var name = $j(this).data('name');
+        var url = $j(this).data('url');
+        var price = $j(this).data('price');
+
+        dataLayer.push({
+            'event': 'productClick',
+            'ecommerce': {
+                'click': {
+                    'actionField': {'list': 'Giỏ hàng'},
+                    'products': [{
+                        'name': name.toString(),                      // Name or ID is required.
+                        'id': id.toString(),
+                        'price': price.toString()
+                    }]
+                }
+            },
+            'eventCallback': function () {
+                document.location = url;
+            }
+        });
+    });
+</script>
+
+<script>
+    function setStorage(key, value) {
+        var expires = (24 * 60 * 60);  // default: seconds for 1 day
+        var now = Date.now();  //millisecs since epoch time, lets deal only with integer
+        var schedule = now + expires * 1000;
+
+        try {
+            localStorage.setItem(key, value);
+            localStorage.setItem(key + '_expiresIn', schedule);
+        } catch (e) {
+//            console.log('setStorage: Error setting key [' + key + '] in localStorage: ' + JSON.stringify(e));
+            return false;
+        }
+        return true;
+    }
+
+    function customizeBuildPC() {
+        $j('.bp-ajax-loader-view').show();
+        $j('.bp-customize-btn').prop('disabled', true);
+
+        var bundleItems = <?php echo json_encode($bundleItems) ?>;
+        setStorage("build_pc_array", JSON.stringify(bundleItems));
+        window.location.href = '<?php echo $this->getUrl('buildpc') ?>';
+    }
+
+    $j('.btn-share').bind('click', function (e) {
+        shareFB();
+        e.preventDefault();
+        e.stopPropagation();
+    });
+</script>
+

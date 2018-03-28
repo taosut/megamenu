@@ -1,0 +1,238 @@
+.fortunate-wheel-event{
+    position: fixed;
+    left: 0;
+    top: 70%;
+    display: grid;
+    width: 128px;
+    cursor: pointer;
+    z-index: 100;
+}
+.fw-img{
+    text-align: center;
+}
+
+.fortunate-wheel-open{
+    color:white;
+    margin-top: 5px;
+    text-transform: uppercase;
+    padding-right: 15px;
+    border-radius: 25px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    font-weight: bold;
+    background: -moz-linear-gradient(270deg, #F62A29 0%, #990F0C 72%, #990F0C 100%); /* ff3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #F62A29), color-stop(72%, #990F0C), color-stop(100%, #990F0C)); /* safari4+,chrome */
+    background: -webkit-linear-gradient(270deg, #F62A29 0%, #990F0C 72%, #990F0C 100%); /* safari5.1+,chrome10+ */
+    background: -o-linear-gradient(270deg, #F62A29 0%, #990F0C 72%, #990F0C 100%); /* opera 11.10+ */
+    background: -ms-linear-gradient(270deg, #F62A29 0%, #990F0C 72%, #990F0C 100%); /* ie10+ */
+    background: linear-gradient(180deg, #F62A29 0%, #990F0C 72%, #990F0C 100%); /* w3c */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#F62A29', endColorstr='#990F0C',GradientType=0 ); /* ie6-9 */
+    border: solid 1px #da3c3d;
+}
+.btn-spin{
+    height: 50px;
+    width: 155px;
+    border-radius: 11px;
+    text-transform: uppercase;
+    background: -moz-linear-gradient(91deg, #C40F17 0%, #C40F17 55%, #4756B1 87%, #4756B1 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #4756B1), color-stop(13%, #4756B1), color-stop(45%, #C40F17), color-stop(100%, #C40F17));
+    background: -webkit-linear-gradient(91deg, #C40F17 0%, #C40F17 55%, #4756B1 87%, #4756B1 100%);
+    background: -o-linear-gradient(91deg, #C40F17 0%, #C40F17 55%, #4756B1 87%, #4756B1 100%);
+    background: -ms-linear-gradient(91deg, #C40F17 0%, #C40F17 55%, #4756B1 87%, #4756B1 100%);
+    background: linear-gradient(359deg, #C40F17 0%, #C40F17 55%, #4756B1 87%, #4756B1 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#4756B1', endColorstr='#C40F17',GradientType=0 );
+    color: white;
+    font-weight: bold;
+    font-size: 14px;
+    border: solid 1px #FF9600;
+    cursor: pointer;
+}
+
+.mileStone {
+    position: absolute;
+    top: 191px;
+    left: calc((100% - 350px)/2);
+    width: 30px;
+}
+
+.spin-button-wrapper{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.close-wheel{
+    color: white;
+    font-size: 26px;
+    position: absolute;
+    background: #333;
+    padding: 2px 11px;
+    top: 5px;
+    left: 80%;
+    border-radius: 22px;
+    cursor: pointer;
+}
+.fortunateDialogWrapper{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.fortunateDialog {
+    background: url(../images/fortunateModalBackground.png) no-repeat;
+    width: 100%;
+    height: 218px;
+    padding-top: 42px;
+    color: white;
+    text-transform: uppercase;
+    text-align: center;
+    position: relative;
+    background-size: 100%;
+}
+
+.fortunateTop{
+    width: 100%;
+    font-size: 14px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+.fortunateTop > .FWgift {
+    font-weight: 700;
+}
+
+.fortunateBottom {
+    margin-top: 13px;
+    font-size: 17px;
+    padding: 9px 5px;
+    border: solid 1px;
+    width: 70%;
+    margin-left: 14%;
+}
+
+.fortunateBottom>span{
+    font-weight: 700;
+}
+.fortunateResultModal{
+    position: relative;
+}
+
+.fortunateModalClose{
+    font-size: 24px;
+    position: absolute;
+    top: -26px;
+    right: -2px;
+    background: rgba(51,51,51,0.8);
+    padding: 3px 10px;
+    border-radius: 21px;
+    cursor: pointer;
+}
+
+.fortunateLose {
+    font-size: 22px;
+    margin-top: 30px;
+}
+
+.show-768 {
+    display: none;
+}
+
+.fortunateHintDialog {
+    padding: 20px 10px 50px 10px;
+    color: white;
+    background: url(../images/hint-background.png) no-repeat;
+    background-size: auto 100%;
+    border-radius: 10px;
+    width: 95%;
+}
+
+.fortunateHintDialog>h3{
+    margin-bottom: 15px;
+    font-size: 20px;
+    text-align: center;
+}
+
+.fortunateHintDialog>p>span{
+    font-weight: 600;
+}
+.fortunateHintDialog>div{
+    text-align: center;
+    margin-top: 20px;
+}
+
+.confirm-hint{
+    background: #C40F17;
+    height: 40px;
+    width: 104px;
+    border-radius: 11px;
+    text-transform: uppercase;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+    border: solid 1px #FF9600;
+    cursor: pointer;
+}
+/** Mid category wrapper **/
+.mid-category-item {
+    background: white;
+    text-align: center;
+    padding: 25px 20px;
+}
+
+.mid-category-item a:hover, .mid-category-item a:focus {
+    text-decoration: none;
+}
+
+.mid-category-item:hover .mid-category-name {
+    color: #d42333;
+}
+
+.mid-category-name {
+    color: #3D3D3D;
+    margin-top: 10px;
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    font-weight: bold;
+    font-size: 14px;
+    height: 20px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mid-category-image-wrapper {
+    width: 100%;
+}
+
+.mid-category-wrapper {
+    background: #e5e5e5;
+    padding-bottom: 15px;
+}
+
+.mid-category-content {
+    -moz-box-shadow: 0 0 5px #999;
+    -webkit-box-shadow: 0 0 5px #999;
+    box-shadow: 0 0 5px #999;
+    margin-top: -50px;
+}
+
+/** End Mid category wrapper **/
+
+.no-margin {
+    margin: 0 !important;
+}
+
+.fortunateHintDialog > ul{
+    list-style: none;
+    padding-left: 20px;
+}
+
+.fortunateHintDialog > ul > li > span{
+    font-weight: 600;
+}
+
+@media screen and(max-width: 325px){
+    .fortunateHintDialog > ul > li {
+        font-size: 11px;
+    }
+}

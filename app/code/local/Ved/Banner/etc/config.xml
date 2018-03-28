@@ -1,0 +1,104 @@
+<?xml version="1.0"?>
+
+<config>
+    <modules>
+        <Ved_Banner>
+            <version>2.0.0</version>
+        </Ved_Banner>
+    </modules>
+
+    <global>
+        <resources>
+            <banner_setup>
+                <setup>
+                    <module>Ved_Banner</module>
+                </setup>
+                <connection>
+                    <use>core_setup</use>
+                </connection>
+            </banner_setup>
+            <banner_write>
+                <connection>
+                    <use>core_write</use>
+                </connection>
+            </banner_write>
+            <banner_read>
+                <connection>
+                    <use>core_read</use>
+                </connection>
+            </banner_read>
+        </resources>
+
+        <blocks>
+            <ved_banner>
+                <class>Ved_Banner_Block</class>
+            </ved_banner>
+        </blocks>
+        <models>
+            <ved_banner>
+                <class>Ved_Banner_Model</class>
+                <resourceModel>ved_banner_resource</resourceModel>
+            </ved_banner>
+            <ved_banner_resource>
+                <class>Ved_Banner_Model_Resource</class>
+                <entities>
+                    <banner>
+                        <table>banner</table>
+                    </banner>
+                </entities>
+            </ved_banner_resource>
+        </models>
+
+        <helpers>
+            <ved_banner>
+                <class>Ved_Banner_Helper</class>
+            </ved_banner>
+        </helpers>
+    </global>
+
+    <admin>
+        <routers>
+            <adminhtml>
+                <ved_banner>
+                    <use>admin</use>
+                    <args>
+                        <module>Ved_Banner</module>
+                        <frontName>ved_banner</frontName>
+                    </args>
+                </ved_banner>
+                <args>
+                    <modules>
+                        <Ved_Banner before="Mage_Adminhtml">Ved_Banner_Adminhtml</Ved_Banner>
+                    </modules>
+                </args>
+            </adminhtml>
+        </routers>
+    </admin>
+    <adminhtml>
+        <layout>
+            <updates>
+                <banner>
+                    <file>ved_banner.xml</file>
+                </banner>
+            </updates>
+        </layout>
+        <acl>
+            <resources>
+                <all>
+                    <title>Allow Everything</title>
+                </all>
+                <admin>
+                    <children>
+                        <catalog>
+                            <children>
+                                <banner translate="title">
+                                    <title>Banner</title>
+                                </banner>
+                            </children>
+                        </catalog>
+                    </children>
+                </admin>
+            </resources>
+        </acl>
+    </adminhtml>
+</config>

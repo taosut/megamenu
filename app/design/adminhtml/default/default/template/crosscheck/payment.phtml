@@ -1,0 +1,73 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     default_default
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<?php
+/**
+ * @see Mage_Adminhtml_Block_Catalog_Product
+ */
+?>
+<div class="content-header">
+    <table cellspacing="0">
+        <tr>
+            <td style="width:50%;"><h3 class="icon-head head-products">Danh sách cập nhật thanh toán</h3></td>
+            <td class="a-right">
+                <?php echo $this->getButtonsHtml() ?>
+            </td>
+        </tr>
+    </table>
+    <div class="entry-edit">
+        <div class="entry-edit-head">
+            <h4 class="icon-head head-edit-form fieldset-legend">Chờ cập nhật thanh toán</h4>
+            <div class="form-buttons"></div>
+        </div>
+        <div class="fieldset ">
+            <?php $allowPayments = $this->getAllowAmount(); ?>
+            <table cellspacing="0" width="100%">
+                <?php for($i = 0; $i< count($allowPayments); $i++) {
+                    if ($i % 3 == 0) { ?>
+                        <tr>
+                    <?php }?>
+                            <td width="33%">
+                                <table width="100%" class="form-list">
+                                    <tr>
+                                        <td class="label"><?php echo $allowPayments[$i]['store_name'] ?></td>
+                                        <td class="value">
+                                            <?php echo $allowPayments[$i]['total_allow_amount'] ?>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                    <?php  if ($i % 3 == 2) {?>
+                        </tr>
+                    <?php }
+                }?>
+            </table>
+        </div>
+    </div>
+</div>
+<div>
+    <?php echo $this->getGridHtml() ?>
+</div>

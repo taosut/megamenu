@@ -1,0 +1,15 @@
+body{font:13px/1.6 arial,'\65B0\7D30\660E\9AD4'; letter-spacing: 1px;}
+.custom-scroll-filter{position:relative;*zoom:1;overflow: auto;}
+.custom-scroll-main{position:relative;left:0;top:0;*zoom:1;}
+.custom-scrollbar{position:absolute;*zoom:1;}
+.custom-scrollbar-track{cursor:pointer;position:absolute;} 
+.custom-scrollbar-thumb{cursor:auto;position:absolute;left: 0;top:0;}
+
+.example-vertical-dbtn{width: 294px;height: 427px; color:#d1c0a5;}
+.example-vertical-dbtn .custom-scroll-main{margin: 0px;width:275px;}
+.example-vertical-dbtn .custom-scrollbar{background: #7e6b5a;width: 1px;height: 390px;top: 15px;right: 10px;}
+.example-vertical-dbtn .custom-scrollbar-track{width: 9px;left: -4px;height: 100%}
+.example-vertical-dbtn .custom-scrollbar-thumb{background: #7e6b5a;width: 10px;}
+.example-vertical-dbtn .custom-scrollbar-button-prev,.example-vertical-dbtn .custom-scrollbar-button-next{font-size:0;line-height:0;width:0;height:0;border:dashed 5px;position: absolute;left: -4px;cursor: pointer;}
+.example-vertical-dbtn .custom-scrollbar-button-prev{border-bottom-style:solid;border-color:transparent transparent #7e6b5a transparent;top: -15px;}
+.example-vertical-dbtn .custom-scrollbar-button-next{border-top-style:solid;border-color:#7e6b5a transparent transparent transparent;bottom: -15px;}

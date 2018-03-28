@@ -1,0 +1,114 @@
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     default_default
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+body  { background:#fff !important; font-size:9pt !important; }
+a     { color:#404041 !important; }
+th,td { color:#404041 !important;  border-color:#BEBCB7 !important; }
+
+.header-container,
+.nav-container,
+.footer-container,
+.pager,
+.toolbar,
+.actions,
+.buttons-set { display:none !important; }
+
+.page-print .data-table .cart-tax-total { background-position:100% -54px; }
+/*.page-print .data-table .cart-tax-info { display:block !important; }*/
+.page-print .p-info {
+	text-align: center;
+}
+.page-print.sales-order-print h1 {
+      font-size: 20px;
+      text-align: center;
+      text-transform: uppercase;
+}
+.page-print.sales-order-print #order_info_id {
+    margin-top: 20px;
+    
+}
+.page-print.sales-order-print #order_info_id > p {
+    text-align: center;
+    
+}
+.page-print.sales-order-print #order_info_id > p > span  {
+    display: inline-block;
+}
+.page-print.sales-order-print #order_info_id > p > span:nth-child(1) {
+    min-width: 70px;
+    text-align: left;
+}
+.page-print.sales-order-print #order_info_id > p > span:nth-child(2) {
+    text-align: right;
+    min-width: 108px;
+}
+.page-print.sales-order-print #address_info > p > span {
+    display: inline-block;
+}
+.page-print.sales-order-print #address_info > p > span:nth-child(1) {
+    width: 175px;
+}
+.page-print.sales-order-print #address_info > p > span:nth-child(2) {
+    font-weight: bold;
+}
+
+.page-print.sales-order-print .data-table tbody th, .page-print.sales-order-print .data-table tbody td {
+  border-bottom: 1px solid #BEBCB7;
+  vertical-align: middle;
+  border-right: 1px solid #BEBCB7;
+}
+.page-print.sales-order-print .data-table thead th {
+  border-bottom: 1px solid #BEBCB7;
+  border-right: 1px solid #BEBCB7;
+  padding: 8px 10px;
+}
+.page-print.sales-order-print .data-table thead th:last-child,
+.page-print.sales-order-print .data-table tbody tr > td:last-child {
+    border-right: none;
+}
+.page-print.sales-order-print #order_info_id p ,
+.page-print.sales-order-print #address_info p  {
+    margin-bottom: 5px;
+}
+.page-print.sales-order-print .data-table {
+    margin-top: 20px;
+}
+.page-print.sales-order-print #order_info_id {
+	margin-top: 20px;
+}
+.page-print.sales-order-print .data-table tfoot tr {
+  background-color: transparent !important;
+}
+.page-print.sales-order-print .data-table tfoot td {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+.page-print.sales-order-print .STT {
+    text-align: center;
+}
+.page-print.sales-order-print #thank {
+    text-align: center;
+    margin-top: 10px;
+    display: inline-block;
+}

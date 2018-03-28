@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <tabs>
+        <coupon_manager translate="label" module="ved_coupon">
+            <label>Coupon Manager</label>
+            <sort_order>246</sort_order>
+        </coupon_manager>
+    </tabs>
+    <sections>
+        <promo translate="label" module="ved_coupon">
+            <label>Coupon Manager</label>
+            <tab>coupon_manager</tab>
+            <sort_order>51805</sort_order>
+            <show_in_default>1</show_in_default>
+            <show_in_website>1</show_in_website>
+            <show_in_store>1</show_in_store>
+            <groups>
+                <ved_coupon translate="label" module="ved_coupon">
+                    <label>Coupon Manager</label>
+                    <frontend_type>text</frontend_type>
+                    <sort_order>1</sort_order>
+                    <show_in_default>1</show_in_default>
+                    <show_in_website>1</show_in_website>
+                    <show_in_store>1</show_in_store>
+                    <fields>
+                        <coupon_live_time translate="label comment">
+                            <label>Thời gian sống của Coupon</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment><![CDATA[Tính theo ngày]]></comment>
+                        </coupon_live_time>
+                        <approve_permission translate="label comment">
+                            <label>ID truy cập</label>
+                            <frontend_type>text</frontend_type>
+                            <sort_order>10</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment><![CDATA[id cách nhau bởi dấu phẩy (,)]]></comment>
+                        </approve_permission>
+                    </fields>
+                </ved_coupon>
+            </groups>
+        </promo>
+    </sections>
+</config>

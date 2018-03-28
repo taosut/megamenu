@@ -1,0 +1,9 @@
+<layout>
+    <buildpc_index_index>
+        <reference name="content">
+            <block type="buildpc/buildpc" name="buildpc.index.index" template="buildpc/index.phtml">
+                <block type="core/template" name="page.cat_menu" template="page/html/cat_menu.phtml"/>
+            </block>
+        </reference>
+    </buildpc_index_index>
+</layout>

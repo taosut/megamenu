@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <modules>
+        <Teko_VAT>
+            <active>true</active>
+            <codePool>local</codePool>
+            <version>1.0.0</version>
+        </Teko_VAT>
+    </modules>
+
+    <global>
+        <models>
+            <Teko_VAT>
+                <class>Teko_VAT_Model</class>
+            </Teko_VAT>
+        </models>
+        <resources>
+            <Teko_VAT_setup>
+                <setup>
+                    <module>Teko_VAT</module>
+                </setup>
+            </Teko_VAT_setup>
+        </resources>
+        <events>
+            <sales_model_service_quote_submit_before>
+                <observers>
+                    <Teko_VAT>
+                        <class>Teko_VAT/observer</class>
+                        <method>salesConvertQuoteToOrder</method>
+                    </Teko_VAT>
+                </observers>
+            </sales_model_service_quote_submit_before>
+        </events>
+        <blocks>
+            <teko_vat>
+                <class>Teko_VAT_Block</class>
+            </teko_vat>
+        </blocks>
+    </global>
+    <admin>
+        <routers>
+            <adminhtml>
+                <teko_vat>
+                    <use>admin</use>
+                    <args>
+                        <module>Teko_VAT</module>
+                        <frontName>teko_vat</frontName>
+                    </args>
+                </teko_vat>
+                <args>
+                    <modules>
+                        <Teko_VAT before="Mage_Adminhtml">Teko_VAT_Adminhtml</Teko_VAT>
+                    </modules>
+                </args>
+            </adminhtml>
+        </routers>
+    </admin>
+    <adminhtml>
+        <layout>
+            <updates>
+                <teko_vat>
+                    <file>teko_vat.xml</file>
+                </teko_vat>
+            </updates>
+        </layout>
+    </adminhtml>
+</config>

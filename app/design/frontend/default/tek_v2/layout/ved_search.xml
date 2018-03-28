@@ -1,0 +1,14 @@
+<layout>
+    <search_index_result>
+        <reference name="content">
+            <block type="search/result" name="search.index.result" template="search/result.phtml">
+                <block type="core/template" name="page.cat_menu" template="page/html/cat_menu.phtml"/>
+                <block type="catalog/layer_state" name="catalog.layer.state.horizontal" as="layer_state_horizontal"
+                       template="catalog/layer/state-horizontal.phtml">
+                </block>
+                <block type="mana_filters/view" name="catalog.leftnav" as="leftnav" after="currency" template="catalog/layer/result_view.phtml"/>
+                <block type="core/template" name="page.subscription" template="page/html/subscription.phtml" />
+            </block>
+        </reference>
+    </search_index_result>
+</layout>

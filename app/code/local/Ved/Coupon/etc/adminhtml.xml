@@ -1,0 +1,41 @@
+<config>
+    <menu>
+        <promo>
+            <children>
+                <ved_coupon translate="title">
+                    <title>Coupon Request</title>
+                    <action>adminhtml/coupon_index/</action>
+                </ved_coupon>
+            </children>
+        </promo>
+    </menu>
+    <acl>
+        <resources>
+            <all>
+                <title>Allow Everything</title>
+            </all>
+            <admin>
+                <children>
+                    <promo>
+                        <children>
+                            <ved_coupon translate="title" module="salesrule">
+                                <title>Coupon Request</title>
+                            </ved_coupon>
+                        </children>
+                    </promo>
+                    <system>
+                        <children>
+                            <config>
+                                <children>
+                                    <ved_coupon translate="title" module="salesrule">
+                                        <title>Coupon Request</title>
+                                    </ved_coupon>
+                                </children>
+                            </config>
+                        </children>
+                    </system>
+                </children>
+            </admin>
+        </resources>
+    </acl>
+</config>

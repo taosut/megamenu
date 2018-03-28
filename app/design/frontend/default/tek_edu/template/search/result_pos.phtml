@@ -1,0 +1,24 @@
+<?php
+$_products = Mage::registry('$_products');
+?>
+
+<?php foreach ($_products->getItems() as $_product): ?>
+    <li onclick="addProductToBill(this)"
+        data-id="<?php echo $_product->getId() ?>"
+        data-name="<?php echo htmlspecialchars($_product->getName()) ?>"
+        data-sku="<?php echo $_product->getSku() ?>"
+        data-price="<?php echo $_product->getFinalPrice() ?>"
+    >
+        <div class="search-product-img">
+            <img src="<?php echo $this->helper('catalog/image')->init($_product, 'small_image')->resize(150, 150); ?>">
+        </div>
+        <div class="search-product-info">
+            <p class="name-item"><?php echo htmlspecialchars($_product->getName()) ?></p>
+            <p>
+                <?php echo $_product->getSku() ?>
+                <span class="price-item">Giá: <?php echo number_format($_product->getFinalPrice(), 0, ",", ".") . " đ"; ?></span>
+            </p>
+            Tồn: 12<span class="price-item">Đặt: 0</span>
+        </div>
+    </li>
+<?php endforeach; ?>

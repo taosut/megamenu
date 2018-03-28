@@ -1,0 +1,198 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Ved_Purchase>
+            <version>1.0.2</version>
+        </Ved_Purchase>
+    </modules>
+    <global>
+
+        <blocks>
+            <ved_purchase>
+                <class>Ved_Purchase_Block</class>
+            </ved_purchase>
+        </blocks>
+        <models>
+            <ved_purchase>
+                <class>Ved_Purchase_Model</class>
+                <resourceModel>ved_purchase_resource</resourceModel>
+            </ved_purchase>
+            <ved_purchase_resource>
+                <class>Ved_Purchase_Model_Resource</class>
+                <entities>
+                    <purchase>
+                        <table>sales_flat_purchase</table>
+                    </purchase>
+                    <mapping>
+                        <table>user_mapping</table>
+                    </mapping>
+                    <purchaseitem>
+                        <table>sales_flat_purchase_item</table>
+                    </purchaseitem>
+                    <requestitem>
+                        <table>sales_flat_purchase_request_item</table>
+                    </requestitem>
+                    <stocktransfer>
+                        <table>sales_flat_stock_transfer</table>
+                    </stocktransfer>
+                    <stocktransferitem>
+                        <table>sales_flat_stock_transfer_item</table>
+                    </stocktransferitem>
+                    <stockrequestitem>
+                        <table>sales_flat_stock_transfer_request_item</table>
+                    </stockrequestitem>
+                    <outputrequest>
+                        <table>sales_flat_output_request</table>
+                    </outputrequest>
+                </entities>
+            </ved_purchase_resource>
+        </models>
+        <resources>
+            <ved_purchase_setup>
+                <setup>
+                    <module>Ved_Purchase</module>
+                </setup>
+            </ved_purchase_setup>
+        </resources>
+        <helpers>
+            <purchase>
+                <class>Ved_Purchase_Helper</class>
+            </purchase>
+        </helpers>
+        <!--<events>-->
+            <!--<order_telephone_confirm_before>-->
+                <!--<observers>-->
+                    <!--<ved_purchase_source>-->
+                        <!--<class>ved_purchase/observer</class>-->
+                        <!--<method>orderTelephoneConfirmBefore</method>-->
+                    <!--</ved_purchase_source>-->
+                <!--</observers>-->
+            <!--</order_telephone_confirm_before>-->
+        <!--</events>-->
+    </global>
+    <admin>
+        <routers>
+            <adminhtml>
+                <ved_purchase>
+                    <use>admin</use>
+                    <args>
+                        <module>Ved_Purchase</module>
+                        <frontName>ved_purchase</frontName>
+                    </args>
+                </ved_purchase>
+                <args>
+                    <modules>
+                        <Ved_Purchase before="Mage_Adminhtml">Ved_Purchase_Adminhtml</Ved_Purchase>
+                    </modules>
+                </args>
+            </adminhtml>
+        </routers>
+    </admin>
+    <adminhtml>
+        <menu>
+            <purchase module="purchase">
+                <title>Purchase</title>
+                <sort_order>25</sort_order>
+                <children>
+                    <!--<purchase_other module="purchase">-->
+                        <!--<title>Create other purchase</title>-->
+                        <!--<sort_order>0</sort_order>-->
+                        <!--<action>adminhtml/purchase/new</action>-->
+                    <!--</purchase_other>-->
+                    <purchase_supplier module="purchase">
+                        <title>Create other purchase</title>
+                        <sort_order>0</sort_order>
+                        <action>adminhtml/purchase/supplier</action>
+                    </purchase_supplier>
+                    <check_purchase module="purchase">
+                        <title>Check purchase request</title>
+                        <sort_order>5</sort_order>
+                        <action>adminhtml/purchase/check</action>
+                    </check_purchase>
+                    <purchase_request module="purchase">
+                        <title>Create Purchase from order</title>
+                        <sort_order>1</sort_order>
+                        <action>adminhtml/request</action>
+                    </purchase_request>
+                    <purchase module="purchase">
+                        <title>Manage Purchase</title>
+                        <sort_order>2</sort_order>
+                        <action>adminhtml/purchase</action>
+                    </purchase>
+                    <transfer_request module="purchase">
+                        <title>Create Stock Transfer</title>
+                        <sort_order>3</sort_order>
+                        <action>adminhtml/stockrequest</action>
+                    </transfer_request>
+                    <stocktransfer module="purchase">
+                        <title>Manage Stock Transfer</title>
+                        <sort_order>4</sort_order>
+                        <action>adminhtml/stocktransfer</action>
+                    </stocktransfer>
+                    <!--<purchase_order module="purchase">-->
+                        <!--<title>Create order purchase</title>-->
+                        <!--<sort_order>6</sort_order>-->
+                        <!--<action>adminhtml/purchase/order</action>-->
+                    <!--</purchase_order>-->
+                </children>
+            </purchase>
+        </menu>
+        <acl>
+            <resources>
+                <all>
+                    <title>Allow Everything</title>
+                </all>
+                <admin>
+                    <children>
+                        <purchase translate="title" module="purchase">
+                            <title>Purchase</title>
+                            <sort_order>1000</sort_order>
+                            <children>
+                                <purchase_request translate="title">
+                                    <title>Create purchase from order</title>
+                                </purchase_request>
+                                <!--<purchase_other translate="title">-->
+                                    <!--<title>Create other purchase</title>-->
+                                <!--</purchase_other>-->
+                                <purchase translate="title">
+                                    <title>Manage purchase</title>
+                                </purchase>
+                                <transfer_request translate="title">
+                                    <title>Create Stock Transfer</title>
+                                </transfer_request>
+                                <stocktransfer module="purchase">
+                                    <title>Manage Stock Transfer</title>
+                                </stocktransfer>
+                                <purchase_supplier module="purchase">
+                                    <title>Create supplier purchase</title>
+                                </purchase_supplier>
+                                <check_purchase translate="title">
+                                    <title>Check purchase request</title>
+                                </check_purchase>
+                                <!--<purchase_order module="purchase">-->
+                                    <!--<title>Create order purchase</title>-->
+                                <!--</purchase_order>-->
+                            </children>
+                        </purchase>
+                    </children>
+                </admin>
+            </resources>
+        </acl>
+        <layout>
+            <updates>
+                <purchase>
+                    <file>ved_purchase.xml</file>
+                </purchase>
+            </updates>
+        </layout>
+        <translate>
+            <modules>
+                <Ved_Purchase>
+                    <files>
+                        <default>Ved_Purchase.csv</default>
+                    </files>
+                </Ved_Purchase>
+            </modules>
+        </translate>
+    </adminhtml>
+</config> 

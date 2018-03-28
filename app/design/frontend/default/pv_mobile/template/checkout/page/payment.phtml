@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <?php echo $this->getChildHtml('head'); ?>
+    <link rel="stylesheet" type="text/css" href="<?php echo $this->getSkinUrl('lib/checkout.css'); ?>"/>
+
+    <script type="text/javascript">
+        var dataLayer = [];
+    </script>
+</head>
+<body>
+
+<!-- Google Tag Manager (noscript) -->
+<noscript>
+    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W6CW7K7"
+            height="0" width="0" style="display:none;visibility:hidden"></iframe>
+</noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+<div class="wrapper">
+    <!-- Start Header-->
+    <?php echo $this->getChildHtml('header'); ?>
+    <!-- End Header-->
+    <!-- Start Content-->
+    <div class="content">
+        <div class="shipping-header payment-shipping-header bd-bottom">
+            <div class="row bs-wizard">
+                <div class="col-xs-4 bs-wizard-step complete">
+                    <span class="bs-wizard-dot address-bar"></span>
+                    <div class="text-center bs-wizard-stepnum text-step">
+                        <span class="color-bar-text">Địa chỉ</span>
+                    </div>
+                    <div class="line active"></div>
+                </div>
+
+                <div class="col-xs-4 bs-wizard-step active">
+                    <span class="bs-wizard-dot checkout-bar"></span>
+                    <div class="text-center bs-wizard-stepnum text-step">
+                        <span class="hidden-xs">Thanh toán</span>
+                        <span class="color-bar-text">Thanh toán</span>
+                    </div>
+                    <div class="line"></div>
+                </div>
+
+                <div class="col-xs-4 bs-wizard-step disabled">
+                    <span class="bs-wizard-dot color-deactive-bar done-bar"></span>
+                    <div class="text-center bs-wizard-stepnum text-step">
+                        <span class="hidden-xs">Hoàn tất</span>
+                        <span class="visible-xs-inline-block">Hoàn tất</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <?php
+        $quote = Mage::getSingleton('checkout/session')->getQuote();
+        $address = $quote->getShippingAddress();
+        ?>
+        <input type="hidden" id="instalname" value="<?php echo $address->getName(); ?>"/>
+        <input type="hidden" id="instalphone" value="<?php echo $address->getTelephone(); ?>"/>
+        <input type="hidden" id="instalcity" value="<?php echo $address->getRegion(); ?>"/>
+        <input type="hidden" id="instaladdress"
+               value="<?php echo $address->getStreetFull() . ', ' . ucfirst(mb_strtolower($address->getCity(), 'UTF-8')) . ', ' . $address->getRegion(); ?>"/>
+        <input type="hidden" id="instalemail" value="<?php echo $address->getEmail(); ?>"/>
+
+        <?php echo $this->getChildHtml('right') ?>
+    </div>
+</div>
+
+<!-- Google Tag Manager -->
+<script>
+    (function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({
+            'gtm.start': new Date().getTime(), event: 'gtm.js'
+        });
+        var f = d.getElementsByTagName(s)[0],
+            j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : '';
+        j.async = true;
+        j.src =
+            'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+        f.parentNode.insertBefore(j, f);
+    })(window, document, 'script', 'dataLayer', 'GTM-W6CW7K7');
+</script>
+<!-- End Google Tag Manager -->
+<script>
+    $j = jQuery.noConflict();
+    $j(document).ready(function(){
+        $j('.search-and-cart-header').hide();
+        // $j('.content').attr("style","margin-top:59px!important");
+        $j('.state-title').html('Thanh toán');
+        showBackState();
+    });
+</script>
+</body>
+</html>

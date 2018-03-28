@@ -1,0 +1,73 @@
+<?php
+$_helper = $this->helper('catalog/output');
+$_products = Mage::registry('productsCollections');
+$productObjList = "Tekshop Edu - Kết quả tìm kiếm";
+?>
+
+<div class="paginate-product">
+    <ul class="products-grid grid-recent">
+        <?php foreach ($_products as $_product): ?>
+            <?php
+            $productObj = new stdClass();
+            $productObj->name = (string)$_product->getName();
+            $productObj->id = (string)$_product->getId();
+            $productObj->price = (string)$_product->getFinalPrice();
+            $productObj->list = $productObjList;
+            $productImpressions[] = $productObj;
+            ?>
+
+            <?php $oldPrice = $_product->getPrice();
+            $newPrice = $_product->getFinalPrice(); ?>
+            <li class="detail-product col-md-3 col-xs-6 newitem<?php if ($oldPrice != $newPrice) : ?> saleoff <?php endif ?>" style="width:20%!important;float:left;!important">
+                <div class="view team-one">
+                    <div class="mask mask-cat"
+                         data-id="<?php echo $_product->getId() ?>"
+                         data-name="<?php echo $_product->getName() ?>"
+                         data-url="<?php echo $_product->getProductUrl() ?>"
+                         data-price="<?php echo $_product->getFinalPrice() ?>"
+                    >
+                        <div class="box-holder">
+                            <h5 class="product-name-hover-mask"
+                                title="<?php echo $this->escapeHtml($_product->getName()) ?>">
+                                <?php echo $this->escapeHtml($_product->getName()) ?>
+                            </h5>
+                            <div class="product-price mb-15 mt-15">
+                                <?php if ($oldPrice != $newPrice) : ?>
+                                    <div class="old-price old-pr-div">
+                                        <span class="price price-cat">
+                                            <?php echo number_format($oldPrice, 0, ",", ".") . " <sup>đ</sup>"; ?>
+                                        </span>
+                                    </div>
+                                <?php else : {
+                                    echo "<div class='old-pr-div'> <span class=\"price \">&nbsp; </span></div>";
+                                } ?>
+                                <?php endif; ?>
+                                <div class="regular-price">
+                                    <span class="price price-cat">
+                                        <?php echo number_format($newPrice, 0, ",", ".") . " <sup>đ</sup>"; ?>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="short-description-hover-mask short-description-list"><?php echo $_helper->productAttribute($_product, nl2br($_product->getShortDescription()), 'short_description') ?></div>
+                        </div>
+                    </div>
+                    <div class="product-image">
+                        <a class="a-img" href="<?php echo $_product->getProductUrl() ?>"
+                           title="<?php echo $this->escapeHtml($this->getImageLabel($_product, 'small_image')) ?>">
+                            <img src="<?php echo $this->helper('catalog/image')->init($_product, 'small_image')->resize(300, 300); ?>"
+                                 alt="<?php echo $this->escapeHtml($this->getImageLabel($_product, 'small_image')) ?>"
+                                 title="<?php echo $this->escapeHtml($this->getImageLabel($_product, 'small_image')) ?>"/>
+                        </a>
+                    </div>
+                </div>
+
+                <?php if ($oldPrice != $newPrice) : ?>
+                    <span class="percent">
+                        <span>- <?php echo number_format(($oldPrice - $newPrice) / $oldPrice * 100, 0) . "%" ?></span>
+                    </span>
+                <?php endif ?>
+
+            </li>
+        <?php endforeach ?>
+    </ul>
+</div>

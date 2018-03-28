@@ -1,0 +1,234 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+    <adminhtml_purchase_edit>
+        <reference name="head">
+            <action method="addJs">
+                <script>productimport/jquery-1.11.3.min.js</script>
+            </action>
+            <action method="addJs">
+                <script>productimport/noconflict.js</script>
+            </action>
+            <action method="addJs">
+                <script>productimport/angular.min.js</script>
+            </action>
+            <action method="addJs">
+                <script>purchase/bootstrap.min.js</script>
+            </action>
+            <action method="addCss">
+                <stylesheet>purchase/css/bootstrap.modal.css</stylesheet>
+            </action>
+            <action method="addCss">
+                <stylesheet>purchase/css/custom.css</stylesheet>
+            </action>
+        </reference>
+        <reference name="content">
+            <block type="ved_purchase/adminhtml_editpurchase" name="editpurchase"
+                   template="purchase/edit.phtml"/>
+        </reference>
+    </adminhtml_purchase_edit>
+    <adminhtml_request_index>
+        <reference name="head">
+            <action method="addJs">
+                <script>productimport/jquery-1.11.3.min.js</script>
+            </action>
+            <action method="addJs">
+                <script>productimport/noconflict.js</script>
+            </action>
+            <action method="addJs">
+                <script>productimport/angular.min.js</script>
+            </action>
+            <action method="addJs">
+                <script>purchase/bootstrap.min.js</script>
+            </action>
+            <action method="addCss">
+                <stylesheet>purchase/css/bootstrap.modal.css</stylesheet>
+            </action>
+            <action method="addCss">
+                <stylesheet>purchase/css/font-awesome.css</stylesheet>
+            </action>
+        </reference>
+        <reference name="content">
+            <block type="ved_purchase/adminhtml_requestitem" name="requestitem"
+                   template="purchase/requestitem.phtml"/>
+        </reference>
+    </adminhtml_request_index>
+    <adminhtml_stocktransfer_edit>
+        <reference name="head">
+            <action method="addJs">
+                <script>productimport/jquery-1.11.3.min.js</script>
+            </action>
+            <action method="addJs">
+                <script>productimport/noconflict.js</script>
+            </action>
+            <action method="addJs">
+                <script>productimport/angular.min.js</script>
+            </action>
+            <action method="addJs">
+                <script>purchase/bootstrap.min.js</script>
+            </action>
+            <action method="addCss">
+                <stylesheet>purchase/css/bootstrap.modal.css</stylesheet>
+            </action>
+            <action method="addCss">
+                <stylesheet>purchase/css/custom.css</stylesheet>
+            </action>
+        </reference>
+        <reference name="content">
+            <block type="ved_purchase/adminhtml_editstocktransfer" name="editstocktransfer"
+                   template="stocktransfer/edit.phtml"/>
+        </reference>
+    </adminhtml_stocktransfer_edit>
+    <adminhtml_stockrequest_index>
+        <reference name="head">
+            <action method="addJs">
+                <script>productimport/jquery-1.11.3.min.js</script>
+            </action>
+            <action method="addJs">
+                <script>productimport/noconflict.js</script>
+            </action>
+            <action method="addJs">
+                <script>productimport/angular.min.js</script>
+            </action>
+            <action method="addJs">
+                <script>purchase/bootstrap.min.js</script>
+            </action>
+            <action method="addCss">
+                <stylesheet>purchase/css/bootstrap.modal.css</stylesheet>
+            </action>
+        </reference>
+        <reference name="content">
+            <block type="ved_purchase/adminhtml_stockrequestitem" name="stockrequestitem"
+                   template="stocktransfer/requestitem.phtml"/>
+        </reference>
+    </adminhtml_stockrequest_index>
+    <adminhtml_purchase_new>
+        <reference name="head">
+            <action method="addJs">
+                <script>productimport/jquery-1.11.3.min.js</script>
+            </action>
+            <action method="addJs">
+                <script>productimport/noconflict.js</script>
+            </action>
+            <action method="addJs">
+                <script>productimport/angular.min.js</script>
+            </action>
+            <action method="addJs">
+                <script>purchase/bootstrap.min.js</script>
+            </action>
+            <action method="addCss">
+                <stylesheet>purchase/css/bootstrap.modal.css</stylesheet>
+            </action>
+            <action method="addCss">
+                <stylesheet>purchase/css/font-awesome.css</stylesheet>
+            </action>
+            <action method="addCss">
+                <stylesheet>purchase/css/custom.css</stylesheet>
+            </action>
+        </reference>
+        <reference name="content">
+            <block type="ved_purchase/adminhtml_newPurchase" name="newPurchase"
+                   template="purchase/new_purchase.phtml"/>
+        </reference>
+    </adminhtml_purchase_new>
+
+    <adminhtml_purchase_supplier>
+        <reference name="head">
+            <action method="addJs">
+                <script>productimport/jquery-1.11.3.min.js</script>
+            </action>
+            <action method="addJs">
+                <script>productimport/noconflict.js</script>
+            </action>
+            <action method="addJs">
+                <script>productimport/angular.min.js</script>
+            </action>
+            <action method="addJs">
+                <script>purchase/bootstrap.min.js</script>
+            </action>
+            <action method="addCss">
+                <stylesheet>purchase/css/bootstrap.modal.css</stylesheet>
+            </action>
+            <action method="addCss">
+                <stylesheet>purchase/css/font-awesome.css</stylesheet>
+            </action>
+            <action method="addCss">
+                <stylesheet>purchase/css/custom.css</stylesheet>
+            </action>
+            <action method="addCss">
+                <stylesheet>purchase/css/chosen.min.css</stylesheet>
+            </action>
+            <action method="addJs">
+                <stylesheet>purchase/chosen.jquery.min.js</stylesheet>
+            </action>
+        </reference>
+        <reference name="content">
+            <block type="ved_purchase/adminhtml_newSupplierPurchase" name="newSupplierPurchase"
+                   template="purchase/new_supplier_purchase.phtml"/>
+        </reference>
+    </adminhtml_purchase_supplier>
+    <adminhtml_purchase_check>
+        <reference name="head">
+            <action method="addJs">
+                <script>productimport/jquery-1.11.3.min.js</script>
+            </action>
+            <action method="addJs">
+                <script>productimport/noconflict.js</script>
+            </action>
+            <action method="addJs">
+                <script>productimport/angular.min.js</script>
+            </action>
+            <action method="addJs">
+                <script>purchase/bootstrap.min.js</script>
+            </action>
+            <action method="addCss">
+                <stylesheet>purchase/css/bootstrap.modal.css</stylesheet>
+            </action>
+            <action method="addCss">
+                <stylesheet>purchase/css/font-awesome.css</stylesheet>
+            </action>
+            <action method="addCss">
+                <stylesheet>purchase/css/custom.css</stylesheet>
+            </action>
+            <action method="addCss">
+                <stylesheet>purchase/css/chosen.min.css</stylesheet>
+            </action>
+            <action method="addJs">
+                <stylesheet>purchase/chosen.jquery.min.js</stylesheet>
+            </action>
+        </reference>
+        <reference name="content">
+            <block type="ved_purchase/adminhtml_checkrequest" name="checkrequest"
+                   template="purchase/checkrequest.phtml"/>
+        </reference>
+    </adminhtml_purchase_check>
+    <adminhtml_purchase_order>
+        <reference name="head">
+            <action method="addJs">
+                <script>productimport/jquery-1.11.3.min.js</script>
+            </action>
+            <action method="addJs">
+                <script>productimport/noconflict.js</script>
+            </action>
+            <action method="addJs">
+                <script>productimport/angular.min.js</script>
+            </action>
+            <action method="addJs">
+                <script>purchase/bootstrap.min.js</script>
+            </action>
+            <action method="addCss">
+                <stylesheet>purchase/css/bootstrap.modal.css</stylesheet>
+            </action>
+            <action method="addCss">
+                <stylesheet>purchase/css/font-awesome.css</stylesheet>
+            </action>
+            <action method="addCss">
+                <stylesheet>purchase/css/custom.css</stylesheet>
+            </action>
+        </reference>
+        <reference name="content">
+            <block type="ved_purchase/adminhtml_purchaseorder" name="purchaseorder"
+                   template="purchase/purchaseorder.phtml"/>
+        </reference>
+    </adminhtml_purchase_order>
+
+</layout>

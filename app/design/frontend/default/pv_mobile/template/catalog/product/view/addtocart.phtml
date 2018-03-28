@@ -1,0 +1,82 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     base_default
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+
+<?php
+/* Check if current product is favourite product or not */
+
+$_product = $this->getProduct();
+?>
+
+<?php if (in_array($_product->getInstock(), array(1, 6)) && $_product->isSaleable()): ?>
+    <input type="hidden" name="qty" class="qty-input"
+           value="1"/>
+    <button type="button" class="detail-action-btn add-to-cart-btn" onclick="addToCart();">
+        Mua ngay
+        <img class="add-to-cart-ajax-loader hidden"
+             src="<?php echo $this->getSkinUrl('images/ajax-loader-white.gif'); ?>"/>
+    </button>
+<?php else: ?>
+    <button type="button" class="detail-action-btn require-purchase-btn" data-toggle="modal"
+            data-target="#purchaseRequestModal">
+        Đặt hàng trước (<?php echo ($_product->getInstock() == 3 || !$_product->isSaleable()) ? 'Tạm hết hàng' : 'Hàng sắp về'; ?>)
+    </button>
+
+    <!-- Modal purchase request -->
+    <div id="purchaseRequestModal" class="purchase-request-modal modal fade" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <input type="hidden" id="require-product-id" value="<?php echo $_product->getId(); ?>"/>
+                <input type="hidden" id="require-product-name" value="<?php echo $_product->getName(); ?>"/>
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title a-center">Gửi yêu cầu đặt hàng</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="name">Họ tên <span class="red">*</span></label>
+                        <input type="text" class="form-control" id="require-name">
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Số điện thoại <span class="red">*</span></label>
+                        <input type="number" class="form-control" id="require-phone">
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Nội dung yêu cầu (tối đa 500 ký tự) <span class="red">*</span></label>
+                        <textarea class="form-control" rows="4" id="require-content" maxlength="500"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary btn-send-request" onclick="sendPurchaseRequest()">
+                        &nbsp;Xác nhận
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php endif; ?>
+

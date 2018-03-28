@@ -1,0 +1,16 @@
+tekshop.vn (v1.08.9355)
+    Thêm feature: người dùng cancel purchase.
+    Thêm feature: search kể cả khi hết hàng.
+    Thêm feature: đồng bộ trạng thái giao vận với warehouse và logistic.
+    Thêm feature: tạo nút chat với teko page.
+    Thêm feature: thêm log khi push message-queue sang RabbitMQ.
+    Fix bugs: hỗ trợ SSL, bỏ index, hỗ trợ mã cho vận hành miền Nam, ...
+
+tekshop.vn (v1.9.207)
+    Thêm feature: gộp 3 tỉnh miền Bắc.
+    Thêm feature: thêm thông tin thời gian xác nhận đơn
+    Thêm feature: thêm sản phẩm còn hàng / hết hàng cho mtek (sync với bên tek vì là 2 theme riêng biệt)
+    Thêm feature: thêm sản phẩm còn hàng / hết hàng cho gshop
+    Thêm feature: thêm thông tin người tạo đơn, sử dụng app nào vào backend của magento (sau này sẽ dùng để log và report)
+    Fix bugs: Xử lý lỗi không fire được tag của GTM khi đặt hàng thành công
+    Fix bugs: các absolute path

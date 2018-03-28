@@ -1,0 +1,57 @@
+<?php
+/**
+ * @category    TheExtensionLab
+ * @package     TheExtensionLab_MegaMenu
+ * @copyright   Copyright (c) 2015 TheExtensionLab (http://www.theextensionlab.com)
+ * @license     Open Software License (OSL 3.0)
+ * @author      James Anelay @ TheExtensionLab <james@theextensionlab.com>
+ */
+?>
+
+<?php $childNodes = $this->getLoadedMenuNodes(); ?>
+<?php $categoryTree = $this->getCategoryTree(); ?>
+
+<?php if($this->hasTitle()):?>
+    <li class="section-title manual-section-title">
+            <span>
+                <?php echo $this->getTitle();?>
+            </span>
+    </li>
+<?php endif;?>
+
+<?php foreach($categoryTree as $category):?>
+
+    <?php $categoryNode = $this->_getCategoryNodeById($childNodes, $category->id);?>
+
+    <?php if($categoryNode):?>
+
+        <li <?php if(!empty($category->children) && !$this->hasTitle()): echo 'class="section-title"';endif;?>>
+
+                <a href="<?php echo $categoryNode->getUrl(); ?>">
+                    <span><?php echo $this->_getCustomCategoryMenuName($categoryNode,$category);?></span>
+                </a>
+
+        </li>
+
+        <?php if(!empty($category->children)):?>
+            <?php foreach($category->children as $childCategory){?>
+                <?php $childCategoryNodeId = 'category-node-'.$childCategory->id;?>
+                <?php if(isset($childNodes[$childCategoryNodeId])):?>
+                    <?php $childCategoryNode = $childNodes[$childCategoryNodeId]; ?>
+                    <li>
+                        <a href="<?php echo $childCategoryNode->getUrl();?>">
+                            <?php echo $this->_getCustomCategoryMenuName($childCategoryNode, $childCategory);?>
+                        </a>
+                    </li>
+                <?php endif;?>
+            <?php } ?>
+            <li <?php if(!empty($category->children)):echo 'class="view-all small-only-view-all"';endif;?>>
+
+                    <a href="<?php echo $categoryNode->getUrl(); ?>">
+                        <span><?php echo $this->__('View All %s', $this->_getCustomCategoryMenuName($categoryNode,$category));?></span>
+                    </a>
+
+            </li>
+        <?php endif;?>
+    <?php endif; ?>
+<?php endforeach; ?>

@@ -1,0 +1,189 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     base_default
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+
+<?php
+/* Check if current product is favourite product or not */
+
+$_product = $this->getProduct(); ?>
+<?php
+$session = Mage::getSingleton('customer/session');
+$isLogin = $session->isLoggedIn();
+$customerId = $session->getCustomer()->getId();
+$customerWishList = Mage::getModel('wishlist/wishlist')
+    ->getCollection()
+    ->addFieldToFilter('customer_id', $customerId)
+    ->getData();
+if (count($customerWishList)) {
+    $wishlist = $customerWishList[0];
+    $wishlistItemModel = Mage::getModel('wishlist/item');
+    $wishlistItemCollection = $wishlistItemModel->getCollection();
+    $item = $wishlistItemCollection
+        ->addFieldToFilter('wishlist_id', $wishlist['wishlist_id'])
+        ->addFieldToFilter('product_id', $_product->getId())
+        ->getData();
+    if (count($item)) {
+        $isFavourite = true;
+    } else {
+        $isFavourite = false;
+    }
+} else {
+    $isFavourite = false;
+}
+?>
+<?php
+$laptopAttributeSetId = 29;
+$vgaAttributeSetId = 47;
+$mainboardAttributeSetId = 46;
+$buildpcAttributeSetId = 62;
+$cpuAttributeSetId = 48;
+$attributeSetId = $_product->getAttributeSetId();
+?>
+<?php $buttonTitle = $this->__('Add to Cart'); ?>
+<?php $instock_status = $_product->getAttributeText('instock_status'); ?>
+<input type="hidden" id="instock-status" value="<?php echo $instock_status ?>"/>
+<input type="hidden" class="isLogin" value="<?php echo $isLogin ?>"/>
+<?php if ($instock_status === 'Có'): ?>
+    <div class="bottom-static-mobile">
+        <div class="add-to-cart mr-0">
+            <?php if (!$_product->isGrouped()): ?>
+                <div class="col-md-4 col-xs-5 pl-0">
+                    <div class="qty-selector">
+                        <div class="qty-sl qty-btn dec button">-</div>
+                        <div class="qty-sl qty-num">
+                            <input type="number" name="qty" id="qty" maxlength="12" onkeyup="checkQtySelector()"
+                                   value="<?php echo $this->getProductDefaultQty() * 1 ?>"
+                                   title="<?php echo $this->__('Qty') ?>"
+                                   class="input-text qty qty-selector-input"/>
+                        </div>
+                        <div class="qty-sl qty-btn inc button">+</div>
+                    </div>
+                </div>
+                <div class="col-md-8 col-xs-7 pr-5 pl-0 add-to-cart-block">
+                    <img class="coupon-state ajax-loader-atc cart-loader" title="Đang tải"
+                         src="<?php echo $this->getSkinUrl('images/ajax-loader.gif') ?>"
+                         width="14" height="14"/>
+                    <button type="button" title="<?php echo $buttonTitle ?>"
+                            class="btn btn-tekshop button btn-cart btn-add-to-cart"
+                            onclick="addToCart()"><span><span><?php echo $buttonTitle ?></span></span>
+                    </button>
+                </div>
+            <?php endif; ?>
+            <?php echo $this->getChildHtml('', true, true) ?>
+        </div>
+    </div>
+<?php else: ?>
+    <div class="out-of-stock-block">
+        <div class="col-md-12 a-center pb-10">
+            <span class="label label-danger out-of-stock-label fz-100 no-fw">Tạm hết hàng</span>
+        </div>
+        <div class="col-md-12 a-center pl-0 pr-5 mb-5">
+            <div class="lh-20 alert alert-warning mb-10">Vui lòng gửi lại thông tin.<br>Chúng tôi sẽ liên lại lạc với
+                bạn ngay khi có hàng!
+            </div>
+
+            <button class="btn require-purchase-btn" type="button" data-toggle="modal"
+                    data-target="#purchaseRequestModal">
+                <span class="require-purchase-text">ĐẶT HÀNG TRƯỚC</span>
+            </button>
+        </div>
+    </div>
+<?php endif; ?>
+
+<div class="col-md-12 col-xs-12 hidden-mobile">
+    <div class="row">
+        <div class="col-md-12 col-xs-12 pl-0 pr-0 social-row">
+            <div class="add-block-sharefb">
+                <button type="button" title="Chia sẻ" class="btn btn-default btn-share"
+                        style="float: none !important;">
+                    Chia sẻ&nbsp;
+                    <i class="fa fa-facebook btn-share-icon"></i>
+                </button>
+            </div>
+            <div class="add-block-sharefb">
+                <button type="button" title="Bình luận" class="btn btn-default btn-comment"
+                        onclick="goToCommentBlock()" style="float: none !important;">
+                    Bình luận&nbsp;
+                    <i class="fa fa-keyboard-o btn-comment-icon"></i>
+                </button>
+            </div>
+            <?php if (!$isFavourite): ?>
+                <button type="button" title="Yêu thích"
+                        class="btn btn-default btn-love btn-add-to-wishlist switch"
+                        product-id="<?php echo $_product->getId(); ?>">
+                                <span><span id="wishlist-content">Yêu thích&nbsp;&nbsp;</span><i
+                                            class="fa fa-heart btn-love-icon"
+                                            aria-hidden="true"></i>
+                                        <img class="coupon-state ajax-loader-atc loading-wish"
+                                             title="Đang tải"
+                                             src="<?php echo $this->getSkinUrl('images/ajax-loader.gif') ?>"
+                                             width="14" height="14"/>
+                                </span>
+                </button>
+            <?php else: ?>
+                <button type="button" title="Bỏ thích"
+                        class="btn btn-default btn-love remove-wish-list switch"
+                        product-id="<?php echo $_product->getId(); ?>">
+                            <span><span id="wishlist-content">Đã thích&nbsp;&nbsp;</span><i
+                                        class="btn-love-icon fa fa-heart"
+                                        aria-hidden="true"></i>
+                             <img class="coupon-state ajax-loader-atc loading-wish"
+                                  title="Đang tải"
+                                  src="<?php echo $this->getSkinUrl('images/ajax-loader.gif') ?>"
+                                  width="14" height="14"/>
+                            </span>
+                </button>
+            <?php endif; ?>
+
+        </div>
+        <?php if ($attributeSetId == $laptopAttributeSetId ||
+            $attributeSetId == $vgaAttributeSetId ||
+            $attributeSetId == $mainboardAttributeSetId ||
+            $attributeSetId == $buildpcAttributeSetId ||
+            $attributeSetId == $cpuAttributeSetId): ?>
+            <div class="col-md-12 no-padding">
+                <button type="button" class="btn btn-default add-to-compare cp-button cp-click">
+                    <span class="cp-label cp-click"><input style="display:none" class="cp-check"
+                                                           type="checkbox"/>Thêm vào so sánh&nbsp;&nbsp;<i
+                                class="fa fa-balance-scale cp-button-icon cp-click"
+                                aria-hidden="true"></i></span>
+                </button>
+            </div>
+            <div class="clearfix"></div>
+            <div id="compare-content" class="no-display">
+                <h2 class="cp-panel-title">Danh sách so sánh</h2>
+                <div class="cp-panel-content">
+                </div>
+                <div class="col-md-12 cp-panel-button-group" style="text-align: center;display: none">
+                    <button type="button" class="btn btn-cp cp-refresh send-compare no-display">
+                        SO SÁNH&nbsp;&nbsp;<i class="fa fa-balance-scale cp-button-icon"
+                                              aria-hidden="true"></i>
+                    </button>
+                </div>
+            </div>
+        <?php endif; ?>
+    </div>
+</div>

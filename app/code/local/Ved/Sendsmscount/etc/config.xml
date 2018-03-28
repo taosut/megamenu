@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Ved_Sendsmscount>
+            <version>0.1.0</version>
+        </Ved_Sendsmscount>
+    </modules>
+    <global>
+
+        <resources>
+            <Ved_Sendsmscount_setup>
+                <setup>
+                    <module>Ved_Sendsmscount</module>
+                    <class>Mage_Customer_Model_Entity_Setup</class>
+                </setup>
+                <connection>
+                    <use>core_setup</use>
+                </connection>
+            </Ved_Sendsmscount_setup>
+            <Ved_Sendsmscount_write>
+                <connection>
+                    <use>core_write</use>
+                </connection>
+            </Ved_Sendsmscount_write>
+            <Ved_Sendsmscount_read>
+                <connection>
+                    <use>core_read</use>
+                </connection>
+            </Ved_Sendsmscount_read>
+        </resources>
+    </global>
+
+</config>

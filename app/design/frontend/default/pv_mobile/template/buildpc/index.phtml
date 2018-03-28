@@ -1,0 +1,1256 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: Teko
+ * Date: 7/12/2017
+ * Time: 9:59 AM
+ */
+
+/**
+ * @var Ved_Buildpc_Block_Buildpc $this
+ */
+?>
+
+<link rel="stylesheet" type="text/css" href="<?php echo $this->getSkinUrl('lib/buildpc.css'); ?>"/>
+
+<?php
+$params = Mage::registry('params');
+$product_share = [];
+if ($params) {
+    $catArr = [553, 552, 548, 636, 637, 554, 541, 549, 555, 540, 543, 542, 544, 781];
+    foreach ($params as $index => $param) {
+        $tempArr = explode("_", $param);
+        $_product = Mage::getModel('catalog/product')->load(intval($tempArr[0])); // tempArr[0] = productId
+        $product_data = array(
+            'catId' => $catArr[$index],
+            'catUrl' => Mage::getModel('catalog/category')->load($catArr[$index])->getUrl(),
+            'productId' => $_product->getId(),
+            'productUrl' => $_product->getProductFullUrl(),
+            'productName' => $_product->getName(),
+            'productStatus' => intval($_product->getStatus()),
+            'productPrice' => intval($_product->getFinalPrice()),
+            'productImageUrl' => (string)Mage::helper('catalog/image')->init($_product, 'small_image')->resize(150, 150),
+            'productQty' => intval($tempArr[1]) // tempArr[1] = productQty
+        );
+        array_push($product_share, json_encode($product_data));
+    }
+}
+$myPC_id = Mage::registry('myPC');
+?>
+
+<?php $session = Mage::getSingleton('customer/session'); ?>
+
+<div class="content">
+    <!-- Build PC page content-->
+    <div class="row">
+        <div class="col-xs-12">
+            <!-- Messages block-->
+            <div class="row">
+                <div class="col-xs-12">
+                    <ul class="messages bp-messages"></ul>
+                </div>
+            </div>
+            <!-- End Messages block-->
+
+            <!-- My PC title-->
+            <?php if ($myPC_id): ?>
+                <div class="row">
+                    <div class="col-md-12 col-xs-12 text-center">
+                        <?php $thisPC = Mage::getModel('Ved_Buildpc/buildpc')->load(intval($myPC_id)); ?>
+                        <h2 class="bp-name-mobile">Bộ PC: <?php echo $thisPC->getName(); ?></h2>
+                    </div>
+                </div>
+            <?php endif; ?>
+            <!-- End My PC title-->
+
+            <!-- Build PC title-->
+            <div class="row">
+                <div class="col-xs-12 bp-header-block">
+                    <div class="bp-title">
+                        Xây dựng cấu hình
+                    </div>
+                    <div class="bp-btn-remove-all" onclick="clearAll();">
+                        <i class="fa fa-refresh "></i>
+                    </div>
+                </div>
+            </div>
+            <!-- End Build PC title-->
+
+            <!-- Build PC main block-->
+            <div class="row">
+                <div class="col-xs-12">
+                    <table class="table table-striped bp-table">
+                        <tbody>
+                        <tr>
+                            <td class="bp-table-key bp-table-key-first">1. Bộ vi xử lý</td>
+                            <td class="bp-table-value bp-table-value-first bp-position-1">
+                                <a class="bp-table-btn open-select-product" data-toggle="modal"
+                                   data-cat-id="553"
+                                   data-cat-url="<?php echo $this->getCatUrl('553') ?>"
+                                   href="#selectProductModal">
+                                    <i class="fa fa-plus"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="bp-table-key">2. Bo mạch chủ</td>
+                            <td class="bp-table-value bp-position-2">
+                                <a class="bp-table-btn open-select-product" data-toggle="modal"
+                                   data-cat-id="552"
+                                   data-cat-url="<?php echo $this->getCatUrl('552') ?>"
+                                   href="#selectProductModal">
+                                    <i class="fa fa-plus"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="bp-table-key">3. RAM</td>
+                            <td class="bp-table-value bp-position-3">
+                                <a class="bp-table-btn open-select-product" data-toggle="modal"
+                                   data-cat-id="548"
+                                   data-cat-url="<?php echo $this->getCatUrl('548') ?>"
+                                   href="#selectProductModal">
+                                    <i class="fa fa-plus"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="bp-table-key">4. Ổ cứng HDD</td>
+                            <td class="bp-table-value bp-position-4">
+                                <a class="bp-table-btn open-select-product" data-toggle="modal"
+                                   data-cat-id="636"
+                                   data-cat-url="<?php echo $this->getCatUrl('636') ?>"
+                                   href="#selectProductModal">
+                                    <i class="fa fa-plus"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="bp-table-key">5. Ổ cứng SSD</td>
+                            <td class="bp-table-value bp-position-5">
+                                <a class="bp-table-btn open-select-product" data-toggle="modal"
+                                   data-cat-id="637"
+                                   data-cat-url="<?php echo $this->getCatUrl('637') ?>"
+                                   href="#selectProductModal">
+                                    <i class="fa fa-plus"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="bp-table-key">6. Card màn hình</td>
+                            <td class="bp-table-value bp-position-6">
+                                <a class="bp-table-btn open-select-product" data-toggle="modal"
+                                   data-cat-id="554"
+                                   data-cat-url="<?php echo $this->getCatUrl('554') ?>"
+                                   href="#selectProductModal">
+                                    <i class="fa fa-plus"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="bp-table-key">7. Nguồn máy tính</td>
+                            <td class="bp-table-value bp-position-7">
+                                <a class="bp-table-btn open-select-product" data-toggle="modal"
+                                   data-cat-id="541"
+                                   data-cat-url="<?php echo $this->getCatUrl('541') ?>"
+                                   href="#selectProductModal">
+                                    <i class="fa fa-plus"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="bp-table-key">8. Vỏ case</td>
+                            <td class="bp-table-value bp-position-8">
+                                <a class="bp-table-btn open-select-product" data-toggle="modal"
+                                   data-cat-id="549"
+                                   data-cat-url="<?php echo $this->getCatUrl('549') ?>"
+                                   href="#selectProductModal">
+                                    <i class="fa fa-plus"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="bp-table-key">9. Tản nhiệt</td>
+                            <td class="bp-table-value bp-position-9">
+                                <a class="bp-table-btn open-select-product" data-toggle="modal"
+                                   data-cat-id="555"
+                                   data-cat-url="<?php echo $this->getCatUrl('555') ?>"
+                                   href="#selectProductModal">
+                                    <i class="fa fa-plus"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="bp-table-key">10. Màn hình</td>
+                            <td class="bp-table-value bp-position-10">
+                                <a class="bp-table-btn open-select-product" data-toggle="modal"
+                                   data-cat-id="540"
+                                   data-cat-url="<?php echo $this->getCatUrl('540') ?>"
+                                   href="#selectProductModal">
+                                    <i class="fa fa-plus"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="bp-table-key">11. Bàn phím</td>
+                            <td class="bp-table-value bp-position-11">
+                                <a class="bp-table-btn open-select-product" data-toggle="modal"
+                                   data-cat-id="543"
+                                   data-cat-url="<?php echo $this->getCatUrl('543') ?>"
+                                   href="#selectProductModal">
+                                    <i class="fa fa-plus"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="bp-table-key">12. Chuột</td>
+                            <td class="bp-table-value bp-position-12">
+                                <a class="bp-table-btn open-select-product" data-toggle="modal"
+                                   data-cat-id="542"
+                                   data-cat-url="<?php echo $this->getCatUrl('542') ?>"
+                                   href="#selectProductModal">
+                                    <i class="fa fa-plus"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="bp-table-key">13. Tai nghe</td>
+                            <td class="bp-table-value bp-position-13">
+                                <a class="bp-table-btn open-select-product" data-toggle="modal"
+                                   data-cat-id="544"
+                                   data-cat-url="<?php echo $this->getCatUrl('544') ?>"
+                                   href="#selectProductModal">
+                                    <i class="fa fa-plus"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        <?php if ($session->isLoggedIn()): ?>
+                            <?php
+                            $currentUserId = $session->getCustomer()->getId();
+                            $giftUserIds = json_decode(Mage::getModel('core/variable')->loadByCode('gift_user_ids')->getValue('plain'))->ids;
+                            ?>
+                            <?php if (in_array(intval($currentUserId), $giftUserIds)): ?>
+                                <tr>
+                                    <td class="bp-table-key">14. Quà tặng</td>
+                                    <td class="bp-table-value bp-position-14">
+                                        <a class="bp-table-btn open-select-product" data-toggle="modal"
+                                           data-cat-id="781"
+                                           data-cat-url="<?php echo $this->getCatUrl('781') ?>"
+                                           href="#selectProductModal">
+                                            <i class="fa fa-plus"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!-- End Build PC main block-->
+
+            <!-- Build PC estimate price-->
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="bp-estimate-price"></div>
+                </div>
+            </div>
+            <!-- End Build PC estimate price-->
+
+            <!-- Build PC button group-->
+            <div class="row">
+                <div class="col-xs-12 bp-button-group">
+                    <button type="button" class="bp-button-group-btn bp-excel-btn" title="Xuất ra file excel"
+                            onclick="exportToExcel()">
+                        <i class="fa fa-file-excel-o"></i>
+                    </button>
+                    <button type="button" class="bp-button-group-btn bp-export-image-btn"
+                            title="Lưu ảnh cấu hình"
+                            onclick="exportBuildPCImage()">
+                        <i class="fa fa-picture-o"></i>
+                    </button>
+                    <!-- Export images form -->
+                    <form id="export-image-buildpc"
+                          action="<?php echo $this->getUrl('buildpc/index/exportImage') ?>"
+                          method="post" target="_blank" hidden>
+                        <input name="bpArray"/>
+                        <input name="screen"/>
+                    </form>
+                    <button type="button" class="bp-button-group-btn bp-facebook-btn" title="Chia sẻ cấu hình"
+                            onclick="shareToFacebook()">
+                        <i class="fa fa-facebook-square"></i>
+                    </button>
+                    <button type="button" class="bp-button-group-btn bp-add-to-cart-btn"
+                            title="Thêm cấu hình đã build vào giỏ hàng"
+                            onclick="addToCartBuildPC()">
+                        <i class="fa fa-shopping-cart"></i>
+                        <img class="bp-add-to-cart-ajax-loader hidden"
+                             src="<?php echo $this->getSkinUrl('images/ajax-loader-white.gif') ?>"/>
+                    </button>
+                </div>
+            </div>
+            <!-- End Build PC button group-->
+
+            <!-- Build PC Guideline-->
+            <div class="row">
+                <div class="col-md-12 col-sm-12 bp-guideline">
+                    <?php
+                    echo $this->getLayout()->createBlock('cms/block')->setBlockId('buildpc_guideline')->toHtml();
+                    ?>
+                </div>
+            </div>
+            <!-- End Build PC Guideline-->
+        </div>
+    </div>
+    <!-- End Build PC page content-->
+
+    <!-- Popup select accessories for Build PC -->
+    <div id="selectProductModal" class="modal fade" role="dialog">
+        <div class="modal-dialog bp-modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content bp-modal-content">
+                <div class="modal-header bp-modal-header">
+                    <div class="row">
+                        <div class="col-xs-12 bp-modal-title">
+                            Chọn linh kiện
+                            <i class="fa fa-close bp-close-icon" data-dismiss="modal"></i>
+                        </div>
+                        <div class="col-xs-10 pr-0 pl-7">
+                            <input type="text" class="bp-search-input" placeholder="Bạn cần tìm linh kiện gì?"/>
+                            <i class="fa fa-search bp-search-icon"></i>
+                        </div>
+                        <div class="col-xs-2 bp-filter-icon-block">
+                            <i class="fa fa-list-ul bp-filter-icon"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-body bp-modal-body">
+                    <div class="row bp-modal-products">
+                        <div class="col-xs-12 bp-modal-products-content">
+                            <div class="bp-loading">
+                                <img src="<?php echo $this->getSkinUrl('images/ajax-loader-new.gif') ?>"
+                                     title="Đang tải"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End popup select accessories for Build PC-->
+
+    <!-- Popup filter -->
+    <div class="modal right fade" id="filterModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header filter-modal-header">
+                    <div class="row">
+                        <div class="col-xs-12 bp-modal-title">
+                            Bộ lọc sản phẩm
+                            <i class="fa fa-close bp-close-icon"
+                               onclick="$j('#filterModal').modal('hide');"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-body">
+                    <div class="col-xs-12 bp-filter-block"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Popup filter-->
+</div>
+
+<script type="text/javascript">
+    var $j = jQuery.noConflict();
+
+    $j(document).ready(function () {
+        $j('.state-title').html('Xây dựng cấu hình');
+        showBackState();
+    });
+    var catArray = ['553', '552', '548', '636', '637', '554', '541', '549', '555', '540', '543', '542', '544', '781'];
+
+    var totalEstimatePrice = 0;
+    var fromShareFB = false;
+    var myPC = false;
+
+    <?php if ($params): ?>
+    <?php if (Mage::registry('fromShare')):?>fromShareFB = true;<?php endif;?>
+    <?php if (Mage::registry('myPC')):?>myPC = true;<?php endif;?>
+    var newArr = <?php echo json_encode($product_share); ?>;
+    var buildpcArr = [];
+    for (var i = 0; i < newArr.length; i++) {
+        buildpcArr.push(JSON.parse(newArr[i]));
+    }
+    appendDataFromLocalStorage(buildpcArr);
+    if (myPC) {
+        setStorage('myPC_array', JSON.stringify(buildpcArr));
+    }
+    <?php endif; ?>
+
+    if (fromShareFB) {
+        $j('.bp-btn-remove-all').addClass('hidden');
+        var y = $j(window).scrollTop();  //your current y position on the page
+        $j(window).scrollTop(y + 500);
+    }
+
+    if (!fromShareFB) {
+        var tmp = [];
+        if (!myPC) {
+            tmp = JSON.parse(localStorage.getItem("build_pc_array"));
+        }
+        else {
+            tmp = JSON.parse(localStorage.getItem("myPC_array"));
+        }
+        if (!tmp || !tmp.length) {
+            $j('.bp-btn-remove-all').addClass('hidden');
+        }
+    }
+
+    /** Click open popup select accessories **/
+    $j(document).on("click", ".open-select-product", function () {
+        var catId = $j(this).data('cat-id');
+
+        $j('.bp-filter-sort-block').addClass('hidden');
+        $j('.bp-products-content').addClass('hidden');
+        $j('.bp-loading').removeClass('hidden');
+        $j('.bp-search-input').prop('disabled', true);
+        $j('.bp-messages').empty();
+
+        var data = {'catId': catId};
+
+        $j.ajax({
+            url: '<?php echo $this->getUrl('buildpc/index/openModal') ?>',
+            type: 'POST',
+            dataType: 'json',
+            data: data,
+            success: function (response) {
+                $j('#selectProductModal').empty().append(response.bp_modal);
+            }
+        });
+    });
+    /** End click open popup select accessories **/
+
+    /** Prevent body scroll when close filter modal **/
+    $j('#filterModal').on('hidden.bs.modal', function () {
+        // do something…
+        $j('body').addClass('modal-open');
+    });
+    /** End Preven body scroll when close filter modal **/
+
+    //Check LS expiration
+    checkLocalStorageExpiration();
+
+    //Append data from local storage
+    if (!fromShareFB && !myPC) {
+        appendDataFromLocalStorage(JSON.parse(localStorage.getItem("build_pc_array")));
+    }
+    else {
+        if (!myPC) {
+            $j('.open-select-product').hide();
+            $j('.remove-selected-product').hide();
+            $j('.bp-input-qty').prop('readonly', true);
+        }
+    }
+
+    /** Build PC functions **/
+    /** Add accessories to Build PC **/
+    function addToBuildPC(value) {
+        var catId = $j(value).data("cat-id");
+        var catUrl = $j(value).data("cat-url");
+        var productId = $j(value).data("product-id");
+        var productName = $j(value).data("product-name");
+        var productPrice = $j(value).data("product-price");
+        var productUrl = $j(value).data("product-url");
+        var productImageUrl = $j(value).data("product-image-url");
+
+        $j('.bp-ajax-' + productId).show();
+        $j('.bp-i-' + productId).hide();
+        $j('.bp-change-btn').prop('disabled', true);
+
+        var bundleItem = {
+            'catId': catId.toString(),
+            'catUrl': catUrl,
+            'productId': productId.toString(),
+            'productName': productName,
+            'productPrice': parseInt(productPrice),
+            'productUrl': productUrl,
+            'productImageUrl': productImageUrl,
+            'productQty': 1
+        };
+
+        checkLocalStorageExpiration();
+
+        var bpArray = [];
+        if (!myPC) {
+            bpArray = JSON.parse(localStorage.getItem("build_pc_array"));
+        }
+        else {
+            bpArray = JSON.parse(localStorage.getItem("myPC_array"));
+        }
+
+        if (bpArray) {
+            for (var i = 0; i < bpArray.length; i++) {
+                var bpArrayCatId = bpArray[i]['catId'];
+                if (catId == bpArrayCatId) {
+                    totalEstimatePrice -= bpArray[i]['productQty'] * bpArray[i]['productPrice'];
+                    bpArray.splice(bpArray.indexOf(bpArray[i]), 1);
+                }
+            }
+
+            bpArray.push(bundleItem);
+            if (!myPC) {
+                setStorage("build_pc_array", JSON.stringify(bpArray));
+            }
+            else {
+                setStorage("myPC_array", JSON.stringify(bpArray));
+            }
+        }
+        else {
+            var newArray = [];
+            newArray.push(bundleItem);
+            if (!myPC) {
+                setStorage("build_pc_array", JSON.stringify(newArray));
+            }
+            else {
+                setStorage("myPC_array", JSON.stringify(newArray));
+            }
+        }
+        var tmpBpArr = [];
+        if (!myPC) {
+            tmpBpArr = JSON.parse(localStorage.getItem("build_pc_array"));
+        }
+        else {
+            tmpBpArr = JSON.parse(localStorage.getItem("myPC_array"));
+        }
+        if (tmp && tmpBpArr.length == 1) {
+            $j('.bp-btn-remove-all').removeClass('hidden');
+        }
+        $j('#selectProductModal').modal('hide');
+        var position = catArray.indexOf(catId.toString());
+        totalEstimatePrice += parseInt(productPrice);
+        $j('.bp-estimate-price').empty();
+        $j('.bp-estimate-price').append("Chi phí dự tính: <b>" + numberWithCommas(totalEstimatePrice) + " đ</b>");
+        appendBuildPCSection(position + 1, catId, catUrl, productName, productId, parseInt(productPrice), parseInt(productPrice), productUrl, productImageUrl, 1, 1);
+    }
+
+    /** Update qty for accessories **/
+    var timeout_update = null;
+
+    function doUpdateQty(value) {
+        preventKeyInput();
+
+        var cat_id = $j(value).data("cat-id");
+        var product_id = $j(value).data("product-id");
+
+        $j('.bp-input-qty').prop('readonly', true);
+
+        var bp_input_qty = "bp-input-qty-" + cat_id;
+        $j('#' + bp_input_qty).prop('readonly', false);
+        $j('#bp-update-qty-ajax-loader-' + cat_id).removeClass('hidden');
+
+        var qty_val = $j('#' + bp_input_qty).val();
+
+        $j('.bp-save-btn').prop('disabled', true);
+        $j('.bp-edit-btn').prop('disabled', true);
+        $j('.bp-excel-btn').prop('disabled', true);
+        $j('.bp-export-image-btn').prop('disabled', true);
+        $j('.bp-facebook-btn').prop('disabled', true);
+        $j('.bp-add-to-cart-btn').prop('disabled', true);
+
+        if (timeout_update) {
+            clearTimeout(timeout_update);
+        }
+        timeout_update = setTimeout(function () {
+            updateQty(parseInt(qty_val), product_id.toString(), cat_id);
+        }, 1000);
+    }
+
+    function updateQty(qty_val, product_id, cat_id) {
+        $j('.bp-messages').empty();
+
+        // Check input qty
+        if (qty_val <= 0 || isNaN(qty_val)) {
+            qty_val = 1;
+        } else if (qty_val > 500) {
+            qty_val = 500;
+        }
+        // append qty to input
+        var bp_input_qty = "bp-input-qty-" + cat_id;
+        $j('#' + bp_input_qty).val(qty_val);
+
+        checkLocalStorageExpiration();
+
+        var bpArray = [];
+        if (!myPC) {
+            bpArray = JSON.parse(localStorage.getItem("build_pc_array"));
+        }
+        else {
+            bpArray = JSON.parse(localStorage.getItem("myPC_array"));
+        }
+
+        if (bpArray) {
+            var productIds = [];
+            for (var i = 0; i < bpArray.length; i++) {
+                productIds.push(bpArray[i]['productId']);
+            }
+            var index = productIds.indexOf(product_id);
+            var productPrice = qty_val * bpArray[index]['productPrice'];
+            var old_Qty = bpArray[index]['productQty']; // get old quantity of product
+
+            //set new quantity
+            bpArray[index]['productQty'] = qty_val;
+
+            // calculate new total estimate price
+            totalEstimatePrice += (qty_val - old_Qty) * bpArray[index]['productPrice'];
+            // append new price for product
+            $j('#bp-table-product-price-' + cat_id).empty();
+            $j('#bp-table-product-price-' + cat_id).append("<span>=</span>" + numberWithCommas(productPrice) + " ₫");
+
+            //append new total estimate price
+            $j('.bp-estimate-price').empty();
+            $j('.bp-estimate-price').append("Chi phí dự tính: <b>" + numberWithCommas(totalEstimatePrice) + " đ</b>");
+
+            if (!myPC) {
+                setStorage("build_pc_array", JSON.stringify(bpArray));
+            }
+            else {
+                setStorage("myPC_array", JSON.stringify(bpArray));
+            }
+        }
+        else {
+            $j('html, body').animate({
+                scrollTop: 0
+            }, 500);
+            $j('.bp-messages').append("<li class='error-msg'><ul><li><span>Không có linh kiện để cập nhật số lượng</span></li></ul></li>");
+            totalEstimatePrice = 0;
+            appendDataFromLocalStorage();
+        }
+
+        // hide loading, enable input + button
+        $j('.bp-input-qty').prop('readonly', false);
+        $j('.bp-position-14 .bp-input-qty').prop('readonly', true);
+        $j('.bp-save-btn').prop('disabled', false);
+        $j('.bp-edit-btn').prop('disabled', false);
+        $j('.bp-excel-btn').prop('disabled', false);
+        $j('.bp-export-image-btn').prop('disabled', false);
+        $j('.bp-facebook-btn').prop('disabled', false);
+        $j('.bp-add-to-cart-btn').prop('disabled', false);
+        $j('.bp-update-qty-ajax-loader').addClass('hidden');
+    }
+
+    /** Remove item from Build PC **/
+    function removeItem(value, catId, position) {
+        swal({
+                title: "Xóa linh kiện?",
+                text: "Bạn có chắc chắn muốn xóa linh kiện khỏi cấu hình?",
+                type: "info",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Xác nhận",
+                cancelButtonText: "Hủy",
+                closeOnConfirm: true
+            },
+            function () {
+                $j(value).addClass('hidden');
+                $j('#bp-remove-item-ajax-loader-' + catId).removeClass('hidden');
+
+                setTimeout(function () {
+                    appendOriginalSection(position, catId);
+                    var bpArray = [];
+                    if (!myPC) {
+                        bpArray = JSON.parse(localStorage.getItem("build_pc_array"));
+                    }
+                    else {
+                        bpArray = JSON.parse(localStorage.getItem("myPC_array"));
+                    }
+
+                    if (bpArray) {
+                        for (var i = 0; i < bpArray.length; i++) {
+                            var bpArrayCatId = bpArray[i]['catId'];
+                            if ((catId.toString() == bpArrayCatId) && (catArray.indexOf(catId.toString()) !== -1)) {
+                                var productQty = bpArray[i]['productQty'];
+                                var productPrice = bpArray[i]['productPrice'];
+                                totalEstimatePrice -= productPrice * productQty;
+
+                                $j('.bp-estimate-price').empty();
+
+                                if (totalEstimatePrice > 0) {
+                                    $j('.bp-estimate-price').append("Chi phí dự tính: <b>" + numberWithCommas(totalEstimatePrice) + " đ</b>");
+                                }
+
+                                bpArray.splice(bpArray.indexOf(bpArray[i]), 1);
+                            }
+                        }
+                    }
+                    if (!myPC) {
+                        setStorage("build_pc_array", JSON.stringify(bpArray));
+                    }
+                    else {
+                        setStorage("myPC_array", JSON.stringify(bpArray));
+                    }
+                    if (!bpArray || bpArray.length === 0) {
+                        $j('.bp-btn-remove-all').addClass('hidden');
+                    }
+                }, 1000);
+            });
+    }
+
+    /** Add to cart Build PC **/
+    function addToCartBuildPC() {
+        swal({
+                title: "Thêm vào giỏ hàng?",
+                text: "Bạn có chắc chắn muốn thêm vào giỏ hàng những linh kiện đã xây dựng?",
+                type: "info",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Xác nhận",
+                cancelButtonText: "Hủy",
+                closeOnConfirm: true
+            },
+            function () {
+                checkLocalStorageExpiration();
+
+                $j('.bp-messages').empty();
+
+                if (!fromShareFB) {
+                    if (!myPC) {
+                        bpArray = JSON.parse(localStorage.getItem("build_pc_array"));
+                    }
+                    else {
+                        bpArray = JSON.parse(localStorage.getItem("myPC_array"));
+                    }
+                }
+                else {
+                    bpArray = [];
+                    var newArr = <?php echo json_encode($product_share); ?>;
+                    for (var i = 0; i < newArr.length; i++) {
+                        bpArray.push(JSON.parse(newArr[i]));
+                    }
+                }
+                if (bpArray) {
+                    if (bpArray.length > 0) {
+                        $j('.bp-add-to-cart-btn').prop('disabled', true);
+                        $j('.bp-add-to-cart-btn i').addClass('hidden');
+                        $j('.bp-add-to-cart-ajax-loader').removeClass('hidden');
+
+                        var productIds = [];
+                        var data = {};
+                        var totalValue = 0;
+                        for (var i = 0; i < bpArray.length; i++) {
+                            productIds.push(bpArray[i]['productId']);
+                            data['qty' + bpArray[i]['productId']] = bpArray[i]['productQty'];
+                            totalValue += bpArray[i]['productPrice'] * bpArray[i]['productQty'];
+                        }
+
+                        data['products'] = productIds;
+
+                        /** Track facebook pixel AddToCart **/
+                        dataLayer.push({
+                            'event': 'addToCart',
+                            'contentIds': productIds,
+                            'value': totalValue
+                        });
+
+                        $j.ajax({
+                            url: '<?php echo $this->getUrl('checkout/cart/addMultiple') ?>',
+                            type: 'POST',
+                            dataType: 'json',
+                            data: data,
+                            success: function (response) {
+                                if (response.error) {
+                                    $j('.bp-add-to-cart-btn').prop('disabled', false);
+                                    $j('.bp-add-to-cart-btn i').removeClass('hidden');
+                                    $j('.bp-add-to-cart-ajax-loader').addClass('hidden');
+                                    $j('html, body').animate({
+                                        scrollTop: 0
+                                    }, 500);
+                                    $j('.bp-messages').append("<li class='error-msg'><ul><li><span>Có lỗi trong quá trình thêm vào giỏ hàng, vui lòng kiểm tra lại</span></li></ul></li>");
+                                }
+                                if (response.success) {
+                                    removeStorage("build_pc_array");
+                                    // Send success message to cart page
+                                    localStorage.setItem('addToCartSuccessMessage', 'Thêm các linh kiện của bộ PC vào giỏ hàng thành công.');
+                                    window.location.href = '<?php echo $this->getUrl('checkout/cart') ?>';
+                                }
+                            }
+                        });
+                    }
+                    else {
+                        $j('.bp-add-to-cart-btn').prop('disabled', false);
+                        $j('html, body').animate({
+                            scrollTop: 0
+                        }, 500);
+                        $j('.bp-messages').append("<li class='error-msg'><ul><li><span>Vui lòng chọn linh kiện để xây dựng cấu hình</span></li></ul></li>");
+                        totalEstimatePrice = 0;
+                        appendDataFromLocalStorage();
+                    }
+                }
+                else {
+                    $j('.bp-add-to-cart-btn').prop('disabled', false);
+                    $j('html, body').animate({
+                        scrollTop: 0
+                    }, 500);
+                    $j('.bp-messages').append("<li class='error-msg'><ul><li><span>Vui lòng chọn linh kiện để xây dựng cấu hình</span></li></ul></li>");
+                    totalEstimatePrice = 0;
+                    appendDataFromLocalStorage();
+                }
+            });
+    }
+
+    /** Clear all PC **/
+    function clearAll() {
+        swal({
+                title: "Làm mới?",
+                text: "Cảnh báo: Toàn bộ linh kiện của bộ PC hiện tại sẽ bị xoá đi",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Xác nhận",
+                confirmButtonColor: "#dd6561",
+                cancelButtonText: "Hủy",
+                closeOnConfirm: false,
+                animation: "slide-from-top"
+            },
+            function () {
+                if (!fromShareFB) {
+                    if (!myPC) {
+                        removeStorage("build_pc_array");
+                    }
+                    else {
+                        removeStorage("myPC_array");
+                    }
+                }
+                for (var j = 1; j <= catArray.length; j++) {
+                    appendOriginalSection(j, catArray[j - 1]);
+                }
+                totalEstimatePrice = 0;
+                $j('.bp-estimate-price').empty();
+                $j('.bp-btn-remove-all').addClass('hidden');
+
+                swal({
+                    title: "Đã làm mới!",
+                    text: 'Toàn bộ linh kiện đã được làm mới!',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            });
+    }
+
+    /** Export excel **/
+    function exportToExcel() {
+        if (!fromShareFB) {
+            if (!myPC) {
+                bpArray = JSON.parse(localStorage.getItem("build_pc_array"));
+            }
+            else {
+                bpArray = JSON.parse(localStorage.getItem("myPC_array"));
+            }
+        }
+        else {
+            bpArray = [];
+            var newArr = <?php echo json_encode($product_share); ?>;
+            for (var i = 0; i < newArr.length; i++) {
+                bpArray.push(JSON.parse(newArr[i]));
+            }
+        }
+        if (bpArray) {
+            if (bpArray.length > 0) {
+                var data = {
+                    'bpArray': bpArray
+                };
+                $j.ajax({
+                    url: '<?php echo $this->getUrl('buildpc/index/exportExcel') ?>',
+                    type: 'POST',
+                    dataType: 'json',
+                    data: data,
+                    success: function (response) {
+                        window.location.href = response['url'];
+                    }
+                });
+            }
+            else {
+                sweetAlert("Oops...", "Bạn chưa chọn sản phẩm nào", "error");
+            }
+        }
+        else {
+            sweetAlert("Oops...", "Bạn chưa chọn sản phẩm nào", "error");
+        }
+    }
+
+    /** Export image **/
+    function exportBuildPCImage() {
+        var bpArray = [];
+        var bpString = '';
+        if (!fromShareFB) {
+            if (!myPC) {
+                bpString = localStorage.getItem("build_pc_array");
+                bpArray = JSON.parse(bpString);
+            }
+            else {
+                bpString = localStorage.getItem("myPC_array");
+                bpArray = JSON.parse(bpString);
+            }
+            // console.log(bpString);
+        }
+        else {
+            var newArr = <?php echo json_encode($product_share); ?>;
+            for (var i = 0; i < newArr.length; i++) {
+                bpArray.push(JSON.parse(newArr[i]));
+            }
+            bpString = JSON.stringify(bpArray);
+            // console.log('fbshare:' + bpString);
+        }
+        var screen = 'web';
+        if (bpArray && bpArray.length) {
+            $j('#export-image-buildpc input[name=bpArray]').val(bpString);
+            $j('#export-image-buildpc input[name=screen]').val(screen);
+            $j('#export-image-buildpc').submit();
+        } else {
+            sweetAlert("Oops...", "Bạn chưa chọn sản phẩm nào", "error")
+        }
+    }
+
+    /** Share Facebook **/
+    function shareToFacebook() {
+        var isEmpty = false;
+        var url = '<?php echo $this->getUrl('buildpc') ?>';
+        if (!fromShareFB) {
+            var bpArray = [];
+            if (!fromShareFB) {
+                if (!myPC) {
+                    bpArray = JSON.parse(localStorage.getItem("build_pc_array"));
+                }
+                else {
+                    bpArray = JSON.parse(localStorage.getItem("myPC_array"));
+                }
+            }
+            else {
+                var Arr = <?php echo json_encode($product_share); ?>;
+                for (var i = 0; i < Arr.length; i++) {
+                    bpArray.push(JSON.parse(Arr[i]));
+                }
+            }
+            var newArr = [];
+            for (var i = 0; i < 13; i++) {
+                newArr.push('0');
+            }
+
+            if (bpArray) {
+                if (bpArray.length > 0) {
+                    for (var i = 0; i < bpArray.length; i++) {
+                        var index = catArray.indexOf(bpArray[i]['catId'].toString());
+                        newArr[index] = bpArray[i]['productId'].toString() + '_' + bpArray[i]['productQty'].toString();
+                    }
+                }
+                else {
+                    isEmpty = true;
+                }
+            }
+            else {
+                isEmpty = true;
+            }
+
+            if (!isEmpty) {
+                url = url.substring(0, url.length - 1);
+                var params = '';
+                for (var i = 0; i < 13; i++) {
+                    if ((newArr[i] !== '0')) {
+                        params += '&p[' + i + ']=' + newArr[i];
+                    }
+                }
+                url += '?pb=' + btoa(params);
+            }
+        }
+        else {
+            url = '<?php echo Mage::helper('core/url')->getCurrentUrl();?>';
+        }
+
+        if (!isEmpty) {
+            FB.ui({
+                method: 'feed',
+                link: url
+            }, function (response) {
+            });
+        }
+        else {
+            sweetAlert("Oops...", "Bạn chưa chọn sản phẩm nào", "error");
+        }
+    }
+
+    /** Save Build PC **/
+    var isLogin = <?php echo Mage::getSingleton('customer/session')->isLoggedIn() ? 1 : 0; ?>;
+
+    function savePC() {
+        if (!isLogin) {
+            $j('#loginMobileView').show();
+            return;
+        }
+        var bpArray = [];
+        if (!fromShareFB) {
+            if (!myPC) {
+                bpArray = JSON.parse(localStorage.getItem("build_pc_array"));
+            }
+            else {
+                bpArray = JSON.parse(localStorage.getItem("myPC_array"));
+            }
+        }
+        else {
+            var Arr = <?php echo json_encode($product_share); ?>;
+            for (var i = 0; i < Arr.length; i++) {
+                bpArray.push(JSON.parse(Arr[i]));
+            }
+        }
+        if (bpArray) {
+            if (bpArray.length > 0) {
+                swal({
+                    title: "Đặt tên cho bộ sản phẩm",
+                    text: 'Nhập tên cho dàn cấu hình "cực trất" của bạn :',
+                    type: "input",
+                    showCancelButton: true,
+                    confirmButtonText: "Xác nhận",
+                    confirmButtonColor: '#DD6B55',
+                    cancelButtonText: "Huỷ",
+                    closeOnConfirm: false,
+                    inputPlaceholder: "Tên bộ PC của tôi"
+                }, function (inputValue) {
+                    if (inputValue === false) return false;
+                    if (inputValue === "") {
+                        swal.showInputError("Hãy nhập tên đi nào!");
+                        return false
+                    }
+                    var data = {
+                        'bpArray': bpArray,
+                        'name': inputValue
+                    };
+                    $j.ajax({
+                        url: '<?php echo $this->getUrl('buildpc/saving/') ?>',
+                        type: 'POST',
+                        dataType: 'json',
+                        data: data,
+                        success: function (response) {
+                            if (response.status === 'existed') {
+                                swal.showInputError("Bộ cấu hình này đã được lưu dưới tên:" + response.name);
+                                return false;
+                            }
+                            swal({
+                                title: "Thành công!",
+                                text: 'Cấu hình đã được lưu thành công!',
+                                timer: 3000,
+                                showConfirmButton: false
+                            });
+                            window.location.href = "<?php echo $this->getUrl('buildpc/saving/list'); ?>";
+                        }
+                    });
+                });
+            } else {
+                sweetAlert("Oops...", "Bạn chưa chọn sản phẩm nào", "error");
+            }
+        } else {
+            sweetAlert("Oops...", "Bạn chưa chọn sản phẩm nào", "error");
+        }
+    }
+
+    /** Edit PC **/
+    <?php if ($myPC_id):?>
+    function editPC() {
+        if (!isLogin) {
+            $j('#loginMobileView').show();
+            return;
+        }
+        var bpArray = [];
+        if (!fromShareFB) {
+            if (!myPC) {
+                bpArray = JSON.parse(localStorage.getItem("build_pc_array"));
+            }
+            else {
+                bpArray = JSON.parse(localStorage.getItem("myPC_array"));
+            }
+        }
+        else {
+            var Arr = <?php echo json_encode($product_share); ?>;
+            for (var i = 0; i < Arr.length; i++) {
+                bpArray.push(JSON.parse(Arr[i]));
+            }
+        }
+        if (bpArray) {
+            if (bpArray.length > 0) {
+                <?php
+                $myPC = Mage::getModel('Ved_Buildpc/buildpc')->load($myPC_id);
+                ?>
+                swal({
+                    title: "Đặt tên cho bộ sản phẩm",
+                    text: 'Nhập tên cho dàn cấu hình "cực trất" của bạn :',
+                    type: "input",
+                    showCancelButton: true,
+                    confirmButtonText: "Xác nhận",
+                    confirmButtonColor: "#f7701e",
+                    cancelButtonText: "Hủy",
+                    closeOnConfirm: false,
+                    inputValue: '<?php echo $myPC->getName();?>'
+                }, function (inputValue) {
+                    if (inputValue === false) return false;
+                    if (inputValue === "") {
+                        swal.showInputError("Hãy nhập tên đi nào!");
+                        return false
+                    }
+                    var data = {
+                        'bpArray': bpArray,
+                        'name': inputValue,
+                        'id': <?php echo $myPC->getId(); ?>
+                    };
+                    $j.ajax({
+                        url: '<?php echo $this->getUrl('buildpc/saving/edit') ?>',
+                        type: 'POST',
+                        dataType: 'json',
+                        data: data,
+                        success: function (response) {
+                            if (response.status === 'completed') {
+                                swal({
+                                    title: "Thành công!",
+                                    text: 'Cấu hình đã được lưu thành công!',
+                                    timer: 3000,
+                                    showConfirmButton: false
+                                });
+                            }
+                            window.location.href = "<?php echo $this->getUrl('buildpc/saving/list'); ?>";
+                        }
+                    });
+                });
+            } else {
+                sweetAlert("Oops...", "Bạn chưa chọn sản phẩm nào", "error");
+            }
+        } else {
+            sweetAlert("Oops...", "Bạn chưa chọn sản phẩm nào", "error");
+        }
+    }
+    <?php endif;?>
+    /** End Build PC functions */
+
+    /** Append data from local storage **/
+    function appendDataFromLocalStorage(bpArray) {
+        if (bpArray) {
+            for (var i = 0; i < bpArray.length; i++) {
+                var catId = bpArray[i]['catId'];
+                var catUrl = bpArray[i]['catUrl'];
+                var productName = bpArray[i]['productName'];
+                var productId = bpArray[i]['productId'];
+                var productPriceUnit = bpArray[i]['productPrice'];
+                var productPrice = bpArray[i]['productPrice'] * bpArray[i]['productQty'];
+                var productUrl = bpArray[i]['productUrl'];
+                var productImageUrl = bpArray[i]['productImageUrl'];
+                var productQty = bpArray[i]['productQty'];
+                var productStatus = 1;
+                if (fromShareFB) {
+                    productStatus = bpArray[i]['productStatus'];
+                }
+
+                totalEstimatePrice += productPrice;
+                appendBuildPCSection(catArray.indexOf(catId.toString()) + 1, catId, catUrl, productName, productId, parseInt(productPriceUnit), parseInt(productPrice), productUrl, productImageUrl, productQty, productStatus);
+            }
+        }
+        else {
+            for (var j = 1; j <= catArray.length; j++) {
+                appendOriginalSection(j, catArray[j - 1]);
+            }
+        }
+        $j('.bp-estimate-price').empty();
+        // Append total estimate price
+        if (totalEstimatePrice > 0) {
+            $j('.bp-estimate-price').append("Chi phí dự tính: <b>" + numberWithCommas(totalEstimatePrice) + " đ</b>");
+        }
+    }
+    /** End Append data from local storage **/
+
+    /** Append Build PC Section **/
+    function appendOriginalSection(position, catId) {
+        $j('.bp-position-' + position).empty();
+        var html = '';
+        html = "<a class='bp-table-btn open-select-product' data-toggle='modal' " +
+            "data-cat-id=" + catId + " href='#selectProductModal'>" +
+            "<i class='fa fa-plus'></i></a>";
+        $j('.bp-position-' + position).append(html);
+    }
+
+    function appendBuildPCSection(position, catId, catUrl, productName, productId, productPriceUnit, productPrice, productUrl, productImageUrl, productQty, productStatus) {
+        var html = '';
+        var loadingImageUrl = '<?php echo $this->getSkinUrl('images/ajax-loader-gray.gif'); ?>';
+        var divName = "<div class='col-xs-9 pr-0 bp-table-product-name'>" + productName + "</div>";
+        if (productStatus === 1) {
+            divName = "<div class='col-xs-9 pr-0 bp-table-product-name'><a data-id=" + productId + " data-name='" + productName + "' data-price=" + productPrice + " href='" + productUrl + "' target='_blank'>" + productName + "</a></div>";
+        }
+        var isInputReadonly = (position === 14) ? 'readonly' : '';
+        html = "<div class='row bp-table-product-row'><div class='col-xs-3 pl-0 pr-0'><img class='bp-product-image' src='" + productImageUrl + "' title='" + productName + "' /></div>" +
+            divName + "</div>" +
+            "<div class='row bp-table-product-row'><div class='col-xs-5 bp-table-product-price-unit pr-0'>" + numberWithCommas(productPriceUnit) + " đ</div>" +
+            "<div class='col-xs-2 bp-table-qty-block pr-0 text-right'><span>x</span>" +
+            "<input type='number' id='bp-input-qty-" + catId + "' class='bp-input-qty' onkeyup='doUpdateQty(this);' data-cat-id=" + catId + " data-product-id=" + productId + " value='" + productQty + "' " + isInputReadonly + "/>" +
+            "<img id='bp-update-qty-ajax-loader-" + catId + "' class='bp-update-qty-ajax-loader hidden' src='" + loadingImageUrl + "'/>" +
+            "</div>" +
+            "<div id='bp-table-product-price-" + catId + "' class='col-xs-5 bp-table-product-price pr-0 text-right'><span>=</span>" + numberWithCommas(productPrice) + " đ</div></div>" +
+            "<div class='col-xs-12 pl-0 pr-0 text-right'>" +
+            "<a title='Thay đổi linh kiện' data-toggle='modal' data-cat-id=" + catId + " data-cat-url=" + catUrl + " href='#selectProductModal'><i class='fa fa-edit bp-table-icon-edit open-select-product' data-cat-id=" + catId + "></i></a>" +
+            "<a class='remove-selected-product' title='Xóa linh kiện' onclick='removeItem(this, " + catId + "," + position + ")'><i class='fa fa-trash bp-table-icon-delete'></i></a>" +
+            "<img id='bp-remove-item-ajax-loader-" + catId + "' class='bp-remove-item-ajax-loader hidden' src='" + loadingImageUrl + "'/>" +
+            "</div>";
+        $j('.bp-position-' + position).empty();
+        $j('.bp-position-' + position).append(html);
+    }
+    /** End Append Build PC Section **/
+
+    /** Common functions **/
+    function checkLocalStorageExpiration() {
+        var now = Date.now();
+
+        var expiresIn = localStorage.getItem('build_pc_array_expiresIn');
+        if (expiresIn === undefined || expiresIn === null) {
+            expiresIn = 0;
+        }
+
+        if (expiresIn < now) {
+            removeStorage("build_pc_array");
+        }
+    }
+
+    function removeStorage(name) {
+        try {
+            localStorage.removeItem(name);
+            localStorage.removeItem(name + '_expiresIn');
+        } catch (e) {
+            console.log('removeStorage: Error removing key [' + name + '] from localStorage: ' + JSON.stringify(e));
+            return false;
+        }
+        return true;
+    }
+
+    function setStorage(key, value) {
+        var expires = (24 * 60 * 60);  // default: seconds for 1 day
+        var now = Date.now();  //millisecs since epoch time, lets deal only with integer
+        var schedule = now + expires * 1000;
+
+        try {
+            localStorage.setItem(key, value);
+            localStorage.setItem(key + '_expiresIn', schedule);
+        } catch (e) {
+            console.log('setStorage: Error setting key [' + key + '] in localStorage: ' + JSON.stringify(e));
+            return false;
+        }
+        return true;
+    }
+
+    function preventKeyInput() {
+        $j('input[type="number"]').keypress(function (e) {
+            if (e.which == 8) { // to allow BackSpace
+                return;
+            }
+            if (e.which < 48 || e.which > 57 || e.keyCode == 13) {
+                e.preventDefault();
+            }
+        });
+    }
+
+    function numberWithCommas(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+    /** End common functions **/
+</script>

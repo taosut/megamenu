@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+
+<config>
+    <modules>
+        <Ved_UserStoreMapping>
+            <version>1.0.0.1</version>
+        </Ved_UserStoreMapping>
+    </modules>
+
+    <global>
+        <models>
+            <userstoremapping>
+                <class>Ved_UserStoreMapping_Model</class>
+                <resourceModel>userstoremapping_resource</resourceModel>
+            </userstoremapping>
+            <userstoremapping_resource>
+                <class>Ved_UserStoreMapping_Model_Resource</class>
+                <entities>
+                    <mapping>
+                        <table>user_mapping</table>
+                    </mapping>
+                </entities>
+            </userstoremapping_resource>
+        </models>
+        <resources>
+            <userstoremapping_setup>
+                <setup>
+                    <module>Ved_UserStoreMapping</module>
+                </setup>
+            </userstoremapping_setup>
+        </resources>
+        <blocks>
+            <ved_userstoremapping>
+                <class>Ved_UserStoreMapping_Block</class>
+            </ved_userstoremapping>
+        </blocks>
+
+        <helpers>
+            <ved_userstoremapping>
+                <class>Ved_UserStoreMapping_Helper</class>
+            </ved_userstoremapping>
+        </helpers>
+    </global>
+
+    <admin>
+        <routers>
+            <adminhtml>
+                <args>
+                    <modules>
+                        <Ved_UserStoreMapping before="Mage_Adminhtml">Ved_UserStoreMapping_Adminhtml</Ved_UserStoreMapping>
+                    </modules>
+                </args>
+            </adminhtml>
+        </routers>
+    </admin>
+
+    <adminhtml>
+        <menu>
+            <system>
+                <children>
+                    <userstoremapping>
+                        <title>User Store Mapping</title>
+                        <sort_order>100</sort_order>
+                        <action>adminhtml/usermapping</action>
+                    </userstoremapping>
+                </children>
+            </system>
+        </menu>
+        <layout>
+            <updates>
+                <ved_userstoremapping>
+                    <file>ved_userstoremapping.xml</file>
+                </ved_userstoremapping>
+            </updates>
+        </layout>
+    </adminhtml>
+
+</config>

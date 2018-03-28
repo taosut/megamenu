@@ -1,0 +1,7 @@
+<script type="text/javascript">
+  function gCafeAddProductToCart(url){
+    var formkey = <?php echo json_encode(Mage::getSingleton('core/session')->getFormKey())?>;
+    var newURL = url.substring(0,url.lastIndexOf("form_key")+9)+formkey + '/qty/1';
+    setLocation(newURL);
+  }
+</script>

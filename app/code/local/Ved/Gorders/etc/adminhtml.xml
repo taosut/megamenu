@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<config>
+    <menu>
+        <mana>
+            <disabled>1</disabled>
+        </mana>
+    </menu>
+    <menu>
+        <sales>
+            <children>
+                <new_order>
+                    <title>Orders - New</title>
+                    <sort_order>1</sort_order>
+                    <action>adminhtml/NewOrder</action>
+                </new_order>
+                <processing_order>
+                    <title>Orders - Shipping</title>
+                    <sort_order>2</sort_order>
+                    <action>adminhtml/ProcessingOrder</action>
+                </processing_order>
+                <completed_order>
+                    <title>Orders - Completed</title>
+                    <sort_order>3</sort_order>
+                    <action>adminhtml/CompletedOrder</action>
+                </completed_order>
+                <order>
+                    <title>Orders - All</title>
+                    <sort_order>4</sort_order>
+                    <action>adminhtml/Order</action>
+                </order>
+                <check_order>
+                    <title>Orders - Overdue</title>
+                    <sort_order>5</sort_order>
+                    <action>adminhtml/NewOrder/check</action>
+                </check_order>
+                <upload_shipment_status>
+                    <title>Upload Order Status</title>
+                    <sort_order>5</sort_order>
+                    <action>adminhtml/UploadShipmentStatus</action>
+                </upload_shipment_status>
+            </children>
+        </sales>
+    </menu>
+</config>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <modules>
+        <Teko_OverrideStandardProductId>
+            <active>true</active>
+            <codePool>local</codePool>
+            <version>1.0.0</version>
+        </Teko_OverrideStandardProductId>
+    </modules>
+
+    <global>
+        <models>
+            <Teko_OverrideStandardProductId>
+                <class>Teko_OverrideStandardProductId_Model</class>
+            </Teko_OverrideStandardProductId>
+        </models>
+        <events>
+            <order_cancel_after>
+                <observers>
+                    <Teko_OverrideStandardProductId>
+                        <class>Teko_OverrideStandardProductId/observer</class>
+                        <method>orderCancelAfter</method>
+                    </Teko_OverrideStandardProductId>
+                </observers>
+            </order_cancel_after>
+
+        </events>
+    </global>
+</config>

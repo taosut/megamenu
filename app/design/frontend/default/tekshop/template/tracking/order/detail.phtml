@@ -1,0 +1,209 @@
+<?php $order = $this->getOrderDetail(); ?>
+
+<?php if ($order->getShippingAddress()): ?>
+    <?php $order_state = $order->getState();
+    $order_status = $order->getStatus();
+    $shipping_address = $order->getShippingAddress();
+    $full_name = $shipping_address->getName();
+    $street = $shipping_address->getStreetFull();
+    $city = $shipping_address->getCity();
+    $region = $shipping_address->getRegion();
+    $telephone = $shipping_address->getTelephone();
+    $email = $shipping_address->getEmail();
+    $full_address = $street . ', ' . $city . ', ' . $region;
+    $total_free_item_price = 0;
+    ?>
+    <div class="track-order-title">KIỂM TRA ĐƠN HÀNG</div>
+    <div class="track-order-subtitle">
+        <span>MÃ ĐƠN HÀNG <?php echo $order->getIncrementId(); ?></span>
+        <span>Đặt ngày <?php echo date("d/m/Y H:i", strtotime($order->getCreatedAtStoreDate())); ?> </span>
+    </div>
+    <div class="track-order-detail-panel">
+        <div class="row track-order-detail-header">
+            <div class="col-md-5 col-xs-5 order-header-block">
+                <div><b>Địa chỉ: </b><br><?php echo $full_address ?></div>
+            </div>
+            <div class="col-md-4 col-xs-4 order-header-block">
+                <div><b>Tên: </b><?php echo $full_name ?><br><b>Điện thoại: </b><?php echo $telephone; ?></div>
+            </div>
+            <div class="col-md-3 col-xs-3 order-header-block">
+                <div><b>Tình trạng: </b><br><?php echo $this->getStateName($order_state, $order_status) ?></div>
+            </div>
+        </div>
+        <div class="row track-order-detail-status">
+
+            <div class="track-progress">
+                <div class="circle <?php if ($order_state == 'canceled'): ?>canceled<?php else: ?>active<?php endif; ?>">
+                    <span class="label icon-delivery-package-opened"></span>
+                    <span class="title">Đang xử lý</span>
+
+                </div>
+
+                <span class="bar <?php if ($order_state == 'processing' || $order_state == 'complete'): ?>active<?php elseif ($order_state == 'canceled'): ?>canceled<?php endif; ?>"></span>
+
+                <div class="circle <?php if ($order_state == 'processing' || $order_state == 'complete'): ?>active<?php elseif ($order_state == 'canceled'): ?>canceled<?php endif; ?>">
+                    <span class="label icon-delivery-truck"></span>
+                    <span class="title">Đang vận chuyển</span>
+
+                </div>
+                <span class="bar <?php if ($order_status == 'delivered' ||$order_state == 'complete'): ?>active<?php elseif ($order_state == 'canceled'): ?>canceled<?php endif; ?>"></span>
+
+                <div class="circle <?php if ($order_status == 'delivered' ||$order_state == 'complete'): ?>active<?php elseif ($order_state == 'canceled'): ?>canceled<?php endif; ?>">
+                    <span class="label <?php if ($order_state == 'canceled'): ?>fa fa-icon fa-times<?php else: ?>icon-check<?php endif; ?>"></span>
+                    <span class="title"><?php if ($order_state == 'canceled'): ?>Đã hủy<?php else: ?>Hoàn tất<?php endif; ?></span>
+
+                </div>
+            </div>
+        </div>
+        <div class="row track-order-detail-description"></div>
+        <div class="row track-order-detail-items">
+            <div class="row track-order-item-title">Chi tiết đơn hàng:</div>
+            <div class="top-row track-order-top-row">
+                <div class="col-md-8 col-xs-7 track-order-text-title no-padding-horizontal">Chi tiết sản phẩm</div>
+                <div class="col-md-2 col-xs-2 track-order-text-title no-padding-horizontal">Số lượng</div>
+                <div class="col-md-2 col-xs-3 track-order-text-title text-right no-padding-horizontal">Thành tiền</div>
+            </div>
+
+            <div class="mid-row track-order-mid-row">
+
+                <?php $_items = $order->getItemsCollection(); ?>
+                <?php $_index = 0; ?>
+                <?php $_count = $_items->count(); ?>
+                <?php foreach ($_items as $_item): ?>
+                    <?php $total = $_item->getPrice() * $_item->getQtyOrdered(); ?>
+                    <?php $freeItem = unserialize($_item->getAdditionalData()); ?>
+                    <?php if ($_item->getParentItem()) continue; ?>
+                    <div class="col-md-8 col-xs-7 track-item-row no-padding-horizontal">
+                        <div class="col-md-3 col-xs-3 no-padding-horizontal">
+                            <img src="<?php echo Mage::helper('catalog/image')->init($_item->getProduct(), 'small_image'); ?>"
+                                 width="100" height="100">
+                        </div>
+                        <div class="col-md-9 col-xs-9 pl-30">
+                            <a href="<?php echo $_item->getProduct()->getProductUrl() ?>"
+                               class="order-item-name"><?php echo $_item->getName(); ?></a>
+                            <div class="col-md-12 col-xs-12 pt-5 pl-0">
+                                <span class='free-item-number'><?php echo ($freeItem && isset($freeItem['quantity'])) ? "(Tặng kèm " . $freeItem['quantity'] . " sản phẩm " . $freeItem['product_name'] . ")" : ''; ?><?php echo ($freeItem && isset($freeItem['parent'])) ? "(Sản phẩm khuyến mãi)" : ''; ?></span>
+                            </div>
+                            <div class="col-md-12 col-xs-12 pl-25">
+                                <?php if (isset($_item->getProductOptions()['bundle_options'])): ?>
+                                    <?php $_options = $_item->getProductOptions()['bundle_options']; ?>
+                                    <dl class="item-options">
+                                        <?php foreach ($_options as $_option) : ?>
+                                            <dt><?php echo Mage::helper('core')->escapeHtml($_option['label'], null) ?></dt>
+                                            <dd>
+                                                <?php foreach ($_option['value'] as $_option_value): ?>
+                                                    <?php echo $_option_value['title']; ?>
+                                                <?php endforeach; ?>
+                                            </dd>
+                                        <?php endforeach; ?>
+                                    </dl>
+                                <?php elseif (isset($_item->getProductOptions()['attributes_info'])): ?>
+                                    <?php $_options = $_item->getProductOptions()['attributes_info']; ?>
+                                    <dl class="item-options">
+                                        <?php foreach ($_options as $_option) : ?>
+                                            <?php $_formatedOptionValue = Mage::helper('catalog/product_configuration')->getFormattedOptionValue($_option); ?>
+                                            <dt><?php echo Mage::helper('core')->escapeHtml($_option['label'], null) ?></dt>
+                                            <dd<?php if (isset($_formatedOptionValue['full_view'])): ?> class="truncated"<?php endif; ?>>
+                                                <?php echo $_formatedOptionValue['value'] ?>
+                                                <?php if (isset($_formatedOptionValue['full_view'])): ?>
+                                                    <div class="truncated_full_value">
+                                                        <dl class="item-options">
+                                                            <dt><?php echo Mage::helper('core')->escapeHtml($_option['label'], null) ?></dt>
+                                                            <dd><?php echo $_formatedOptionValue['full_view'] ?></dd>
+                                                        </dl>
+                                                    </div>
+                                                <?php endif; ?>
+                                            </dd>
+                                        <?php endforeach; ?>
+                                    </dl>
+                                <?php elseif (isset($_item->getProductOptions()['options'])): ?>
+                                    <?php $_options = $_item->getProductOptions()['options']; ?>
+                                    <dl class="item-options">
+                                        <?php foreach ($_options as $_option) : ?>
+                                            <?php $_formatedOptionValue = Mage::helper('catalog/product_configuration')->getFormattedOptionValue($_option); ?>
+                                            <dt><?php echo Mage::helper('core')->escapeHtml($_option['label'], null) ?></dt>
+                                            <dd<?php if (isset($_formatedOptionValue['full_view'])): ?> class="truncated"<?php endif; ?>>
+                                                <?php echo $_formatedOptionValue['value'] ?>
+                                                <?php if (isset($_formatedOptionValue['full_view'])): ?>
+                                                    <div class="truncated_full_value">
+                                                        <dl class="item-options">
+                                                            <dt><?php echo Mage::helper('core')->escapeHtml($_option['label'], null) ?></dt>
+                                                            <dd><?php echo $_formatedOptionValue['full_view'] ?></dd>
+                                                        </dl>
+                                                    </div>
+                                                <?php endif; ?>
+                                            </dd>
+                                        <?php endforeach; ?>
+                                    </dl>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2 col-xs-2 track-order-text no-padding-horizontal">
+                        <?php echo ($freeItem && isset($freeItem['quantity'])) ? round($_item->getQtyOrdered()) - $freeItem['quantity'] : round($_item->getQtyOrdered()); ?>
+                    </div>
+                    <div class="col-md-2 col-xs-3 track-order-text text-right no-padding-horizontal">
+                        <?php if ($freeItem && isset($freeItem['quantity']) && isset($freeItem['price'])): ?>
+                            <?php $total = $total - $freeItem['quantity'] * $freeItem['price'] ?>
+                            <?php $total_free_item_price += $freeItem['quantity'] * $freeItem['price']; ?>
+                        <?php endif; ?>
+                        <?php echo Mage::helper('checkout')->formatPrice($total); ?>
+                    </div>
+
+                <?php endforeach; ?>
+            </div>
+
+            <div class="bot-row track-order-bot-row">
+                <?php
+                $sub_total = $order->getSubtotal();
+                $grand_total = $order->getGrandTotal();
+                $discount_value = $sub_total - $grand_total;
+                $grand_discount = $discount_value - $total_free_item_price;
+                ?>
+                <div class="col-md-3 col-xs-6">
+                    <div class="payment-cart-text lh-30 fs14" style="color: #333">Tổng giá</div>
+                    <?php if ($grand_discount > 0): ?>
+                        <div class="payment-cart-text lh-30 fs14" style="color: #333">Giảm giá</div>
+                    <?php endif; ?>
+                    <div class="payment-cart-text lh-30 fs14">Thành tiền</div>
+                    <?php if ($order->getPaymentOnline()): ?>
+                        <div class="payment-cart-text lh-30 fs14" style="color: #384182">Đã thanh toán</div>
+                    <?php endif; ?>
+                </div>
+                <div class="col-md-9 col-xs-6 text-right">
+                    <div class="o-cart-grandtotal lh-30"><?php echo Mage::helper('core')->currency($sub_total - $total_free_item_price, true, false); ?></div>
+                    <?php if ($grand_discount > 0): ?>
+                        <div class="o-cart-totaldiscount lh-30">
+                            - <?php echo Mage::helper('core')->currency($grand_discount, true, false); ?>
+                        </div>
+                    <?php endif; ?>
+                    <div class="o-cart-cod lh-30"><?php echo Mage::helper('core')->currency($grand_total, true, false); ?></div>
+                    <?php if ($order->getPaymentOnline()): ?>
+                        <div class="o-cart-cod lh-30" style="color: #384182"><?php echo Mage::helper('core')->currency($order->getPaymentOnline(), true, false); ?></div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8 col-xs-2"></div>
+        <div class="col-md-4 col-xs-10 pb-30">
+            <button type="button" class="btn btn-block btn-default shipping-btn o-shipping-btn-address"
+                    title="<?php echo $this->__('Continue Shopping') ?>"
+                    onclick="window.location='<?php echo $this->getUrl() ?>'">
+                <span><span><?php echo $this->__('Continue Shopping') ?></span></span>
+            </button>
+        </div>
+    </div>
+<?php else: ?>
+    <div class="no-order-found text-center">Không tìm thấy đơn hàng nào thỏa mãn</div>
+    <div class="row">
+        <div class="col-md-4 col-md-offset-4 col-xs-6 col-xs-offset-3 pb-30">
+            <button type="button" class="btn btn-block btn-default shipping-btn o-shipping-btn-address continue-shipping-mobile"
+                    title="<?php echo $this->__('Continue Shopping') ?>"
+                    onclick="window.location='<?php echo $this->getUrl() ?>'">
+                <span><span><?php echo $this->__('Continue Shopping') ?></span></span>
+            </button>
+        </div>
+    </div>
+<?php endif; ?>

@@ -1,0 +1,230 @@
+<style>
+    .mb{margin-bottom: 10px}
+    .ml{margin-left: 20px}
+    .w250{width: 250px !important;}
+    .w300{width: 300px !important;}
+    td p{padding-top: 7px;}
+    .import-alert{
+        margin-bottom:10px !important;padding: 10px !important;
+    }
+</style>
+<div class"content-header">
+<table cellspacing="0">
+    <tbody><tr>
+        <td style="width:50%;"><h3 class="icon-head head-cms-page"><?php echo $this->__('Import Shipment Status from Excel file')?></h3></td>
+    </tr>
+    </tbody></table>
+</div>
+<div class="with-bootstrap">
+    <div ng-app="importAdmin" ng-controller="importCtrl" class="container-fluid">
+        <div class="row mb">
+            <input id="file-input" type="file" class="filestyle" date-size="sm" data-placeholder="Choose XLS/XLSX file" nv-file-select uploader="uploader" ng-disabled="state!='upload'">
+        </div>
+        <uib-progressbar class="progress-striped active row" value="item.progress" ng-show="uploader.queue.length == 1">Uploading {{item.progress}}%</uib-progressbar>
+        <uib-progressbar class="progress-striped active row" value="50" ng-show="state=='requestMatching'">Processing</uib-progressbar>
+        <uib-progressbar class="progress-striped active row" value="importProcess" max="row_num" ng-show="state=='importing'">Importing {{importProcess}}/{{row_num}}</uib-progressbar>
+        <div class="row mb" ng-show="state!='upload'">
+            <button ng-disabled="startMatchingDisabled()" ng-if="state=='choose'" class="btn btn-success" ng-click="startMatching()">
+                <span class="glyphicon glyphicon-upload"></span>Start Match
+            </button>
+            <button ng-if="state=='matching'" class="btn btn-success" ng-click="startImport()">
+                <span class="glyphicon glyphicon-upload"></span>Start Import
+            </button>
+            <button ng-if="state=='finished'" class="btn btn-success" ng-click="continueAnotherSheet()">
+                <span class="glyphicon glyphicon-upload"></span>Continue with another sheet
+            </button>
+            <button class="btn btn-warning" ng-if="state!='matching'" ng-click="cancel()">
+                <span class="glyphicon glyphicon-ban-circle"></span>Cancel
+            </button>
+            <button class="btn btn-warning" ng-if="state=='matching'" ng-click="chooseAnother()">
+                <span class="glyphicon glyphicon-ban-circle"></span>Cancel
+            </button>
+        </div>
+        <div class="row mb" ng-if="state=='finished'">
+            <label></label>
+        </div>
+        <uib-alert class="row import-alert" type="danger" ng-repeat="item in msg.danger">{{item}}</uib-alert>
+        <uib-alert class="row import-alert" type="success" ng-repeat="item in msg.detail">{{item}}</uib-alert>
+        <div class="row mb" ng-show="state=='choose'||state=='requestMatching'||state=='matching'">
+            <form class="form-inline">
+                <div class="form-group">
+                    <label>Choose a Sheet</label>
+                    <select class="form-control input-sm w250" ng-disabled="state!='choose'" ng-model="matched.sheet">
+                        <option ng-repeat="item in choose.sheets" value="{{item.id}}">{{item.name}}</option>
+                    </select>
+                </div>
+                <div class="form-group ml">
+                    <label>Ignore first rows</label>
+                    <input type="number" class="form-control" ng-model="matched.ignore">
+                </div>
+            </form>
+        </div>
+        <div class="row mb" ng-show="state=='matching'">
+            <table>
+                <tr>
+                    <td colspan="4"><b>This sheet have {{row_num}} rows and {{cols.length}} columns. Please choose field and matching column before start import</b></td>
+                </tr>
+                <tr ng-repeat="col in matched.cols">
+                    <td>
+                        <p>Match column <b>{{col.col}} ({{col.name}})</b></p>
+                    </td>
+                    <td><p>&nbsp;&nbsp;To Attribute&nbsp;&nbsp;</p></td>
+                    <td>
+                        <select class="input-sm w300" ng-model="col.matched">
+                            <option value="">Not Use</option>
+                            <option ng-repeat="attr in matched.attrs" value="{{attr.code}}">{{attr.name}} - {{attr.code}} {{attr.unique=='1'?"- Allow update":''}}</option>
+                        </select>
+                    </td>
+                    <td>
+                        &nbsp;&nbsp;
+                        <label ng-if="col.matched == item" ng-repeat="item in matched.unique">
+                            <input type="checkbox" style="margin-top: -1px" ng-checked="matched.updater==item" ng-change="changeUpdater(item)" ng-model="temp[item]"> Update using this field
+                        </label>
+                    </td>
+
+                </tr>
+            </table>
+        </div>
+    </div>
+
+</div>
+<script type="text/javascript">
+    var app = angular.module('importAdmin', ['ui.bootstrap', 'angularFileUpload']);
+    var scope;
+    app.controller('importCtrl', function ($scope,$timeout,FileUploader) {
+        var uploader = new FileUploader({removeAfterUpload: true,url:<?php echo json_encode(Mage::getUrl("*/*/upload",array('form_key'=>Mage::getSingleton('core/session')->getFormKey())))?>});
+        $scope.uploader = uploader;
+        $scope.item = {progress:0};
+        $scope.state = "upload";
+        $scope.choose = {};
+
+        resetData();
+
+        scope = $scope;
+        uploader.filters.push({
+            name: 'fileFilter',
+            fn: function(item /*{File|FileLikeObject}*/, options) {
+                if(this.queue.length > 1) return false;
+                if(item.size > 5*1024*1024) return false;
+                var type = ',' + item.name.slice(item.name.lastIndexOf('.') + 1) + ',';
+                return (',xls,xlsx,').indexOf(type) !== -1;
+            }
+        });
+        $scope.cancel = function(){
+            $j("#file-input").filestyle('clear');
+            $j("#file-input").filestyle("disabled",false);
+            $scope.state = 'upload';
+            resetData();
+        };
+        uploader.onAfterAddingFile = function(fileItem) {
+            $scope.item = fileItem;
+            uploader.uploadAll();
+        };
+
+        uploader.onSuccessItem = function(fileItem, response, status, headers) {
+            var url = <?php echo json_encode(Mage::getUrl("*/*/importing",array('form_key'=>Mage::getSingleton('core/session')->getFormKey())))?>;
+            console.info('onSuccessItem', fileItem, response);
+            if(response.result == 'error'){
+                $scope.state = 'error';
+                $scope.msg.danger.push(response.msg);
+                return;
+            }
+            $scope.state = 'choose';
+            $scope.choose = response.data;
+            $j("#file-input").filestyle("disabled",true);
+            console.log(url);
+        };
+
+        $scope.startMatchingDisabled = function(){
+            return $scope.state != 'choose' || $scope.matched.sheet == null;
+        };
+
+        $scope.startMatching = function(){
+            var url = <?php echo json_encode(Mage::getUrl("*/*/matching",array('form_key'=>Mage::getSingleton('core/session')->getFormKey())))?>;
+            var rq = {ignore:$scope.choose.ignore,file:$scope.choose.filename,sheet:$scope.matched.sheet};
+            $scope.state = 'requestMatching';
+            jQuery.getJSON(url,rq,function(respone){
+                $scope.matched.attrs = respone.data.attrs;
+                $scope.matched.cols = respone.data.cols;
+                $scope.matched.unique = respone.data.unique;
+                $scope.row_num = respone.data.row_num;
+                $scope.state = 'matching';
+                $timeout(function(){$scope.$apply()},100);
+            })
+        };
+
+        $scope.changeUpdater = function(item){
+            if($scope.temp[item]){
+                $scope.matched.updater = item;
+            }else{
+                $scope.matched.updater = "";
+            }
+            angular.forEach($scope.temp,function(value,key){
+                if(key !=item)
+                    $scope.temp[key] = false;
+            });
+        };
+
+        $scope.startImport = function(){
+            $scope.msg.danger = [];
+            $scope.msg.detail = [];
+            var url = <?php echo json_encode(Mage::getUrl("*/*/importing",array('form_key'=>Mage::getSingleton('core/session')->getFormKey())))?>;
+            var attr = [];
+            angular.forEach($scope.matched.cols,function(value){
+                if(value.matched != null && value.matched != ''){
+                    attr.push({matched:value.matched,col:value.col});
+                }
+            });
+            if(attr.length != 2){
+                $scope.msg.danger.push("Vui lòng map đúng 2 cột Mã đơn hàng và Trạng thái đơn hàng");
+                $scope.state = 'matching';
+                return;
+            }
+            var rq = {from:$scope.matched.ignore+1,file:$scope.choose.filename,sheet:$scope.matched.sheet,attr:attr};
+            $scope.state = 'importing';
+            $scope.importProcess = $scope.matched.ignore;
+            importData(url,rq);
+        };
+
+        $scope.continueAnotherSheet = function(){
+            $scope.state = 'choose';
+            //delete current sheet
+            var currentSheet = $scope.matched.sheet;
+            angular.forEach($scope.choose.sheets,function(value){
+                if(value.id == currentSheet){
+                    value.name+=" (Processed)";
+                }
+            });
+            resetData();
+        };
+
+        $scope.chooseAnother = function(){
+            $scope.state = 'choose';
+        };
+
+        function resetData(){
+            $scope.matched = {ignore:1}
+            $scope.row_num = 0;
+            $scope.importProcess = 0;
+            $scope.temp = {};
+            $scope.msg = {danger:[],detail:[]};
+            $timeout(function(){$scope.$apply()},100);
+        }
+
+        function importData(url,rq){
+            if($scope.state != 'importing') return;
+            jQuery.getJSON(url,rq,function(respone){
+                $timeout(function(){$scope.$apply()},100);
+                angular.forEach(respone.fail,function(item){$scope.msg.danger.push(item)});
+                angular.forEach(respone.detail,function(item){$scope.msg.detail.push(item)});
+                $scope.importProcess = rq.from+respone.total-1;
+                rq.from+=respone.total;
+                if(respone.done=="1") {
+                    $scope.state = 'finished';
+                    return;
+                };
+                importData(url,rq);
+            });
+        }
+    });
+</script>

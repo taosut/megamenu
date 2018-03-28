@@ -1,0 +1,25 @@
+<?php
+/**
+ * @category    TheExtensionLab
+ * @package     TheExtensionLab_MegaMenu
+ * @copyright   Copyright (c) 2015 TheExtensionLab (http://www.theextensionlab.com)
+ * @license     Open Software License (OSL 3.0)
+ * @author      James Anelay @ TheExtensionLab <james@theextensionlab.com>
+ */
+?>
+
+<?php /** @var $this TheExtensionLab_MegaMenu_Block_Widget_Cms_Page_Featured */
+$featuredCmsPage = $this->getCmsPage()?>
+
+<div class="featured-cms featured-section <?php echo $this->getDisplayClass();?>">
+    <a href="<?php echo $this->getCmsPageUrl($featuredCmsPage);?>">
+        <?php if($this->hasFeaturedImage()):?>
+            <img src="<?php echo Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_MEDIA).$this->getFeaturedImage();?>" />
+        <?php endif;?>
+        <?php if($this->hasTitle()):?>
+            <span><?php echo $this->getTitle();?></span>
+        <?php else:?>
+            <span><?php echo $featuredCmsPage->getTitle(); ?></span>
+        <?php endif;?>
+    </a>
+</div>

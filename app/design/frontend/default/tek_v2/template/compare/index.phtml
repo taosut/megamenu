@@ -1,0 +1,282 @@
+<?php
+$products = Mage::registry('product');
+$attributeCode = Mage::registry('attribute_set_id');
+$loadProduct = Mage::registry('loadedProduct');
+$additionalData = $loadProduct[0];
+$localStorage = Mage::registry('localStorage');
+$helper = Mage::helper('catalog/output');
+$atrributeKeys = Mage::registry('attributeKeys');
+$label = Mage::registry('label');
+?>
+<input type="hidden" class="attr-code" value="<?php echo $attributeCode; ?>"/>
+<input type="hidden" class="params" value="<?php echo $localStorage; ?>"/>
+<div class="content">
+
+    <!--Breadcrumb-->
+    <div class="row tek-breadcrumb">
+        <div class="col-md-10 col-md-offset-1 content-section">
+            <div class="tek-breadcrumb-content" style="padding: 6px 0 5px 0;"></div>
+            <div class="tek-breadcrumb-main">
+                <span>So sánh sản phẩm</span>
+            </div>
+        </div>
+    </div>
+    <!--End Breadcrumb-->
+
+    <div class="row">
+        <div class="col-md-10 col-md-offset-1 pr-0 content-section">
+            <div class="compare-block">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                    <tr>
+                        <th class="compare-center cp-unit cp-responsive-header">
+                            <img class="cp-helper-img"
+                                 src="<?php echo $this->getSkinUrl('images/collection.jpg') ?>"
+                                 alt="So sánh sản phẩm" title="So sánh sản phẩm">
+                        </th>
+                        <?php foreach ($products as $product): ?>
+                            <th class="compare-center">
+                                <div class="cp-remove" data-id="<?php echo $product->getId() ?>">&times;</div>
+                                <div class="product-image">
+                                    <a class="a-img"
+                                       href="<?php echo $product->getProductFullUrl() ?>"
+                                       title="<?php echo $product->getProductName() ?>" target="_blank">
+                                        <img class="cp-resimg"
+                                             src="<?php echo Mage::helper('catalog/image')->init($product, 'small_image')->resize(150, 150); ?>"
+                                             alt="<?php echo $this->escapeHtml($this->getImageLabel($product, 'small_image')) ?>"
+                                             title="<?php echo $this->escapeHtml($this->getImageLabel($product, 'small_image')) ?>">
+                                    </a>
+                                </div>
+                                <a class="cp-name" href="<?php echo $product->getProductFullUrl() ?>"
+                                   title="<?php echo $this->escapeHtml($product->getName()); ?>"
+                                   target="_blank"><?php echo $this->escapeHtml($product->getName()); ?>
+                                </a>
+
+                                <div class="cp-product-regular-price">
+                                    <?php echo number_format($product->getFinalPrice(), 0, ",", ".") . " ₫"; ?>
+                                </div>
+                            </th>
+                        <?php endforeach; ?>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    <?php foreach ($additionalData as $data): ?>
+                        <?php $key = array_search($data, $additionalData) ?>
+                        <tr>
+                            <td class="cp-table-header"><?php echo $this->escapeHtml($this->__($data['label'])) ?></td>
+                            <?php foreach ($loadProduct as $product): ?>
+                                <td class="cp-row"><?php echo $product[$key]['value'] ?></td>
+                            <?php endforeach; ?>
+                        </tr>
+                    <?php endforeach; ?>
+                    <tr>
+                        <td class="cp-table-header"></td>
+                        <?php foreach ($products as $product): ?>
+                            <form action="<?php echo $this->getUrl('checkout/cart/addAjax') ?>" method="post"
+                                  id="product_addtocart_form-<?php echo $product->getId() ?>" <?php if ($product->getOptions()): ?> enctype="multipart/form-data"<?php endif; ?>>
+                                <td class="cp-row">
+                                    <input type="hidden" name="form_key"
+                                           value="<?php echo Mage::getSingleton('core/session')->getFormKey() ?>"/>
+                                    <input type="hidden" name="product"
+                                           value="<?php echo $product->getId() ?>"/>
+                                    <input type="hidden" name="related_product" value=""/>
+                                    <div class="add_to_cart_messages add_to_cart_messages-<?php echo $product->getId() ?>"></div>
+                                    <?php $instockStatus = $product->getInstock(); ?>
+                                    <?php if (in_array($instockStatus, array(1, 6))): ?>
+                                        <button type="button" class="btn btn-add bp-change-btn wish-add-to-cart"
+                                                product-id="<?php echo $product->getId() ?>"
+                                                product-type="<?php echo $product->getTypeID() ?>">
+                                            <span class="hidden-mobile display-inline">Thêm vào giỏ hàng&nbsp;</span>
+                                            <img class="shopping-cart-icon bp-i-<?php echo $product->getId() ?>"
+                                                 src="<?php echo $this->getSkinUrl('images/icon_ShoppingCart2.svg'); ?>"/>
+                                            <img class="add-to-cart-ajax-loader-<?php echo $product->getId() ?> hidden"
+                                                 src="<?php echo $this->getSkinUrl('images/ajax-loader-white.gif'); ?>"/>
+                                        </button>
+                                    <?php else:?>
+                                        <button type="button" class="btn btn-purchase bp-change-btn wish-purchase"
+                                                data-toggle="modal"
+                                                data-target="#gridViewPurchaseRequestModal-<?php echo $product->getId(); ?>">
+                                            Đặt hàng trước <span class="hidden-1200">(<?php echo $product->getInstock() == 3 ? 'Tạm hết hàng' : 'Hàng sắp về' ;?>)</span>
+                                        </button>
+                                        <!-- Modal purchase request -->
+                                        <div id="gridViewPurchaseRequestModal-<?php echo $product->getId(); ?>"
+                                             class="purchase-request-modal modal fade"
+                                             role="dialog">
+                                            <div class="modal-dialog">
+                                                <!-- Modal content-->
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <button type="button" class="close"
+                                                                data-dismiss="modal">&times;
+                                                        </button>
+                                                        <h4 class="modal-title a-center">Gửi yêu cầu đặt
+                                                            hàng</h4>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="form-group">
+                                                            <label for="name">Họ tên <span class="red">*</span></label>
+                                                            <input type="text" class="form-control"
+                                                                   id="grid-view-require-name-<?php echo $product->getId(); ?>">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="phone">Số điện thoại <span
+                                                                        class="red">*</span></label>
+                                                            <input type="number" class="form-control"
+                                                                   id="grid-view-require-phone-<?php echo $product->getId(); ?>">
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="phone">Nội dung yêu cầu (tối đa 500
+                                                                ký tự) <span class="red">*</span></label>
+                                                            <textarea class="form-control" rows="4"
+                                                                      id="grid-view-require-content-<?php echo $product->getId(); ?>"
+                                                                      maxlength="500"></textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button"
+                                                                class="btn btn-primary btn-send-request"
+                                                                data-product-id="<?php echo $product->getId(); ?>"
+                                                                data-product-name="<?php echo $product->getName(); ?>"
+                                                                onclick="sendPurchaseRequestGridView(this)">
+                                                            &nbsp;Xác nhận
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    <?php endif;?>
+                                </td>
+                                <?php if ($product->getTypeID() === 'bundle'): ?>
+                                    <?php
+                                    $bundleCollection = $product->getTypeInstance(true)
+                                        ->getSelectionsCollection($product->getTypeInstance(true)->getOptionsIds($product), $product);
+                                    ?>
+                                    <?php foreach ($bundleCollection as $_option): ?>
+                                        <input type="hidden"
+                                               name="bundle_option[<?php echo $_option->getOptionId() ?>]"
+                                               value="<?php echo $_option->getSelectionId() ?>"/>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                                <input type="hidden" name="qty" value="1"/>
+
+                            </form>
+                        <?php endforeach; ?>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var $j = jQuery.noConflict();
+    $j(document).ready(function () {
+        bindAddToCart();
+
+        $j('.cp-remove').on('click', function (e) {
+            var productId = $j(this).attr('data-id');
+            swal({
+                    title: "Xóa khỏi danh sách ?",
+                    text: "Bạn có muốn xóa sản phẩm khỏi danh sách so sánh?",
+                    type: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: '#DD6B55',
+                    confirmButtonText: 'Xóa ',
+                    cancelButtonText: "Hủy bỏ",
+                    closeOnConfirm: false,
+                    closeOnCancel: false,
+                    showLoaderOnConfirm: true
+                },
+                function (isConfirm) {
+                    if (isConfirm) {
+                        var compareList = JSON.parse(localStorage.getItem('compareList'));
+                        var listItem = compareList.listItem;
+                        var newList = [];
+                        listItem.forEach(function (item) {
+                            if (item.product_id != productId) {
+                                newList.push(item);
+                            }
+                        });
+                        var itemParams = [];
+                        newList.forEach(function (item) {
+                            itemParams.push({
+                                'product_id': item.product_id
+                            });
+                        });
+                        compareList.listItem = newList;
+                        localStorage.setItem('compareList', JSON.stringify(compareList));
+                        compareList.listItem = itemParams;
+                        if (newList.length == 0) {
+                            window.close();
+                            return;
+                        }
+                        window.location.href = "<?php echo Mage::getUrl("compare/index/compare")?>" + "?data=" + btoa(JSON.stringify(compareList));
+                    }
+                    else {
+                        swal.close();
+                    }
+                });
+            e.stopPropagation();
+            e.preventDefault();
+        });
+
+        function bindAddToCart() {
+            $j('.wish-add-to-cart').bind('click', function (e) {
+                var product_id = $j(this).attr('product-id');
+                $j('.wish-add-to-cart').prop('disabled', true);
+                $j('.bp-i-' + product_id).addClass('hidden');
+                $j('.add-to-cart-ajax-loader-' + product_id).removeClass('hidden');
+
+                var form = $j('#product_addtocart_form-' + product_id);
+                var data = form.serializeArray();
+
+                $j.ajax({
+                    url: form.attr('action'),
+                    type: 'POST',
+                    dataType: 'json',
+                    data: data,
+                    success: function (response) {
+                        $j('.wish-add-to-cart').prop('disabled', false);
+                        if (response.message !== '') {
+                            $j('.add_to_cart_messages').empty();
+                            if (response.error_flg == 0) {
+                                swal("Thành công!", "Thêm vào giỏ hàng thành công");
+                                setTimeout(function () {
+                                    swal.close();
+                                }, 3000);
+                            }
+                            else {
+                                if (response.message == 'Please specify the product\'s option(s).') {
+                                    response.message = 'Sản phẩm có chứa thuộc tính, vui lòng vào chi tiết sản phẩm';
+                                }
+                                $j('.add_to_cart_messages-' + product_id).append("<div class='alert alert-danger mb-5'>" + response.message + "</div>");
+                            }
+                        }
+
+                        // Update shopping cart header
+                        $j('#shopping-cart-header').empty().append(response.ex_header_html);
+
+                        // Update shopping cart footer
+                        $j('#shopping-cart-footer').empty().append(response.footer_cart_html);
+
+                        $j('.mini-cart').click(function (e) {
+                            e.stopPropagation();
+                        });
+
+                        if ($j(window).scrollTop() > $j(window).width() / 3.2) {
+                            $j('.mini-cart').css('right', '0');
+                        }
+
+                        $j('.wish-add-to-cart').prop('disabled', false);
+                        $j('.bp-i-' + product_id).removeClass('hidden');
+                        $j('.add-to-cart-ajax-loader-' + product_id).addClass('hidden');
+                    }
+                });
+                e.preventDefault();
+                e.stopPropagation();
+            });
+        }
+    });
+</script>

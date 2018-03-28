@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Ved_Crosscheck>
+            <active>true</active>
+            <codePool>local</codePool>
+          </Ved_Crosscheck>
+    </modules>
+</config> 

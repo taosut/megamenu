@@ -1,0 +1,118 @@
+body{font:14px/1.7 arial,'\5FAE\8EDF\6B63\9ED1\9AD4';color:#d1c0a5; background:#160607;}
+
+#header { width:100%; overflow-x:hidden; background:url(../images/head_bg.jpg) 50% 0 no-repeat;}
+#header_content { width:1000px; height:710px; margin:0 auto; position:relative;}
+#buy { width:100%; overflow-x:hidden; background:url(../images/index_buy.jpg) 50% 0 no-repeat;}
+#buy_content { width:1000px; height:1000px; margin:0 auto; position:relative;}
+#treasure { width:100%; overflow-x:hidden; background:url(../images/treasure_bg.jpg) 50% 0 no-repeat;}
+#treasure_content { width:1000px; height:808px; margin:0 auto; position:relative;}
+#combine_box { width:100%; overflow-x:hidden; background:url(../images/combine_bg.jpg) 50% 0 no-repeat;}
+#combine_box_content { width:1000px; height:987px; margin:0 auto; position:relative;}
+#recod {width:100%; overflow-x:hidden; background:url(../images/index_recod.jpg) 50% 0 no-repeat;}
+#recod_content { width:1000px; height:527px; margin:0 auto; position:relative;}
+#open_recod {width:100%; overflow-x:hidden; background:url(../images/open_recod.jpg) 50% 0 no-repeat;}
+#open_recod_content { width:1000px; height:527px; margin:0 auto; position:relative;}
+#ombine_recod {width:100%; overflow-x:hidden; background:url(../images/combine_recod.jpg) 50% 0 no-repeat;}
+#ombine_recod_content { width:1000px; height:633px; margin:0 auto; position:relative;}
+#rule {width:100%; overflow-x:hidden; background:url(../images/index_rule.jpg) 50% 0 no-repeat;}
+#rule_content { width:1000px; height:648px; margin:0 auto; position:relative;}
+#copyright {width:100%; overflow-x:hidden; background:url(../images/copyright.jpg) 50% 0 no-repeat;}
+#copyright_content { width:1000px; height:115px; margin:0 auto; position:relative;}
+#lol_logo { width:290px; height:115px; display:block; top:10px; left:360px; position:absolute;}
+#garena {width:90px; height:30px; display:block; top:45px; left:70px; position:absolute;}
+#fb {width:30px; height:30px; display:block; top:45px; left:950px; position:absolute;}
+
+#skin1 { width:171px; height:174px; background:url(../images/skin1.jpg) 0 0 no-repeat; display:block; position:absolute; top:494px; left:420px;}
+#skin2 { width:171px; height:174px; background:url(../images/skin2.jpg) 0 0 no-repeat; display:block; position:absolute; top:494px; left:420px;}
+#hero1 { width:171px; height:174px; background:url(../images/hero1.jpg) 0 0 no-repeat; display:block; position:absolute; top:494px; left:420px;}
+#hero2 { width:171px; height:174px; background:url(../images/hero2.jpg) 0 0 no-repeat; display:block; position:absolute; top:494px; left:420px;}
+#Askin1 { width:171px; height:173px; background:url(../images/Askin1.jpg) 0 0 no-repeat; display:block; position:absolute; top:228px; left:173px;}
+#Askin2 { width:171px; height:173px; background:url(../images/Askin2.jpg) 0 0 no-repeat; display:block; position:absolute; top:228px; left:173px;}
+#Ahero1 { width:171px; height:173px; background:url(../images/Ahero1.jpg) 0 0 no-repeat; display:block; position:absolute; top:228px; left:173px;}
+#Ahero2 { width:171px; height:173px; background:url(../images/Ahero2.jpg) 0 0 no-repeat; display:block; position:absolute; top:228px; left:173px;}
+
+#nav { width:925px; height:115px; position:absolute; left:37px; background:url(../images/menu_bg.png) 0 0 no-repeat;}
+#step1 { width:260px; height:115px; background:url(../images/step1.png) 0 0 no-repeat; display:block; position:absolute; left:74px; top:0;}
+#step1_active { width:260px; height:115px; background:url(../images/step1_active.png) 0 0 no-repeat; display:block; position:absolute; left:74px; top:0;}
+#step1:hover { background:url(../images/step1_hover.png) 0 0 no-repeat;}
+#step2 { width:260px; height:115px; background:url(../images/step2.png) 0 0 no-repeat; display:block; position:absolute; left:334px; top:0;}
+#step2_active { width:260px; height:115px; background:url(../images/step2_active.png) 0 0 no-repeat; display:block; position:absolute; left:334px; top:0;}
+#step2:hover { background:url(../images/step2_hover.png) 0 0 no-repeat;}
+#step3 { width:260px; height:115px; background:url(../images/step3.png) 0 0 no-repeat; display:block; position:absolute; left:594px; top:0;}
+#step3_active  { width:260px; height:115px; background:url(../images/step3_active.png) 0 0 no-repeat; display:block; position:absolute; left:594px; top:0;}
+#step3:hover { background:url(../images/step3_hover.png) 0 0 no-repeat;}
+
+#login { width:191px; height:52px; background:url(../images/login.png) 0 0 no-repeat; display:block; margin:0 15px 0 20px;}
+#login:hover { background:url(../images/login_hover.png) 0 0 no-repeat;}
+
+.story { width:925px; height:90px; position:absolute; left:37px; top:130px;}
+.sale { width:925px; height:730px; position:absolute; left:37px; top:230px;}
+.sale li { width:270px; height:310px; float:left; margin:10px 15px 5px 20px; display:block; position:relative;}
+.item1 { background:url(../images/sale1.png) 0 0 no-repeat;}
+.item2 { background:url(../images/sale2.png) 0 0 no-repeat;}
+.item3 { background:url(../images/sale3.png) 0 0 no-repeat;}
+.item4 { background:url(../images/sale4.png) 0 0 no-repeat;}
+.item5 { background:url(../images/sale5.png) 0 0 no-repeat;}
+.item6 { background:url(../images/sale6.png) 0 0 no-repeat;}
+.treasure_content { width:100px; height:142px; background:url(../images/treasure_content.jpg) 0 0 no-repeat; position:absolute; top:78px; left:140px;}
+.treasure_in { width:100px; height:142px; background:url(../images/treasure_in.jpg) 0 0 no-repeat; position:absolute; top:78px; left:140px;}
+h3 { margin:0 15px 10px 20px; font-size:15px;}
+h3 a { text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);background-image: linear-gradient(to bottom, #fbb450, #f89406);background-repeat: repeat-x; color:#000; font-size:14px; padding:5px; margin:0 0 0 20px;
+background:orange \9; /*IE8*/*background:orange; /*IE7*/_background:orange; /*IE6*/ }
+h4 { margin:0 15px 10px 0; font-size:15px;}
+h4 a { text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);background-image: linear-gradient(to bottom, #fbb450, #f89406);background-repeat: repeat-x; color:#000; font-size:14px; padding:5px; margin:0 0 0 20px;
+background:orange \9; /*IE8*/*background:orange; /*IE7*/_background:orange; /*IE6*/ }
+.color1 { color:#eb6100;}
+.title { background:#eb6100; padding:2px 5px; border-radius:5px; color:#fff;}
+.select { width:65px; height:34px; position:absolute; top:241px; left:76px;}
+.form1 { width:65px; height:34px; background:#1e1917; text-align:center; color:#d1c0a5; border:0px; font-size:18px;}
+.buy_btn { width:101px; height:39px; position:absolute; top:239px; left:149px; background:url(../images/buy_btn.png) 0 0 no-repeat; display:block;}
+.buy_btn:hover { background:url(../images/buy_btn_hover.png) 0 0 no-repeat;}
+
+.logout { width:147px; height:38px; position:absolute; top:52px; left:629px; background:url(../images/logout.png) 0 0 no-repeat; display:block;}
+.logout:hover { background:url(../images/logout_hover.png) 0 0 no-repeat;}
+.open { width:147px; height:38px; position:absolute; top:52px; left:779px; background:url(../images/open.png) 0 0 no-repeat; display:block;}
+.open:hover { background:url(../images/open_hover.png) 0 0 no-repeat;}
+.go { width:147px; height:38px; position:absolute; top:52px; left:779px; background:url(../images/go.png) 0 0 no-repeat; display:block;}
+.go:hover { background:url(../images/go_hover.png) 0 0 no-repeat;}
+.sale_recod { width:925px; height:370px; position:absolute; left:37px; top:120px;}
+.combine_recod { width:925px; height:470px; position:absolute; left:37px; top:120px;}
+.eventrule { width:870px; height:460px; position:absolute; left:57px; top:120px;}
+.eventrule a{ text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);background-image: linear-gradient(to bottom, #fbb450, #f89406);background-repeat: repeat-x; color:#000; font-size:14px; padding:5px; margin:0 10px 0 10px;
+background:orange \9; /*IE8*/*background:orange; /*IE7*/_background:orange; /*IE6*/ }
+.number {width:870px; height:30px; margin:10px 0 0 20px; font-size:13px;}
+.number .active{ color:#362e2b; padding:1px 5px; background:#f8b551; color:#362e2b; border:1px #59493f solid; border-radius:5px;}
+.number li { float:left;margin: 0 5px 0 0;}
+.number li a{ color:#362e2b; padding:1px 5px; background:#a6937c; color:#362e2b; border:1px #59493f solid; border-radius:5px; display:block;}
+.number li a:hover{ background:#f8b551;}
+.active{ float:left; padding:1px 5px; background:#f8b551; color:#362e2b; border:1px #59493f solid; margin: 0 5px 0 0; border-radius:5px;}
+.td1 { border:1px #59493f solid; padding:2px 5px; background:#362e2b; color:#f8b551; text-align:center;}
+.td2 { border:1px #59493f solid; padding:2px 5px; background:#1c1716;  text-align:center;}
+.td3 { border:1px #59493f solid; padding:2px 5px; background:#1c1716;  text-align:center; height:30px;}
+
+
+.treasure_box { width:925px; height:550px; position:absolute; left:37px; top:230px;}
+#opentreasure { width:276px; height:263px; position:absolute; top:160px; left:600px; background:url(../images/opentreasure.png) 0 0 no-repeat; display:block;}
+#opentreasure:hover{background:url(../images/opentreasure_hover.png) 0 0 no-repeat;}
+#combine{ text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);background-image: linear-gradient(to bottom, #fbb450, #f89406);background-repeat: repeat-x; color:#000; font-size:14px; padding:5px; margin:5px;
+background:orange \9; /*IE8*/*background:orange; /*IE7*/_background:orange; /*IE6*/ }
+#b_item1 { width:157px; height:130px; display:block; text-align:center; background:url(../images/item1_bg.png) 0 0 no-repeat; position:absolute; top:128px; left:135px; padding:50px 0 0 0 ;}
+#b_item2 { width:157px; height:130px; display:block; text-align:center; background:url(../images/item1_bg.png) 0 0 no-repeat; position:absolute; top:269px; left:48px; padding:50px 0 0 0 ;}
+#b_item3 { width:157px; height:130px; display:block; text-align:center; background:url(../images/item1_bg.png) 0 0 no-repeat; position:absolute; top:413px; left:134px; padding:50px 0 0 0 ;}
+#action { width:190px; height:193px; position:absolute; top:269px; left:360px; background:url(../images/action.png) 0 0 no-repeat; display:block;}
+#action:hover{background:url(../images/action_hover.png) 0 0 no-repeat;}
+#reset { width:293px; height:49px; position:absolute; top:595px; left:588px; background:url(../images/reset.png) 0 0 no-repeat; display:block;}
+#reset:hover{background:url(../images/reset_hover.png) 0 0 no-repeat;}
+#select_item { width:294px; height:427px; position:absolute; top:162px; left:588px;}
+
+
+
+/*popup*/
+#popwrap,#popinner,#popcontent,#masklayer,#popclose,#poploader{margin: 0;padding: 0}
+#popwrap{position:fixed;left:0;top:0;z-index:12;width:100%;height:100%;overflow:hidden;_position:absolute;display: none}
+#popinner{margin:0 auto;position:relative;top:50%;_top:0;zoom:1;width: 880px;height: 600px;}
+#popcontent{visibility:hidden;width:100%;height: 100%;}
+#masklayer{position:fixed;left:0;top:0;z-index:11;background:#000;width:100%;height:100%;_position:absolute;opacity:0.7;filter:alpha(opacity=70);display: none;}
+#popclose{}
+#popexpand{width:20px;height:20px;position:absolute;cursor:pointer;background-image:url(../images/popexpand.png);right:33px;top:6px;z-index: 1;visibility: hidden;display: block;text-decoration: none;}
+#poploader{width:32px;height:32px;position:absolute;background-image:url(../images/poploader.gif);left:50%;top:50%;z-index: 1;margin: -16px 0 0 -16px;overflow: hidden;}

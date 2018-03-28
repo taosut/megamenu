@@ -1,0 +1,267 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: Teko
+ * Date: 9/6/2017
+ * Time: 11:10 AM
+ */
+
+// Lay code tu rule trong backend
+//$rule = Mage::getModel('salesrule/rule')->load(101);
+//
+//$collection = Mage::getResourceModel('salesrule/coupon_collection')
+//    ->addFieldToFilter('rule_id', 101)
+//    ->addFieldToFilter('times_used', 0)
+//    ->getFirstItem()
+//    ->getData('code');
+?>
+
+<?php
+$currentUser = Mage::getSingleton('customer/session')->getCustomer();
+$agentInfo = json_decode($currentUser->getAgentInfo());
+$agentChannels = array(
+    1 => 'Mạng xã hội',
+    2 => 'Diễn đàn/Website'
+);
+?>
+
+<style>
+    /*basic reset*/
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    /*adding a black bg to the body to make things clearer*/
+    body {
+        background: black;
+    }
+</style>
+
+<script>
+    dataLayer = [];
+</script>
+
+<?php
+$session = Mage::getSingleton('customer/session');
+?>
+
+<?php if ($session->isLoggedIn()): ?>
+    <?php if ($currentUser->getIsAgentDeleted() == 1): ?>
+        <?php echo $this->getChildHtml('agent.warning') ?>
+    <?php else: ?>
+        <div class="agent-content">
+            <div class="row row-eq-height">
+
+                <?php echo $this->getChildHtml('agent.navigation') ?>
+
+                <div class="col-md-10 col-sm-10 col-xs-12">
+                    <div class="row mr-0">
+                        <div class="col-md-12 col-sm-12 col-xs-12 pl-30-xs">
+                            <div class="row">
+                                <div class="col-md-6 col-sm-6 col-xs-6 pr-7">
+                                    <div class="agent-box agent-achievements">
+                                        <div class="agent-box-title h-40">Điểm thành tích hiệu lực</div>
+                                        <div class="agent-available-point">
+                                            <span><?php echo $agentInfo->available_point ?></span>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-sm-6 col-xs-6 pl-7">
+                                    <div class="agent-box agent-achievements">
+                                        <div class="agent-box-title h-40">Điểm thành tích đã sử dụng</div>
+                                        <div class="agent-used-point">
+                                            <span><?php echo $agentInfo->used_point ?></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row row-eq-height">
+                                <div class="col-md-12 col-sm-12">
+                                    <div class="agent-box agent-post-history">
+                                        <div class="agent-box-title">
+                                            Các quyền lợi của đặc vụ
+                                        </div>
+                                        <div class="table-responsive">
+                                            <table id="datatable" class="table table-striped agent-table">
+                                                <thead>
+                                                <tr>
+                                                    <th>STT</th>
+                                                    <th>Tên quyền lợi</th>
+                                                    <th>Số điểm cần để đổi</th>
+                                                    <th>Quy đổi</th>
+                                                </tr>
+                                                </thead>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 col-sm-12">
+                                    <div class="agent-box agent-post-history mb-15">
+                                        <div class="agent-box-title">
+                                            Quy định về đổi điểm
+                                        </div>
+                                        <div class="agent-redemption-rules">
+                                            <!-- Agent redemption rules -->
+                                            <?php
+                                            echo $this->getLayout()->createBlock('cms/block')->setBlockId('agent_redemption_rules')->toHtml();
+                                            ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="redeemSucceed" class="modal fade" role="dialog">
+            <div class="modal-dialog" style="margin-top: 25vh">
+                <!-- Modal content-->
+                <div class="modal-content agent-modal-content">
+                    <div class="modal-header agent-modal-header">
+                        <div class="agent-close-modal" data-dismiss="modal">&times;</div>
+                    </div>
+                    <div class="modal-body agent-modal-body">
+                        <div class="a-center">
+                            <img class="agent-modal-body-logo"
+                                 src="<?php echo $this->getSkinUrl('images/agent-logo-green.png') ?>">
+                            <div class="agent-modal-body-text">
+                                Chúc mừng Đặc vụ đã quy đổi quyền lợi thành công. Kết quả sẽ gửi vào SMS trong vòng 6h.
+                                Xin
+                                cảm ơn!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
+<?php else: ?>
+    <?php echo $this->getChildHtml('agent.warning_login') ?>
+<?php endif; ?>
+
+<script>
+    var $j = jQuery.noConflict();
+    var win = $j(window);
+
+    $j('.main-container').find('.container').addClass('ml-0');
+
+    $j('input[type="number"]').keypress(function (e) {
+        var a = [];
+        var k = e.which;
+
+        for (i = 48; i < 58; i++)
+            a.push(i);
+
+        if (!(a.indexOf(k) >= 0))
+            e.preventDefault();
+    });
+
+    $j(document).ready(function () {
+        $j('.main-container').find('.container').addClass('w-100');
+        $j('.build-pc-btn').addClass('no-display');
+        $j('.facebook-message').addClass('no-display');
+
+        $j("#datepicker").datepicker({
+            dateFormat: 'dd/mm/yy',
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "1950:2017"
+        });
+
+        // Render datatable
+        $j('#datatable').DataTable({
+            "ajax": '<?php echo $this->getUrl('agent/index/getRedemptionGift')?>',
+            "pagingType": "full_numbers",
+            "language": {
+                "lengthMenu": "Hiển thị _MENU_ bản ghi mỗi trang",
+                "zeroRecords": "Không tìm thấy dữ liệu phù hợp",
+                "info": "Trang _PAGE_ / _PAGES_",
+                "infoEmpty": "",
+                "infoFiltered": "",
+                "search": "Tìm kiếm:",
+                "paginate": {
+                    "previous": "Trước",
+                    "next": "Sau",
+                    "first": "Đầu",
+                    "last": "Cuối"
+                }
+            },
+            "columns": [
+                {"width": "10%"},
+                {"width": "40%"},
+                {"width": "30%"},
+                {"width": "20%", "orderable": false}
+            ],
+            "initComplete": function (settings, json) {
+                $j('div.datatable-loading').remove();
+            }
+        });
+
+        // Add loading text when call ajax
+        $j('tbody').empty();
+        $j('<div class="datatable-loading" style="padding: 15px 0; text-align: center;">Đang tải dữ liệu...</div>').appendTo('tbody');
+        $j('.datatable-loading').css('width', $j('#datatable').width() + 'px').css('border-bottom', '1px solid #fff');
+    });
+
+    function redeem(value) {
+
+        swal({
+                title: "Quy đổi thành tích?",
+                text: "Bạn có chắc chắn muốn quy đổi quyền lợi này?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Xác nhận",
+                cancelButtonText: "Đóng",
+                closeOnConfirm: false,
+                showLoaderOnConfirm: true
+            },
+            function () {
+                var redemptionGiftId = $j(value).data('redemption-gift-id');
+
+                var dataPost = {
+                    user_id: '<?php echo $currentUser->getId() ?>',
+                    redemption_gift_id: redemptionGiftId
+                };
+
+                $j.ajax({
+                    url: '<?php echo $this->getUrl('agent/index/redeem'); ?>',
+                    type: 'post',
+                    dataType: 'json',
+                    data: dataPost,
+                    success: function (response) {
+//                console.log(response);
+                        if (response.success) {
+                            // Ajax reload datatable
+                            $j('#datatable').DataTable().ajax.reload();
+
+                            // Update block diem thanh tich
+                            $j('.agent-available-point span').empty();
+                            $j('.agent-available-point span').append(response.available_point);
+                            $j('.agent-used-point span').empty();
+                            $j('.agent-used-point span').append(response.used_point);
+
+                            swal.close();
+                            $j('#redeemSucceed').modal();
+                        }
+                        else {
+                            if (response.no_coupon) {
+                                swal("Quy đổi không thành công!", response.error_message, "error");
+                            }
+                            else {
+                                swal("", "Có lỗi xảy ra, vui lòng thử lại sau!", "error");
+                            }
+                        }
+                    }
+                });
+            });
+    }
+</script>

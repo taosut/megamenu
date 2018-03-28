@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Teko_VAT>
+            <active>true</active>
+            <codePool>local</codePool>
+          </Teko_VAT>
+    </modules>
+</config> 

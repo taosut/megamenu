@@ -1,0 +1,277 @@
+<?php
+$listPC = Mage::registry('listPC');
+$totalPage = Mage::registry('totalPage');
+$customer = Mage::getSingleton('customer/session')->getCustomer();
+?>
+<div class="breadcrumbs">
+    <ul>
+        <div class="tekshop-cat-header-breadcrumbs">
+            <div class="tekshop-cat-header-img">
+                <img src="/skin/frontend/default/tekshop/images/header-icon.png">
+            </div>
+            <div class="tekshop-breadcrumb-header">
+                <li class="category613">
+                    <strong>Danh sách bộ PC của <?php echo $customer->getName(); ?></strong>
+                </li>
+            </div>
+        </div>
+    </ul>
+</div>
+
+<input type="hidden" id="currentPage" value="1"/>
+<input type="hidden" id="totalPage" value="<?php echo $totalPage; ?>"/>
+<?php if (!$listPC->count()): ?>
+    <div class="cart-empty">
+        <img class="cart-empty-img">
+        <h1 class="cart-empty-text">Danh sách cấu hình của bạn đang trống !</h1>
+    </div>
+<?php else: ?>
+<div class="col-md-12 col-xs-12 bp-products-content no-padding">
+    <div class="origin-list">
+        <div class="load-after-remove">
+            <div class="bpf-pcview">
+                <div class="col-md-8 col-xs-8 bp-f-main" style="padding-right: 0!important;">
+                    <?php foreach ($listPC as $_myPC): ?>
+                        <div class="col-md-12 col-xs-12 bp-selected-item wishlist-show list-bp-hold"
+                             style="padding-right: 0!important;" data-id='<?php echo $_myPC->getId() ?>'>
+                            <div class="col-md-2 col-xs-2">
+                                <div class="bp-mypc-detail">
+                                    <div class="numberCircle">
+                                        <?php echo $_myPC->getAllItem()->count(); ?>
+                                    </div>
+                                    <span class="sp-tips">Sản phẩm</span>
+                                </div>
+                            </div>
+                            <div class="col-md-8 col-xs-8">
+                                <div class="bp-mypc-name">
+                                    <a href='<?php echo Mage::getUrl('buildpc') . '?mypc=' . $_myPC->getId(); ?>'
+                                        target="_blank" title="<?php echo $_myPC->getName(); ?>">
+                                        <?php echo $_myPC->getName(); ?>
+                                    </a>
+                                </div>
+                                <div class="bp-product-regular-price">
+                                    <?php echo number_format($_myPC->getPrice(), 0, ",", ".") . ""; ?><span>đ</span>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-xs-2 a-right no-padding" style="padding-right: 30px!important;">
+                                <button myPC-id="<?php echo $_myPC->getId() ?>" alt="Xóa" title="Xóa khỏi danh sách"
+                                        type="button" class="remove-myPC" aria-hidden="true"
+                                        deluminate_imagetype="png"></button>
+                            </div>
+                            <div class="bp-addition-content" id="list<?php echo $_myPC->getId() ?>"
+                                 style="display:none"></div>
+                        </div>
+                    <?php endforeach; ?>
+                    <div class="additionContent"></div>
+                </div>
+                <div class="col-md-4 col-xs-4 bp-list-detail">
+                    <div class="bp-show-detail">
+                        <div class="load-bf-detail" style="display: none;">
+                            <img class="mt-13"
+                                 src="http://tekshop.vn/skin/frontend/default/tekshop/images/loading.gif">
+                        </div>
+                    </div>
+                    <div class="load-items">
+                    </div>
+                </div>
+            </div>
+            <div class="bpf-mobileview" style="display:none">
+                <div class="col-md-12 col-xs-12 bp-products-content no-padding">
+                    <div class="origin-list">
+                        <div class="load-after-remove">
+                            <?php foreach ($listPC as $_myPC): ?>
+                                <div class="col-md-12 col-xs-12 bp-selected-item wishlist-show">
+                                    <div class="row">
+                                        <div class="col-md-3 col-xs-3">
+                                            <div class="bp-mypc-detail">
+                                                <div class="numberCircle" style="margin-top: 10%;width: 53px;height: 30px;font-size: 22px;border: none;">
+                                                    <?php echo $_myPC->getAllItem()->count(); ?>
+                                                </div>
+                                                <span class="sp-tips-mobile">
+                                                    Sản phẩm
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-7 col-xs-7">
+                                            <div class="bp-mypc-name" style="word-wrap: break-word;">
+                                                <a href='<?php echo Mage::getUrl('buildpc') . '?mypc=' . $_myPC->getId(); ?>'>
+                                                    <?php echo $_myPC->getName(); ?>
+                                                </a>
+                                            </div>
+                                            <div class="bp-product-regular-price">
+                                                <?php echo number_format($_myPC->getPrice(), 0, ",", ".") . ""; ?><span>đ</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2 col-xs-2 a-right no-padding"
+                                             style="padding-right: 30px!important;">
+                                            <button myPC-id="<?php echo $_myPC->getId() ?>" alt="Xóa"
+                                                    title="Xóa khỏi danh sách"
+                                                    type="button" class="remove-myPC" aria-hidden="true"
+                                                    deluminate_imagetype="png"></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php endforeach; ?>
+                            <div class="additionContent">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php if ($totalPage != 1): ?>
+        <div class="text-center load-more-products-text" style="margin-top: 10px">
+            <button type="button" class="btn btn-default btn-viewmore btn-loadmore-list" style="margin-top: 30px;">XEM THÊM
+                SẢN PHẨM
+            </button>
+        </div>
+        <div class="text-center load-more-products" title="Đang tải" style="display: none;">
+            <img class="mt-13" src="http://tekshop.vn/skin/frontend/default/tekshop/images/loading.gif">
+        </div>
+    <?php endif; ?>
+    <?php endif; ?>
+    <script>
+        bindRemove();
+        var $j = jQuery.noConflict();
+        $j(document).ready(function () {
+            var width = $j(window).width();
+            if (width <= 500) {
+                $j('.bpf-pcview').hide();
+                $j('.bpf-mobileview').show();
+            } else {
+                $j('.bpf-pcview').show();
+                $j('.bpf-mobileview').hide();
+            }
+            $j(window).resize(function () {
+                var width = $j(window).width();
+                if (width <= 500) {
+                    $j('.bpf-pcview').hide();
+                    $j('.bpf-mobileview').show();
+                } else {
+                    $j('.bpf-pcview').show();
+                    $j('.bpf-mobileview').hide();
+                }
+            });
+        });
+        $j('.btn-loadmore-list').on('click', function (e) {
+            $j('.btn-loadmore-list').hide();
+            $j('.load-more-products').show();
+            var currentPage = Number($j('#currentPage').val());
+            var totalPage = Number($j('#totalPage').val());
+            $j.ajax({
+                url: '<?php echo Mage::getUrl("buildpc/saving/loadMore")?>',
+                data: {
+                    'currentPage': currentPage
+                },
+                success: function (data) {
+                    $j('.additionContent').append(data);
+                    $j('.btn-loadmore-list').show();
+                    $j('.load-more-products').hide();
+                    currentPage = Number(currentPage) + 1;
+                    if (currentPage === totalPage) {
+                        $j('.load-more-products-text').hide();
+                    } else {
+                        $j('#currentPage').val(currentPage);
+                    }
+                    $j('load-more-products').hide();
+                    bindRemove();
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log("Status: " + textStatus);
+                    console.log("Error: " + errorThrown);
+                    $j('load-more-products').hide();
+                }
+            });
+            e.preventDefault();
+            e.stopPropagation();
+        });
+
+        function bindRemove() {
+            $j('.remove-myPC').bind('click', function (e) {
+                var myPC_id = $j(this).attr('myPC-id');
+                swal({
+                        title: "Xóa dàn PC ?",
+                        text: "Bạn có muốn xóa bộ PC khỏi danh sách?",
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: '#DD6B55',
+                        confirmButtonText: 'Xóa sản phẩm',
+                        cancelButtonText: "Hủy bỏ",
+                        closeOnConfirm: false,
+                        closeOnCancel: false
+                    },
+                    function (isConfirm) {
+                        if (isConfirm) {
+                            $j.ajax({
+                                method: 'POST',
+                                url: '<?php echo Mage::getUrl("buildpc/saving/remove")?>',
+                                data: {
+                                    'myPC_id': myPC_id,
+                                },
+                                success: function (data) {
+                                    data = JSON.parse(data);
+                                    if (data['status'] === 'success') {
+                                        // reload
+                                        window.location.href =
+                                            '<?php echo $this->getUrl('*/*/*', ['_current' => true,
+                                                '_use_rewrite' => true, '_store' => Mage::app()->getStore()->getId()]); ?>';
+                                    }
+                                    else if (data['status'] === 'not_login') {
+                                        swal("Phiên làm việc kết thúc! Bạn cần đăng nhập để thực hiện thao tác này!");
+                                        setTimeout(function () {
+                                            swal.close();
+                                        }, 1000)
+                                    }
+                                }
+                            })
+                        }
+                        else {
+                            swal.close();
+                        }
+                    });
+            });
+        }
+        $j(".list-bp-hold").hover(function () {
+
+                var check = $j('.bp-f-main').find('.bpf-list-active');
+                if (check.length) {
+                    check.removeClass('bpf-list-active');
+                }
+                if ($j('.load-bf-detail').is(':visible')) {
+                    $j('.load-bf-detail').hide();
+                }
+                $j(this).addClass('bpf-list-active');
+                var content = $j('#list' + $j(this).attr('data-id'));
+                if (!content.attr('data-full')) {
+                    $j('.bp-list-detail').removeClass('bp-list-detail-hover');
+                    $j('.load-items').html("");
+                    $j('.load-bf-detail').show();
+                    var id = $j(this).attr('data-id');
+                    $j.ajax({
+                        method: 'get',
+                        url: '<?php echo Mage::getUrl('buildpc/saving/loadItems/')?>',
+                        data: {
+                            'pc': id
+                        },
+                        success: function (response) {
+                            content.attr('data-full', 1);
+                            content.html(response);
+                            $j('.load-bf-detail').hide();
+                            $j('.load-items').html(content.html());
+                            $j('.bp-list-detail').addClass('bp-list-detail-hover');
+                        }
+                    });
+                } else {
+                    $j('.load-items').html(content.html());
+                    setTimeout(function () {
+                        $j('.bp-list-detail').addClass('bp-list-detail-hover');
+                    }, 150);
+                }
+
+            }
+            , function () {
+            }
+        );
+    </script>

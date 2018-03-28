@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+    <adminhtml_productqc_index>
+
+        <reference name="content">
+            <block type="core/template" name="productqc"
+                   template="productqc/product.phtml"/>
+        </reference>
+    </adminhtml_productqc_index>
+    <adminhtml_catalog_Productqc>
+        <reference name="content">
+            <block type="core/template" name="warehouse" as="warehouse"
+                   template="productqc/warehouse.phtml"/>
+        </reference>
+    </adminhtml_catalog_Productqc>
+    <adminhtml_asia_product_index>
+        <reference name="content">
+            <block type="core/template" name="warehouse" as="product.qc.update.price"
+                   template="ved_productqc/asia_product/index.phtml"/>
+        </reference>
+    </adminhtml_asia_product_index>
+</layout>

@@ -1,0 +1,101 @@
+<?php $order = $this->getOrderDetail(); ?>
+    <?php if ($order->getShippingAddress()): ?>
+        <?php
+            $order_state = $order->getState();
+            $order_status = $order->getStatus();
+            $shipping_address = $order->getShippingAddress();
+            $full_name = $shipping_address->getName();
+            $street = $shipping_address->getStreetFull();
+            $city = $shipping_address->getCity();
+            $region = $shipping_address->getRegion();
+            $telephone = $shipping_address->getTelephone();
+            $email = $shipping_address->getEmail();
+            $full_address = $street . ', ' . $city . ', ' . $region;
+            $total_free_item_price = 0;
+            $_items = $order->getItemsCollection();
+            foreach ($_items as $_item){
+                $freeItem = unserialize($_item->getAdditionalData());
+                $total_free_item_price += $freeItem['quantity'] * $freeItem['price'];
+            }
+            $sub_total = $order->getSubtotal();
+            $grand_total = $order->getGrandTotal();
+            $discount_value = $sub_total - $grand_total;
+            $grand_discount = $discount_value - $total_free_item_price;
+        ?>
+        <div class="tracking-order-detail-1st-block">
+            <div class="order-detail-code">Mã đơn hàng: <span>#<?php echo $order->getIncrementId(); ?></span></div>
+            <div class="order-detail-date">Ngày đặt: <span><?php echo date("d/m/Y H:i", strtotime($order->getCreatedAtStoreDate())); ?></span></div>
+            <div class="order-detail-status">Trạng thái: <span><?php echo $this->getStateName($order_state, $order_status) ?></span></div>
+        </div>
+        <div class="tracking-order-detail-simple-block mgt-7">
+            <div class="tracking-order-left-right no-padding-bottom">
+                <div class="to-left "> Phí vận chuyển:</div>
+                <div class="to-right"> Miễn phí</div>
+            </div>
+            <div class="tracking-order-left-right">
+                <div class="to-left">Hình thức:</div>
+                <div class="to-right">Thanh toán tiền mặt</div>
+            </div>
+        </div>
+        <div class="tracking-order-detail-simple-block">
+            <div class="tracking-order-left-right">
+                <div class="to-left">Tạm tính:</div>
+                <div class="to-right tracking-order-total"><?php echo Mage::helper('core')->currency($sub_total - $total_free_item_price, true, false); ?></div>
+            </div>
+            <?php if($order->getCouponCode()): ?>
+                <div class="tracking-order-left-right no-padding-bottom">
+                    <div class="to-left ">Mã giảm giá:</div>
+                    <div class="to-right"><?php echo $order->getCouponCode(); ?></div>
+                </div>
+            <?php endif; ?>
+            <?php if($grand_discount > 0): ?>
+                <div class="tracking-order-left-right">
+                    <div class="to-left">Giảm giá:</div>
+                    <div class="to-right tracking-order-discount">- <?php echo Mage::helper('core')->currency($grand_discount, true, false); ?></div>
+                </div>
+            <?php endif; ?>
+        </div>
+        <div class="tracking-order-detail-simple-block">
+            <div class="tracking-order-left-right no-padding-bottom">
+                <div class="to-left font-16">Thành tiền:</div>
+                <div class="to-right tracking-order-grandtotal"><?php echo Mage::helper('core')->currency($grand_total, true, false); ?></div>
+            </div>
+            <div class="vat to-right mgt-7"> (Đã bao gồm VAT)</div>
+        </div>
+        <div class="tracking-order-cart-info">
+            Thông tin giỏ hàng
+        </div>
+        <div>
+            <?php foreach ($_items as $_item): ?>
+                <div class="tracking-order-product">
+                    <div class="tracking-order-image">
+                        <img src="<?php echo Mage::helper('catalog/image')->init($_item->getProduct(), 'small_image'); ?>" />
+                    </div>
+                    <div class="tracking-order-side-info">
+                        <div class="tracking-order-name">
+                            <?php
+                            if(strlen($_item->getName()) > 84 ){
+                                echo substr($_item->getName(),0,81) . "...";
+                            }else{
+                                echo $_item->getName();
+                            }
+                            ?>
+                        </div>
+                        <?php
+                        ?>
+                        <div class="tracking-order-price">
+                            <?php echo Mage::helper('checkout')->formatPrice($_item->getPrice()); ?>
+                        </div>
+<!--                            <div class="tracking-order-old-price">-->
+<!--                                --><?php //echo Mage::helper('checkout')->formatPrice($oldPriceMain); ?>
+<!--                            </div>-->
+                        <div class="tracking-order-quanity">
+                            Số lượng: <span><?php echo intval($_item->getQtyOrdered())?></span>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
+
+

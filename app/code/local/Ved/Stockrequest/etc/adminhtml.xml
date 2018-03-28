@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+
+<config>
+    <menu>
+        <catalog>
+            <children>
+                <stockrequest>
+                    <title>Danh sách yêu cầu hàng từ người dùng</title>
+                    <sort_order>1000</sort_order>
+                    <action>adminhtml/userstockrequest</action>
+                </stockrequest>
+            </children>
+        </catalog>
+    </menu>
+</config>

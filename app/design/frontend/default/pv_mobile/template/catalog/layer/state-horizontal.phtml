@@ -1,0 +1,38 @@
+<?php $_filters = $this->getActiveFilters() ?>
+<?php if (!empty($_filters)): ?>
+    <?php
+    $filterGroup = array();
+    foreach ($_filters as $_filter) {
+        if (!isset($filterGroup[$_filter->getName()])) {
+            $filterGroup[$_filter->getName()] = array();
+        }
+        array_push($filterGroup[$_filter->getName()], (object)[
+            'label' => $this->escapeHtml($_filter->getLabel()),
+            'removeUrl' => $_filter->getRemoveUrl(),
+        ]);
+    }
+    ?>
+    <span class="filtered-title">Bộ lọc:</span>
+    <div class="filtered-content">
+        <?php if (count($filterGroup) > 0): ?>
+            <?php foreach ($filterGroup as $key => $group): ?>
+                <div class="filtered-item">
+                    <span class="filtered-key"><?php echo $key == 'Category' ? 'Danh mục' : $key ?>:</span>
+                    <?php foreach ($group as $filter): ?>
+                        <span class="filtered-value"><?php echo $filter->label ?>
+                            <a onclick="removeFiltered('<?php echo $filter->removeUrl ?>')"
+                               class="remove-filtered-item">
+                            <i class="fa fa-times"></i>
+                        </a>
+                    </span>
+                    <?php endforeach; ?>
+                </div>
+            <?php endforeach; ?>
+        <?php endif; ?>
+        <button type="button" onclick="clearFiltered('<?php echo $this->getClearUrl() ?>')" class="clear-filtered-btn">
+            Xóa bộ lọc
+            <img class="clear-filtered-ajax-loader hidden"
+                 src="<?php echo $this->getSkinUrl('images/ajax-loader-white.gif'); ?>"/>
+        </button>
+    </div>
+<?php endif; ?>

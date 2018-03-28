@@ -1,0 +1,411 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     base_default
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<?php
+$_order = $this->getOrder();
+$order_id = $_order->getId();
+$grand_total = $_order->getGrandTotal();
+$productImpressions = [];
+$orderedItems = [];
+?>
+
+<script>
+    dataLayer = [];
+    dataLayer.push({
+        'grandTotal': <?php echo $grand_total ?>
+    });
+</script>
+
+<div class="panel br-0 panel-order-item">
+    <div class="panel-body no-padding">
+        <h3 class="panel-cart-title cart-payment-success-title">Sản phẩm đã đặt hàng</h3>
+
+        <div class="row">
+            <div class="mid-row">
+                <?php
+                $_items = $_order->getItemsCollection();
+                $params = array(
+                    'max_length' => 55,
+                    'cut_replacer' => ' <a href="#" class="dots" onclick="return false">...</a>'
+                );
+                $total_free_item_price = 0;
+                ?>
+                <?php $_index = 0; ?>
+                <?php $_count = $_items->count(); ?>
+                <?php foreach ($_items as $_item): ?>
+                    <?php
+                    $productObj = new stdClass();
+                    $productObj->name = (string)$_item->getProduct()->getName();
+                    $productObj->id = (string)$_item->getProduct()->getId();
+                    $productObj->price = (string)$_item->getProduct()->getFinalPrice();
+                    $productObj->list = 'Sản phẩm đã đặt hàng';
+
+                    $productObjCart = new stdClass();
+                    $productObjCart->name = (string)$_item->getProduct()->getName();
+                    $productObjCart->id = (string)$_item->getProduct()->getId();
+                    $productObjCart->price = (string)$_item->getProduct()->getFinalPrice();
+                    $productObjCart->quantity = intval($_item->getQtyOrdered());
+
+                    //if a product has parents (simple product of configurable/bundled/grouped product) load his Parent product type
+                    if ($_item->getParentItemId()) {
+                        $parent_product_type = Mage::getModel('sales/order_item')->load($_item->getParentItemId())->getProductType();
+                        //if Parent product type is not Bundle and Configurable
+                        if ($parent_product_type != Mage_Catalog_Model_Product_Type::TYPE_BUNDLE && $parent_product_type != Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE ) {
+                            // your code goes here (do whatever you need to do)
+                            $productImpressions[] = $productObj;
+                            $orderedItems[] = $productObjCart;
+                        }
+                    } else {
+                        $productImpressions[] = $productObj;
+                        $orderedItems[] = $productObjCart;
+                    }
+                    ?>
+                    <?php $total = $_item->getPrice() * $_item->getQtyOrdered(); ?>
+                    <?php $freeItem = unserialize($_item->getAdditionalData()); ?>
+                    <?php if ($_item->getParentItem()) continue; ?>
+                    <div class="order-item-row">
+                        <div class="col-md-12 col-xs-12 no-padding">
+                            <!-- Web -->
+                            <div class="hidden-xs">
+                                <div class="col-md-2 no-padding pr-5">
+                                    <img src="<?php echo Mage::helper('catalog/image')->init($_item->getProduct(), 'small_image'); ?>"
+                                         width="65" height="65">
+                                </div>
+                                <div class="col-md-10">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="order-item-name product-mask"
+                                                 data-id="<?php echo $_item->getProduct()->getId() ?>"
+                                                 data-name="<?php echo $_item->getProduct()->getName() ?>"
+                                                 data-url="<?php echo $_item->getProduct()->getProductUrl() ?>"
+                                                 data-price="<?php echo $_item->getProduct()->getFinalPrice() ?>"
+                                            >
+                                                <?php echo $_item->getName(); ?>
+                                            </div>
+                                            <div class="col-md-12 pt-5 pl-0">
+                                                <span class='free-item-number'><?php echo ($freeItem && isset($freeItem['quantity'])) ? "(Tặng kèm " . $freeItem['quantity'] . " sản phẩm " . $freeItem['product_name'] . ")" : ''; ?><?php echo ($freeItem && isset($freeItem['parent'])) ? "(Sản phẩm khuyến mãi)" : ''; ?></span>
+                                            </div>
+                                            <div class="col-md-12 pl-25">
+                                                <?php if ($_item->getProductOptions()): ?>
+                                                    <?php if (isset($_item->getProductOptions()['bundle_options'])): ?>
+                                                        <?php $_options = $_item->getProductOptions()['bundle_options']; ?>
+                                                        <dl class="item-options">
+                                                            <?php foreach ($_options as $_option) : ?>
+                                                                <dt><?php echo Mage::helper('core')->escapeHtml($_option['label'], null) ?></dt>
+                                                                <dd>
+                                                                    <?php foreach ($_option['value'] as $_option_value): ?>
+                                                                        <?php echo $_option_value['title']; ?>
+                                                                    <?php endforeach; ?>
+                                                                </dd>
+                                                            <?php endforeach; ?>
+                                                        </dl>
+                                                    <?php elseif (isset($_item->getProductOptions()['attributes_info'])): ?>
+                                                        <?php $_options = $_item->getProductOptions()['attributes_info']; ?>
+                                                        <dl class="item-options">
+                                                            <?php foreach ($_options as $_option) : ?>
+                                                                <?php $_formatedOptionValue = Mage::helper('catalog/product_configuration')->getFormattedOptionValue($_option); ?>
+                                                                <dt><?php echo Mage::helper('core')->escapeHtml($_option['label'], null) ?></dt>
+                                                                <dd<?php if (isset($_formatedOptionValue['full_view'])): ?> class="truncated"<?php endif; ?>>
+                                                                    <?php echo $_formatedOptionValue['value'] ?>
+                                                                    <?php if (isset($_formatedOptionValue['full_view'])): ?>
+                                                                        <div class="truncated_full_value">
+                                                                            <dl class="item-options">
+                                                                                <dt><?php echo Mage::helper('core')->escapeHtml($_option['label'], null) ?></dt>
+                                                                                <dd><?php echo $_formatedOptionValue['full_view'] ?></dd>
+                                                                            </dl>
+                                                                        </div>
+                                                                    <?php endif; ?>
+                                                                </dd>
+                                                            <?php endforeach; ?>
+                                                        </dl>
+                                                    <?php elseif (isset($_item->getProductOptions()['options'])): ?>
+                                                        <?php $_options = $_item->getProductOptions()['options']; ?>
+                                                        <dl class="item-options">
+                                                            <?php foreach ($_options as $_option) : ?>
+                                                                <?php $_formatedOptionValue = Mage::helper('catalog/product_configuration')->getFormattedOptionValue($_option); ?>
+                                                                <dt><?php echo Mage::helper('core')->escapeHtml($_option['label'], null) ?></dt>
+                                                                <dd<?php if (isset($_formatedOptionValue['full_view'])): ?> class="truncated"<?php endif; ?>>
+                                                                    <?php echo $_formatedOptionValue['value'] ?>
+                                                                    <?php if (isset($_formatedOptionValue['full_view'])): ?>
+                                                                        <div class="truncated_full_value">
+                                                                            <dl class="item-options">
+                                                                                <dt><?php echo Mage::helper('core')->escapeHtml($_option['label'], null) ?></dt>
+                                                                                <dd><?php echo $_formatedOptionValue['full_view'] ?></dd>
+                                                                            </dl>
+                                                                        </div>
+                                                                    <?php endif; ?>
+                                                                </dd>
+                                                            <?php endforeach; ?>
+                                                        </dl>
+                                                    <?php endif; ?>
+                                                <?php endif; ?>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <span class="product-unit-price"><?php echo Mage::helper('core')->currency($_item->getPrice(), true, false) ?></span>
+                                        </div>
+                                        <div class="col-md-3 text-center order-text">
+                                            x<?php echo ($freeItem && isset($freeItem['quantity'])) ? round($_item->getQtyOrdered()) - $freeItem['quantity'] : round($_item->getQtyOrdered()); ?>
+                                        </div>
+                                        <div class="col-md-5 order-text text-right pr-0">
+                                            <?php if ($freeItem && isset($freeItem['quantity']) && isset($freeItem['price'])): ?>
+                                                <?php $total = $total - $freeItem['quantity'] * $freeItem['price'] ?>
+                                                <?php $total_free_item_price += $freeItem['quantity'] * $freeItem['price']; ?>
+                                            <?php endif; ?>
+                                            <?php echo Mage::helper('checkout')->formatPrice($total); ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Mobile -->
+                            <div class="visible-xs-block">
+                                <div class="row">
+                                    <div class="col-xs-2">
+                                        <img src="<?php echo Mage::helper('catalog/image')->init($_item->getProduct(), 'small_image'); ?>"
+                                             width="65" height="65"/>
+                                    </div>
+                                    <div class="col-xs-10">
+                                        <div class="row">
+                                            <div class="col-xs-12 order-product-name">
+                                                <div class="order-item-name product-mask"
+                                                     data-id="<?php echo $_item->getProduct()->getId() ?>"
+                                                     data-name="<?php echo $_item->getProduct()->getName() ?>"
+                                                     data-url="<?php echo $_item->getProduct()->getProductUrl() ?>"
+                                                     data-price="<?php echo $_item->getProduct()->getFinalPrice() ?>"
+                                                >
+                                                    <?php echo $_item->getName(); ?>
+                                                </div>
+                                                <div class="col-xs-12 pt-5 pl-0">
+                                                    <span class='free-item-number'><?php echo ($freeItem && isset($freeItem['quantity'])) ? "(Tặng kèm " . $freeItem['quantity'] . " sản phẩm " . $freeItem['product_name'] . ")" : ''; ?><?php echo ($freeItem && isset($freeItem['parent'])) ? "(Sản phẩm khuyến mãi)" : ''; ?></span>
+                                                </div>
+                                                <div class="col-xs-12 pl-25">
+                                                    <?php if ($_item->getProductOptions()): ?>
+                                                        <?php if (isset($_item->getProductOptions()['bundle_options'])): ?>
+                                                            <?php $_options = $_item->getProductOptions()['bundle_options']; ?>
+                                                            <dl class="item-options">
+                                                                <?php foreach ($_options as $_option) : ?>
+                                                                    <dt><?php echo Mage::helper('core')->escapeHtml($_option['label'], null) ?></dt>
+                                                                    <dd>
+                                                                        <?php foreach ($_option['value'] as $_option_value): ?>
+                                                                            <?php echo $_option_value['title']; ?>
+                                                                        <?php endforeach; ?>
+                                                                    </dd>
+                                                                <?php endforeach; ?>
+                                                            </dl>
+                                                        <?php elseif (isset($_item->getProductOptions()['attributes_info'])): ?>
+                                                            <?php $_options = $_item->getProductOptions()['attributes_info']; ?>
+                                                            <dl class="item-options">
+                                                                <?php foreach ($_options as $_option) : ?>
+                                                                    <?php $_formatedOptionValue = Mage::helper('catalog/product_configuration')->getFormattedOptionValue($_option); ?>
+                                                                    <dt><?php echo Mage::helper('core')->escapeHtml($_option['label'], null) ?></dt>
+                                                                    <dd<?php if (isset($_formatedOptionValue['full_view'])): ?> class="truncated"<?php endif; ?>>
+                                                                        <?php echo $_formatedOptionValue['value'] ?>
+                                                                        <?php if (isset($_formatedOptionValue['full_view'])): ?>
+                                                                            <div class="truncated_full_value">
+                                                                                <dl class="item-options">
+                                                                                    <dt><?php echo Mage::helper('core')->escapeHtml($_option['label'], null) ?></dt>
+                                                                                    <dd><?php echo $_formatedOptionValue['full_view'] ?></dd>
+                                                                                </dl>
+                                                                            </div>
+                                                                        <?php endif; ?>
+                                                                    </dd>
+                                                                <?php endforeach; ?>
+                                                            </dl>
+                                                        <?php elseif (isset($_item->getProductOptions()['options'])): ?>
+                                                            <?php $_options = $_item->getProductOptions()['options']; ?>
+                                                            <dl class="item-options">
+                                                                <?php foreach ($_options as $_option) : ?>
+                                                                    <?php $_formatedOptionValue = Mage::helper('catalog/product_configuration')->getFormattedOptionValue($_option); ?>
+                                                                    <dt><?php echo Mage::helper('core')->escapeHtml($_option['label'], null) ?></dt>
+                                                                    <dd<?php if (isset($_formatedOptionValue['full_view'])): ?> class="truncated"<?php endif; ?>>
+                                                                        <?php echo $_formatedOptionValue['value'] ?>
+                                                                        <?php if (isset($_formatedOptionValue['full_view'])): ?>
+                                                                            <div class="truncated_full_value">
+                                                                                <dl class="item-options">
+                                                                                    <dt><?php echo Mage::helper('core')->escapeHtml($_option['label'], null) ?></dt>
+                                                                                    <dd><?php echo $_formatedOptionValue['full_view'] ?></dd>
+                                                                                </dl>
+                                                                            </div>
+                                                                        <?php endif; ?>
+                                                                    </dd>
+                                                                <?php endforeach; ?>
+                                                            </dl>
+                                                        <?php endif; ?>
+                                                    <?php endif; ?>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-xs-4">
+                                                <span class="product-unit-price"><?php echo Mage::helper('core')->currency($_item->getPrice(), true, false) ?></span>
+                                            </div>
+                                            <div class="col-xs-3 text-center no-padding order-text">
+                                                x <?php echo ($freeItem && isset($freeItem['quantity'])) ? round($_item->getQtyOrdered()) - $freeItem['quantity'] : round($_item->getQtyOrdered()); ?>
+                                            </div>
+                                            <div class="col-xs-5 order-text">
+                                                <div class="pull-right">
+                                                    <?php if ($freeItem && isset($freeItem['quantity']) && isset($freeItem['price'])): ?>
+                                                        <?php $total = $total - $freeItem['quantity'] * $freeItem['price'] ?>
+                                                        <?php $total_free_item_price += $freeItem['quantity'] * $freeItem['price']; ?>
+                                                    <?php endif; ?>
+                                                    <?php echo Mage::helper('checkout')->formatPrice($total); ?>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="payment-cart-total pt-0 mb-20">
+    <?php
+    $sub_total = $_order->getSubtotal();
+    $discount_value = $sub_total - $grand_total;
+    $grand_discount = $discount_value - $total_free_item_price;
+    ?>
+    <div class="panel-heading cart-discount-block border-bottom-d5">
+        <div class="row discount-row">
+            <div class="cart-pr-discount-title col-md-5 col-xs-5 no-padding">Tạm tính:</div>
+            <div class="total-heading-price col-md-7 col-xs-7 no-padding a-right">
+                <?php echo Mage::helper('core')->currency($sub_total - $total_free_item_price, true, false); ?>
+            </div>
+        </div>
+    </div>
+    <?php if ($grand_discount > 0): ?>
+        <div class="panel-heading cart-discount-block border-bottom-d5">
+            <div class="row discount-row">
+                <div class="cart-pr-discount-title col-md-5 col-xs-5 no-padding">Giảm giá:</div>
+                <div class="cart-discount-value col-md-7 col-xs-7 no-padding">
+                    -<?php echo Mage::helper('core')->currency($grand_discount, true, false); ?></div>
+            </div>
+        </div>
+    <?php endif; ?>
+
+    <div class="panel-heading cart-discount-block">
+        <div class="row discount-row pb-0">
+            <div class="cart-pr-discount-title col-md-5 col-xs-5 no-padding">Thành tiền:</div>
+            <div class="cart-pr-grandtotal col-md-7 col-xs-7 no-padding">
+                <?php echo Mage::helper('core')->currency($grand_total, true, false); ?>
+            </div>
+            <div class="col-md-12 col-xs-12 free-ship-block pl-0">(Miễn phí vận chuyển toàn quốc)</div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    function formatCurrency(n) {
+        return n.toFixed(0).replace(/./g, function (c, i, a) {
+            return i > 0 && c !== "." && (a.length - i) % 3 === 0 ? "." + c : c;
+        });
+    }
+</script>
+
+<script>
+//    var productImpressions = <?php //echo json_encode($productImpressions); ?>//;
+//
+//    /**
+//     * Measures product impressions and also tracks a standard
+//     * pageview for the tag configuration.
+//     * Product impressions are sent by pushing an impressions object
+//     * containing one or more impressionFieldObjects.
+//     */
+//    dataLayer.push({
+//        'ecommerce': {
+//            'currencyCode': 'VND',                       // Local currency is optional.
+//            'impressions': productImpressions
+//        }
+//    });
+</script>
+
+<script>
+    /**
+     * Call this function when a user clicks on a product link. This function uses the event
+     * callback datalayer variable to handle navigation after the ecommerce data has been sent
+     * to Google Analytics.
+     * @param {Object} productObj An object representing a product.
+     */
+    $j('.product-mask').click(function () {
+        var id = $j(this).data('id');
+        var name = $j(this).data('name');
+        var url = $j(this).data('url');
+        var price = $j(this).data('price');
+
+        dataLayer.push({
+            'event': 'productClick',
+            'ecommerce': {
+                'click': {
+                    'actionField': {'list': 'Sản phẩm đã đặt hàng'},
+                    'products': [{
+                        'name': name.toString(),                      // Name or ID is required.
+                        'id': id.toString(),
+                        'price': price.toString()
+                    }]
+                }
+            },
+            'eventCallback': function () {
+                document.location = url;
+            }
+        });
+    });
+</script>
+
+<script>
+    var orderedItems = <?php echo json_encode($orderedItems); ?>;
+//    console.log(orderedItems);
+
+    /**
+     * Send transaction data with a pageview if available
+     * when the page loads. Otherwise, use an event when the transaction
+     * data becomes available.
+     */
+
+    dataLayer.push({
+        'ecommerce': {
+            'purchase': {
+                'actionField': {
+                    'id': '<?php echo $order_id ?>',                         // Transaction ID. Required for purchases and refunds.
+                    'affiliation': 'Tekshop Education',
+                    'revenue': '<?php echo $grand_total ?>',                     // Total transaction value (incl. tax and shipping)
+                    'tax': '0',
+                    'shipping': '0'
+                },
+                'products': orderedItems
+            }
+        }
+    });
+</script>

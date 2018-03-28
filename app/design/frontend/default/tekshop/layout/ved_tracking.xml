@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<layout version="0.1.0">
+    <tracking_order_index>
+        <reference name="content"> <!-- block name inside which you need to display hello world -->
+            <action method="setTemplate">
+                <template>tracking/order/index.phtml</template>
+            </action>
+        </reference>
+    </tracking_order_index>
+</layout>

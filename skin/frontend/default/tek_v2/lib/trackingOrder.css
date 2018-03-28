@@ -1,0 +1,532 @@
+/* Track Order */
+.tracking-content {
+    min-height: 65vh;
+    margin-top: 20px;
+}
+
+.new-order-title, .track-order-title {
+    font-family: "Open Sans Condensed";
+    font-size: 24px;
+    text-transform: uppercase;
+    color: #2d3877;
+    user-select: none;
+    font-weight: bold;
+}
+
+.no-order-found {
+    font-size: 16px;
+    font-weight: bold;
+    color: #58595b;
+    text-transform: uppercase;
+}
+
+#search-track-order {
+    margin: 20px 0;
+    width: 100%;
+    padding: 10px;
+    font-size: 13px;
+}
+
+.track-order-item {
+    cursor: pointer;
+    padding: 15px 0;
+    color: #333;
+}
+
+.track-order-item:hover {
+    color: #d42333;
+}
+
+.track-order-item-active {
+    color: #d42333;
+}
+
+.track-order-id {
+    border-right: 1px solid #333;
+}
+
+.track-order-item:hover .track-order-id {
+    border-right: 1px solid #d42333;
+}
+
+.new-track-orders {
+    border-right: 1px solid #ebebeb;
+}
+
+.track-order-wrapper {
+    margin-top: 40px;
+    font-family: "Roboto", sans-serif;
+    min-height: 80vh;
+}
+
+.track-order-detail-panel {
+    overflow: hidden;
+    padding: 15px;
+    border: 1px solid #ebebeb;
+}
+
+.track-order-content {
+    min-height: 100vh;
+}
+
+.track-order-detail-loading img {
+    position: absolute;
+    top: 35%;
+    left: 50%;
+}
+
+.search-order-loading img {
+    position: absolute;
+    top: 150%;
+    left: 40%;
+}
+
+.track-order-subtitle {
+    padding: 10px 0;
+    font-weight: bold;
+}
+
+.track-order-subtitle span {
+    font-family: "Open Sans Condensed";
+    padding-right: 15px;
+    font-size: 15px;
+}
+
+.track-order-subtitle span:last-child {
+    padding-left: 20px;
+    border-left: 1px solid #58595b;
+}
+
+.track-order-detail-header {
+    padding-bottom: 15px;
+    border-bottom: 1px solid #ebebeb;
+    font-size: 13px;
+}
+
+.order-header-block {
+    border-right: 1px solid #ebebeb;
+}
+
+.track-order-item-title {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 30px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.track-order-top-row {
+    text-transform: uppercase;
+    font-weight: normal;
+    padding: 10px;
+    border-bottom: none !important;
+    background: #ebebeb;
+}
+
+.track-order-mid-row {
+    border-bottom: 1px solid #e0e0e0 !important;
+    padding: 20px 10px;
+}
+
+.pl-30 {
+    padding-left: 30px !important;
+}
+
+.no-padding-horizontal {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+.track-item-row {
+    padding-bottom: 20px !important;
+}
+
+.track-item-row:last-child {
+    padding-bottom: 0 !important;
+}
+
+.track-order-text-title {
+    font-size: 14px;
+    color: #333;
+    font-weight: 600;
+}
+
+.track-order-text {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+}
+
+.track-order-detail-block {
+    min-height: 120px;
+}
+
+*,
+*:after,
+*:before {
+    box-sizing: border-box;
+}
+
+.track-progress {
+    border-bottom: 1px solid #ebebeb;
+    width: 700px;
+    margin: 20px auto;
+    text-align: center;
+    padding-top: 15px;
+}
+
+.track-progress .circle,
+.track-progress .bar {
+    display: inline-block;
+    background: #fff;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 1px solid #b5b5ba;
+}
+
+.track-progress .circle {
+    border: 2px solid #b5b5ba;
+}
+
+.track-progress .bar {
+    position: relative;
+    width: 190px;
+    height: 6px;
+    margin: 0 -4px 17px -3px;
+    border-left: none;
+    border-right: none;
+    border-radius: 0;
+    top: 38px;
+    vertical-align: top
+}
+
+.track-progress .circle .label {
+    display: inline-block;
+    width: 80px;
+    height: 80px;
+    line-height: 38px;
+    border-radius: 50%;
+    margin-top: 0;
+    padding-left: 20px;
+    padding-top: 20px;
+    color: #b5b5ba;
+    font-size: 40px;
+    text-align: center;
+}
+
+.track-progress .circle .title {
+    color: #b5b5ba;
+    font-size: 13px;
+    line-height: 18px;
+    margin-left: -5px;
+    margin-top: 10px;
+    text-transform: uppercase;
+    overflow: hidden;
+    height: 40px;
+    display: block
+}
+
+/* Done / Active */
+
+.track-progress .bar {
+    border: none;
+    background: #b5b5ba;
+}
+
+.track-progress .circle.active {
+    border: 2px solid #2d3877;
+}
+
+.track-progress .circle.canceled {
+    border: 2px solid red;
+}
+
+.track-progress .bar.active {
+    background: #2d3877;
+}
+
+.track-progress .bar.canceled {
+    background: red;
+}
+
+.track-progress .circle .title {
+    margin-left: -32px;
+    font-size: 15px;
+    width: 140px;
+}
+
+.track-progress .circle.active .label {
+    color: #2d3877;
+}
+
+.track-progress .circle.active .title {
+    color: #2d3877;
+}
+
+.track-progress .circle.canceled .label {
+    color: red;
+}
+
+.track-progress .circle.canceled .title {
+    color: red;
+}
+
+input:disabled, input:read-only, input:read-only:focus {
+    user-select: none;
+    background: #dddddd;
+}
+
+#preview {
+    visibility: hidden;
+    width: 450px;
+    height: 450px;
+    position: absolute;
+    top: 35px;
+    left: 420px;
+    border: solid 2px #888;
+    background: #FFF;
+    z-index: 99999;
+}
+
+.morecontent span {
+    display: none;
+}
+
+.comment {
+    width: 400px;
+    background-color: #f0f0f0;
+    margin: 10px;
+}
+
+.std, .std p {
+    white-space: pre-line;
+    line-height: 24px;
+}
+
+.pd-5 {
+    padding: 5px 0 !important;
+}
+
+.track-order-forgot-password {
+    cursor: pointer;
+    color: #b7b7b7;
+    border-bottom: 1px dotted #b7b7b7;
+}
+
+.track-order-forgot-password:hover {
+    text-decoration: none;
+    color: #5b5b5b;
+}
+
+.track-order-forgot-password:focus {
+    text-decoration: none;
+    color: #5b5b5b;
+}
+
+.tracking-order-divider {
+    margin-top: 5px;
+    border-top: 9px solid #ebebeb;
+}
+
+.tracking-total-info {
+    color: #333;
+    font-size: 15px;
+}
+
+.mid-row {
+    border-bottom: none !important;
+    overflow: hidden;
+    padding-top: 20px;
+    margin: 0 15px;
+    padding-bottom: 10px;
+}
+
+.order-item-row {
+    padding: 15px 15px !important;
+}
+
+.bot-row {
+    margin: 0 15px;
+    overflow: hidden;
+    padding-top: 15px;
+}
+
+.top-row {
+    overflow: hidden;
+    margin: 0 15px;
+    padding-bottom: 10px;
+}
+
+.o-cart-grandtotal {
+    color: #58595b;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 5px !important;
+}
+
+.lh-30 {
+    line-height: 30px;
+}
+
+.o-cart-cod {
+    color: #d7202d;
+    font-size: 22px;
+    font-weight: bold;
+    margin-top: 5px !important;
+}
+
+.payment-cart-text {
+    font-weight: bold;
+    font-size: 16px;
+    color: #58585a;
+    margin-bottom: 5px;
+}
+
+.btn-continue-float-right {
+    float: right;
+}
+
+.btn-continue-shopping {
+    border: none;
+    display: block;
+    margin: 30px 0;
+    margin-right: 15px;
+    border-radius: 3px;
+    background-color: #2d3877;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 12px 40px;
+    text-transform: uppercase;
+}
+
+.order-item-name {
+    font-size: 14px;
+    color: #333;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+a .order-item-name {
+    text-decoration: none;
+}
+
+.order-item-name:hover {
+    color: #d42333;
+    text-decoration: none;
+}
+
+@media screen and (max-width: 1200px) {
+    .track-progress {
+        border-bottom: 1px solid #ebebeb;
+        width: 650px;
+        margin: 20px auto;
+        text-align: center;
+        padding-top: 15px;
+    }
+
+    .track-progress .circle,
+    .track-progress .bar {
+        display: inline-block;
+        background: #fff;
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        border: 1px solid #b5b5ba;
+    }
+
+    .track-progress .circle {
+        border: 2px solid #b5b5ba;
+    }
+
+    .track-progress .bar {
+        position: relative;
+        width: 140px;
+        height: 6px;
+        margin: 0 -4px 17px -3px;
+        border-left: none;
+        border-right: none;
+        border-radius: 0;
+        top: 38px;
+        vertical-align: top
+    }
+
+    .track-progress .circle .label {
+        display: inline-block;
+        width: 80px;
+        height: 80px;
+        line-height: 38px;
+        border-radius: 50%;
+        margin-top: 0;
+        padding-left: 20px;
+        padding-top: 20px;
+        color: #b5b5ba;
+        font-size: 40px;
+        text-align: center;
+    }
+
+    .track-progress .circle .title {
+        color: #b5b5ba;
+        font-size: 13px;
+        line-height: 18px;
+        margin-left: -5px;
+        margin-top: 10px;
+        text-transform: uppercase;
+        overflow: hidden;
+        height: 40px;
+        display: block
+    }
+
+    .track-progress .bar {
+        border: none;
+        background: #b5b5ba;
+    }
+
+    .track-progress .circle.active {
+        border: 2px solid #2d3877;
+    }
+
+    .track-progress .circle.canceled {
+        border: 2px solid red;
+    }
+
+    .track-progress .bar.active {
+        background: #2d3877;
+    }
+
+    .track-progress .bar.canceled {
+        background: red;
+    }
+
+    .track-progress .circle .title {
+        margin-left: -32px;
+        font-size: 15px;
+        width: 140px;
+    }
+
+    .track-progress .circle.active .label {
+        color: #2d3877;
+    }
+
+    .track-progress .circle.active .title {
+        color: #2d3877;
+    }
+
+    .track-progress .circle.canceled .label {
+        color: red;
+    }
+
+    .track-progress .circle.canceled .title {
+        color: red;
+    }
+
+    /* Additional */
+    .search-list-orders {
+        font-size: 13px
+    }
+
+    .track-order-detail-status {
+        display: flex;
+    }
+}

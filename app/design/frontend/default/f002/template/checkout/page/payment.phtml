@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?php echo $this->getLang() ?>" lang="<?php echo $this->getLang() ?>">
+<head>
+    <?php echo $this->getChildHtml('head') ?>
+    <script type="text/javascript" src="<?php echo $this->getSkinUrl('js/jquery-1.12.2.min.js'); ?>"></script>
+    <script type="text/javascript" src="<?php echo $this->getSkinUrl('js/no-conflict.js'); ?>"></script>
+    <script type="text/javascript" src="<?php echo $this->getSkinUrl('js/bootstrap.min.js'); ?>"></script>
+    <script type="text/javascript" src="<?php echo $this->getSkinUrl('js/bootbox.min.js'); ?>"></script>
+    <link rel="stylesheet" type="text/css" href="<?php echo $this->getSkinUrl('css/style.min.css'); ?>">
+</head>
+<body  class="tiki-shipping-address" >
+<?php echo $this->getChildHtml('after_body_start') ?>
+<div class="shipping-header">
+    <div class="container">
+        <div class="row row-style-1">
+            <div class="col-lg-4 visible-lg-block">
+                <a href="/"><img src="<?php echo $this->getSkinUrl('images/gcafe_shop.png'); ?>" height="62" width="312" class="img-responsive" alt="Image"></a>
+            </div>
+            <div class="col-lg-8">
+                <div class="row bs-wizard">
+                    <div class="col-lg-4 col-md-4 col-xs-4 col-sm-4 bs-wizard-step complete">
+                        <div class="text-center bs-wizard-stepnum">
+                            <span>Đăng Nhập</span>
+                        </div>
+                        <div class="progress"><div class="progress-bar"></div></div>
+                        <span class="bs-wizard-dot">1</span>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-xs-4 col-sm-4 bs-wizard-step complete">
+                        <div class="text-center bs-wizard-stepnum">
+                            <span class="hidden-xs">Địa Chỉ Giao Hàng</span>
+                            <span class="visible-xs-inline-block">Địa Chỉ</span>
+                        </div>
+                        <div class="progress"><div class="progress-bar"></div></div>
+                        <span class="bs-wizard-dot">2</span>
+                    </div>
+
+                    <div class="col-lg-4 col-md-4 col-xs-4 col-sm-4 bs-wizard-step active">
+                        <div class="text-center bs-wizard-stepnum">
+                            <span class="hidden-xs">Thanh Toán &amp; Đặt Mua</span>
+                            <span class="visible-xs-inline-block">Thanh Toán</span>
+                        </div>
+                        <div class="progress"><div class="progress-bar"></div></div>
+                        <span class="bs-wizard-dot">3</span>
+                    </div>
+
+                </div>
+            </div>
+         <!--   <div class="col-lg-2 visible-lg-block hotline">
+                <img src="https://vcdn.tikicdn.com/assets/img/hotline.png" height="42" width="176" alt="">
+            </div>-->
+        </div>
+    </div>
+</div>
+<?php echo $this->getChildHtml('global_notices') ?>
+<div class="wrap">
+    <div class="container">
+        <div class="row visible-lg-block">
+            <div class="col-lg-12">
+                <h3 style="float: left">3. Thanh Toán &amp; Đặt Mua</h3>
+            </div>
+            <?php echo $this->getChildHtml('top_slider') ?>
+            <?php echo $this->getChildHtml('breadcrumbs') ?>
+        </div>
+        <div class="row row-style-2">
+            <div class="col-lg-8 col-md-12 cart-col-1">
+                <?php echo $this->getChildHtml('global_messages') ?>
+                <?php echo $this->getChildHtml('content') ?>
+            </div>
+            <div class="col-lg-4 col-md-12 cart-col-2">
+                <div id="right-affix" class="affix-top">
+                    <?php echo $this->getChildHtml('right') ?>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<?php //echo $this->getChildHtml('footer') ?>
+<?php //echo $this->getChildHtml('global_cookie_notice') ?>
+<?php //echo $this->getChildHtml('before_body_end') ?>
+<?php //echo $this->getAbsoluteFooter() ?>
+</body>
+</html>

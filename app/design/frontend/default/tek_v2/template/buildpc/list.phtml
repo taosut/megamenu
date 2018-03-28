@@ -1,0 +1,270 @@
+<?php
+$listPC = Mage::registry('listPC');
+$totalPage = Mage::registry('totalPage');
+$currentPage = Mage::registry('currentPage');
+$customer = Mage::getSingleton('customer/session')->getCustomer();
+?>
+
+<div class="content">
+
+    <!--Breadcrumb-->
+    <div class="row tek-breadcrumb">
+        <div class="col-md-10 col-md-offset-1 content-section">
+            <div class="tek-breadcrumb-content" style="padding: 6px 0 5px 0;"></div>
+            <div class="tek-breadcrumb-main">
+                <span>Danh sách cấu hình của bạn</span>
+            </div>
+        </div>
+    </div>
+    <!--End Breadcrumb-->
+
+    <!--List block-->
+    <div class="row list-block bpc-wrapper">
+        <div class="col-md-9 pr-0 content-section">
+            <?php if (!$listPC->count()): ?>
+                <div class="row">
+                    <div class="col-md-12 col-sm-12 list-no-products">
+                        <img class="list-no-products-img"
+                             src="<?php echo $this->getSkinUrl('images/giohangtrong.png'); ?>"/>
+                        <span class="list-no-products-text">Không có cấu hình nào trong danh sách</span>
+                        <button type="button" class="go-back-btn" onclick="goBack();">
+                            Trở về
+                            <img class="go-back-ajax-loader hidden"
+                                 src="<?php echo $this->getSkinUrl('images/ajax-loader-white.gif'); ?>"/>
+                        </button>
+                    </div>
+                </div>
+            <?php else: ?>
+            <!-- Messages block-->
+            <div class="row">
+                <div class="col-md-12 col-sm-12">
+                    <div class="detail-messages purchase-request-messages"></div>
+                </div>
+            </div>
+            <!-- End Messages block-->
+
+            <div class="row">
+                <!--Product List-->
+                <div>
+                    <!--Filter top-->
+                    <div class="row">
+                        <div class="col-md-12 col-sm-12">
+                            <?php if ($totalPage > 1): ?>
+                            <div class="filter-top">
+                                <div class="filter-row row">
+                                    <div class="col-md-12 col-sm-12 pagination-block top-pagination-block mt-6">
+                                        <?php if ($listPC->getSize()): ?>
+                                            <?php if ($totalPage > 1): ?>
+                                                <span>
+                                                    Trang <b><?php echo $currentPage; ?>/<?php echo $totalPage; ?></b>
+                                                </span>
+                                                <a href="<?php echo $this->getPageUrl(1) ?>"
+                                                   title="<?php echo $this->__('Last Previous') ?>"><i
+                                                            class="fa fa-angle-double-left"></i></a>
+                                                <a class="previous i-previous"
+                                                   href="<?php echo $this->getPageUrl(max(1, $currentPage - 1)); ?>"
+                                                   title="<?php echo $this->__('Previous') ?>">
+                                                    <i class="fa fa-angle-left"></i>
+                                                </a>
+
+                                                <?php foreach ($this->getRange($currentPage, $totalPage) as $_page): ?>
+                                                    <?php if ($_page == $currentPage): ?>
+                                                        <a class="active"><?php echo $_page ?></a>
+                                                    <?php else: ?>
+                                                        <a href="<?php echo $this->getPageUrl($_page) ?>"><?php echo $_page ?></a>
+                                                    <?php endif; ?>
+                                                <?php endforeach; ?>
+
+                                                <a class="next i-next"
+                                                   href="<?php echo $this->getPageUrl(min($totalPage, $currentPage + 1)) ?>"
+                                                   title="<?php echo $this->__('Next') ?>">
+                                                    <i class="fa fa-angle-right"></i>
+                                                </a>
+                                                <a href="<?php echo $this->getPageUrl($totalPage) ?>"
+                                                   title="<?php echo $this->__('Last Next') ?>">
+                                                    <i class="fa fa-angle-double-right"></i>
+                                                </a>
+                                            <?php endif; ?>
+                                        <?php endif ?>
+                                    </div>
+                                </div>
+                            </div>
+                            <?php endif; ?>
+                        </div>
+                        <!--End Filter top-->
+
+                        <!--Product list content-->
+                        <div class="row">
+                            <div class="col-md-7 col-sm-7" style="padding-right: 0px!important;">
+                                <!--List view-->
+                                <div class="list-view">
+                                    <?php foreach ($listPC as $_myPC): ?>
+                                        <?php
+                                        $finalPrice = $_myPC->getPrice();
+                                        ?>
+                                        <div class="row list-view-item bpc-list-view list-bp-hold" data-id="<?php echo $_myPC->getId() ?>">
+                                            <div class="col-md-9 col-sm-9 pl-0">
+                                                <div class="col-md-2 col-xs-2">
+                                                    <div class="bp-mypc-detail">
+                                                        <div class="numberCircle">
+                                                            <?php echo $_myPC->getAllItem()->count(); ?>
+                                                        </div>
+                                                        <span class="sp-tips">Sản phẩm</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-7 col-sm-7">
+                                                    <a class="list-view-product-name bpc-list-name"
+                                                       href="<?php echo Mage::getUrl('buildpc') . '?mypc=' . $_myPC->getId(); ?>"
+                                                       title="<?php echo $this->escapeHtml($_myPC->getName()); ?>">
+                                                        <?php echo $this->escapeHtml($_myPC->getName()); ?>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3 col-sm-3 pl-0">
+                                                <div class="list-view-final-price bpc-list-price">
+                                                    <?php echo number_format($finalPrice, 0, ",", ".") . " ₫"; ?>
+                                                </div>
+                                                <div class="bpc-list-remove" data-id="<?php echo $_myPC->getId(); ?>">
+                                                    Xoá khỏi danh sách
+                                                </div>
+                                                <div class="bp-addition-content" id="list<?php echo $_myPC->getId() ?>"
+                                                     style="display:none"></div>
+                                            </div>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+                                <!--End List view-->
+                            </div>
+                            <div class="col-md-5 col-sm-5 bp-list-detail">
+                                <div class="bp-show-detail">
+                                    <div class="load-bf-detail" style="display: none;">
+                                        <img class="mt-13"
+                                             src="<?php echo $this->getSkinUrl('images/loading.gif') ?>">
+                                    </div>
+                                </div>
+                                <div class="load-items">
+                                </div>
+                            </div>
+                        </div>
+                        <!--End Product list content-->
+
+                        <!--Filter bottom-->
+                        <?php if ($totalPage > 1): ?>
+                        <div class="row">
+                            <div class="col-md-12 col-sm-12">
+                                <div class="filter-bottom">
+                                    <div class="filter-row">
+                                        <div class="pagination-block bottom-pagination-block"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <?php endif;?>
+                        <div class="row">
+                            <div class="col-md-12 col-sm-12">
+                                <div class="mb-15">
+                                </div>
+                            </div>
+                        </div>
+                        <!--End Filter bottom-->
+                    </div>
+                    <!--End Product List-->
+                </div>
+                <?php endif; ?>
+            </div>
+        </div>
+        <!--End List block-->
+    </div>
+</div>
+<script>
+    var $j = jQuery.noConflict();
+    $j(document).ready(function () {
+        $j('.list-view').show();
+    });
+
+    $j('.bpc-list-remove').bind('click', function (e) {
+        var myPC_id = $j(this).data('id');
+        swal({
+                title: "Xóa dàn PC ?",
+                text: "Bạn có muốn xóa bộ PC khỏi danh sách?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: '#DD6B55',
+                confirmButtonText: 'Xóa sản phẩm',
+                cancelButtonText: "Hủy bỏ",
+                closeOnConfirm: false,
+                closeOnCancel: false
+            },
+            function (isConfirm) {
+                if (isConfirm) {
+                    $j.ajax({
+                        method: 'POST',
+                        url: '<?php echo Mage::getUrl("buildpc/saving/remove")?>',
+                        data: {
+                            'myPC_id': myPC_id
+                        },
+                        success: function (data) {
+                            data = JSON.parse(data);
+                            if (data['status'] === 'success') {
+                                // reload
+                                window.location.href =
+                                    '<?php echo $this->getUrl('*/*/*', ['_current' => true,
+                                        '_use_rewrite' => true, '_store' => Mage::app()->getStore()->getId()]); ?>';
+                            }
+                            else if (data['status'] === 'not_login') {
+                                swal("Phiên làm việc kết thúc! Bạn cần đăng nhập để thực hiện thao tác này!");
+                                setTimeout(function () {
+                                    swal.close();
+                                }, 1000)
+                            }
+                        }
+                    })
+                }
+                else {
+                    swal.close();
+                }
+            });
+    });
+
+    $j(".list-bp-hold").hover(function () {
+
+            var check = $j('.bp-f-main').find('.bpf-list-active');
+            if (check.length) {
+                check.removeClass('bpf-list-active');
+            }
+            if ($j('.load-bf-detail').is(':visible')) {
+                $j('.load-bf-detail').hide();
+            }
+            $j(this).addClass('bpf-list-active');
+            var content = $j('#list' + $j(this).attr('data-id'));
+            if (!content.attr('data-full')) {
+                $j('.bp-list-detail').removeClass('bp-list-detail-hover');
+                $j('.load-items').html("");
+                $j('.load-bf-detail').show();
+                var id = $j(this).attr('data-id');
+                $j.ajax({
+                    method: 'get',
+                    url: '<?php echo Mage::getUrl('buildpc/saving/loadItems/')?>',
+                    data: {
+                        'pc': id
+                    },
+                    success: function (response) {
+                        content.attr('data-full', 1);
+                        content.html(response);
+                        $j('.load-bf-detail').hide();
+                        $j('.load-items').html(content.html());
+                        $j('.bp-list-detail').addClass('bp-list-detail-hover');
+                    }
+                });
+            } else {
+                $j('.load-items').html(content.html());
+                setTimeout(function () {
+                    $j('.bp-list-detail').addClass('bp-list-detail-hover');
+                }, 150);
+            }
+
+        }
+        , function () {
+        }
+    );
+</script>

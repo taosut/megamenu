@@ -1,0 +1,19 @@
+<div class="panel panel-default cart">
+    <div class="panel-body">
+        <div class="order">
+            <span class="title">
+                Địa chỉ giao hàng
+            </span>
+            <a href="/checkout/shipping/" class="btn btn-default btn-custom1">Sửa</a>
+        </div>
+        <?php  $info = $this->getShippingAddressInfo(); ?>
+        <div class="information">
+            <h6><?php echo $info['name']; ?></h6>
+            <p class="end">
+                <?php echo $info['full_address']; ?>
+                <br>Điện thoại: <?php echo $info['phone']; ?>
+                <br><?php echo $info['country']; ?>
+            </p>
+        </div>
+    </div>
+</div>

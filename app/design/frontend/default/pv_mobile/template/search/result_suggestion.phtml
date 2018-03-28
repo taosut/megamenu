@@ -1,0 +1,12 @@
+<?php
+$_products = Mage::registry('suggestion_products');
+?>
+
+<?php foreach ($_products->getItems() as $_product): ?>
+    <a href="<?php echo $_product->getProductFullUrl(); ?>">
+        <div class="search-suggestion-name" title="<?php echo $_product->getName(); ?>"><?php echo $_product->getName(); ?></div>
+    </a>
+<?php endforeach; ?>
+<div class="search-suggestion-view-all"
+     data-search-url="<?php echo $this->getUrl('catalogsearch/result'); ?>">Xem tất cả
+</div>

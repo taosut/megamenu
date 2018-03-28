@@ -1,0 +1,248 @@
+<div class="cart">
+	<div class="panel panel-default cart-block">
+		<div class="panel-heading">
+			<h5><i class="fa fa-shopping-cart"></i>&nbsp;Giỏ hàng
+				<span class="update-cart-loading no-display" title="Đang tải">
+				<img src="<?php echo $this->getSkinUrl('images/ajax-loader.gif') ?>"
+					 width="14" height="14"/></span>
+			</h5>
+		</div>
+		<div id="shopping-cart-body">
+			<div class="panel-body pt-0">
+				<?php
+				$itemsArray = Mage::getSingleton('checkout/session')->getQuote()->getAllVisibleItems();
+				$params = array(
+					'max_length' => 55,
+					'cut_replacer' => ' <a href="#" class="dots" onclick="return false">...</a>'
+				);
+				$total_free_item_price = 0;
+				?>
+				<?php if (count($itemsArray) > 0): ?>
+					<form id="cart-qty-form"
+						  action="<?php echo $this->getUrl('checkout/cart/updatePostAjax') ?>"
+						  method="post">
+						<?php foreach ($itemsArray as $item): ?>
+
+							<?php
+							$productObj = new stdClass();
+							$productObj->name = (string)$item->getProduct()->getName();
+							$productObj->id = (string)$item->getProduct()->getId();
+							$productObj->price = (string)$item->getProduct()->getFinalPrice();
+							$productObj->quantity = $item->getQty();
+							$cartItems[] = $productObj;
+							?>
+
+							<?php
+							$total = $item->getPrice() * $item->getQty();
+							$freeItem = unserialize($item->getAdditionalData());
+							?>
+
+							<div class="cart-item-row row">
+								<div class="row cart-pr-title">
+									<div class="col-xs-10">
+										<div class="cart-pr-name product-mask"
+											 data-id="<?php echo $item->getProduct()->getId() ?>"
+											 data-name="<?php echo $item->getProduct()->getName() ?>"
+											 data-url="<?php echo $item->getProduct()->getProductUrl() ?>"
+											 data-price="<?php echo $item->getProduct()->getFinalPrice() ?>"
+										><?php echo $item->getName(); ?></div>
+									</div>
+									<div class="col-xs-2 cart-delete-block a-right">
+									<span class="coupon-state ajax-loader-delete"
+										  id="ald-<?php echo $item->getId() ?>" title="Đang tải">
+										<img
+												src="<?php echo $this->getSkinUrl('images/ajax-loader.gif') ?>"
+												width="14" height="14"/>
+									</span>
+										<?php if (!(isset($freeItem) && isset($freeItem['parent']))): ?>
+											<a class="cart-delete-btn pull-right"
+											   onclick="deleteItem(this)"
+											   data-id="<?php echo $item->getId() ?>"
+											   data-product-id="<?php echo $item->getProductId() ?>"
+											   data-name="<?php echo $item->getName() ?>"
+											   data-price="<?php echo $item->getPrice() ?>"
+											   data-qty="<?php echo $item->getQty() ?>"
+											   id="ald-btn-<?php echo $item->getId() ?>"
+											   data-url="<?php echo Mage::getUrl('checkout/cart/deleteAjax', array('id' => $item->getId(), 'delete_qty' => $item->getQty())); ?>">
+												<i class="fa fa-trash-o"></i>
+											</a>
+										<?php endif; ?>
+									</div>
+								</div>
+								<div class="clearfix"></div>
+								<div class="cart-pr-prices">
+									<div class="col-md-12 col-xs-7 no-padding">
+										<img src="<?php echo Mage::helper('catalog/image')->init($item->getProduct(), 'small_image')->resize(50) ?>"
+											 width="50" height="50"/>
+										<span class="cart-qty-text col-xs-offset-1">
+											<span><?php echo Mage::helper('checkout')->formatPrice($item->getPrice()); ?></span>
+											<span class="margin-cart-left">x</span>
+											<?php echo $this->getBlockHtml('formkey'); ?>
+											<input name="cart[<?php echo $item->getId() ?>][qty]"
+												   id="input-qty-<?php echo $item->getId() ?>"
+												   data-id="<?php echo $item->getId() ?>"
+												   data-product-id="<?php echo $item->getProductId() ?>"
+												   data-name="<?php echo $item->getName() ?>"
+												   data-price="<?php echo $item->getPrice() ?>"
+												   data-qty="<?php echo $item->getQty() ?>"
+												   onkeyup="doUpdateCart(this)"
+												   type="number"
+												   value="<?php echo (isset($freeItem) && isset($freeItem['quantity'])) ? $item->getQty() - $freeItem['quantity'] : $item->getQty(); ?>"
+												   size="4"
+												   title="<?php echo $this->__('Qty') ?>"
+												   class="input-text qty input-qty margin-cart-left text-center"
+												   maxlength="12"
+												<?php echo ((isset($freeItem) && isset($freeItem['parent'])) || $item->getProduct()->getIsRecurring()) ? 'disabled' : '' ?>
+											/>
+										<input type="hidden" id="product-is-recurring"
+											   value="<?php echo $item->getProduct()->getIsRecurring() ?>"/>
+										<input name="cart[<?php echo $item->getId() ?>][product_id]"
+											   value="<?php echo $item->getProduct()->getId() ?>"
+											   type="hidden"/>
+										<input name="cart[<?php echo $item->getId() ?>][previous_qty]"
+											   value="<?php echo $item->getQty(); ?>"
+											   type="hidden"/>
+										</span>
+									</div>
+									<div class="col-md-12 col-xs-5 no-padding cart-pr-total-price">
+										<?php if (isset($freeItem) && isset($freeItem['quantity']) && isset($freeItem['price'])): ?>
+											<?php $total = $total - $freeItem['quantity'] * $freeItem['price'] ?>
+											<?php $total_free_item_price += $freeItem['quantity'] * $freeItem['price']; ?>
+										<?php endif; ?>
+										<span>=&nbsp;<?php echo Mage::helper('checkout')->formatPrice($total); ?></span>
+									</div>
+									<div class="col-md-12 no-padding">
+										<span class='free-item-number'><?php echo (isset($freeItem) && isset($freeItem['quantity'])) ? "(Tặng kèm " . $freeItem['quantity'] . " sản phẩm " . $freeItem['product_name'] . ")" : ''; ?></span>
+									</div>
+								</div>
+								<div class="clearfix"></div>
+								<?php if ($item->getProduct()->getTypeID() == 'bundle' && $_options = Mage::helper('bundle/catalog_product_configuration')->getOptions($item)): ?>
+									<dl class="item-options">
+										<?php foreach ($_options as $_option) : ?>
+											<?php $_formatedOptionValue = Mage::helper('catalog/product_configuration')->getFormattedOptionValue($_option, $params); ?>
+											<dt><?php echo Mage::helper('core')->escapeHtml($_option['label'], null) ?></dt>
+											<dd<?php if (isset($_formatedOptionValue['full_view'])): ?> class="truncated"<?php endif; ?>>
+												<?php echo $_formatedOptionValue['value'] ?>
+												<?php if (isset($_formatedOptionValue['full_view'])): ?>
+													<div class="truncated_full_value">
+														<dl class="item-options">
+															<dt><?php echo Mage::helper('core')->escapeHtml($_option['label'], null) ?></dt>
+															<dd><?php echo $_formatedOptionValue['full_view'] ?></dd>
+														</dl>
+													</div>
+												<?php endif; ?>
+											</dd>
+										<?php endforeach; ?>
+									</dl>
+								<?php elseif ($item->getProduct()->getTypeID() != 'bundle' && $_options = Mage::helper('catalog/product_configuration')->getOptions($item)): ?>
+									<dl class="item-options">
+										<?php foreach ($_options as $_option) : ?>
+											<?php $_formatedOptionValue = Mage::helper('catalog/product_configuration')->getFormattedOptionValue($_option, $params); ?>
+											<dt><?php echo Mage::helper('core')->escapeHtml($_option['label'], null) ?></dt>
+											<dd<?php if (isset($_formatedOptionValue['full_view'])): ?> class="truncated"<?php endif; ?>>
+												<?php echo $_formatedOptionValue['value'] ?>
+												<?php if (isset($_formatedOptionValue['full_view'])): ?>
+													<div class="truncated_full_value">
+														<dl class="item-options">
+															<dt><?php echo Mage::helper('core')->escapeHtml($_option['label'], null) ?></dt>
+															<dd><?php echo $_formatedOptionValue['full_view'] ?></dd>
+														</dl>
+													</div>
+												<?php endif; ?>
+											</dd>
+										<?php endforeach; ?>
+									</dl>
+								<?php endif; ?>
+							</div>
+
+						<?php endforeach; ?>
+					</form>
+				<?php else: ?>
+					<div class="empty-cart text-center">
+						<span>Giỏ hàng trống</span>
+					</div>
+				<?php endif; ?>
+			</div>
+			<?php if (count($itemsArray) > 0): ?>
+			<?php
+			$sub_total = Mage::helper('checkout/cart')->getQuote()->getSubtotal();
+			$grand_total = Mage::helper('checkout/cart')->getQuote()->getGrandTotal();
+			$discount_value = $sub_total - $grand_total;
+			$coupon_code = Mage::getSingleton('checkout/session')->getQuote()->getCouponCode();
+			?>
+			<input type="hidden" id="discount-value" value="<?php echo $discount_value ?>">
+			<input type="hidden" id="total-free-item-price"
+				   value="<?php echo $total_free_item_price ?>">
+			<div class="panel-footer">
+
+				<!-- Sub total block-->
+				<div class="row pl-15 pr-15 mt-15">
+					<div class="cart-pr-total-title col-xs-5 no-padding">Tổng tiền:</div>
+					<div
+							class="cart-pr-subtotal col-xs-7 no-padding"><?php echo Mage::helper('checkout')->formatPrice($sub_total - $total_free_item_price) ?></div>
+				</div>
+
+				<!-- Coupon block-->
+				<form id="discount-coupon-form"
+					  action="<?php echo $this->getUrl('checkout/cart/couponPostAjax') ?>"
+					  method="post">
+					<div class="discount cart-discount pb-0">
+						<div class="discount-form">
+							<input type="hidden" name="remove" id="remove-coupon" value="0"/>
+							<div class="input-box row">
+								<div class="col-md-12 pl-0 pr-0 coupon-block input-coupon-block">
+									<input type="text" class="input-text discount-input"
+										   id="coupon_code"
+										   placeholder="Mã giảm giá" name="coupon_code"
+										   value="<?php echo $this->escapeHtml($coupon_code) ?>"
+										   onkeyup="doCouponPost()"/>
+									<span class="coupon-state ajax-loader" title="Đang tải"><img
+												src="<?php echo $this->getSkinUrl('images/ajax-loader.gif') ?>"
+												width="14" height="14"/></span>
+									<a class="coupon-state remove-coupon-btn"
+									   onclick="applyCouponCode(true)"
+									   title="Nhập lại mã giảm giá"><span
+												class="fa fa-times"></span></a>
+									<a class="coupon-state success-coupon-btn"
+									   title="Mã được ghi nhận"><span
+												class="fa fa-check"></span></a>
+								</div>
+								<div class="invalid_coupon text-right"></div>
+							</div>
+						</div>
+					</div>
+				</form>
+
+				<div class="clearfix"></div>
+				<!-- Discount block-->
+				<div class="row pl-15 pr-15 pt-15 cart-discount-block">
+					<div class="cart-pr-discount-title col-xs-5 no-padding">Số tiền giảm:</div>
+					<div class="cart-discount-value col-xs-7 no-padding">
+						-&nbsp;<?php echo Mage::helper('checkout')->formatPrice($discount_value - $total_free_item_price) ?></div>
+				</div>
+				<div class="clearfix"></div>
+
+				<!-- Grand total block-->
+				<div class="row pl-15 pr-15 grand-total-block">
+					<div class="cart-pr-total-title col-xs-5 no-padding">Thành tiền:</div>
+					<div
+							class="cart-pr-grandtotal col-xs-7 no-padding"><?php echo Mage::helper('checkout')->formatPrice($grand_total) ?></div>
+				</div>
+
+				<div class="totals ">
+					<ul class="checkout-types cart-checkout-types">
+						<li class="fast-pay">
+							<button type="button"
+									title="<?php echo $this->__('Proceed to Checkout') ?>"
+									class="button btn-proceed-checkout btn-checkout"
+									onclick="goToCheckout()">
+								<span><span><?php echo $this->__('Proceed to Checkout') ?></span></span>
+							</button>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		<?php endif; ?>
+	</div>
+</div>

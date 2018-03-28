@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!--
+* @category    TheExtensionLab
+* @package     TheExtensionLab_MegaMenu
+* @copyright   Copyright (c) 2015 TheExtensionLab (http://www.theextensionlab.com)
+* @license     Open Software License (OSL 3.0)
+* @author      James Anelay @ TheExtensionLab <james@theextensionlab.com>
+-->
+<layout>
+    <default>
+        <!-- Replace default js files with our own to ensure our new Nav Id is used-->
+        <reference name="head">
+            <action method="removeItem"><type>js</type><name>varien/menu.js</name></action>
+            <action method="addItem"><type>skin_js</type><name>js/theextensionlab/megamenu/menu-bp.js</name></action>
+            <action method="addItem"><type>skin_js</type><name>js/theextensionlab/megamenu/menu.js</name></action>
+        </reference>
+
+        <!-- Add our styling -->
+        <reference name="head">
+            <action method="addCss">
+                <stylesheet>css/theextensionlab/megamenu/grid.css</stylesheet>
+            </action>
+            <action method="addCss">
+                <stylesheet>css/theextensionlab/megamenu/main.css</stylesheet>
+            </action>
+            <action method="addCss" ifconfig="catalog/navigation/include_responsive_styles">
+                <stylesheet>css/theextensionlab/megamenu/responsive.css</stylesheet>
+            </action>
+            <action method="addCss">
+                <stylesheet>css/theextensionlab/megamenu/theme-specific.css</stylesheet>
+            </action>
+        </reference>
+
+        <!-- Set the menu renderer and own own menu template (so that we can set our custom menu ID) -->
+        <reference name="catalog.topnav">
+            <action method="setTemplate"><template>theextensionlab/megamenu/page/html/topmenu.phtml</template></action>
+            <block type="theextensionlab_megamenu/page_html_topmenu_renderer" name="catalog.topnav.renderer"
+                   template="theextensionlab/megamenu/page/html/topmenu/renderer.phtml"/>
+        </reference>
+    </default>
+</layout>

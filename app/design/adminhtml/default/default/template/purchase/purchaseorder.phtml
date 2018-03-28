@@ -1,0 +1,1214 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     default_default
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<?php
+/**
+ * @see Mage_Adminhtml_Block_Catalog_Product
+ */
+?>
+<div ng-app="purchase" ng-controller="requestCtrl as ctrl" class="purchase-request">
+    <div class="content-header">
+        <table cellspacing="0">
+            <tr>
+                <td style="width:50%;">
+                    <h3 class="icon-head head-products"><?php echo Mage::helper('purchase')->__('Purchase Order') ?></h3>
+                </td>
+                <td class="a-right">
+                    <button ng-click="ctrl.openConfirm()" type="button" class="scalable add">Đặt hàng</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="grid">
+        <div class="hor-scroll">
+            <div ng-if="ctrl.error"><h3 style="color: red" class="a-center">{{ctrl.error}}</h3></div>
+            <div ng-if="ctrl.successMessage"><h3 style="color: green" class="a-center">{{ctrl.successMessage}}</h3>
+            </div>
+            <table cellspacing="0" class="actions">
+                <tbody>
+                <tr>
+                    <td class="pager">
+                        Trang
+                        <a style="text-decoration: none" title="Previous page" ng-click="ctrl.gotoPage('previous')"
+                           ng-if="ctrl.page > 1">
+                            <img src="<?php echo $this->getSkinUrl('images/pager_arrow_left.gif') ?>"
+                                 alt="Go to Previous page" class="arrow">
+                        </a>
+                        <img src="<?php echo $this->getSkinUrl('images/pager_arrow_left_off.gif') ?>"
+                             ng-if="ctrl.page == 1" alt="Go to Previous page" class="arrow">
+
+                        <input input-qty type="text" name="page" ng-model="ctrl.page" class="input-text page"
+                               enter-click="ctrl.gotoPage()">
+                        <a style="text-decoration: none" title="Next page" ng-click="ctrl.gotoPage('next')">
+                            <img src="<?php echo $this->getSkinUrl('images/pager_arrow_right.gif') ?>"
+                                 alt="Go to Next page" class="arrow">
+                        </a>
+                        trong {{Math.floor(ctrl.total_item % ctrl.limit ? ctrl.total_item / ctrl.limit + 1 :
+                        ctrl.total_item / ctrl.limit)}} trang
+                        <span class="separator">|</span>
+                        Xem
+                        <select class="chosen-select form-control" style="width: 40px !important;" ng-model="ctrl.limit"
+                                ng-change="ctrl.updatePage()">
+                            <option value="10">10</option>
+                            <option value="15">15</option>
+                            <option value="20">20</option>
+                        </select>
+                        bản ghi
+                        <span class="separator">|</span>
+                        Tổng cộng {{ctrl.total_item}} bản ghi
+                        <span id="ved_gorders_grid-total-count" class="no-display">{{ctrl.total_item}}</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <table cellspacing="0" class="data order-tables">
+                <colgroup>
+                    <col style="width: 20%">
+                    <col style="width: 8%">
+                    <col style="width: 8%">
+                    <col style="width: 9%">
+                    <col style="width: 5%">
+                    <col style="width: 8%">
+                    <col style="width: 10%">
+                    <col style="width: 12%">
+                    <col style="width: 10%">
+                    <col style="width: 10%">
+                </colgroup>
+                <thead>
+                <tr class="headings">
+                    <th class="a-center">Tên sản phẩm</th>
+                    <th class="a-center">Đơn hàng</th>
+                    <th class="a-center">SKU</th>
+                    <th class="a-center">Warehouse SKU</th>
+                    <th class="a-center">SL đặt</th>
+                    <th class="a-center">Tồn kho</th>
+                    <th class="a-center">Tỉnh mua hàng</th>
+                    <th class="a-center">Đặt hàng NCC</th>
+                    <th class="a-center">Giá nhập</th>
+                    <th class="a-center">Loại</th>
+                </tr>
+                <tr class="filter">
+                    <th>
+                        <input type="text" style="width: 98%;" name="name" ng-model="ctrl.name"
+                               enter-click="ctrl.searchItem()" value=""
+                               class="input-text no-changes" placeholder="Tên sản phẩm...">
+                    </th>
+                    <th>
+                        <input type="text" style="width: 96%;" name="increment_id" ng-model="ctrl.increment_id"
+                               enter-click="ctrl.searchItem()" value=""
+                               class="input-text no-changes" placeholder="Mã đơn hàng...">
+                    </th>
+                    <th>
+                        <input type="text" style="width: 96%;" name="sku" ng-model="ctrl.sku"
+                               enter-click="ctrl.searchItem()" value=""
+                               class="input-text no-changes" placeholder="SKU...">
+                    </th>
+                    <th>
+                        <input type="text" style="width: 96%;" name="warehouse_sku" ng-model="ctrl.warehouse_sku"
+                               enter-click="ctrl.searchItem()" value=""
+                               class="input-text no-changes" placeholder="Warehouse SKU...">
+                    </th>
+                    <th></th>
+                    <th></th>
+                    <th>
+                        <input type="text" style="width: 96%;" name="province_name" ng-model="ctrl.province_name"
+                               enter-click="ctrl.searchItem()" value=""
+                               class="input-text no-changes" placeholder="Tỉnh mua hàng...">
+                    </th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody ng-repeat="item in ctrl.outputRequests track by $index" ng-if="ctrl.loading === false">
+                <tr>
+                    <td style="padding: 10px;">{{item.name}}</td>
+                    <td style="padding: 10px;">{{item.increment_id}}</td>
+                    <td style="padding: 10px;">{{item.sku}}</td>
+                    <td style="padding: 10px;">{{item.warehouse_sku}}</td>
+                    <td class="a-center" style="padding: 10px;">{{item.quantity}}</td>
+                    <td style="padding: 10px;">
+                        <div ng-if="item.total_inventory >= 1">
+                            <div class="a-center"
+                                 style="cursor: pointer; color: blue; font-weight: bold; margin-bottom: 5px"
+                                 ng-click="ctrl.openShowDetailQuantity(item)">
+                                {{item.total_inventory}}
+                            </div>
+                            <div style="float: left; margin-top: 1px;">
+                                <span>Lấy hàng từ kho&nbsp;&nbsp;</span>
+                            </div>
+                            <div>
+                                <label class="switch">
+                                    <input type="checkbox" ng-model="item.is_export_warehouse"
+                                           ng-click="ctrl.getItemFromWarehouse(item)"/>
+                                    <div class="slider round"></div>
+                                </label>
+                            </div>
+
+                            <div ng-if="item.is_export_warehouse" style="margin-top: 5px">
+                                <span style="font-weight: bold">Số lượng lấy: </span>
+                                <input input-qty
+                                       class="a-center" type="text" style="width: 30%;"
+                                       ng-model="item.add_stock_qty"
+                                       ng-change="ctrl.updateAddStockQty(item)"/>
+                            </div>
+                        </div>
+
+                        <div class="a-center" ng-if="item.total_inventory === 0">{{item.total_inventory}}</div>
+                    </td>
+                    <td style="padding: 10px;">{{item.province_name}}</td>
+                    <td style="padding: 10px;">
+
+                        <div style="float: left; margin-top: 1px;">
+                            <span>Đặt hàng NCC&nbsp;&nbsp;</span>
+                        </div>
+                        <div>
+                            <label class="switch">
+                                <input type="checkbox" ng-model="item.is_import_warehouse"
+                                       ng-click="ctrl.getSupplierListByItem(item)"/>
+                                <div class="slider round"></div>
+                            </label>
+                        </div>
+
+                        <div ng-if="item.is_import_warehouse">
+                            <p style="margin-top: 10px; font-weight: bold">Kho nhập</p>
+                            <select class="chosen-select form-control" ng-model="item.selected_warehouse"
+                                    style="width: 100%;"
+                                    ng-show="item.is_import_warehouse"
+                                    ng-change="ctrl.getSupplierListByItem(item)"
+                                    ng-options="warehouse.name for warehouse in ctrl.warehouses">
+                            </select>
+
+                            <div ng-if="item.is_import_warehouse && item.suppliers === undefined">
+                                <p style="color: red; margin-top: 10px">Kho bạn chọn không có nhà cung cấp nào!</p>
+                            </div>
+
+                            <div ng-if="item.is_import_warehouse && item.suppliers !== undefined">
+                                <p style="margin-top: 10px; font-weight: bold">Nhà cung cấp</p>
+                                <select class="chosen-select form-control" ng-model="item.selected_supplier"
+                                        style="width: 100%;"
+                                        ng-show="item.is_import_warehouse"
+                                        ng-init="item.selected_supplier = item.suppliers[0]"
+                                        ng-change="ctrl.changeSupplier(item)"
+                                        ng-options="supplier.name for supplier in item.suppliers">
+                                </select>
+                                <div style="margin-top: 10px;">
+                                    <span style="font-weight: bold">Số lượng đặt:  </span>
+                                    <input input-qty
+                                           class="a-center" type="text" style="width: 20%;"
+                                           ng-model="item.request_qty"
+                                           ng-change="ctrl.updateRequestQty(item)"/>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                    <td style="padding: 10px;">
+                        <input input-qty
+                               class="a-center" type="text" style="width: 100%;"
+                               ng-model="item.price"
+                               value="{{item.price}}"
+                               ng-change="ctrl.updatePrice(item)"/>
+                    </td>
+                    <td style="padding: 10px;">
+                        <select class="chosen-select form-control" style="width: 100%;" ng-model="item.type"
+                                ng-change="ctrl.updateType(item)"">
+                        <option value="0">Hàng mua</option>
+                        <option value="1">Hàng ký gửi</option>
+                        <option value="2">Hàng khuyến mãi</option>
+                        </select>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="popupConfirm" class="modal fade" tabindex="-1">
+        <div class="modal-dialog  modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h3 class="modal-title a-center" id="modalLabel">Xác nhận thông tin đặt hàng</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="range">
+                        <div class="grid">
+                            <div class="hor-scroll">
+                                <table cellspacing="0" class="data order-tables">
+                                    <colgroup>
+                                        <col style="width: 3%">
+                                        <col style="width: 17%">
+                                        <col style="width: 9%">
+                                        <col style="width: 9%">
+                                        <col style="width: 10%">
+                                        <col style="width: 6%">
+                                        <col style="width: 10%">
+                                        <col style="width: 13%">
+                                        <col style="width: 13%">
+                                        <col style="width: 10%">
+                                    </colgroup>
+                                    <thead>
+                                    <tr class="headings">
+                                        <th class="a-center">STT</th>
+                                        <th class="a-center">Tên sản phẩm</th>
+                                        <th class="a-center">Đơn hàng</th>
+                                        <th class="a-center">SKU</th>
+                                        <th class="a-center">Warehouse SKU</th>
+                                        <th class="a-center">SL đặt</th>
+                                        <th class="a-center">Tồn kho</th>
+                                        <th class="a-center">Đặt hàng NCC</th>
+                                        <th class="a-center">Giá nhập</th>
+                                        <th class="a-center">Loại</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody ng-repeat="item in ctrl.purchaseItems track by $index">
+                                    <tr>
+                                        <td class="a-center" style="padding: 10px;">{{ $index + 1 }}</td>
+                                        <td style="padding: 10px;">{{item.name}}</td>
+                                        <td style="padding: 10px;">{{item.increment_id}}</td>
+                                        <td style="padding: 10px;">{{item.sku}}</td>
+                                        <td style="padding: 10px;">{{item.warehouse_sku}}</td>
+                                        <td class="a-center" style="padding: 10px;">{{item.quantity}}</td>
+                                        <td class="a-center" style="padding: 10px;">
+                                            {{item.total_inventory}}<br>
+                                            <span ng-if="item.is_export_warehouse">(Lấy hàng từ kho - SL: {{item.add_stock_qty}})</span>
+                                        </td>
+                                        <td style="padding: 10px;">
+                                            <div ng-if="item.selected_supplier">
+                                                <p><span style="font-weight: bold">Kho nhập:</span>
+                                                    {{item.selected_warehouse.name}}</p>
+                                                <p><span style="font-weight: bold">NCC:</span>
+                                                    {{item.selected_supplier.name }}</p>
+                                                <p><span style="font-weight: bold">SL đặt:</span>
+                                                    {{item.request_qty }}</p>
+                                            </div>
+                                            <div class="a-center" ng-if="!item.selected_supplier">
+                                                <p>Không</p>
+                                            </div>
+                                        </td>
+                                        <td style="padding: 10px;">{{item.price | number:2 }} đ</td>
+                                        <td style="padding: 10px;">
+                                            <span ng-if="item.type==='0'">Hàng mua</span>
+                                            <span ng-if="item.type==='1'">Hàng ký gửi</span>
+                                            <span ng-if="item.type==='2'">Hàng khuyến mãi</span>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="scalable back" data-dismiss="modal">Huỷ</button>
+                    <button type="button" class="btn btn-warning btn-mini"
+                            ng-click="ctrl.createPurchaseRequestFromOrder();">Đặt hàng
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="showDetailQuantityInStock" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h3 class="modal-title a-center" id="modalLabel">Thông tin tồn kho của sản phẩm</h3>
+                </div>
+                <div class="modal-body">
+                    <div class="range">
+                        <div class="grid">
+                            <div class="hor-scroll">
+                                <table cellspacing="0" class="data order-tables">
+                                    <colgroup>
+                                        <col style="width: 10%">
+                                        <col style="width: 70%">
+                                        <col style="width: 20%">
+
+                                    </colgroup>
+                                    <thead>
+                                    <tr class="headings">
+                                        <th class="a-center">STT</th>
+                                        <th class="a-center">Tên kho</th>
+                                        <th class="a-center">SL tồn kho</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody ng-repeat="item in ctrl.stockArrays track by $index">
+                                    <tr>
+                                        <td class="a-center" style="padding: 10px;">{{ $index + 1 }}</td>
+                                        <td style="padding: 10px;">{{item.store_name}}</td>
+                                        <td class="a-center" style="padding: 10px;">{{item.inventory}}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <p style="margin-top: 10px; font-weight: bold; text-align: right; margin-right: 30px"
+                                   ng-if="ctrl.total_request">SL đã đặt từ kho: {{ctrl.total_request}} </p>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="scalable back" data-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalFadeScreen" class="modal fade" data-backdrop="static" data-keyboard="false"></div>
+</div>
+<script type="text/javascript">
+    localStorage.removeItem('outputRequests');
+    (function () {
+        var app = angular.module('purchase', []);
+
+        app.controller('requestCtrl', function ($scope, $http, $window) {
+            $scope.Math = Math;
+
+            var vm = this;
+            vm.loading = true;
+            vm.name = '';
+            vm.increment_id = '';
+            vm.sku = '';
+            vm.warehouse_sku = '';
+            vm.province_name = '';
+            vm.limit = '10';
+            vm.allItems = {};
+            vm.outputRequests = [];
+            vm.purchaseItems = [];
+            vm.total_item = 0;
+            vm.currentPage = 1;
+
+            getData();
+
+            function getData() {
+                vm.page = 1;
+                getWarehouse();
+            }
+
+            function getWarehouse() {
+                $http.get('<?= Mage::getConfig()->getNode('global/warehouse_api_url') . 'stores/list'?>')
+                    .then(successCallback);
+
+                function successCallback(response) {
+                    vm.warehouses = response.data.data;
+                    getOutputRequestList();
+                }
+            }
+
+            vm.updatePage = function () {
+                vm.page = 1;
+
+                saveToLocalStorage();
+                getOutputRequestList();
+            };
+
+            vm.gotoPage = function (direction) {
+
+                saveToLocalStorage();
+                if (direction === 'next') {
+                    if (vm.page * vm.limit < vm.total_item) {
+                        vm.page += 1;
+                        getOutputRequestList();
+
+                    }
+                }
+                else if (direction === 'previous') {
+                    if (vm.page > 1) {
+                        vm.page -= 1;
+                        getOutputRequestList();
+                    }
+                }
+                else {
+                    if (vm.page === '') {
+                        vm.page = 1;
+                    }
+                    vm.page = parseInt(vm.page);
+                    if (vm.page > Math.floor(vm.total_item / vm.limit) + 1) {
+                        vm.page = vm.currentPage;
+                        return false;
+                    }
+                    else {
+                        getOutputRequestList();
+                    }
+//                    console.log(vm.purchaseItems);
+                }
+
+            };
+
+            function isInArray(value, array) {
+                return array.indexOf(value) > -1;
+            }
+
+            function saveToLocalStorage() {
+                var outputRequests = JSON.parse(localStorage.getItem('outputRequests'));
+
+                if (!outputRequests || outputRequests.length === 0) {
+                    var items = [];
+                    for (var i = 0; i < vm.outputRequests.length; i++) {
+                        if (vm.outputRequests[i].is_export_warehouse || vm.outputRequests[i].is_import_warehouse) {
+                            if (vm.outputRequests[i].is_import_warehouse) {
+                                items.push({
+                                    id: vm.outputRequests[i].id,
+                                    is_export_warehouse: vm.outputRequests[i].is_export_warehouse,
+                                    is_import_warehouse: vm.outputRequests[i].is_import_warehouse,
+                                    selected_warehouse: vm.outputRequests[i].selected_warehouse,
+                                    selected_supplier: vm.outputRequests[i].selected_supplier,
+                                    suppliers: vm.outputRequests[i].suppliers,
+                                    request_qty: parseInt(vm.outputRequests[i].request_qty),
+                                    add_stock_qty: parseInt(vm.outputRequests[i].add_stock_qty),
+                                    price: vm.outputRequests[i].price,
+                                    type: vm.outputRequests[i].type
+                                });
+                            }
+                            else {
+                                items.push({
+                                    id: vm.outputRequests[i].id,
+                                    is_export_warehouse: vm.outputRequests[i].is_export_warehouse,
+                                    is_import_warehouse: vm.outputRequests[i].is_import_warehouse,
+                                    request_qty: parseInt(vm.outputRequests[i].request_qty),
+                                    add_stock_qty: parseInt(vm.outputRequests[i].add_stock_qty),
+                                    price: vm.outputRequests[i].price,
+                                    type: vm.outputRequests[i].type
+                                });
+                            }
+                        }
+                    }
+                    localStorage.setItem('outputRequests', JSON.stringify(items));
+                }
+                else {
+
+                    var outputRequestsIds = [];
+                    for (var i = 0; i < outputRequests.length; i++) {
+                        outputRequestsIds.push(outputRequests[i].id);
+                    }
+
+                    for (var j = 0; j < vm.outputRequests.length; j++) {
+                        if (isInArray(vm.outputRequests[j].id, outputRequestsIds)) {
+
+                            var index = outputRequestsIds.indexOf(vm.outputRequests[j].id);
+
+                            if (vm.outputRequests[j].is_export_warehouse || vm.outputRequests[j].is_import_warehouse) {
+
+                                if (vm.outputRequests[j].is_import_warehouse) {
+                                    outputRequests[index] = {
+                                        id: vm.outputRequests[j].id,
+                                        is_export_warehouse: vm.outputRequests[j].is_export_warehouse,
+                                        is_import_warehouse: vm.outputRequests[j].is_import_warehouse,
+                                        selected_warehouse: vm.outputRequests[j].selected_warehouse,
+                                        selected_supplier: vm.outputRequests[j].selected_supplier,
+                                        suppliers: vm.outputRequests[j].suppliers,
+                                        request_qty: parseInt(vm.outputRequests[j].request_qty),
+                                        add_stock_qty: parseInt(vm.outputRequests[j].add_stock_qty),
+                                        price: vm.outputRequests[j].price,
+                                        type: vm.outputRequests[j].type
+                                    };
+                                }
+                                else {
+                                    outputRequests[index] = {
+                                        id: vm.outputRequests[j].id,
+                                        is_export_warehouse: vm.outputRequests[j].is_export_warehouse,
+                                        is_import_warehouse: vm.outputRequests[j].is_import_warehouse,
+                                        request_qty: parseInt(vm.outputRequests[j].request_qty),
+                                        add_stock_qty: parseInt(vm.outputRequests[j].add_stock_qty),
+                                        price: vm.outputRequests[j].price,
+                                        type: vm.outputRequests[j].type
+                                    };
+                                }
+                            }
+                            else {
+                                outputRequests.splice(index, 1);
+                                outputRequestsIds.splice(index, 1);
+                            }
+                        }
+                        else {
+                            if (vm.outputRequests[j].is_export_warehouse || vm.outputRequests[j].is_import_warehouse) {
+                                if (vm.outputRequests[j].is_import_warehouse) {
+                                    outputRequests.push({
+                                        id: vm.outputRequests[j].id,
+                                        is_export_warehouse: vm.outputRequests[j].is_export_warehouse,
+                                        is_import_warehouse: vm.outputRequests[j].is_import_warehouse,
+                                        selected_warehouse: vm.outputRequests[j].selected_warehouse,
+                                        selected_supplier: vm.outputRequests[j].selected_supplier,
+                                        suppliers: vm.outputRequests[j].suppliers,
+                                        request_qty: parseInt(vm.outputRequests[j].request_qty),
+                                        add_stock_qty: parseInt(vm.outputRequests[j].add_stock_qty),
+                                        price: vm.outputRequests[j].price,
+                                        type: vm.outputRequests[j].type
+                                    });
+                                }
+                                else {
+                                    outputRequests.push({
+                                        id: vm.outputRequests[j].id,
+                                        is_export_warehouse: vm.outputRequests[j].is_export_warehouse,
+                                        is_import_warehouse: vm.outputRequests[j].is_import_warehouse,
+                                        request_qty: parseInt(vm.outputRequests[j].request_qty),
+                                        add_stock_qty: parseInt(vm.outputRequests[j].add_stock_qty),
+                                        price: vm.outputRequests[j].price,
+                                        type: vm.outputRequests[j].type
+                                    });
+                                }
+                            }
+                        }
+                    }
+
+                    localStorage.setItem('outputRequests', JSON.stringify(outputRequests));
+                }
+            }
+
+            vm.searchItem = function () {
+                vm.page = 1;
+
+                getOutputRequestList();
+            };
+
+            function getOutputRequestList() {
+
+                vm.loading = true;
+                jQuery("#modalFadeScreen").modal('show');
+                jQuery('#loading-mask').show();
+
+                var url = <?php echo json_encode(Mage::getUrl("*/outputrequest/list"))?>;
+
+                $http.get(url + '?name=' + vm.name + '&increment_id=' + vm.increment_id + '&sku=' + vm.sku + '&warehouse_sku=' + vm.warehouse_sku + '&province_name=' + vm.province_name + '&page=' + vm.page + '&limit=' + vm.limit)
+                    .then(getOutputRequestCompleted);
+
+                function getOutputRequestCompleted(response) {
+
+                    vm.outputRequests = response.data.data;
+
+                    vm.total_item = response.data.total;
+
+                    var productIds = [];
+
+                    for (var index = 0; index < vm.outputRequests.length; index++) {
+                        //Get quantity in stock
+                        getQuantityInStock(vm.outputRequests[index]);
+
+                        //Get original price (for uncheck supplier)
+                        vm.outputRequests[index].original_price = vm.outputRequests[index].price;
+
+                        // Check in local storage
+                        var outputRequests = JSON.parse(localStorage.getItem('outputRequests'));
+
+                        if (outputRequests && outputRequests.length > 0) {
+                            var outputRequestsIds = [];
+                            for (var i = 0; i < outputRequests.length; i++) {
+                                outputRequestsIds.push(outputRequests[i].id);
+                            }
+
+                            if (isInArray(vm.outputRequests[index].id, outputRequestsIds)) { // Neu item nam trong Local storage
+
+                                var o_index = outputRequestsIds.indexOf(vm.outputRequests[index].id);
+
+                                vm.outputRequests[index].is_import_warehouse = outputRequests[o_index].is_import_warehouse;
+                                vm.outputRequests[index].is_export_warehouse = outputRequests[o_index].is_export_warehouse;
+                                vm.outputRequests[index].add_stock_qty = outputRequests[o_index].add_stock_qty;
+                                vm.outputRequests[index].request_qty = outputRequests[o_index].request_qty;
+
+                                if (outputRequests[o_index].is_import_warehouse) {
+                                    vm.outputRequests[index].selected_warehouse = outputRequests[o_index].selected_warehouse;
+                                    vm.outputRequests[index].selected_supplier = outputRequests[o_index].selected_supplier;
+                                    vm.outputRequests[index].suppliers = outputRequests[o_index].suppliers;
+                                }
+                                else {
+                                    //Get default warehouse
+                                    getDefaultWarehouse(vm.outputRequests[index]);
+                                }
+
+                                vm.outputRequests[index].price = outputRequests[o_index].price;
+                                vm.outputRequests[index].type = outputRequests[o_index].type;
+
+                            }
+                            else { // Neu item khong nam trong local storage
+                                //Get default warehouse
+                                getDefaultWarehouse(vm.outputRequests[index]);
+
+                                vm.outputRequests[index].is_import_warehouse = false;
+                                vm.outputRequests[index].is_export_warehouse = false;
+                                vm.outputRequests[index].add_stock_qty = 1;
+                                vm.outputRequests[index].request_qty = 1;
+                                vm.outputRequests[index].type = '0';
+                            }
+                        }
+                        else { // Neu local storage chua co item nao hoac chua duoc khoi tao
+
+                            //Get default warehouse
+                            getDefaultWarehouse(vm.outputRequests[index]);
+
+                            vm.outputRequests[index].is_import_warehouse = false;
+                            vm.outputRequests[index].is_export_warehouse = false;
+                            vm.outputRequests[index].add_stock_qty = 1;
+                            vm.outputRequests[index].request_qty = 1;
+                            vm.outputRequests[index].type = '0';
+                        }
+
+                        productIds.push(vm.outputRequests[index].product_id);
+                    }
+
+                    // Get hold quantity, tru total_inventory
+                    getHoldQuantity(productIds);
+
+                }
+
+                vm.currentPage = vm.page;
+            }
+
+            function getHoldQuantity(productIds) {
+//                console.log(productIds);
+
+                var param = {
+                    product_ids: productIds
+                };
+
+                // Get hold quantity
+                $http.get('<?= Mage::getUrl("*/outputrequest/getHoldQuantity")?>?' + decodeURIComponent(jQuery.param(param)))
+                    .then(getHoldQuantityCompleted);
+
+                function getHoldQuantityCompleted(response) {
+
+                    var results = response.data.data.request_item;
+
+                    if (results.length > 0) {
+                        for (var index = 0; index < results.length; index++) {
+                            for (var j = 0; j < vm.outputRequests.length; j++) {
+
+                                if (results[index].product_id === vm.outputRequests[j].product_id) {
+//                                    console.log(results[index].product_id, vm.outputRequests[j].total_inventory, results[index].total_request);
+                                    vm.outputRequests[j].total_inventory -= results[index].total_request;
+                                    if (vm.outputRequests[j].total_inventory < 0) {
+                                        vm.outputRequests[j].total_inventory = 0;
+                                    }
+                                    vm.outputRequests[j].total_request = results[index].total_request;
+                                }
+                            }
+                        }
+                    }
+
+                    vm.loading = false;
+                    jQuery('#loading-mask').hide();
+                    jQuery("#modalFadeScreen").modal('hide');
+                }
+            }
+
+            function getDefaultWarehouse(item) {
+                var is_found = false;
+                for (var index = 0; index < vm.warehouses.length; index++) {
+                    if (item.province_code === vm.warehouses[index].province_code) {
+                        item.selected_warehouse = vm.warehouses[index];
+                        is_found = true;
+                    }
+                }
+                if (is_found === false) {
+                    item.selected_warehouse = vm.warehouses[0];
+                }
+            }
+
+            function getWarehouseByProvinceCode(province_code) {
+                for (var index = 0; index < vm.warehouses.length; index++) {
+                    if (vm.warehouses[index].province_code === province_code) {
+                        return vm.warehouses[index];
+                    }
+                }
+            }
+
+            function getQuantityInStock(item) {
+
+                item.total_inventory = 0;
+                var param = {
+                    product_ids: [item.product_id]
+                };
+
+                $http.get('<?= Mage::getConfig()->getNode('global/warehouse_api_url') . 'products/in-stock-quantity'?>?' + decodeURIComponent(jQuery.param(param)))
+                    .then(getQuantityInStockCompleted);
+
+                function getQuantityInStockCompleted(response) {
+                    var results = response.data.data;
+
+                    var array = jQuery.map(results, function (value) {
+                        return [value];
+                    });
+
+                    if (array.length > 0) {
+                        for (var index = 0; index < array.length; index++) {
+                            item.total_inventory += array[index].products[item.product_id].inventory;
+                        }
+                    }
+
+                }
+            }
+
+            vm.getItemFromWarehouse = function (item) {
+                var purchaseItemsIds = [];
+                if (vm.purchaseItems.length > 0) {
+                    for (var i = 0; i < vm.purchaseItems.length; i++) {
+                        purchaseItemsIds.push(vm.purchaseItems[i].id);
+                    }
+                }
+
+                if (item.is_export_warehouse) { // Check
+                    if (item.total_inventory >= item.quantity) {
+                        item.add_stock_qty = item.quantity;
+                    }
+                    else {
+                        item.add_stock_qty = item.total_inventory;
+                    }
+
+                    var p_index = purchaseItemsIds.indexOf(item.id);
+
+                    // Neu trong purchase item chua co san pham nay -> push vao, neu da co -> replace
+                    if (p_index === -1) {
+                        vm.purchaseItems.push(item); // Push vao purchaseItems
+                    }
+                    else {
+                        vm.purchaseItems[p_index] = item; // Replace san pham trong purchaseItems
+                    }
+
+                }
+                else { //Uncheck
+                    if (item.is_import_warehouse) {
+                        var p_index = purchaseItemsIds.indexOf(item.id);
+
+                        // Neu trong purchase item chua co san pham nay -> push vao, neu da co -> replace
+                        if (p_index === -1) {
+                            vm.purchaseItems.push(item); // Push vao purchaseItems
+                        }
+                        else {
+                            vm.purchaseItems[p_index] = item; // Replace san pham trong purchaseItems
+                        }
+                    }
+                    else {
+                        var index = vm.purchaseItems.indexOf(item);
+                        if (index !== -1) {
+                            vm.purchaseItems.splice(index, 1);// Splice khoi purchaseItems
+                        }
+                    }
+                }
+
+//                console.log(vm.purchaseItems);
+            };
+
+            vm.getSupplierListByItem = function (item) {
+
+                var purchaseItemsIds = [];
+                if (vm.purchaseItems.length > 0) {
+                    for (var i = 0; i < vm.purchaseItems.length; i++) {
+                        purchaseItemsIds.push(vm.purchaseItems[i].id);
+                    }
+                }
+
+                if (item.is_import_warehouse) { // Chon nhap kho
+
+                    var param = {
+                        product_ids: [item.product_id],
+                        region_code: item.selected_warehouse.province_code
+                    };
+                    $http.get('<?= Mage::getConfig()->getNode('global/supplier_api_url') . 'listSupplierByProductId'?>?' + decodeURIComponent(jQuery.param(param)))
+                        .then(successCallback);
+                    function successCallback(response) {
+
+                        item.suppliers = response.data[item.product_id];
+
+                        if (item.suppliers) { // Neu kho duoc chon co nha cung cap
+
+                            item.price = parseInt(item.suppliers[0].import_price);
+                            item.selected_supplier = item.suppliers[0];
+
+                            var p_index = purchaseItemsIds.indexOf(item.id);
+
+                            // Neu trong purchase item chua co san pham nay -> push vao, neu da co -> replace
+                            if (p_index === -1) {
+                                vm.purchaseItems.push(item); // Push vao purchaseItems
+                            }
+                            else {
+                                vm.purchaseItems[p_index] = item; // Replace san pham trong purchaseItems
+                            }
+//                            console.log(vm.purchaseItems);
+                        }
+                        else { // Neu kho duoc chon khong co nha cung cap
+                            item.price = item.original_price;
+                            item.selected_supplier = undefined;
+
+                            if (item.is_export_warehouse) {
+                                var p_index = purchaseItemsIds.indexOf(item.id);
+
+                                // Neu trong purchase item chua co san pham nay -> push vao, neu da co -> replace
+                                if (p_index === -1) {
+                                    vm.purchaseItems.push(item); // Push vao purchaseItems
+                                }
+                                else {
+                                    vm.purchaseItems[p_index] = item; // Replace san pham trong purchaseItems
+                                }
+                            }
+                            else {
+                                var index = vm.purchaseItems.indexOf(item);
+
+                                if (index !== -1) {
+                                    vm.purchaseItems.splice(index, 1);// Splice khoi purchaseItems
+                                }
+                            }
+//                            console.log(vm.purchaseItems);
+                        }
+
+                    }
+                }
+                else { // Bo chon nhap kho
+                    item.price = parseInt(item.original_price);
+                    item.selected_supplier = undefined;
+                    item.suppliers = undefined;
+
+                    if (item.is_export_warehouse) {
+                        var p_index = purchaseItemsIds.indexOf(item.id);
+
+                        // Neu trong purchase item chua co san pham nay -> push vao, neu da co -> replace
+                        if (p_index === -1) {
+                            vm.purchaseItems.push(item); // Push vao purchaseItems
+                        }
+                        else {
+                            vm.purchaseItems[p_index] = item; // Replace san pham trong purchaseItems
+                        }
+                    }
+                    else {
+                        var index = vm.purchaseItems.indexOf(item);
+                        if (index !== -1) {
+                            vm.purchaseItems.splice(index, 1);// Splice khoi purchaseItems
+                        }
+                    }
+//                    console.log(vm.purchaseItems);
+                }
+
+            };
+
+            vm.changeSupplier = function (item) {
+                item.price = parseInt(item.selected_supplier.import_price);
+
+                // Update price va supplier cho purchaseItem
+                var index = vm.purchaseItems.indexOf(item);
+                vm.purchaseItems[index].price = item.price;
+                vm.purchaseItems[index].selected_supplier = item.selected_supplier;
+            };
+
+            vm.updateAddStockQty = function (item) {
+                var purchaseItemsIds = [];
+                if (vm.purchaseItems.length > 0) {
+                    for (var i = 0; i < vm.purchaseItems.length; i++) {
+                        purchaseItemsIds.push(vm.purchaseItems[i].id);
+                    }
+                }
+
+                // Update qty cho purchaseItem
+                var p_index = purchaseItemsIds.indexOf(item.id);
+                vm.purchaseItems[p_index].add_stock_qty = parseInt(item.add_stock_qty);
+            };
+
+            vm.updateRequestQty = function (item) {
+                var purchaseItemsIds = [];
+                if (vm.purchaseItems.length > 0) {
+                    for (var i = 0; i < vm.purchaseItems.length; i++) {
+                        purchaseItemsIds.push(vm.purchaseItems[i].id);
+                    }
+                }
+
+                if (item.suppliers) {
+                    // Update qty cho purchaseItem
+                    var p_index = purchaseItemsIds.indexOf(item.id);
+                    vm.purchaseItems[p_index].request_qty = parseInt(item.request_qty);
+                }
+            };
+
+            vm.updatePrice = function (item) {
+                if (item.suppliers) {
+                    // Update price cho purchaseItem
+                    var index = vm.purchaseItems.indexOf(item);
+                    vm.purchaseItems[index].price = parseInt(item.price);
+                }
+            };
+
+            vm.updateType = function (item) {
+                if (item.suppliers) {
+                    // Update type cho purchaseItem
+                    var index = vm.purchaseItems.indexOf(item);
+                    vm.purchaseItems[index].type = item.type;
+                }
+            };
+
+            vm.openShowDetailQuantity = function (item) {
+
+                vm.total_request = item.total_request;
+
+                vm.stockArrays = [];
+                var param = {
+                    product_ids: [item.product_id]
+                };
+
+                $http.get('<?= Mage::getConfig()->getNode('global/warehouse_api_url') . 'products/in-stock-quantity'?>?' + decodeURIComponent(jQuery.param(param)))
+                    .then(getQuantityInStockCompleted);
+
+                function getQuantityInStockCompleted(response) {
+                    var results = response.data.data;
+
+                    var array = jQuery.map(results, function (value) {
+                        return [value];
+                    });
+
+                    for (var index = 0; index < array.length; index++) {
+                        var stockArray = {
+                            store_name: array[index].store_name,
+                            inventory: array[index].products[item.product_id].inventory
+                        };
+
+                        vm.stockArrays.push(stockArray);
+                    }
+
+                    jQuery("#showDetailQuantityInStock").modal('show');
+                }
+            };
+
+            vm.openConfirm = function () {
+//                console.log(vm.purchaseItems);
+                if (vm.purchaseItems.length === 0) {
+                    vm.error = "Không có dữ liệu để đặt hàng";
+                    return false;
+                }
+                vm.error = '';
+                jQuery("#popupConfirm").modal('show');
+            };
+
+            vm.createPurchaseRequestFromOrder = function () {
+
+                jQuery("#modalFadeScreen").modal('show');
+                jQuery('#loading-mask').show();
+
+                var dataImport = []; //Data nhap kho
+                var dataExport = []; //Data lay hang tu kho
+
+                for (var index = 0; index < vm.purchaseItems.length; index++) {
+//                    console.log(vm.purchaseItems[index]);
+
+                    // Neu chon lay hang tu kho
+                    if (vm.purchaseItems[index].is_export_warehouse) {
+//                        console.log('Lay hang tu kho');
+                        var warehouse = getWarehouseByProvinceCode(vm.purchaseItems[index].province_code);
+                        // Data luu vao sales_order_item_stock
+                        dataExport[vm.purchaseItems[index].id] = {
+                            id: vm.purchaseItems[index].id,
+                            order_id: vm.purchaseItems[index].order_id,
+                            product_id: vm.purchaseItems[index].product_id,
+                            sku: vm.purchaseItems[index].sku,
+                            status: 1,
+                            quantity: vm.purchaseItems[index].add_stock_qty,
+                            website_id: vm.purchaseItems[index].website_id,
+                            store_id: warehouse.id,
+                            store_name: warehouse.name,
+                            order_increment_id: vm.purchaseItems[index].increment_id,
+                            order_item_id: vm.purchaseItems[index].item_id
+                        }
+                    }
+
+                    // Neu chon nhap kho
+                    if (vm.purchaseItems[index].is_import_warehouse) {
+//                        console.log('Nhap kho');
+                        // Data luu vao sales_flat_purchase va sales_flat_purchase_item
+                        dataImport[vm.purchaseItems[index].selected_supplier.id] = {
+                            id: vm.purchaseItems[index].id,
+                            supplier_id: vm.purchaseItems[index].selected_supplier.id,
+                            supplier_name: vm.purchaseItems[index].selected_supplier.name,
+                            supplier_info: vm.purchaseItems[index].selected_supplier,
+                            website_id: vm.purchaseItems[index].website_id,
+                            store_id: vm.purchaseItems[index].selected_warehouse.id,
+                            store_name: vm.purchaseItems[index].selected_warehouse.name,
+                            items: [
+                                {
+                                    sku: vm.purchaseItems[index].sku,
+                                    product_name: vm.purchaseItems[index].name,
+                                    product_id: vm.purchaseItems[index].product_id,
+                                    order_quantity: vm.purchaseItems[index].quantity,
+                                    quantity: vm.purchaseItems[index].request_qty,
+                                    price: vm.purchaseItems[index].price,
+                                    unit: 'Chiếc',
+                                    type: vm.purchaseItems[index].type,
+                                    vat: 10
+                                }
+                            ]
+                        }
+                    }
+                }
+
+                dataExport = cleanArray(dataExport); // Data lay hang tu kho
+                dataImport = cleanArray(dataImport); // Data nhap kho
+
+                // Xu ly lay hang tu kho neu co du lieu
+                if (dataExport.length > 0) {
+//                    console.log('Xu ly lay hang tu kho');
+
+                    var paramExport = {
+                        "stock_requests": dataExport
+                    };
+
+                    var urlExport = <?php echo json_encode(Mage::getUrl("*/outputrequest/addItemStock", array('form_key' => Mage::getSingleton('core/session')->getFormKey())))?>;
+                    return $http.post(urlExport, paramExport).then(successCallback, errorCallback);
+
+                    function successCallback(response) {
+                        if (response.data.result === 'ok') {
+                            jQuery("#popupConfirm").modal('hide');
+                            vm.successMessage = "Đặt hàng từ kho thành công";
+                            if (dataImport.length === 0) { // Neu khong co du lieu nhap kho
+                                $window.location.reload();
+                                return true;
+                            }
+                            else { // Neu co du lieu nhap kho -> xu ly
+//                                console.log('Xu ly nhap kho');
+                                var paramImport = {
+                                    "purchase_requests": dataImport
+                                };
+//
+                                var urlImport = <?php echo json_encode(Mage::getUrl("*/*/addPurchaseFromOrder", array('form_key' => Mage::getSingleton('core/session')->getFormKey())))?>;
+                                return $http.post(urlImport, paramImport).then(successCallback, errorCallback);
+
+                                function successCallback(response) {
+                                    if (response.data.result === 'ok') {
+//                                        jQuery("#popupConfirm").modal('hide');
+                                        $window.location.href = '../index';
+                                        return true;
+                                    } else {
+                                        jQuery("#popupConfirm").modal('hide');
+                                        jQuery("#modalFadeScreen").modal('hide');
+                                        jQuery('#loading-mask').hide();
+                                        vm.error = "Có lỗi trong quá trình cập nhật dữ liệu, vui lòng thử lại sau";
+                                        return false;
+                                    }
+                                }
+
+                                function errorCallback(response) {
+                                    jQuery("#popupConfirm").modal('hide');
+                                    jQuery("#modalFadeScreen").modal('hide');
+                                    jQuery('#loading-mask').hide();
+                                    vm.error = "Có lỗi trong quá trình cập nhật dữ liệu, vui lòng thử lại sau";
+                                    return false;
+                                }
+                            }
+                        } else {
+                            jQuery("#popupConfirm").modal('hide');
+                            jQuery("#modalFadeScreen").modal('hide');
+                            jQuery('#loading-mask').hide();
+                            vm.error = "Có lỗi trong quá trình cập nhật dữ liệu, vui lòng thử lại sau";
+                            return false;
+                        }
+                    }
+
+                    function errorCallback(response) {
+                        jQuery("#popupConfirm").modal('hide');
+                        jQuery("#modalFadeScreen").modal('hide');
+                        jQuery('#loading-mask').hide();
+                        vm.error = "Có lỗi trong quá trình cập nhật dữ liệu, vui lòng thử lại sau";
+                        return false;
+                    }
+                }
+
+                // Xu ly nhap kho neu co du lieu (trong truong hop khong co du lieu xuat kho)
+                if (dataExport.length === 0 && dataImport.length > 0) {
+//                    console.log('Xu ly nhap kho');
+                    var paramImport = {
+                        "purchase_requests": dataImport
+                    };
+//
+                    var urlImport = <?php echo json_encode(Mage::getUrl("*/*/addPurchaseFromOrder", array('form_key' => Mage::getSingleton('core/session')->getFormKey())))?>;
+                    return $http.post(urlImport, paramImport).then(successCallback, errorCallback);
+
+                    function successCallback(response) {
+                        if (response.data.result === 'ok') {
+//                            jQuery("#popupConfirm").modal('hide');
+                            $window.location.href = '../index';
+                            return true;
+                        } else {
+                            jQuery("#popupConfirm").modal('hide');
+                            jQuery("#modalFadeScreen").modal('hide');
+                            jQuery('#loading-mask').hide();
+                            vm.error = "Có lỗi trong quá trình cập nhật dữ liệu, vui lòng thử lại sau";
+                            return false;
+                        }
+                    }
+
+                    function errorCallback(response) {
+                        jQuery("#popupConfirm").modal('hide');
+                        jQuery("#modalFadeScreen").modal('hide');
+                        jQuery('#loading-mask').hide();
+                        vm.error = "Có lỗi trong quá trình cập nhật dữ liệu, vui lòng thử lại sau";
+                        return false;
+                    }
+                }
+            };
+        });
+
+        function cleanArray(actual) {
+            var newArray = new Array();
+            for (var i = 0; i < actual.length; i++) {
+                if (actual[i]) {
+                    newArray.push(actual[i]);
+                }
+            }
+            return newArray;
+        }
+
+        app.directive('enterClick', enterClick);
+
+        function enterClick() {
+            return function (scope, element, attrs) {
+                element.bind("keydown keypress", function (event) {
+                    var keyCode = event.which || event.keyCode;
+                    if (keyCode === 13) {
+                        scope.$apply(function () {
+                            scope.$eval(attrs.enterClick);
+                        });
+
+                        event.preventDefault();
+                    }
+                });
+            };
+        }
+
+        app.directive('inputQty', function () {
+            return {
+                require: 'ngModel',
+                link: function (scope, element, attr, ngModelCtrl) {
+                    function fromUser(text) {
+                        var transformedInput = text.replace(/[^0-9]/g, '');
+//                        console.log(transformedInput);
+                        if (transformedInput !== text) {
+                            ngModelCtrl.$setViewValue(transformedInput);
+                            ngModelCtrl.$render();
+                        }
+                        return transformedInput;  // or return Number(transformedInput)
+                    }
+
+                    ngModelCtrl.$parsers.push(fromUser);
+                }
+            };
+        });
+    })();
+</script>

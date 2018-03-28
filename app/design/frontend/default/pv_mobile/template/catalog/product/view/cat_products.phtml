@@ -1,0 +1,103 @@
+<?php
+$_products = Mage::registry('cat_products');
+?>
+<?php if (count($_products) > 0): ?>
+    <?php
+    $tagProduct = Mage::getModel('tag/tag_relation')
+        ->setTagId(1)// Bao ke gia
+        ->setStoreId((Mage::app()->getStore()->getId()))
+        ->getProductIds();
+    ?>
+    <?php foreach ($_products as $_product): ?>
+        <?php
+        $oldPrice = $_product->getPrice();
+        $finalPrice = $_product->getFinalPrice();
+        ?>
+        <!-- Get promotion info-->
+        <?php
+        $includedProduct = json_decode($this->helper('catalog/output')->productAttribute($_product, nl2br($_product->getPromotionInfo()), 'promotion_info'));
+        $includedProductIds = [];
+        $includedProductQty = [];
+        if ($includedProduct) {
+            $includedProductIds = json_decode($this->helper('catalog/output')->productAttribute($_product, nl2br($_product->getPromotionInfo()), 'promotion_info'))->promotion_ids;
+            $includedProductQty = json_decode($this->helper('catalog/output')->productAttribute($_product, nl2br($_product->getPromotionInfo()), 'promotion_info'))->promotion_qty;
+        }
+        $promotionInfoHtml = '';
+        ?>
+        <?php if (count($includedProductIds) > 0 && count($includedProductQty) > 0): ?>
+            <?php foreach ($includedProductIds as $key => $id): ?>
+                <?php $_includedProduct = Mage::getModel('catalog/product')->load($id); ?>
+                <?php $promotionInfoHtml .= '<p>- ' . $this->escapeHtml($_includedProduct->getName()) . ' (' . $includedProductQty[$key] . ' sp)</p>'; ?>
+            <?php endforeach; ?>
+        <?php endif; ?>
+        <!-- End get promotion info-->
+        <div class="col-md-3 col-sm-3">
+            <div class="product-content">
+                <?php if (in_array((string)$_product->getId(), $tagProduct)): ?>
+                    <img class="list-tag"
+                         src='<?php echo $this->getSkinUrl('images/tag.png') ?>'/>
+                <?php endif; ?>
+                <a href="<?php echo $_product->getProductFullUrl(); ?>"
+                   onclick="trackProductClicks(this);"
+                   data-id="<?php echo $_product->getId(); ?>"
+                   data-name="<?php echo $this->escapeHtml($_product->getName()); ?>"
+                   data-price="<?php echo $_product->getFinalPrice(); ?>"
+                >
+                    <img class="product-img"
+                         data-product-name="<?php echo $this->escapeHtml($_product->getName()); ?>"
+                         data-product-price="<?php echo number_format($_product->getFinalPrice(), 0, ",", ".") . " ₫"; ?>"
+                         data-product-desc="<?php echo $this->escapeHtml($this->helper('catalog/output')->productAttribute($_product, nl2br($_product->getShortDescription()), 'short_description')) ?>"
+                         data-product-promo="<?php echo $promotionInfoHtml; ?>"
+                         src="<?php echo $this->helper('catalog/image')->init($_product, 'small_image')->resize(300, 300); ?>"/>
+                </a>
+                <div class="product-info">
+                    <div class="old-price">
+                        <?php if ($oldPrice != $finalPrice) : ?>
+                            <?php echo number_format($oldPrice, 0, ",", ".") . " ₫"; ?>
+                        <?php endif; ?>
+                    </div>
+                    <div class="final-price">
+                        <?php echo number_format($finalPrice, 0, ",", ".") . " ₫"; ?>
+                    </div>
+                    <div class="discount">
+                        <?php if ($oldPrice != $finalPrice) : ?>
+                            Tiết kiệm:
+                            <span class="discount-number"><?php echo number_format(($oldPrice - $finalPrice) / $oldPrice * 100, 0) . "%" ?></span>
+                        <?php endif; ?>
+                    </div>
+                    <a class="product-name" onclick="trackProductClicks(this);"
+                       data-id="<?php echo $_product->getId(); ?>"
+                       data-name="<?php echo $this->escapeHtml($_product->getName()); ?>"
+                       data-price="<?php echo $_product->getFinalPrice(); ?>"
+                       href="<?php echo $_product->getProductFullUrl(); ?>"
+                       title="<?php echo $this->escapeHtml($_product->getName()); ?>">
+                        <?php echo $this->escapeHtml($_product->getName()); ?>
+                    </a>
+                </div>
+                <div class="product-btn">
+                    <?php
+                    $instockStatus = $_product->getAttributeText('instock_status');
+                    $addToCartUrl = ($_product->getTypeId() == 'simple' && $instockStatus === 'Có') ? Mage::helper('checkout/cart')->getAddUrl($_product) : $_product->getProductFullUrl();
+                    ?>
+                    <button type="button"
+                            class="add-to-cart-btn add-to-cart-from-list-btn"
+                            data-product-name="<?php echo $this->escapeHtml($_product->getName()); ?>"
+                            data-product-id="<?php echo intval($_product->getId()); ?>"
+                            data-product-price="<?php echo intval($_product->getFinalPrice()); ?>"
+                            data-product-type="<?php echo $_product->getTypeId(); ?>"
+                            data-instock-status="<?php echo $instockStatus; ?>"
+                            data-add-to-cart-url="<?php echo $addToCartUrl; ?>"
+                    >
+                        Thêm vào giỏ hàng
+                        <img class="add-to-cart-from-list-icon hidden-1200"
+                             src="<?php echo $this->getSkinUrl('images/icon_ShoppingCart.svg'); ?>"/>
+                        <img class="add-to-cart-from-list-ajax-loader hidden"
+                             src="<?php echo $this->getSkinUrl('images/ajax-loader-black.gif'); ?>"/>
+                    </button>
+                </div>
+            </div>
+        </div>
+    <?php endforeach; ?>
+<?php endif; ?>
+
+

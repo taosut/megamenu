@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+ 
+<config>
+    <menu>
+        <sales>
+            <children>
+                <ved_porders translate="title" module="ved_porders">
+                    <sort_order>10</sort_order>
+                    <title>Orders - Processing</title>
+                    <action>adminhtml/porder/</action>
+                </ved_porders>
+            </children>
+        </sales>
+    </menu>
+</config>

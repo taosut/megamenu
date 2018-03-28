@@ -1,0 +1,9 @@
+<layout>
+    <compare_index_compare>
+        <reference name="content">
+            <block type="compare/index" name="compare.index.compare" template="compare/index.phtml">
+                <block type="core/template" name="page.cat_menu" template="page/html/cat_menu.phtml"/>
+            </block>
+        </reference>
+    </compare_index_compare>
+</layout>

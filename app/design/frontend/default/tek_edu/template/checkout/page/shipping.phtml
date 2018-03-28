@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?php echo $this->getLang() ?>"
+      lang="<?php echo $this->getLang() ?>">
+<head>
+    <?php echo $this->getChildHtml('head') ?>
+    <script type="text/javascript" src="<?php echo $this->getSkinUrl('js/bootbox.min.js'); ?>"></script>
+    <link rel="stylesheet" type="text/css" href="<?php echo $this->getSkinUrl('css/style.min.css'); ?>">
+</head>
+<body class="tiki-shipping-address">
+<?php echo $this->getChildHtml('after_body_start') ?>
+
+<?php echo $this->getChildHtml('global_notices') ?>
+
+<?php Mage::getSingleton('core/session')->setWelcomeMessage('true'); ?>
+<div id="preloader" class="preloaderlight">
+    <h1>
+        <img src="<?php echo $this->getSkinUrl('images/tekedu.gif') ?>" alt="Logo"/>
+    </h1>
+</div>
+<script type="text/javascript">
+    setTimeout(function(){ jQuery( "#preloader" ).fadeOut(); }, 50);
+</script>
+<script>
+    dataLayer = [];
+</script>
+<div class="wrap">
+    <?php echo $this->getChildHtml('header') ?>
+    <div class="container">
+
+        <div class="row row-style-2" style="min-height: 730px;">
+            <?php echo $this->getChildHtml('global_messages') ?>
+            <div class="col-lg-7 col-md-12 cart-col-1">
+                <div class="shipping-header payment-shipping-header">
+                    <div class="row bs-wizard">
+                        <div class="col-lg-4 col-md-4 col-xs-4 col-sm-4 bs-wizard-step complete">
+                            <div class="text-center bs-wizard-stepnum text-step">
+                                <span class="color-bar-text">Địa chỉ giao hàng</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar color-deactive-bar"></div>
+                            </div>
+                            <span class="bs-wizard-dot color-bar">1</span>
+                        </div>
+
+                        <div class="col-lg-4 col-md-4 col-xs-4 col-sm-4 bs-wizard-step active">
+                            <div class="text-center bs-wizard-stepnum text-step">
+                                <span class="hidden-xs text-nowrap">Thanh Toán &amp; Đặt Mua</span>
+                                <span class="visible-xs-inline-block text-nowrap">
+                                    Thanh Toán &amp; Đặt Mua
+                                </span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar color-deactive-bar"></div>
+                            </div>
+                            <span class="bs-wizard-dot color-deactive-bar">2</span>
+                        </div>
+
+                        <div class="col-lg-4 col-md-4 col-xs-4 col-sm-4 bs-wizard-step disabled">
+                            <div class="text-center bs-wizard-stepnum text-step">
+                                <span class="hidden-xs">Hoàn tất</span>
+                                <span class="visible-xs-inline-block">Hoàn tất</span>
+                            </div>
+                            <div class="progress">
+                                <div class="progress-bar"></div>
+                            </div>
+                            <span class="bs-wizard-dot color-deactive-bar">3</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-15"></div>
+                <?php echo $this->getChildHtml('content') ?>
+            </div>
+            <div class="col-lg-5 col-md-12 cart-col-2">
+                <div id="right-affix" class="affix-top">
+                    <?php echo $this->getChildHtml('right') ?>
+                </div>
+
+                <!-- Affiliate input block -->
+                <div class="checkbox text-left toggle-affiliate">
+                    <label>
+                        <input type="checkbox"> Bạn được giới thiệu mua hàng tại TekShop?
+                    </label>
+                </div>
+                <div id="affiliate-block" class="panel panel-default" hidden>
+                    <div class="panel-heading">
+                        <h5 class="affiliate-title">
+                            <i class="fa fa-tag affiliate-icon"></i>
+                            Mã giới thiệu
+                        </h5>
+                    </div>
+                    <div class="panel-body cart">
+                        <div class="discount cart-discount">
+                            <input name="affiliate_code" form="address-info"
+                                   class="discount-input input-text affiliate_code" placeholder="Mã giới thiệu"/>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<?php //echo $this->getChildHtml('footer') ?>
+<?php //echo $this->getChildHtml('global_cookie_notice') ?>
+<?php //echo $this->getChildHtml('before_body_end') ?>
+<div>
+    <?php echo $this->getChildHtml('footer') ?>
+</div>
+
+<script>
+$j('.toggle-affiliate').on('click', function() {
+    if ($j('.toggle-affiliate input').is(':checked')) {
+        $j('#affiliate-block').show(200)
+    } else {
+        $j('#affiliate-block').hide(200)
+    }
+})
+</script>
+
+<?php echo $this->getAbsoluteFooter() ?>
+</body>
+</html>

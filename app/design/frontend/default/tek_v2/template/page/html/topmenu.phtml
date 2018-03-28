@@ -1,0 +1,139 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     base_default
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<?php
+/**
+ * Top menu for store
+ *
+ * @see Mage_Page_Block_Html_Topmenu
+ */
+?>
+<?php $_menu = $this->getHtml('level-top') ?>
+<!--<link rel="stylesheet" type="text/css" href="--><?php //echo $this->getSkinUrl('css/bootstrap.min.css'); ?><!--"/>-->
+<!--<script type="text/javascript" src="--><?php //echo $this->getSkinUrl('js/bootstrap.min.js'); ?><!--"></script>-->
+<div class="nav-container nav-normal <?php echo !Mage::getBlockSingleton('page/html_header')->getIsHomePage() ? 'nav-background' : '' ?>">
+    <ul id="nav">
+        <?php if ($_menu): ?>
+            <li>
+                <?php echo $_menu ?>
+            </li>
+        <?php endif ?>
+    </ul>
+</div>
+<div class="nav-container nav-mobile">
+    <a class="btn btn-primary btn-menu" data-toggle="modal"
+       data-target="#openMenuModal">
+        <i class="fa fa-icon fa-bars"></i>
+    </a>
+
+    <a class="btn btn-primary btn-feature" data-toggle="modal"
+       data-target="#openFeatureModal">
+        <i class="fa fa-icon fa-ellipsis-v"></i>
+    </a>
+
+    <!-- Modal -->
+    <div id="openMenuModal" class="modal left fade" role="dialog">
+        <div class="modal-dialog menu-modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content menu-modal-content">
+                <div class="modal-body no-padding">
+                    <ul class="menu-left menu-left-top menu-left-mobile">
+                        <li><a href="<?php echo $this->getUrl('') ?>">Trang chủ</a></li>
+                        <?php if ($_menu): ?>
+                            <?php echo $_menu ?>
+                        <?php endif ?>
+                    </ul>
+                    <div class="col-xs-12 no-padding modal-advice-block">
+                        <span class="modal-advice-text">Tư vấn mua hàng:</span>&nbsp;&nbsp;
+                        <img src="<?php echo $this->getSkinUrl('images/calltongdai.png') ?>">&nbsp;&nbsp;
+                        <a class="modal-advice-number" href="tel:+84961485978"> 0961485978</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php
+    /**
+     * @var Mage_Customer_Model_Session $session
+     */
+    $session = Mage::getSingleton('customer/session');
+    ?>
+    <!-- Modal -->
+    <div id="openFeatureModal" class="modal right fade" role="dialog">
+        <div class="modal-dialog feature-modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content feature-modal-content">
+                <div class="modal-body no-padding">
+                    <?php if (!$session->isLoggedIn()): ?>
+                        <p class="tracking-order-modal float-none"><a onclick="openLogin()"> Đăng nhập</a></p>
+                    <?php else: ?>
+                        <p class="tracking-order-modal float-none"><a
+                                    href="<?php echo $this->getUrl('tracking/order'); ?>">Kiểm tra đơn hàng</a></p>
+                    <?php endif; ?>
+                    <?php if ($session->isLoggedIn()): ?>
+                        <p class="tracking-order-modal float-none"><a href="<?php echo $this->getUrl('favourite') ?>">Sản
+                                phẩm yêu thích
+                            </a></p>
+                    <?php endif; ?>
+                    <?php if ($session->isLoggedIn()): ?>
+                        <?php
+                        $currentUser = $session->getCustomer();
+                        ?>
+                        <p class="tracking-order-modal float-none"><a
+                                    href="<?php echo ($currentUser->getIsAgent() == '1') ? $this->getUrl('agent') : $this->getUrl('agent/index/register') ?>">Đặc
+                                vụ Tekshop
+                            </a></p>
+                        <p class="tracking-order-modal float-none"><a href="<?php echo $this->getUrl('buildpc/saving/list'); ?>">
+                                Cấu hình của tôi</a></p>
+                    <?php endif; ?>
+                    <p class="tracking-order-modal float-none"><a href="<?php echo $this->getUrl('policy') ?>">Quy định
+                            chung</a></p>
+                    <p class="tracking-order-modal float-none"><a href="<?php echo $this->getUrl('price-payment') ?>">Giá
+                            sản phẩm và thanh toán</a></p>
+                    <p class="tracking-order-modal float-none"><a href="<?php echo $this->getUrl('logistic') ?>">Vận
+                            chuyển và giao nhận hàng</a></p>
+                    <p class="tracking-order-modal float-none"><a href="<?php echo $this->getUrl('warranty') ?>">Bảo
+                            hành, bảo trì</a></p>
+                    <p class="tracking-order-modal float-none"><a href="<?php echo $this->getUrl('return') ?>">Đổi trả
+                            và hoàn tiền</a></p>
+                    <p class="tracking-order-modal float-none"><a href="<?php echo $this->getUrl('privacy') ?>">Bảo mật
+                            thông tin cá nhân</a></p>
+                    <?php if ($session->isLoggedIn()): ?>
+                        <p class="tracking-order-modal float-none"><a
+                                    href="<?php echo Mage::getUrl('authentication/user/logout'); ?>">Đăng xuất
+                            </a></p>
+                    <?php endif; ?>
+                    <div class="call-number">
+                        <a href="tel:+84961485978">0961485978</a>
+                        <span class="tracking-order-modal tracking-order-advice-text">
+                            <!-- (Bấm 6666) -->
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

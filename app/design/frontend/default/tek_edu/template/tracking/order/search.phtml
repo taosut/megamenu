@@ -1,0 +1,14 @@
+<?php $orders = $this->getSearchedOrders() ?>
+<?php $first_order = $orders->getFirstItem(); ?>
+<?php foreach ($orders as $order): ?>
+    <div id="track-order-item-<?php echo (string)$order->getIncrementId(); ?>"
+         data-id="<?php echo (string)$order->getIncrementId(); ?>"
+         class="row track-order-item <?php if ($order->getIncrementId() == $first_order->getIncrementId()): ?>track-order-item-active<?php endif; ?>"
+         onclick="checkOrderDetail(this)">
+        <div class="col-md-4 col-xs-4 track-order-id"><b><?php echo (string)$order->getIncrementId(); ?></b></div>
+        <div class="col-md-4 col-xs-4 track-order-id">
+            <?php echo date("d/m/Y", strtotime($order->getCreatedAtStoreDate())); ?>
+        </div>
+        <div class="col-md-4 col-xs-4"><?php echo $this->getStateName($order->getState()) ?></div>
+    </div>
+<?php endforeach; ?>

@@ -1,0 +1,165 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Ved_Usa>
+            <version>1.0.0.0</version>
+        </Ved_Usa>
+    </modules>
+    <global>
+        <models>
+            <usa>
+                <rewrite>
+                    <shipping_carrier_dhl>Ved_Usa_Model_Shipping_Carrier_Dhl</shipping_carrier_dhl>
+                    <shipping_carrier_fedex>Ved_Usa_Model_Shipping_Carrier_Fedex</shipping_carrier_fedex>
+                    <shipping_carrier_ups>Ved_Usa_Model_Shipping_Carrier_Ups</shipping_carrier_ups>
+                    <shipping_carrier_usps>Ved_Usa_Model_Shipping_Carrier_Usps</shipping_carrier_usps>
+                    <shipping_carrier_dhl_international>Ved_Usa_Model_Shipping_Carrier_Dhl_International</shipping_carrier_dhl_international>
+                    <shipping_carrier_ghtk>Ved_Usa_Model_Shipping_Carrier_Ghtk</shipping_carrier_ghtk>
+                    <shipping_carrier_ghn>Ved_Usa_Model_Shipping_Carrier_Ghn</shipping_carrier_ghn>
+                    <shipping_carrier_vtp>Ved_Usa_Model_Shipping_Carrier_Vtp</shipping_carrier_vtp>
+                    <shipping_carrier_vnpost>Ved_Usa_Model_Shipping_Carrier_Vnpost</shipping_carrier_vnpost>
+                    <shipping_carrier_gcafeshop>Ved_Usa_Model_Shipping_Carrier_Gcafeshop</shipping_carrier_gcafeshop>
+                </rewrite>
+            </usa>
+        </models>
+    </global>
+    <default>
+        <carriers>
+            <ghtk>
+                <account/>
+                <active>0</active>
+                <sallowspecific>0</sallowspecific>
+                <allowed_methods>IE,E SAT,E 10:30AM,E,N,S,G</allowed_methods>
+                <contentdesc>Big Box</contentdesc>
+                <cutoff_cost/>
+                <dutypaymenttype>R</dutypaymenttype>
+                <free_method>G</free_method>
+                <gateway_url>https://eCommerce.airborne.com/ApiLandingTest.asp</gateway_url>
+                <id backend_model="adminhtml/system_config_backend_encrypted"/>
+                <model>usa/shipping_carrier_ghtk</model>
+                <password backend_model="adminhtml/system_config_backend_encrypted"/>
+                <shipment_requesttype>0</shipment_requesttype>
+                <shipment_type>P</shipment_type>
+                <shipping_key backend_model="adminhtml/system_config_backend_encrypted"/>
+                <shipping_intlkey backend_model="adminhtml/system_config_backend_encrypted"/>
+                <title>GHTK</title>
+                <specificerrmsg>This shipping method is currently unavailable. If you would like to ship using this shipping method, please contact us.</specificerrmsg>
+                <unit_of_measure>LB</unit_of_measure>
+                <max_package_weight>150</max_package_weight>
+                <handling_type>F</handling_type>
+                <handling_action>O</handling_action>
+                <shipment_days>Mon,Tue,Wed,Thu,Fri,Sat</shipment_days>
+                <intl_shipment_days>Mon,Tue,Wed,Thu,Fri</intl_shipment_days>
+                <additional_protection_rounding>0</additional_protection_rounding>
+            </ghtk>
+            <ghn>
+                <account/>
+                <active>0</active>
+                <sallowspecific>0</sallowspecific>
+                <allowed_methods>IE,E SAT,E 10:30AM,E,N,S,G</allowed_methods>
+                <contentdesc>Big Box</contentdesc>
+                <cutoff_cost/>
+                <dutypaymenttype>R</dutypaymenttype>
+                <free_method>G</free_method>
+                <gateway_url>https://eCommerce.airborne.com/ApiLandingTest.asp</gateway_url>
+                <id backend_model="adminhtml/system_config_backend_encrypted"/>
+                <model>usa/shipping_carrier_ghn</model>
+                <password backend_model="adminhtml/system_config_backend_encrypted"/>
+                <shipment_requesttype>0</shipment_requesttype>
+                <shipment_type>P</shipment_type>
+                <shipping_key backend_model="adminhtml/system_config_backend_encrypted"/>
+                <shipping_intlkey backend_model="adminhtml/system_config_backend_encrypted"/>
+                <title>GHN</title>
+                <specificerrmsg>This shipping method is currently unavailable. If you would like to ship using this shipping method, please contact us.</specificerrmsg>
+                <unit_of_measure>LB</unit_of_measure>
+                <max_package_weight>150</max_package_weight>
+                <handling_type>F</handling_type>
+                <handling_action>O</handling_action>
+                <shipment_days>Mon,Tue,Wed,Thu,Fri,Sat</shipment_days>
+                <intl_shipment_days>Mon,Tue,Wed,Thu,Fri</intl_shipment_days>
+                <additional_protection_rounding>0</additional_protection_rounding>
+            </ghn>
+            <vtp>
+                <account/>
+                <active>0</active>
+                <sallowspecific>0</sallowspecific>
+                <allowed_methods>IE,E SAT,E 10:30AM,E,N,S,G</allowed_methods>
+                <contentdesc>Big Box</contentdesc>
+                <cutoff_cost/>
+                <dutypaymenttype>R</dutypaymenttype>
+                <free_method>G</free_method>
+                <gateway_url>https://eCommerce.airborne.com/ApiLandingTest.asp</gateway_url>
+                <id backend_model="adminhtml/system_config_backend_encrypted"/>
+                <model>usa/shipping_carrier_vtp</model>
+                <password backend_model="adminhtml/system_config_backend_encrypted"/>
+                <shipment_requesttype>0</shipment_requesttype>
+                <shipment_type>P</shipment_type>
+                <shipping_key backend_model="adminhtml/system_config_backend_encrypted"/>
+                <shipping_intlkey backend_model="adminhtml/system_config_backend_encrypted"/>
+                <title>VTP</title>
+                <specificerrmsg>This shipping method is currently unavailable. If you would like to ship using this shipping method, please contact us.</specificerrmsg>
+                <unit_of_measure>LB</unit_of_measure>
+                <max_package_weight>150</max_package_weight>
+                <handling_type>F</handling_type>
+                <handling_action>O</handling_action>
+                <shipment_days>Mon,Tue,Wed,Thu,Fri,Sat</shipment_days>
+                <intl_shipment_days>Mon,Tue,Wed,Thu,Fri</intl_shipment_days>
+                <additional_protection_rounding>0</additional_protection_rounding>
+            </vtp>
+            <vnpost>
+                <account/>
+                <active>0</active>
+                <sallowspecific>0</sallowspecific>
+                <allowed_methods>IE,E SAT,E 10:30AM,E,N,S,G</allowed_methods>
+                <contentdesc>Big Box</contentdesc>
+                <cutoff_cost/>
+                <dutypaymenttype>R</dutypaymenttype>
+                <free_method>G</free_method>
+                <gateway_url>https://eCommerce.airborne.com/ApiLandingTest.asp</gateway_url>
+                <id backend_model="adminhtml/system_config_backend_encrypted"/>
+                <model>usa/shipping_carrier_vnpost</model>
+                <password backend_model="adminhtml/system_config_backend_encrypted"/>
+                <shipment_requesttype>0</shipment_requesttype>
+                <shipment_type>P</shipment_type>
+                <shipping_key backend_model="adminhtml/system_config_backend_encrypted"/>
+                <shipping_intlkey backend_model="adminhtml/system_config_backend_encrypted"/>
+                <title>VNPOST</title>
+                <specificerrmsg>This shipping method is currently unavailable. If you would like to ship using this shipping method, please contact us.</specificerrmsg>
+                <unit_of_measure>LB</unit_of_measure>
+                <max_package_weight>150</max_package_weight>
+                <handling_type>F</handling_type>
+                <handling_action>O</handling_action>
+                <shipment_days>Mon,Tue,Wed,Thu,Fri,Sat</shipment_days>
+                <intl_shipment_days>Mon,Tue,Wed,Thu,Fri</intl_shipment_days>
+                <additional_protection_rounding>0</additional_protection_rounding>
+            </vnpost>
+            <gcafeshop>
+                <account/>
+                <active>0</active>
+                <sallowspecific>0</sallowspecific>
+                <allowed_methods>IE,E SAT,E 10:30AM,E,N,S,G</allowed_methods>
+                <contentdesc>Big Box</contentdesc>
+                <cutoff_cost/>
+                <dutypaymenttype>R</dutypaymenttype>
+                <free_method>G</free_method>
+                <gateway_url>https://eCommerce.airborne.com/ApiLandingTest.asp</gateway_url>
+                <id backend_model="adminhtml/system_config_backend_encrypted"/>
+                <model>usa/shipping_carrier_gcafeshop</model>
+                <password backend_model="adminhtml/system_config_backend_encrypted"/>
+                <shipment_requesttype>0</shipment_requesttype>
+                <shipment_type>P</shipment_type>
+                <shipping_key backend_model="adminhtml/system_config_backend_encrypted"/>
+                <shipping_intlkey backend_model="adminhtml/system_config_backend_encrypted"/>
+                <title>GCAFESHOP</title>
+                <specificerrmsg>This shipping method is currently unavailable. If you would like to ship using this shipping method, please contact us.</specificerrmsg>
+                <unit_of_measure>LB</unit_of_measure>
+                <max_package_weight>150</max_package_weight>
+                <handling_type>F</handling_type>
+                <handling_action>O</handling_action>
+                <shipment_days>Mon,Tue,Wed,Thu,Fri,Sat</shipment_days>
+                <intl_shipment_days>Mon,Tue,Wed,Thu,Fri</intl_shipment_days>
+                <additional_protection_rounding>0</additional_protection_rounding>
+            </gcafeshop>
+        </carriers>
+    </default>
+</config>

@@ -1,0 +1,177 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     base_default
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<?php
+
+function tokenTruncate($string, $your_desired_width) {
+    $parts = preg_split('/([\s\n\r]+)/', $string, null, PREG_SPLIT_DELIM_CAPTURE);
+    $parts_count = count($parts);
+    $length = 0;
+    $last_part = 0;
+    for (; $last_part < $parts_count; ++$last_part) {
+        $length += strlen($parts[$last_part]);
+        if ($length > $your_desired_width) { break; }
+    }
+    if($last_part < $parts_count)
+        return implode(array_slice($parts, 0, $last_part)) . "...";
+    else
+        return implode(array_slice($parts, 0, $last_part));
+}
+
+$categories = array('Khuyến mãi', 'Chuột', 'Bàn phím', 'Tai nghe', 'Sản phẩm khác', 'Màn hình', 'Nước uống');
+$category_ids = array(10,9);
+?>
+
+<?php
+foreach ($categories as $categoryName) {
+    $storeId = Mage::app()->getStore()->getId();
+    $rootCategoryId = Mage::app()->getStore()->getRootCategoryId();
+    $category = Mage::getResourceModel('catalog/category_collection')
+        ->addFieldToFilter('name', $categoryName)
+        ->addFieldToFilter('is_active', 1)
+        ->addAttributeToFilter('path', array('like' => "1/{$rootCategoryId}/%"))
+        ->getFirstItem();
+    if(!$category->getId()){
+        continue;
+    }
+    //$category = Mage::getModel('catalog/category')->load($categoryId);
+
+    //    $collection = $this->getProductCollection();
+    $todayStartOfDayDate  = Mage::app()->getLocale()->date()
+        ->setTime('00:00:00')
+        ->toString(Varien_Date::DATETIME_INTERNAL_FORMAT);
+
+    $todayEndOfDayDate  = Mage::app()->getLocale()->date()
+        ->setTime('23:59:59')
+        ->toString(Varien_Date::DATETIME_INTERNAL_FORMAT);
+
+    $collection = Mage::getResourceModel('catalog/product_collection');
+    $collection->setVisibility(Mage::getSingleton('catalog/product_visibility')->getVisibleInCatalogIds());
+    $collection
+        ->addMinimalPrice()
+        ->addFinalPrice()
+        ->addTaxPercents()
+        ->addAttributeToSelect(Mage::getSingleton('catalog/config')->getProductAttributes())
+        ->addUrlRewrite();
+    $collection = $this->_addProductAttributesAndPrices($collection)
+        ->addStoreFilter()
+        ->addAttributeToFilter('news_from_date', array('or'=> array(
+            0 => array('date' => true, 'to' => $todayEndOfDayDate),
+            1 => array('is' => new Zend_Db_Expr('null')))
+        ), 'left')
+        ->addAttributeToFilter('news_to_date', array('or'=> array(
+            0 => array('date' => true, 'from' => $todayStartOfDayDate),
+            1 => array('is' => new Zend_Db_Expr('null')))
+        ), 'left')
+        ->addAttributeToFilter(
+            array(
+                array('attribute' => 'news_from_date', 'is'=>new Zend_Db_Expr('not null')),
+                array('attribute' => 'news_to_date', 'is'=>new Zend_Db_Expr('not null'))
+            )
+        )
+        ->addAttributeToSort('news_from_date', 'desc')
+        ->setPageSize(8)
+        ->setCurPage(1);
+
+    $_products = $collection->addCategoryFilter($category);
+
+    if ($_products->getSize()):?>
+    <?php echo '<div class="cat_header">
+                    <div class="cat_header_left" >'. $category->getData('name') . '</div>
+                    <div class="cat_header_right" >'. '<a href="'. $category->getUrl($category) .'"><i class="fa fa-angle-double-right"></i> xem thêm </a>' . '</div>
+                </div>';?>
+    <?php $_columnCount = 4; ?>
+    <?php $i=0; foreach ($_products->getItems() as $_product):?>
+        <?php if ($i++%$_columnCount==0):?>
+            <ul class="products-grid grid-recent">
+        <?php endif ?>
+        <?php $oldPrice = $_product->getPrice();
+        $newPrice = $_product->getFinalPrice(); ?>
+        <li class="col-md-3 newitem<?php if(($i-1)%$_columnCount==0): ?> first<?php elseif($i%$_columnCount==0): ?> last<?php endif; ?> <?php if($oldPrice != $newPrice) :?> saleoff <?php endif ?>">
+
+            <div class="view team-one">
+                <div class="product-image">
+                    <a class="a-img" href="<?php echo $_product->getProductUrl() ?>" title="<?php echo $this->escapeHtml($this->getImageLabel($_product, 'small_image')) ?>">
+                        <img src="<?php echo $this->helper('catalog/image')->init($_product, 'small_image')->resize(283, 283); ?>" width="283" height="283" alt="<?php echo $this->escapeHtml($this->getImageLabel($_product, 'small_image')) ?>" title="<?php echo $this->escapeHtml($this->getImageLabel($_product, 'small_image')) ?>" />
+                    </a>
+                </div>
+                <div class="mask">
+                    <div class="box-holder">
+                        <?php
+                        $instock_status = $_product->getAttributeText('instock_status');
+                        //                                        var_dump($instock_status);
+                        ?>
+
+                        <?php if($_product->isSaleable()): ?>
+                            <button title="Đặt mua" type="button" class="button"
+                                <?php if($_product->getTypeId() == 'simple' && $instock_status === 'Có') {
+                                    echo "onclick=\"gCafeAddProductToCart('" . Mage::helper('checkout/cart')->getAddUrl($_product) . "')\"";
+                                }else {
+                                    echo "onclick=\"location.href='" . $_product->getProductUrl() . "'\"";
+                                }?>
+                            >
+
+                                <span class="home-order"><i class="fa fa-cart-plus"></i><?php echo $this->__('ĐẶT MUA') ?></span>
+                            </button>
+                        <?php else: ?>
+                            <div class="out-of-stock"><?php echo $this->__('Out of stock') ?></div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+            <h5 class="product-name"><a href="<?php echo $_product->getProductUrl() ?>" title="<?php echo $this->escapeHtml($_product->getName()) ?>"><?php echo $this->escapeHtml($_product->getName()) ?></a></h5>
+            <?php if($oldPrice != $newPrice) :?>
+                <span class="old-price">
+						<span class="price">
+							<?php echo number_format($oldPrice, 0, ",", ".") ; ?>
+						</span>
+					</span>
+            <?php endif ?>
+            <span class="regular-price">
+					<span class="price">
+						<?php echo number_format($newPrice, 0,"," , ".") . " VND";  ?>
+					</span>
+				</span>
+
+            <p><?php
+                $desc = $this->stripTags($_product->getShortDescription(),null, true);
+                echo $desc; ?></p>
+            <?php if($oldPrice != $newPrice) :?>
+                <span class="percent">
+						<?php echo $this->__('discount') ?> <span><?php echo number_format(($oldPrice - $newPrice)/$oldPrice * 100,0) ."%" ?></span>
+					</span>
+            <?php endif ?>
+
+        </li>
+        <?php if ($i%$_columnCount==0 || $i==count($_products)): ?>
+            </ul>
+        <?php endif ?>
+    <?php endforeach; ?>
+    <script type="text/javascript">decorateGeneric($$('ul.products-grid'), ['odd','even','first','last'])</script>
+<?php endif;
+}?>
+
+

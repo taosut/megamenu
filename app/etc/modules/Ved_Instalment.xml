@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Ved_Instalment>
+            <active>true</active>
+            <codePool>local</codePool>
+            <version>1.0.0</version>
+        </Ved_Instalment>
+    </modules>
+</config>

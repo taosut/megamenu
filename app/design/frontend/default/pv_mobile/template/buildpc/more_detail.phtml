@@ -1,0 +1,19 @@
+<?php
+$items = Mage::registry('items');
+?>
+
+<?php foreach ($items as $item): ?>
+    <div class="col-xs-12 no-padding detail-bp-item">
+        <div class="col-xs-3 no-padding">
+            <img class="bp-product-image"
+                 src="<?php echo $item['image_url'] ?>"
+                 title="Ảnh sản phẩm">
+        </div>
+        <span class="bp-f-quantity">x<?php echo intval($item['quantity']); ?></span>
+        <div class="col-xs-9 pl-10 pr-0 bp-table-product-name">
+            <a class="bp-product-name"
+               href="<?php echo $item['url'] ?>"
+               target="_blank"><?php echo $item['name'] ?></a>
+        </div>
+    </div>
+<?php endforeach; ?>

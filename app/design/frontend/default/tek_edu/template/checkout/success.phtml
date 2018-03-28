@@ -1,0 +1,187 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     base_default
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<link rel="stylesheet" type="text/css" href="<?php echo $this->getSkinUrl('css/style.min.css'); ?>">
+
+<div class="col-md-7">
+    <div class="tiki-shipping-address">
+        <div class="shipping-header payment-shipping-header">
+            <div class="row bs-wizard">
+                <div class="col-lg-4 col-md-4 col-xs-4 col-sm-4 bs-wizard-step complete">
+                    <div class="text-center bs-wizard-stepnum text-step">
+                        <span class="color-bar-text">Địa chỉ giao hàng</span>
+                    </div>
+                    <div class="progress">
+                        <div class="progress-bar color-bar"></div>
+                    </div>
+                    <span class="bs-wizard-dot color-bar">1</span>
+                </div>
+
+                <div class="col-lg-4 col-md-4 col-xs-4 col-sm-4 bs-wizard-step complete">
+                    <div class="text-center bs-wizard-stepnum text-step">
+                        <span class="hidden-xs color-bar-text text-nowrap">Thanh Toán &amp; Đặt Mua</span>
+                        <span class="visible-xs-inline-block color-bar-text text-nowrap">Thanh Toán &amp; Đặt Mua</span>
+                    </div>
+                    <div class="progress">
+                        <div class="progress-bar color-bar"></div>
+                    </div>
+                    <span class="bs-wizard-dot color-bar">2</span>
+                </div>
+
+                <div class="col-lg-4 col-md-4 col-xs-4 col-sm-4 bs-wizard-step complete">
+                    <div class="text-center bs-wizard-stepnum text-step">
+                        <span class="hidden-xs color-bar-text">Hoàn tất</span>
+                        <span class="visible-xs-inline-block color-bar-text">Hoàn tất</span>
+                    </div>
+                    <div class="progress">
+                        <div class="progress-bar color-bar"></div>
+                    </div>
+                    <span class="bs-wizard-dot color-bar">3</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel br-0 panel-success mb-0">
+        <div class="panel-body pb-10">
+            <h2 class="success-title mt-5"><?php echo $this->__('Your order has been received') ?></h2>
+            <div class="success-text"><?php echo $this->__('Thank you for your purchase!') ?></div>
+
+            <?php if ($this->getOrderId()): ?>
+<!--                --><?php //if ($this->getCanViewOrder()) : ?>
+<!--                    <div class="success-text">--><?php //echo $this->__('Your order # is: %s.', sprintf('<b><a href="%s">%s</a></b>', $this->escapeHtml($this->getViewOrderUrl()), $this->escapeHtml($this->getOrderId()))) ?><!--</div>-->
+<!--                --><?php //else : ?>
+                    <div class="success-text">Đơn hàng số: <b>#<?php echo $this->escapeHtml($this->getOrderId()) ?></b></div>
+<!--                --><?php //endif; ?>
+                <div class="success-text">Chúng tôi sẽ giao hàng sớm nhất cho bạn sau 1 đến 3 ngày.</div>
+                <?php if ($this->getCanViewOrder() && $this->getCanPrintOrder()) : ?>
+                    <p>
+                        <?php //echo $this->__('Click <a href="%s" onclick="this.target=\'_blank\'">here to print</a> a copy of your order confirmation.', $this->getPrintUrl()) ?>
+                        <?php echo $this->getChildHtml() ?>
+                    </p>
+                <?php endif; ?>
+            <?php endif; ?>
+
+            <?php if ($this->getAgreementRefId()): ?>
+                <div class="success-text"><?php echo $this->__('Your billing agreement # is: %s.', sprintf('<a href="%s">%s</a>', $this->escapeHtml($this->getAgreementUrl()), $this->escapeHtml($this->getAgreementRefId()))) ?></div>
+            <?php endif; ?>
+
+            <?php if ($profiles = $this->getRecurringProfiles()): ?>
+                <div class="success-text"><?php echo $this->__('Your recurring payment profiles:'); ?></div>
+                <ul class="disc">
+                    <?php foreach ($profiles as $profile): ?>
+                        <?php $profileIdHtml = ($this->getCanViewProfiles() ? sprintf('<a href="%s">%s</a>', $this->escapeHtml($this->getProfileUrl($profile)), $this->escapeHtml($this->getObjectData($profile, 'reference_id'))) : $this->escapeHtml($this->getObjectData($profile, 'reference_id'))); ?>
+                        <li><?php echo $this->__('Payment profile # %s: "%s".', $profileIdHtml, $this->escapeHtml($this->getObjectData($profile, 'schedule_description'))) ?></li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php endif; ?>
+        </div>
+    </div>
+
+    <div class="panel panel-default cart br-0 panel-address">
+        <div class="panel-body">
+            <div class="order order-panel">
+            <span class="title address-title">
+                Địa chỉ giao hàng
+            </span>
+                <br><br>
+                <!--            <a href="-->
+                <?php //echo Mage::app()->getStore()->getBaseUrl(Mage_Core_Model_Store::URL_TYPE_LINK) . 'checkout/shipping/';?><!--" class="btn btn-default btn-custom1">Sửa</a>-->
+            </div>
+            <?php $_order = Mage::getModel('sales/order')->loadByIncrementId($this->getOrderId()); ?>
+            <?php
+            $shipping_address = $_order->getShippingAddress();
+            $full_name = $shipping_address->getName();
+            $street = $shipping_address->getStreetFull();
+            $city = $shipping_address->getCity();
+            $region = $shipping_address->getRegion();
+            $telephone = $shipping_address->getTelephone();
+            $email = $shipping_address->getEmail();
+            $customer_note = $_order->getCustomerNote();
+            $full_address = $street . ', ' . $city . ', ' . $region;
+            $affiliate_code = $_order->getAffiliateCode();
+            ?>
+            <input type="hidden" id="telephone" value="<?php echo $telephone; ?>">
+            <?php $info = Mage::getModel('checkout/session')->getQuote()->getShippingAddress()->getData(); ?>
+            <div class="information">
+                <div class="address-text">
+                    <?php echo $full_name ?>
+                </div>
+                <div class="address-text">
+                    <?php echo $full_address; ?>
+                </div>
+                <div class="address-text"><b>Điện thoại:</b>
+                    <?php echo $telephone; ?>
+                </div>
+                <?php if ($email != ''): ?>
+                    <div class="address-text"><b>Email:</b>
+                        <?php echo $email; ?>
+                    </div>
+                <?php endif; ?>
+                <?php if ($affiliate_code): ?>
+                    <div class="address-text"><b>Mã giới thiệu:</b>
+                        <?php echo $affiliate_code; ?>
+                    </div>
+                <?php endif; ?>
+                <?php if ($customer_note != ''): ?>
+                    <div class="address-text"><b>Ghi chú:</b>
+                        <?php echo $customer_note; ?>
+                    </div>
+                <?php endif; ?>
+
+            </div>
+        </div>
+    </div>
+    <div class="bottom-static-mobile checkout-payment text-center">
+        <button type="button" class="btn btn-default shipping-btn o-shipping-btn-address order-success-btn ml-15"
+        title="<?php echo $this->__('Continue Shopping') ?>"
+        onclick="window.location='<?php echo $this->getUrl() ?>'">
+        <span><span><?php echo $this->__('Continue Shopping') ?></span></span>
+        </button>
+    </div>
+</div>
+
+<?php echo $this->getMessagesBlock()->getGroupedHtml() ?>
+
+<!--Subscribe user to push notification-->
+<script type="text/javascript">
+    var $j = jQuery.noConflict();
+
+    $j(window).on('resize', function() {
+        if ($j(window).width() < 500) {
+            $j('.tiki-shipping-address').css('padding-bottom', '40px');
+            $j('#search_mini_form').hide();
+            $j('.header-mobile-height').css('height', '50px');
+        } else {
+            $j('.tiki-shipping-address').css('padding-bottom', '0');
+            $j('#search_mini_form').show();
+            $j('.header-container').removeClass('header-mobile-height');
+        }
+    }).trigger('resize');
+
+//    var USER_ID = $j('#telephone').val();
+//    registerSW();
+</script>

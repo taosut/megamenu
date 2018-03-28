@@ -1,0 +1,78 @@
+<?php $version = Teko::getSaleCenterVersion(); ?>
+<link rel="stylesheet" type="text/css" href="<?php echo $this->getSkinUrl('lib/notfound.css'); ?><?php echo "?v=" . $version ?>"/>
+
+<div class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="row not-found-main-block">
+                <div class="col-xs-12 not-found-text">
+                    Xin lỗi, trang bạn đang tìm kiếm không tồn tại!
+                </div>
+                <div class="col-xs-12">
+                    <img class="not-found-img"
+                         src="<?php echo $this->getSkinUrl('images/PhongVuCharacter.svg'); ?>"/>
+                </div>
+                <div class="col-xs-12">
+                    <button type="button" class="continue-shopping-btn"
+                            title="Tiếp tục mua hàng"
+                            onclick="continueShopping();">
+                        Tiếp tục mua hàng
+                        <img class="continue-shopping-icon"
+                             src="<?php echo $this->getSkinUrl('images/icon_ShoppingCart2.svg'); ?>">
+                        <img class="continue-shopping-ajax-loader hidden"
+                             src="<?php echo $this->getSkinUrl('images/ajax-loader-white.gif'); ?>"/>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row not-found-alternative-block">
+        Hoặc bạn có thể thử những liên kết sau
+    </div>
+    <div class="row not-found-cat-block">
+        <div class="col-xs-12">
+            <div class="row">
+                <?php
+                $_categories = Mage::helper('catalog/category')->getStoreCategories();
+                ?>
+                <?php if (count($_categories) > 0): ?>
+                    <?php $i = 0; ?>
+                    <?php foreach ($_categories as $_category): ?>
+                        <?php $_category = Mage::getModel('catalog/category')->load($_category->getId()); ?>
+                        <?php $catIconName = $_category->getDescription(); ?>
+                        <div class="col-xs-4 text-center">
+                            <a class="not-found-cat-section" href="<?php echo $_category->getUrl(); ?>">
+                                <div class="not-found-cat-icon-block">
+                                    <img class="not-found-cat-icon"
+                                         src="<?php echo $this->getSkinUrl('images/menu-icon/') . $catIconName . '_White.svg' ?><?php echo "?v=" . $version ?>"/>
+                                </div>
+                                <span class="not-found-cat-name"><?php echo $_category->getName(); ?></span>
+                            </a>
+                        </div>
+                        <?php
+                        $i++;
+                        if ($i == 12) break;
+                        ?>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    var $j = jQuery.noConflict();
+
+    $j(document).ready(function () {
+        $j('.state-title').html('Quay lại');
+        showBackState();
+    });
+    function continueShopping() {
+        $j('.continue-shopping-btn').prop('disabled', true);
+        $j('.continue-shopping-icon').addClass('hidden');
+        $j('.continue-shopping-ajax-loader').removeClass('hidden');
+
+        window.location.href = '<?php echo $this->getUrl(''); ?>';
+    }
+</script>

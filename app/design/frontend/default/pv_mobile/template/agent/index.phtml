@@ -1,0 +1,1035 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: Teko
+ * Date: 9/6/2017
+ * Time: 11:10 AM
+ */
+?>
+
+<?php
+$currentUser = Mage::getSingleton('customer/session')->getCustomer();
+$agentInfo = json_decode($currentUser->getAgentInfo());
+?>
+
+<style>
+    /*basic reset*/
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    /*adding a black bg to the body to make things clearer*/
+    body {
+        background: black;
+    }
+</style>
+
+<script>
+    dataLayer = [];
+</script>
+
+<?php
+$session = Mage::getSingleton('customer/session');
+?>
+
+<?php if ($session->isLoggedIn()): ?>
+    <?php if ($currentUser->getIsAgentDeleted() == 1): ?>
+        <?php echo $this->getChildHtml('agent.warning') ?>
+    <?php else: ?>
+        <div class="agent-content">
+            <div class="row row-eq-height">
+
+                <?php echo $this->getChildHtml('agent.navigation') ?>
+
+                <div class="col-md-10 col-sm-10 col-xs-12">
+                    <div class="row row-eq-height pl-15-768">
+                        <div class="col-md-7 col-sm-7 col-xs-12 pr-0 pr-30-768 agent-submit-xs">
+                            <form id="submitAchievementForm" class="form-horizontal"
+                                  action="<?php echo $this->getUrl('agent/index/submitAchievement') ?>"
+                                  method="post">
+                                <div class="agent-box agent-submit-achievement">
+                                    <div class="agent-box-title">
+                                        Link bài viết
+                                    </div>
+                                    <div class="agent-submit-form-content agent-link-block">
+                                        <div class="form-group">
+                                            <div class="col-sm-12">
+                                                <input id="agentSubmitLink" type="text"
+                                                       class="agent-field-input form-control h-50"
+                                                       name="link"
+                                                       placeholder="Đường link đến bài viết có nội dung PR cho Tekshop"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="agent-box-title">
+                                        Lựa chọn tài khoản
+                                    </div>
+                                    <div class="agent-submit-form-content">
+
+                                        <div class="form-group">
+                                            <?php
+                                            $accountCollection = Mage::getModel('Ved_Agent/agentaccount')->getCollection()
+                                                ->addFieldToFilter('user_id', $currentUser->getId())
+                                                ->addFieldToFilter('main_table.is_deleted', 0)
+                                                ->addFieldToFilter('status', Ved_Agent_Model_Agentaccount::VERIFIED)
+                                                ->join(
+                                                    'agent_channel',
+                                                    'main_table.channel_id = agent_channel.channel_id and agent_channel.is_active = 1',
+                                                    'channel_name'
+                                                );
+                                            ?>
+                                            <div class="col-sm-12">
+                                                <select id="agentSubmitAccount"
+                                                        class="agent-field-input form-control chosen"
+                                                        name="account"
+                                                        data-placeholder="<?php if (count($accountCollection) > 0): ?>Chọn tài khoản của bạn<?php else: ?>Bạn chưa có account được duyệt, vui lòng vào mục Quản lý tài khoản để kiểm tra<?php endif; ?>">
+                                                    <option value=""><?php if (count($accountCollection) > 0): ?>Chọn tài khoản của bạn<?php else: ?>Bạn chưa có account được duyệt, vui lòng vào mục Quản lý tài khoản để kiểm tra<?php endif; ?></option>
+                                                    <?php foreach ($accountCollection as $account): ?>
+                                                        <option value="<?php echo $account->getId() ?>"><?php echo $account->getAccountName() ?>
+                                                            (<?php echo $account->getChannelName() ?>)
+                                                        </option>
+                                                    <?php endforeach; ?>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="col-sm-12">
+                                                <select id="agentSubmitType"
+                                                        class="agent-field-input form-control chosen"
+                                                        name="type"
+                                                        data-placeholder="Chọn hình thức bài viết">
+                                                    <option value="">Chọn hình thức bài viết</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group agent-submit-block">
+                                            <div class="col-sm-9 col-xs-12 agent-submit-text">
+                                                <input id="agentSubmitConfirm" type="checkbox" class="agent-checkbox"
+                                                       name="confirm">
+                                                <span class="agent-confirm-submit-text" onclick="confirmSubmitText()">
+                                                    Tôi chịu trách nhiệm về nội dung trong bài viết hoặc comment có nhắc đến Tekshop
+                                                </span>
+                                            </div>
+
+                                            <div class="col-sm-3 col-xs-12">
+                                                <div class="agent-btn agent-submit-btn" onclick="submitAchievement()">
+                                                    <img class="agent-ajax-loader-submit no-display"
+                                                         title="Đang tải"
+                                                         src="<?php echo $this->getSkinUrl('images/ajax-loader.gif') ?>"
+                                                         width="16" height="16"/>
+                                                    Xác nhận
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="col-md-5 pl-0 no-display-1200 agent-point-md">
+                            <div class="col-md-12">
+                                <div class="col-md-6 pl-0 pr-7">
+                                    <div class="agent-box agent-achievements">
+                                        <div class="agent-box-title agent-point-title">Điểm thành tích hiệu lực</div>
+                                        <div class="agent-available-point">
+                                            <span><?php echo $agentInfo->available_point ?></span>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="col-md-6 pr-0 pl-7">
+                                    <div class="agent-box agent-achievements">
+                                        <div class="agent-box-title agent-point-title">Điểm thành tích đã sử dụng</div>
+                                        <div class="agent-used-point">
+                                            <span><?php echo $agentInfo->used_point ?></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="agent-box agent-recommendation">
+                                    <div class="agent-box-title">Giới thiệu đặc vụ</div>
+                                    <div class="agent-recommendation-text fs-14">Chia sẻ link này cho bạn bè của bạn
+                                        nhé!
+                                    </div>
+                                    <div class="row agent-recommendation-content">
+                                        <div id="recommendationLink" class="col-md-9 agent-get-link-text">
+                                            <?php echo $this->getUrl('agent/index/register') . '?recommendation_code=' . base64_encode($currentUser->getAgentCode()); ?>
+                                        </div>
+                                        <div class="agent-get-link-btn col-md-3 pr-0" onclick="copyLink()">Sao chép
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-5 col-sm-5 col-xs-12 pl-0 display-1200 agent-point-xs">
+                            <div class="col-md-12 col-sm-12 col-xs-6 pr-7-xs">
+                                <div class="agent-box agent-achievements">
+                                    <div class="agent-box-title agent-point-title">Điểm thành tích hiệu lực</div>
+                                    <div class="agent-available-point">
+                                        <span><?php echo $agentInfo->available_point ?></span>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-sm-12 col-xs-6 pl-7-xs">
+                                <div class="agent-box agent-achievements">
+                                    <div class="agent-box-title agent-point-title">Điểm thành tích đã sử dụng</div>
+                                    <div class="agent-used-point">
+                                        <span><?php echo $agentInfo->used_point ?></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 pl-0 display-1200 pl-15-768">
+                        <div class="agent-box agent-recommendation">
+                            <div class="agent-box-title">Giới thiệu đặc vụ</div>
+                            <div class="agent-recommendation-text fs-14">Chia sẻ link này cho bạn bè của bạn
+                                nhé!
+                            </div>
+                            <div class="row agent-recommendation-content no-display-414">
+                                <div id="recommendationLink" class="col-md-9 col-sm-10 col-xs-10 agent-get-link-text">
+                                    <?php echo $this->getUrl('agent/index/register') . '?recommendation_code=' . base64_encode($currentUser->getAgentCode()); ?>
+                                </div>
+                                <div class="agent-get-link-btn col-md-3 col-sm-2 col-xs-2 pr-0" onclick="copyLink()">Sao
+                                    chép
+                                </div>
+                            </div>
+
+                            <div class="row agent-recommendation-content display-414">
+                                <textarea
+                                        class="form-control agent-link-input agent-get-link-text"><?php echo $this->getUrl('agent/index/register') . '?recommendation_code=' . base64_encode($currentUser->getAgentCode()); ?></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mr-0 pl-15-768">
+                        <div class="col-md-12">
+                            <div class="agent-box agent-post-history">
+                                <div class="agent-box-title h-40">
+                                    Lịch sử xác nhận thành tích
+                                    <div class="agent-btn clear-filter-btn pull-right">
+                                        Bỏ lọc
+                                    </div>
+                                </div>
+
+                                <div class="agent-recommendation-total">Số thành tích đang lọc/Tổng số thành tích: <span class="agent-filtered-count"></span>/<span class="agent-total-count"></span></div>
+
+                                <div class="table-responsive">
+                                    <table id="datatable" class="table table-striped agent-table">
+                                        <thead>
+                                        <tr>
+                                            <th>Thời gian cập nhật</th>
+                                            <th>Account (kênh)</th>
+                                            <th>Hình thức</th>
+                                            <th>Link</th>
+                                            <th>Tình trạng xác nhận</th>
+                                            <th>Lý do</th>
+                                            <th>Điểm thành tích</th>
+                                            <th>Thao tác</th>
+                                        </tr>
+                                        </thead>
+                                        <tfoot>
+                                        <tr>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                        </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 pl-2 pr-13 pl-15-768 pr-15-768">
+                        <div class="agent-intro-blocks mt-0-xs">
+                            <!-- Agent introduction-->
+                            <?php
+                            echo $this->getLayout()->createBlock('cms/block')->setBlockId('agent_introduction')->toHtml();
+                            ?>
+
+                            <!-- Agent rights-->
+                            <?php
+                            echo $this->getLayout()->createBlock('cms/block')->setBlockId('agent_rights')->toHtml();
+                            ?>
+
+                            <!-- Agent duties-->
+                            <?php
+                            echo $this->getLayout()->createBlock('cms/block')->setBlockId('agent_duties')->toHtml();
+                            ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="submitSucceed" class="modal fade" role="dialog">
+            <div class="modal-dialog" style="margin-top: 25vh">
+                <!-- Modal content-->
+                <div class="modal-content agent-modal-content">
+                    <div class="modal-header agent-modal-header">
+                        <div class="agent-close-modal" data-dismiss="modal">&times;</div>
+                    </div>
+                    <div class="modal-body agent-modal-body">
+                        <div class="a-center">
+                            <img class="agent-modal-body-logo"
+                                 src="<?php echo $this->getSkinUrl('images/agent-logo-green.png') ?>">
+                            <div class="agent-modal-body-text">
+                                Thành tích đang được Tekshop xác nhận. Xin cảm ơn đặc vụ!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="submitFailed" class="modal fade" role="dialog">
+            <div class="modal-dialog" style="margin-top: 25vh">
+                <!-- Modal content-->
+                <div class="modal-content agent-modal-content">
+                    <div class="modal-header agent-modal-header">
+                        <div class="agent-close-modal" data-dismiss="modal">&times;</div>
+                    </div>
+                    <div class="modal-body agent-modal-body">
+                        <div class="a-center">
+                            <img class="agent-modal-body-logo"
+                                 src="<?php echo $this->getSkinUrl('images/agent-logo-red.png') ?>">
+                            <div class="row agent-validate-text agent-not-enough-field agent-modal-body-text no-display">
+                                <div class="col-xs-8 col-xs-offset-2">
+                                    Vui lòng nhập đủ thông tin để xác nhận thành tích của bạn!
+                                </div>
+                            </div>
+                            <div class="row agent-validate-text agent-link-too-long agent-modal-body-text no-display">
+                                <div class="col-xs-8 col-xs-offset-2">
+                                    Link bài viết chỉ cho phép dài tối đa 255 ký tự!
+                                </div>
+                            </div>
+                            <div class="row agent-validate-text agent-not-check-confirm agent-modal-body-text no-display">
+                                <div class="col-xs-8 col-xs-offset-2">
+                                    Bạn chưa xác nhận sẽ chịu trách nhiệm về nội dung trong bài viết hoặc comment có
+                                    nhắc
+                                    đến Tekshop!
+                                </div>
+                            </div>
+                            <div class="row agent-validate-text agent-submit-time-error agent-modal-body-text no-display">
+                                <div class="col-xs-8 col-xs-offset-2">
+                                    Thời gian giữa 2 lần xác nhận bài viết liên tiếp phải ít nhất là 1 phút!
+                                </div>
+                            </div>
+                            <div class="row agent-validate-text agent-submit-error agent-modal-body-text no-display"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="editAchievementModal" class="modal fade">
+            <div class="modal-dialog modal-lg" style="margin-top: 25vh;"><!-- Modal content-->
+                <div class="modal-content agent-modal-content">
+                    <div class="modal-header agent-modal-header">
+                        <div class="agent-close-modal" data-dismiss="modal">&times;</div>
+                    </div>
+                    <div class="modal-body agent-modal-body agent-background-intro">
+                        <h1>Sửa thông tin thành tích</h1>
+
+                        <form id="editAchievementForm" class="form-horizontal"
+                              action="<?php echo $this->getUrl('agent/index/updateAchievement') ?>" method="post">
+                            <div class="form-group">
+                                <?php
+                                $accountCollection = Mage::getModel('Ved_Agent/agentaccount')->getCollection()
+                                    ->addFieldToFilter('user_id', $currentUser->getId())
+                                    ->addFieldToFilter('is_deleted', 0)
+                                    ->addFieldToFilter('status', Ved_Agent_Model_Agentaccount::VERIFIED);
+                                ?>
+                                <label class="control-label col-sm-2" for="account">Chọn account <span
+                                            class="red">*</span></label>
+                                <div class="col-sm-10">
+                                    <select id="editSubmitAccount" class="agent-field-input form-control chosen"
+                                            name="account"
+                                            data-placeholder="Chọn account của bạn">
+                                        <option value=""></option>
+                                        <?php foreach ($accountCollection as $account): ?>
+                                            <option value="<?php echo $account->getId() ?>"><?php echo $account->getAccountName() ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="type">Hình thức <span
+                                            class="red">*</span></label>
+                                <div class="col-sm-10">
+                                    <select id="editSubmitType" class="agent-field-input form-control chosen"
+                                            name="type"
+                                            data-placeholder="Chọn hình thức">
+                                        <option value=""></option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="link">Link <span class="red">*</span></label>
+                                <div class="col-sm-10">
+                                    <input id="editSubmitLink" type="text" class="agent-field-input form-control"
+                                           name="link"
+                                           placeholder="Nhập đường link dẫn đến bài viết của bạn"/>
+                                </div>
+                            </div>
+                            <div class="col-sm-10 col-sm-offset-2 pl-5 mb-10 agent-error-text red edit-not-enough-field no-display">
+                                Vui lòng nhập đủ thông tin để cập nhật!
+                            </div>
+                            <div class="col-sm-10 col-sm-offset-2 pl-5 mb-10 agent-error-text red edit-link-too-long no-display">
+                                Link bài viết chỉ cho phép dài tối đa 255 ký tự!
+                            </div>
+                            <input type="hidden" id="editAchievementId" name="achievement_id"/>
+                            <div class="form-group mb-0">
+                                <div class="col-sm-2 col-sm-offset-2">
+                                    <div class="agent-btn update-achievement-btn" onclick="updateAchievement()">
+                                        <img class="agent-ajax-loader-edit no-display"
+                                             title="Đang tải"
+                                             src="<?php echo $this->getSkinUrl('images/ajax-loader.gif') ?>"
+                                             width="16" height="16"/>
+                                        Cập nhật
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
+<?php else: ?>
+    <?php echo $this->getChildHtml('agent.warning_login') ?>
+<?php endif; ?>
+
+<script>
+    var $j = jQuery.noConflict();
+    var win = $j(window);
+
+    // Recommendation link mobile
+    var inp = $j(".agent-link-input")[0];
+    var default_value = inp.value;
+
+    inp.addEventListener("input", function () {
+        this.value = default_value;
+    }, false);
+
+    $j('input[type="number"]').keypress(function (e) {
+        var a = [];
+        var k = e.which;
+
+        for (i = 48; i < 58; i++)
+            a.push(i);
+
+        if (!(a.indexOf(k) >= 0))
+            e.preventDefault();
+    });
+
+    $j(document).ready(function () {
+        win.on('resize', function () {
+            if (win.width() < 751) {
+                $j('.agent-submit-xs').insertAfter('.agent-point-xs');
+                $j('#agentSubmitLink').attr("placeholder", "Đường link đến bài viết");
+            }
+            else {
+                $j('.agent-point-xs').insertAfter('.agent-submit-xs');
+                $j('.agent-point-md').insertAfter('.agent-submit-xs');
+                $j('#agentSubmitLink').attr("placeholder", "Đường link đến bài viết có nội dung PR cho Tekshop");
+            }
+
+            if (win.width() < 380) {
+                $j('.agent-link-input').attr('rows', '3');
+            }
+            else {
+                $j('.agent-link-input').attr('rows', '2');
+            }
+        }).trigger('resize');
+
+
+        $j('.main-container').find('.container').addClass('w-100');
+        $j('.build-pc-btn').addClass('no-display');
+        $j('.facebook-message').addClass('no-display');
+
+        $j("#datepicker").datepicker({
+            dateFormat: 'dd/mm/yy',
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "1950:2017"
+        });
+
+        $j('#datatable tfoot th').eq(0).each(function () {
+            $j(this).html('<input id="min" class="mb-5" type="text" placeholder="Từ ngày"><input id="max" type="text" placeholder="Đến ngày">');
+        });
+
+        // Render datatable
+        var table = $j('#datatable').DataTable({
+            "ajax": '<?php echo $this->getUrl('agent/index/getSubmitHistory')?>?user_id=<?php echo $currentUser->getId() ?>',
+            "pagingType": "full_numbers",
+            "orderCellsTop": true,
+            "language": {
+                "lengthMenu": "Hiển thị _MENU_ bản ghi mỗi trang",
+                "zeroRecords": "Không tìm thấy dữ liệu phù hợp",
+                "info": "Trang _PAGE_ / _PAGES_",
+                "infoEmpty": "",
+                "infoFiltered": "",
+                "search": "Tìm kiếm:",
+                "paginate": {
+                    "previous": "Trước",
+                    "next": "Sau",
+                    "first": "Đầu",
+                    "last": "Cuối"
+                }
+            },
+            "columns": [
+                {"width": "11%"},
+                {"width": "17%"},
+                {"width": "13%"},
+                {"width": "22%"},
+                {"width": "13%"},
+                {"width": "9%"},
+                {"width": "9%"},
+                {"width": "6%", "orderable": false}
+            ],
+            "order": [[0, "desc"]],
+            "initComplete": function (settings, json) {
+                $j('div.datatable-loading').remove();
+
+                this.api().columns({search: 'applied'}).every(function () {
+                    var column = this;
+                    var index = column.index();
+                    if (index === 1 || index === 2 || index === 4) {
+
+                        var select = $j('<select id="select-' + index + '" style="color: #727175"><option value="">-- Chọn --</option></select>')
+                            .appendTo($j(column.footer()).empty())
+                            .on('change', function () {
+                                var val = $j.fn.dataTable.util.escapeRegex(
+                                    $j(this).val()
+                                );
+
+                                if (val !== '') {
+                                    $j('#select-' + index).css('color', '#333');
+                                } else {
+                                    $j('#select-' + index).css('color', '#727175');
+                                }
+
+                                column
+                                    .search(val ? '^' + val + '$' : '', true, false)
+                                    .draw();
+                            });
+
+                        column.data().unique().sort().each(function (d, j) {
+                            var dText = strip(d);
+                            select.append('<option value="' + dText + '">' + dText + '</option>')
+                        });
+                    }
+
+                });
+
+                // Filtered by clicking in notification tab
+                if(localStorage.getItem('agent_achievement_waiting')) {
+                    $j('#select-4').val('Chờ duyệt').change();
+                    localStorage.removeItem('agent_achievement_waiting');
+                }
+
+                if(localStorage.getItem('agent_achievement_approved')) {
+                    $j('#select-4').val('Phê duyệt').change();
+                    localStorage.removeItem('agent_achievement_approved');
+                }
+
+                if(localStorage.getItem('agent_achievement_rejected')) {
+                    $j('#select-4').val('Từ chối').change();
+                    localStorage.removeItem('agent_achievement_rejected');
+                }
+
+                if(localStorage.getItem('agent_achievement_needtoupdate')) {
+                    $j('#select-4').val('Cần cập nhật').change();
+                    localStorage.removeItem('agent_achievement_needtoupdate');
+                }
+
+            },
+            "footerCallback": function (row, data, start, end, display) {
+                var api = this.api(), data;
+
+                // Remove the formatting to get integer data for summation
+                var intVal = function (i) {
+                    return typeof i === 'string' ?
+                        i.replace(/[\$,]/g, '') * 1 :
+                        typeof i === 'number' ?
+                            i : 0;
+                };
+
+                // Total over all pages
+                var total = api
+                    .column(6, {'search': 'applied'})
+                    .data()
+                    .reduce(function (a, b) {
+                        return intVal(a) + intVal(b);
+                    }, 0);
+
+                // Update footer
+                $j(api.column(6).footer()).html(
+                    'Tổng điểm: ' + total
+                );
+
+                getTotalRows();
+                getFilteredRows();
+            }
+        });
+
+        function getTotalRows() {
+            $j('.agent-total-count').empty().append($j('#datatable').DataTable().rows().count());
+        }
+
+        function getFilteredRows(){
+            var info = $j('#datatable').DataTable().page.info();
+            $j('.agent-filtered-count').empty().append(info.recordsDisplay);
+        }
+
+        table.on('draw', function () {
+            table.columns().indexes().each(function (idx) {
+                var select = $j(table.column(idx).footer()).find('select');
+
+                if (select.val() === '') {
+                    select
+                        .empty()
+                        .append('<option value="">-- Chọn --</option>');
+
+                    table.column(idx, {search: 'applied'}).data().unique().sort().each(function (d, j) {
+                        var dText = strip(d);
+                        select.append('<option value="' + dText + '">' + dText + '</option>');
+                    });
+                }
+            });
+        });
+
+        // Filter date range
+        $j.fn.dataTable.ext.search.push(
+            function (settings, data, dataIndex) {
+                var min = $j('#min').datepicker("getDate");
+                var max = $j('#max').datepicker("getDate");
+                if (max) {
+                    max.setHours(23, 59, 59, 999);
+                }
+
+                var startDate = new Date(data[0].split("|")[0]);
+
+                if (min == null && max == null) {
+                    return true;
+                }
+                if (min == null && startDate <= max) {
+                    return true;
+                }
+                if (max == null && startDate >= min) {
+                    return true;
+                }
+                if (startDate <= max && startDate >= min) {
+                    return true;
+                }
+                return false;
+            }
+        );
+
+        $j("#min").datepicker({
+            onSelect: function () {
+                table.draw();
+            },
+            dateFormat: 'dd/mm/yy',
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "1950:2017"
+        });
+
+        $j("#max").datepicker({
+            onSelect: function () {
+                table.draw();
+            },
+            dateFormat: 'dd/mm/yy',
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "1950:2017"
+        });
+
+        $j('#min, #max').change(function () {
+            table.draw();
+        });
+        // End filter date range
+
+        // Add loading text when call ajax
+        $j('#datatable tbody').empty();
+        $j('<div class="datatable-loading" style="padding: 15px 0; text-align: center;">Đang tải dữ liệu...</div>').appendTo('#datatable tbody');
+        $j('.datatable-loading').css('width', $j('#datatable').width() + 'px');
+    });
+
+    // Clear all filters
+    $j('.clear-filter-btn').click(function () {
+        $j('#datatable tfoot input').val('').change();
+        $j('#datatable tfoot select').val('').change();
+        $j('#min').datepicker('setDate', '');
+        $j('#max').datepicker('setDate', '');
+    });
+
+    $j('#agentSubmitAccount').chosen();
+    $j('#agentSubmitType').chosen();
+
+    $j('#editAchievementModal').on('shown.bs.modal', function () {
+        $j('#editSubmitAccount').chosen();
+        $j('#editSubmitType').chosen();
+
+        $j('.agent-error-text').addClass('no-display');
+
+        $j('#editSubmitLink').keyup(function () {
+            $j('.edit-not-enough-field').addClass('no-display');
+            $j('.edit-link-too-long').addClass('no-display');
+        });
+    });
+
+    // Xu ly show hinh thuc tuong ung khi chon account
+    $j('#agentSubmitAccount').change(function () {
+        var agentAccountId = $j('#agentSubmitAccount').val();
+        var dataPost = {
+            agent_account_id: agentAccountId
+        };
+
+        $j('#agentSubmitType').attr("disabled", true);
+        $j('#agentSubmitType').trigger("chosen:updated");
+
+        $j.ajax({
+            url: '<?php echo $this->getUrl('agent/index/getAchievementTypeByAccount'); ?>',
+            type: 'post',
+            dataType: 'json',
+            data: dataPost,
+            success: function (response) {
+//                console.log(response);
+                if (response.success) {
+                    $j('#agentSubmitType').empty();
+                    $j('#agentSubmitType').append(response.list_type_html);
+                    $j('#agentSubmitType').attr("disabled", false);
+                    $j('#agentSubmitType').trigger("chosen:updated");
+                }
+                else {
+                    swal("", "Có lỗi xảy ra, vui lòng thử lại sau!", "error");
+                }
+            }
+        });
+    });
+
+    // Xu ly show hinh thuc tuong ung khi chon account
+    $j('#editSubmitAccount').change(function () {
+        var agentAccountId = $j('#editSubmitAccount').val();
+        var dataPost = {
+            agent_account_id: agentAccountId
+        };
+
+        $j('#editSubmitType').attr("disabled", true);
+        $j('#editSubmitType').trigger("chosen:updated");
+
+        $j.ajax({
+            url: '<?php echo $this->getUrl('agent/index/getAchievementTypeByAccount'); ?>',
+            type: 'post',
+            dataType: 'json',
+            data: dataPost,
+            success: function (response) {
+//                console.log(response);
+                if (response.success) {
+                    $j('#editSubmitType').empty();
+                    $j('#editSubmitType').append(response.list_type_html);
+                    $j('#editSubmitType').attr("disabled", false);
+                    $j('#editSubmitType').trigger("chosen:updated");
+                }
+                else {
+                    swal("", "Có lỗi xảy ra, vui lòng thử lại sau!", "error");
+                }
+            }
+        });
+    });
+
+    function confirmSubmitText() {
+        if ($j('#agentSubmitConfirm').is(":checked")) {
+            $j('#agentSubmitConfirm').prop('checked', false);
+        }
+        else {
+            $j('#agentSubmitConfirm').prop('checked', true);
+        }
+    }
+
+    var clickable = true;
+
+    function submitAchievement() {
+        if (clickable) {
+
+            $j('.agent-validate-text').addClass('no-display');
+
+            var form = $j('#submitAchievementForm');
+            var data = form.serializeArray();
+            var accountId = data[1].value;
+            var typeId = data[2].value;
+            var link = data[0].value.trim();
+            var confirm = data[3] ? data[3].value : '';
+
+            // Lay thoi diem submit gan nhat (de check 1 phut submit 1 lan)
+            var currentSubmitTime = new Date().getTime();
+            var lastSubmitTime = (localStorage.getItem("lastSubmitTime")) ? localStorage.getItem("lastSubmitTime") : 0;
+
+            // Check nhap du thong tin
+            if (accountId === '' || typeId === '' || link === '') {
+                $j('.agent-not-enough-field').removeClass('no-display');
+                $j('#submitFailed').modal();
+            }
+            else if (link.length > 255) {
+                $j('.agent-link-too-long').removeClass('no-display');
+                $j('#submitFailed').modal();
+            }
+            else if (confirm === '') {
+                $j('.agent-not-check-confirm').removeClass('no-display');
+                $j('#submitFailed').modal();
+            }
+            // Check 1 phut submit 1 lan
+            else if (currentSubmitTime - lastSubmitTime < 60000) {
+                $j('.agent-submit-time-error').removeClass('no-display');
+                $j('#submitFailed').modal();
+            }
+            else {
+                clickable = false;
+                $j('.agent-ajax-loader-submit').removeClass('no-display');
+
+                var dataPost = {
+                    user_id: '<?php echo $currentUser->getId() ?>',
+                    account_id: accountId,
+                    achievement_type_id: typeId,
+                    link: link
+                };
+//
+                $j.ajax({
+                    url: form.attr('action'),
+                    type: form.attr('method'),
+                    dataType: 'json',
+                    data: dataPost,
+                    success: function (response) {
+                        $j('.agent-ajax-loader-submit').addClass('no-display');
+//                    console.log(response);
+                        if (response.success) {
+                            // Luu thoi diem submit (de check 1 phut submit 1 lan)
+                            var lastSubmitTime = new Date().getTime();
+                            localStorage.setItem("lastSubmitTime", lastSubmitTime);
+
+                            // Ajax reload datatable
+                            $j('#datatable').DataTable().ajax.reload();
+
+                            $j('#submitSucceed').modal();
+                            resetSubmitFormValue();
+
+                            clickable = true;
+                        }
+                        else {
+                            $j('.agent-submit-error').removeClass('no-display');
+                            $j('.agent-submit-error').empty();
+                            if (response.no_satisfy) {
+                                $j('.agent-submit-error').append(response.error_message);
+                            }
+                            else {
+                                $j('.agent-submit-error').append('Có lỗi xảy ra, vui lòng thử lại sau!');
+                            }
+                            $j('#submitFailed').modal();
+
+                            clickable = true;
+                        }
+                    }
+                });
+            }
+        }
+    }
+
+    function editAchievement(value) {
+        // Pass variable to edit achievement modal form
+        var achievementId = $j(value).data('achievement-id');
+        var accountId = $j(value).data('account-id');
+        var achievementTypeId = $j(value).data('achievement-type-id');
+        var link = $j(value).data('link');
+
+        $j('#editSubmitAccount').val(accountId);
+        $j('#editSubmitAccount').trigger("chosen:updated");
+        $j('#editSubmitType').attr("disabled", true);
+        $j('#editSubmitType').trigger("chosen:updated");
+
+        var dataPost = {
+            agent_account_id: accountId
+        };
+
+        $j.ajax({
+            url: '<?php echo $this->getUrl('agent/index/getAchievementTypeByAccount'); ?>',
+            type: 'post',
+            dataType: 'json',
+            data: dataPost,
+            success: function (response) {
+
+                if (response.success) {
+                    $j('#editSubmitType').empty();
+                    $j('#editSubmitType').append(response.list_type_html);
+                    $j('#editSubmitType').val(achievementTypeId);
+                    $j('#editSubmitType').attr("disabled", false);
+                    $j('#editSubmitType').trigger("chosen:updated");
+                }
+                else {
+                    swal("", "Có lỗi xảy ra, vui lòng thử lại sau!", "error");
+                }
+            }
+        });
+
+        $j('#editSubmitLink').val(link);
+
+        $j('#editAchievementId').val(achievementId);
+
+        $j('#editAchievementModal').modal();
+    }
+
+    var updateClickable = true;
+
+    function updateAchievement() {
+        if (updateClickable) {
+
+            $j('.agent-validate-text').addClass('no-display');
+
+            var form = $j('#editAchievementForm');
+            var data = form.serializeArray();
+            var accountId = data[0].value;
+            var typeId = data[1].value;
+            var link = data[2].value.trim();
+            var achievementId = data[3].value;
+
+            // Check nhap du thong tin
+            if (accountId === '' || typeId === '' || link === '') {
+                $j('.edit-not-enough-field').removeClass('no-display');
+            }
+            else if (link.length > 255) {
+                $j('.edit-link-too-long').removeClass('no-display');
+            }
+            else {
+                updateClickable = false;
+                $j('.agent-ajax-loader-edit').removeClass('no-display');
+
+                var dataPost = {
+                    achievement_id: achievementId,
+                    account_id: accountId,
+                    achievement_type_id: typeId,
+                    link: link
+                };
+//
+                $j.ajax({
+                    url: form.attr('action'),
+                    type: form.attr('method'),
+                    dataType: 'json',
+                    data: dataPost,
+                    success: function (response) {
+                        $j('.agent-ajax-loader-edit').addClass('no-display');
+//                    console.log(response);
+                        if (response.success) {
+                            // Ajax reload datatable
+                            $j('#datatable').DataTable().ajax.reload();
+
+                            $j('#editAchievementModal').modal('toggle');
+                            $j('#submitSucceed').modal();
+
+                            updateClickable = true;
+                        }
+                        else {
+                            $j('#editAchievementModal').modal('toggle');
+                            $j('.agent-submit-error').removeClass('no-display');
+                            $j('.agent-submit-error').empty();
+                            if (response.no_satisfy) {
+                                $j('.agent-submit-error').append(response.error_message);
+                            }
+                            else {
+                                $j('.agent-submit-error').append('Có lỗi xảy ra, vui lòng thử lại sau!');
+                            }
+                            $j('#submitFailed').modal();
+
+                            updateClickable = true;
+                        }
+                    }
+                });
+            }
+        }
+    }
+
+    function deleteAchievement(value) {
+
+        var achievementId = $j(value).data('achievement-id');
+        swal({
+                title: "Xóa thành tích?",
+                text: "Bạn có chắc chắn muốn xóa thành tích này khỏi hệ thống?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#47c834",
+                confirmButtonText: "Xóa",
+                cancelButtonText: "Đóng",
+                showLoaderOnConfirm: true,
+                closeOnConfirm: false
+            },
+            function () {
+                var dataPost = {
+                    achievement_id: achievementId
+                };
+
+                $j.ajax({
+                    url: '<?php echo $this->getUrl('agent/index/deleteAchievement') ?>',
+                    type: 'post',
+                    dataType: 'json',
+                    data: dataPost,
+                    success: function (response) {
+//                    console.log(response);
+                        if (response.success) {
+                            // Ajax reload datatable
+                            $j('#datatable').DataTable().ajax.reload();
+
+                            swal("", "Xóa thành tích thành công!", "success");
+                        }
+                        else {
+                            swal("", "Có lỗi trong quá trình xóa thành tích, vui lòng thử lại!", "error");
+                        }
+                    }
+                });
+            });
+    }
+
+    function resetSubmitFormValue() {
+        $j('#agentSubmitAccount').val('');
+        $j('#agentSubmitType').val('');
+        $j('#agentSubmitAccount').trigger("chosen:updated");
+        $j('#agentSubmitType').trigger("chosen:updated");
+        $j('#agentSubmitLink').val('');
+        $j('#agentSubmitNote').val('');
+        $j('#agentSubmitConfirm').prop('checked', false);
+    }
+
+    function copyLink() {
+        var $temp = $j("<input>");
+        $j("body").append($temp);
+        $temp.val($j('#recommendationLink').text()).select();
+        document.execCommand("copy");
+        $temp.remove();
+        swal({
+            title: '',
+            type: 'success',
+            text: 'Đã sao chép link giới thiệu',
+            showConfirmButton: false,
+            timer: 1500
+        });
+    }
+
+    function strip(html) {
+        var tmp = document.createElement("DIV");
+        tmp.innerHTML = html;
+        return tmp.textContent || tmp.innerText;
+    }
+</script>

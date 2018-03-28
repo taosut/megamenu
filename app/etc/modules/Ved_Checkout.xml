@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Ved_Checkout>
+            <active>true</active>
+            <codePool>local</codePool>
+        </Ved_Checkout>
+    </modules>
+</config>

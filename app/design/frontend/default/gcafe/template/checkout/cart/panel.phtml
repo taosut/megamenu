@@ -1,0 +1,88 @@
+<div id="panel-cart">
+    <div class="panel panel-default cart">
+        <div class="panel-body">
+            <?php
+//            $totals = Mage::getSingleton('checkout/session')->getQuote()->getTotals();
+//            var_dump($totals);
+            $info =  $this->getCartInfo();
+            $cart_qty = $info['cart_qty'];
+            $products = $info['products'];
+            $total_discount = 0 - $info['total_discount'];
+            $grand_total = $info['grand_total'];
+            $shipping_amount = $info['shipping_amount'];
+            $cod = $info['cod'];
+            ?>
+            <div class="order">
+                <span class="title">Đơn Hàng</span>
+                <span class="title"> (<?php echo $cart_qty; ?> sản phẩm)</span>
+                <a href="<?php echo Mage::app()->getStore()->getBaseUrl(Mage_Core_Model_Store::URL_TYPE_LINK) . 'checkout/cart/';?>" class="btn btn-default btn-custom1">Sửa</a>
+            </div>
+            <div class="product">
+                <?php
+                $itemsArray = Mage::getSingleton('checkout/session')->getQuote()->getAllVisibleItems();
+                foreach($itemsArray as $item){
+                    ?>
+                    <?php $total = $item->getPrice() * $item->getQty(); ?>
+                    <?php $freeItem = unserialize($item->getAdditionalData()); ?>
+                    <div class="item">
+                        <p class="title">
+                            <strong><?php echo ($freeItem && isset($freeItem['quantity'])) ? $item->getQty() - $freeItem['quantity'] : $item->getQty(); ?> x </strong>
+<!--                            <strong>--><?php //echo $item['quantity']; ?><!-- x </strong>-->
+                            <a href="<?php echo $item->getProduct()->getProductUrl(); ?>" target="_blank"
+                               class="payment-cart-pr-name">
+                                <?php echo $item->getName(); ?>
+                            </a>
+<!--                            <a href="--><?php //echo $item['url']; ?><!--" target="_blank">-->
+<!--                                --><?php //echo $item['name']; ?>
+<!--                            </a>-->
+                        </p>
+                        <div class="col-md-12 pt-5 pl-25 pb-5">
+                            <span class="free-item-text"><?php echo ($freeItem && isset($freeItem['quantity'])) ? "(Tặng kèm <span class='free-item-number'>" . $freeItem['quantity'] . "</span> sản phẩm " . $freeItem['product_name'] . ")" : ''; ?></span>
+                        </div>
+                        <p class="price">
+                            <?php if ($freeItem && isset($freeItem['quantity']) && isset($freeItem['price'])): ?>
+                                <?php $total = $total - $freeItem['quantity'] * $freeItem['price'] ?>
+                                <?php $total_free_item_price += $freeItem['quantity'] * $freeItem['price']; ?>
+                            <?php endif; ?>
+                            <span><?php echo Mage::helper('core')->currency($total, true, false); ?></span>
+<!--                            <span>--><?php //echo Mage::helper('core')->currency($item['grand_total'], true, false); ?><!--</span>-->
+                        </p>
+                    </div>
+                <?php
+                }
+                ?>
+            </div>
+            <?php
+            $sub_total = Mage::helper('checkout/cart')->getQuote()->getSubtotal();
+            $grand_total = Mage::helper('checkout/cart')->getQuote()->getGrandTotal();
+            $discount_value = $sub_total - $grand_total;
+            $grand_discount = ($discount_value > $total_free_item_price) ? $discount_value - $total_free_item_price : 0 ;
+            ?>
+            <p class="total">
+                Tạm Tính:
+                <span><?php echo Mage::helper('core')->currency($sub_total - $total_free_item_price, true, false); ?></span>
+            </p>
+            <?php if ($grand_discount > 0): ?>
+            <p class="total">
+                Giảm giá:
+                <span>- <?php echo Mage::helper('core')->currency($grand_discount, true, false); ?></span>
+            </p>
+            <?php endif ?>
+            <p class="shipping">
+                Phí vận chuyển:
+                <span>
+                    <?php
+                        if( $shipping_amount == -1){
+                            echo "Chưa có";
+                        } else {
+                            echo Mage::helper('core')->currency($shipping_amount, true, false);
+                        }
+                    ?>
+                </span>
+            </p>
+            <p class="total2">
+                Thành tiền:<span><?php echo Mage::helper('core')->currency($grand_total, true, false); ?></span>
+            </p>
+        </div>
+    </div>
+</div>

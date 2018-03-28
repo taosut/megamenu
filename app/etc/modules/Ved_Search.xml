@@ -1,0 +1,9 @@
+
+<config>
+    <modules>
+        <Ved_Search>
+            <active>true</active>
+            <codePool>local</codePool>
+        </Ved_Search>
+    </modules>
+</config>

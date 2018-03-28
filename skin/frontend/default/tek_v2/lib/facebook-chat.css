@@ -1,0 +1,46 @@
+.fb_dialog {
+    width: 35px !important;
+    height: 35px !important;
+    box-shadow: none !important;
+    cursor: pointer;
+    border: 1px solid transparent;
+    user-select: none;
+    right: 0 !important;
+    bottom: calc(29% - 122px) !important;
+    margin: 13px !important;
+    z-index: 500 !important;
+    opacity: 0 !important;
+}
+
+.fb_shrink_active:active {
+    opacity: 0 !important;
+    transform: none !important;
+}
+
+.fb_dialog iframe {
+    width: 35px !important;
+    height: 35px !important;
+}
+
+.off-tet-message {
+    position: absolute;
+    bottom: -50px;
+    right: 70px;
+    width: 360px !important;
+    height: 142px !important;
+    pointer-events: all;
+}
+
+@media not all and (hover: none) {
+    .fb-customerchat iframe {
+        right: 50pt !important;
+        bottom: 25pt !important;
+    }
+}
+
+@media screen and (max-width: 1200px) {
+    .fb_dialog {
+        margin: 8px !important;
+        bottom: calc(30% - 102px) !important;
+    }
+}

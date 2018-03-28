@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+
+<config>
+    <modules>
+        <Ved_Catalog>
+            <version>1.0.0</version>
+        </Ved_Catalog>
+    </modules>
+    <global>
+        <blocks>
+            <ved_catalog_product>
+                <class>Ved_Catalog_Block_Product</class>
+            </ved_catalog_product>
+        </blocks>
+    </global>
+</config>

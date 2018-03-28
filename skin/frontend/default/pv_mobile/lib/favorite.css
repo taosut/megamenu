@@ -1,0 +1,90 @@
+.rm-favorite-list {
+    float: right;
+    position: absolute;
+    bottom: 13px;
+    color: #3B5CA0;
+    right: 13px;
+}
+
+.rm-favorite-grid {
+    float:right;
+}
+
+.rm-favorite-grid:hover {
+    cursor: pointer;
+    color: #d42333;
+}
+
+.promo-info {
+    padding: 0 9% 0 0;
+}
+
+.pd-left-0 {
+    padding-left:0;
+}
+
+.fv-modal{
+    background: #efefef;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.fv-text-wrap{
+    padding: 20px 20px 0 20px;
+    text-align: center;
+    font-size: 17px;
+    font-weight: 600;
+}
+.fv-description{
+    margin-top: 10px;
+    font-size: 13px;
+    text-align: center;
+    font-weight: 500;
+}
+.prompt-answer{
+    width: 100%;
+    margin-top: 21px;
+    font-size: 17px;
+    color: #007AFF;
+    border-top: solid 1px #dcddde;
+}
+.prompt-left{
+    width: 50%;
+    float:left;
+    background: #efefef;
+    border-right: 1px #dcddde solid;
+    padding-top: 15px;
+    padding-bottom: 13px;
+    text-align: center;
+    cursor: pointer;
+    border-bottom-left-radius: 5px;
+}
+.prompt-right{
+    width: 50%;
+    float:left;
+    background: #efefef;
+    font-weight: 600;
+    padding-top: 15px;
+    padding-bottom: 13px;
+    text-align: center;
+    cursor: pointer;
+    border-bottom-right-radius: 5px;
+}
+
+.mid-modal {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.mid-modal > .modal-content {
+    width: 80%;
+    height: 150px;
+    text-align: center;
+    padding-top: 25px;
+}
+
+.order-detail-loading > p {
+    margin-top: 8px;
+}

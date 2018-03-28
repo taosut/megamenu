@@ -1,0 +1,225 @@
+/*----------- Main DropDown Positioning ---------------*/
+.megamenu-nav {
+  position: relative;
+  z-index: 150;
+}
+.megamenu-nav li {
+  position: static;
+}
+
+.megamenu-nav-primary {
+  display: block;
+  margin-top: 15px;
+}
+.megamenu-nav-primary li.level0 {
+  display: inline-block;
+}
+.megamenu-nav-primary li.level0 > a, .megamenu-nav-primary li.level0 > span {
+  text-transform: uppercase;
+  display: inline-block;
+  position: relative;
+  padding: 0 12px 0 8px;
+  text-decoration: none;
+  display: block;
+  cursor: pointer;
+}
+.megamenu-nav-primary a.level0, .megamenu-nav-primary span.level0 {
+  padding: 0 25px;
+  border-bottom: 0px;
+}
+.megamenu-nav-primary .megamenu {
+  position: absolute;
+  display: none;
+  z-index: 10;
+}
+.megamenu-nav-primary .megamenu .button {
+  color: #fff;
+}
+.megamenu-nav-primary .menu-active .megamenu {
+  display: block;
+}
+.megamenu-nav-primary a, .megamenu-nav-primary span.level0 {
+  color: #636363;
+  display: block;
+}
+.megamenu-nav-primary a:hover, .megamenu-nav-primary span.level0:hover {
+  color: #3399cc;
+  text-decoration: none;
+}
+.megamenu-nav-primary a, .megamenu-nav-primary span.level0, .megamenu-nav-primary .section-title span {
+  line-height: 30px;
+}
+.megamenu-nav-primary li:hover > a {
+  color: #3399cc;
+  text-decoration: none;
+}
+
+/*----------- Main DropDown Styling ---------------*/
+.megamenu-nav div.megamenu {
+  background-color: #fff;
+  border: 1px solid #e8eaeb;
+}
+
+.megamenu-nav .megamenu .column:not(:last-child) {
+  border-right: 1px solid #eceff1;
+}
+
+.megamenu-nav .megamenu-nav-primary div.megamenu {
+  border-top: 2px solid #64b5f6;
+}
+
+/*----------- Dropdown Types ---------------*/
+.megamenu-nav li.level0 .absolute-center {
+  left: 0px;
+  right: 0px;
+  width: 100% !important;
+}
+.megamenu-nav li.level0 .absolute-left {
+  left: 0px;
+  right: auto;
+}
+.megamenu-nav li.level0 .absolute-right {
+  right: 0px;
+  left: auto;
+}
+
+/*----------- Content Columns ---------------*/
+.content-columns-1 {
+  -webkit-column-count: 1;
+  /* Chrome, Safari, Opera */
+  -moz-column-count: 1;
+  /* Firefox */
+  column-count: 1;
+}
+
+.content-columns-2 {
+  -webkit-column-count: 2;
+  /* Chrome, Safari, Opera */
+  -moz-column-count: 2;
+  /* Firefox */
+  column-count: 2;
+}
+
+.content-columns-3 {
+  -webkit-column-count: 3;
+  /* Chrome, Safari, Opera */
+  -moz-column-count: 3;
+  /* Firefox */
+  column-count: 3;
+}
+
+.content-columns-4 {
+  -webkit-column-count: 4;
+  /* Chrome, Safari, Opera */
+  -moz-column-count: 4;
+  /* Firefox */
+  column-count: 4;
+}
+
+.content-columns-5 {
+  -webkit-column-count: 5;
+  /* Chrome, Safari, Opera */
+  -moz-column-count: 5;
+  /* Firefox */
+  column-count: 5;
+}
+
+/*----------- Featured Product ---------------*/
+.megamenu-featured-products {
+  padding: 27px 27px 0px;
+}
+
+.featured-product {
+  text-align: center;
+}
+.featured-product img {
+  margin: 0 auto 15px;
+  padding: 10px;
+  border: 1px solid #eceff1;
+  box-sizing: border-box;
+  max-width: 100%;
+}
+.featured-product .button {
+  margin-top: 5px;
+}
+.secondary .featured-product {
+  text-align: left;
+}
+.megamenu-nav .secondary .featured-product {
+  overflow: hidden;
+}
+.megamenu-nav .secondary .featured-product .bd {
+  overflow: hidden;
+  padding: 30px 0px 0px;
+}
+.megamenu-nav .secondary .featured-product .img {
+  float: left;
+  margin-right: 15px;
+  max-width: 150px;
+}
+.megamenu-nav .secondary .featured-product .img img {
+  display: block;
+}
+.megamenu-nav .secondary .featured-product .imgExt {
+  float: right;
+}
+.megamenu-nav .secondary .featured-product .button {
+  float: left;
+  padding: 5px;
+  line-height: 16px;
+}
+
+/*----------- Featured Category ---------------*/
+.featured-section, .featured-section a {
+  position: relative;
+}
+
+.featured-section {
+  padding: 15px;
+}
+.featured-section img {
+  width: 100%;
+}
+.featured-section a span {
+  background-color: rgba(100, 181, 246, 0.35);
+  bottom: 0;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: bold;
+  left: 0;
+  margin-right: 10px;
+  padding: 5px 10px;
+  position: absolute;
+  text-align: center;
+  text-transform: uppercase;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/*------------- Component Styles --------------*/
+.section-title {
+  font-weight: bold;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+}
+
+/*------------- Widget Blocks --------------*/
+.list-block {
+  margin-left: 20px;
+  padding: 10px 45px;
+}
+.list-block:first-of-type {
+  padding-top: 35px;
+}
+.list-block:last-of-type {
+  padding-bottom: 35px;
+}
+.list-block li a {
+  padding: 0px;
+  border: 0px;
+}
+
+/*------------- Display Classes --------------*/
+.small-only-view-all {
+  display: none;
+}

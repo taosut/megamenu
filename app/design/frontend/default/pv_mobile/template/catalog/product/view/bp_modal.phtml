@@ -1,0 +1,289 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: Teko
+ * Date: 7/17/2017
+ * Time: 10:03 AM
+ */
+
+?>
+<?php
+$category = Mage::getModel('catalog/category')->load(Mage::registry('catId'));
+$catUrl = $category->getUrl();
+?>
+
+<div class="modal-dialog bp-modal-dialog">
+    <div class="modal-content bp-modal-content">
+        <div class="modal-header bp-modal-header">
+            <div class="row">
+                <div class="col-xs-12 bp-modal-title">
+                    Chọn linh kiện
+                    <i class="fa fa-close bp-close-icon" data-dismiss="modal"></i>
+                </div>
+                <div class="col-xs-10 pr-0 pl-7">
+                    <input id="bp-search-input" type="text" class="bp-search-input"
+                           onkeyup="doSearchProductModal()"
+                           placeholder="Bạn cần tìm linh kiện gì?"/>
+                    <i class="fa fa-search bp-search-icon"></i>
+                </div>
+                <div class="col-xs-2 bp-filter-icon-block">
+                    <i class="fa fa-list-ul bp-filter-icon" data-toggle="modal" data-target="#filterModal"></i>
+                </div>
+            </div>
+        </div>
+        <div class="modal-body bp-modal-body">
+            <div class="row bp-modal-products">
+                <div class="col-xs-12 bp-modal-products-content">
+                    <div class="row bp-filter-sort-block hidden">
+                        <div class="col-xs-12 bp-sort-block"></div>
+                        <div class="col-xs-12 bp-pagination-block"></div>
+                        <div class="col-xs-12 bp-filtered-block"></div>
+                    </div>
+                    <div class="bp-loading">
+                        <img src="<?php echo $this->getSkinUrl('images/ajax-loader-new.gif') ?>"
+                             title="Đang tải"/>
+                    </div>
+                    <div class="row bp-products-content"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var $j = jQuery.noConflict();
+
+    $j('.bp-search-input').prop('disabled', true);
+
+    /** Get data in modal **/
+    var catUrl = <?php echo json_encode($catUrl) ?>;
+
+    queryProduct(catUrl);
+    /** End get data in modal **/
+
+    /** Paginate product modal **/
+    function paginateProductModal(paginateUrl) {
+        queryProduct(paginateUrl);
+    }
+    /** End paginate product modal **/
+
+    /** Sort product modal **/
+    function sortProductModal(sortUrl) {
+        queryProduct(sortUrl);
+    }
+    /** End sort product modal **/
+
+    /** Filter product modal **/
+    function getFilterProductModal() {
+        $j('.filter-section-item').click(function () {
+            var filterUrl = $j(this).data('filter-url');
+            queryProduct(filterUrl);
+        });
+
+        $j('.filter-section-checkbox').click(function (e) {
+            e.stopPropagation();
+
+            var filterUrl = $j(this).data('filter-url');
+            queryProduct(filterUrl);
+        });
+    }
+
+    function removeFiltered(removeUrl) {
+        queryProduct(removeUrl);
+    }
+
+    function clearFiltered(clearUrl) {
+        queryProduct(clearUrl);
+    }
+
+    function filterClick() {
+
+    }
+    /** End filter product modal **/
+
+    /** Query product action **/
+    function queryProduct(url) {
+        $j('.bp-products-content').addClass('hidden');
+        $j('.bp-loading').removeClass('hidden');
+        $j('.bp-search-input').prop('disabled', true);
+        $j('#filterModal').modal('hide');
+
+        $j.ajax({
+            url: url,
+            type: 'GET',
+            success: function (response) {
+                $j('.bp-filter-sort-block').removeClass('hidden');
+                $j('.bp-products-content').removeClass('hidden');
+                $j('.bp-loading').addClass('hidden');
+                $j('.bp-search-input').prop('disabled', false);
+
+                // Append product to products content
+                $j('.bp-products-content').html($j(response).find('.bp-products-content').html());
+
+                // Append pagination block
+                if ($j(response).find('.bp-pagination-block').html()) {
+                    $j('.bp-pagination-block').html($j(response).find('.bp-pagination-block').html()).css('padding', '10px 0');
+                }
+                else {
+                    $j('.bp-pagination-block').html('').css('padding', '3px 0 2px 0');
+                }
+
+                // Append sort block
+                $j('.bp-sort-block').html($j(response).find('.bp-sort-block').html());
+
+                // Append filter block
+                $j('.bp-filter-block').html($j(response).find('.filter-block').html());
+                $j('.bp-filtered-block').html($j(response).find('.filtered-block').html());
+                getFilterProductModal();
+                $j('.apply-filter-btn').addClass('hidden');
+                $j('.bp-apply-filter-btn').removeClass('hidden');
+
+                // Set height for bp products content
+                var modalDialogHeight = $j('.bp-modal-dialog').height();
+                var modalHeaderHeight = $j('.bp-modal-header').height() + 13;
+                var filterSortBlockHeight = $j('.bp-filter-sort-block').height();
+                $j('.bp-products-content').css('height', (modalDialogHeight - modalHeaderHeight - filterSortBlockHeight) + 'px');
+                $j('.bp-filter-block').css('height', (modalDialogHeight - 39) + 'px');
+            }
+        });
+    }
+    /** End query product action **/
+
+    /** Search product modal **/
+    var timeout = null;
+
+    function doSearchProductModal() {
+        $j('.bp-loading').removeClass('hidden');
+        $j('.bp-products-content').addClass('hidden');
+        $j('#filterModal').modal('hide');
+
+        if (timeout) {
+            clearTimeout(timeout);
+        }
+        timeout = setTimeout(function () {
+            searchProductModal();
+        }, 1000);
+    }
+
+    function searchProductModal() {
+        var keySearch = strip($j('#bp-search-input').val().trim());
+        if (keySearch === '') {
+            queryProduct(catUrl);
+        }
+        else {
+            var searchUrl = '<?php echo $this->getUrl('catalogsearch/result') ?>?cat=<?php echo Mage::registry('catId')?>&q=' + keySearch;
+            queryProductSearch(keySearch, searchUrl);
+        }
+    }
+
+    function queryProductSearch(keySearch, searchUrl) {
+        $j.ajax({
+            url: searchUrl,
+            type: 'GET',
+            success: function (response) {
+                $j('.bp-filter-sort-block').removeClass('hidden');
+                $j('.bp-products-content').removeClass('hidden');
+                $j('.bp-loading').addClass('hidden');
+                $j('.bp-search-input').prop('disabled', false);
+
+                // Append product to products content
+                if ($j(response).find('.bp-products-content').html()) {
+                    $j('.bp-products-content').html($j(response).find('.bp-products-content').html());
+
+                    // Append pagination block
+                    if ($j(response).find('.bp-pagination-block').html()) {
+                        $j('.bp-pagination-block').html($j(response).find('.bp-pagination-block').html());
+                    }
+                    else {
+                        $j('.bp-pagination-block').html('');
+                    }
+
+                    // Append sort block
+                    $j('.bp-sort-block').html($j(response).find('.bp-sort-block').html());
+
+                    // Append filter block
+                    $j('.bp-filter-block').html($j(response).find('.filter-block').html());
+                    $j('.bp-filtered-block').html('');
+                    getFilterProductModal();
+                    $j('.apply-filter-btn').addClass('hidden');
+                    $j('.bp-apply-filter-btn').removeClass('hidden');
+                }
+                else {
+                    $j('.bp-products-content').html('<div class="col-xs-12 list-no-products"><img src="<?php echo $this->getSkinUrl('images/giohangtrong.png'); ?>"/>Không tìm thấy sản phẩm nào phù hợp! </div>');
+                    $j('.bp-pagination-block').html('');
+                    $j('.bp-sort-block').html('Kết quả tìm kiếm theo: ' + keySearch);
+                    $j('.bp-filter-block').html('');
+                    $j('.bp-filtered-block').html('');
+                }
+
+                // Set height for bp products content
+                var modalDialogHeight = $j('.bp-modal-dialog').height();
+                var modalHeaderHeight = $j('.bp-modal-header').height() + 13;
+                var filterSortBlockHeight = $j('.bp-filter-sort-block').height();
+                $j('.bp-products-content').css('height', (modalDialogHeight - modalHeaderHeight - filterSortBlockHeight) + 'px');
+                $j('.bp-filter-block').css('height', (modalDialogHeight - 39) + 'px');
+            }
+        });
+    }
+    /** End search product modal **/
+
+    /** Click expand / collapse filter **/
+    function toggleFilterTitle(value) {
+        var header = $j(value);
+        var icon = $j(value).find('i');
+        //getting the next element
+        var content = header.next();
+        //open up the content needed - toggle the slide- if visible, slide up, if not slidedown.
+        content.slideToggle(300);
+        //toggle icon
+        icon.toggleClass('fa-caret-up fa-caret-down');
+    }
+    /** End Click expand / collapse filter **/
+
+    /** Common functions **/
+    function getParameterByName(name, url) {
+        if (!url) url = window.location.href;
+        name = name.replace(/[\[\]]/g, "\\$&");
+        var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+            results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return '';
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
+    }
+
+    function removeURLParameter(url, parameter) {
+        //prefer to use l.search if you have a location/link object
+        var urlparts = url.split('?');
+        if (urlparts.length >= 2) {
+
+            var prefix = encodeURIComponent(parameter) + '=';
+            var pars = urlparts[1].split(/[&;]/g);
+
+            //reverse iteration as may be destructive
+            for (var i = pars.length; i-- > 0;) {
+                //idiom for string.startsWith
+                if (pars[i].lastIndexOf(prefix, 0) !== -1) {
+                    pars.splice(i, 1);
+                }
+            }
+
+            url = urlparts[0] + (pars.length > 0 ? '?' + pars.join('&') : "");
+            return url;
+        } else {
+            return url;
+        }
+    }
+
+    function formatCurrency(n) {
+        return n.toFixed(0).replace(/./g, function (c, i, a) {
+            return i > 0 && c !== "." && (a.length - i) % 3 === 0 ? "." + c : c;
+        });
+    }
+
+    function strip(html) {
+        var tmp = document.createElement("DIV");
+        tmp.innerHTML = html;
+        return tmp.textContent || tmp.innerText;
+    }
+    /** Common functions **/
+</script>

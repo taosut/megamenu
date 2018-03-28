@@ -1,0 +1,71 @@
+<div class="col-xs-4 subscription-title">
+    <img src="<?php echo $this->getSkinUrl('images/icon_Mail.svg'); ?>"/>
+    <div class="subscription-text">Đăng ký bản tin Phong Vũ</div>
+</div>
+<div class="col-xs-8 promo-info-text">
+    Cập nhật thông tin K.Mãi nhanh nhất<br>
+    Hưởng quyền lợi giảm giá riêng biệt
+</div>
+<div class="col-xs-10 subscription-input-block">
+    <input id="subscription-input" class="subscription-input" type="text"
+           placeholder="Địa chỉ Email của bạn..."/>
+</div>
+<div class="col-xs-2 subscribe-btn-block">
+    <div class="subscribe-btn" onclick="subscribeNewsletter();">
+        <i class="fa fa-plus"></i>
+    </div>
+</div>
+
+<script type="text/javascript">
+    /** Subscribe news letter **/
+    $j('.subscription-input').keypress(function (e) {
+        if (e.keyCode === 13) {
+            subscribeNewsletter();
+        }
+    });
+
+    function subscribeNewsletter() {
+        var subscribeEmail = $j('#subscription-input').val().trim();
+        if (subscribeEmail === '') {
+            swal("Có lỗi!", "Bạn chưa nhập địa chỉ Email cần đăng ký!", "error");
+        }
+        else if (!validateEmail(subscribeEmail)) {
+            swal("Có lỗi!", "Địa chỉ Email không đúng định dạng!", "error");
+        }
+        else {
+            swal({
+                title: "Đăng ký nhận bản tin Phong Vũ",
+                text: "Bạn có muốn đăng ký nhận bản tin Phong Vũ cho Email " + subscribeEmail + "?",
+                type: "info",
+                confirmButtonText: "Xác nhận",
+                cancelButtonText: "Đóng",
+                showCancelButton: true,
+                closeOnConfirm: false,
+                showLoaderOnConfirm: true
+            }, function () {
+                $j.ajax({
+                    url: '<?php echo $this->getUrl('search/index/subscribeEmail'); ?>',
+                    type: 'GET',
+                    data: {
+                        subscribe_email: subscribeEmail
+                    },
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.success) {
+                            swal("Thành công!", response.success_message);
+                        }
+                        else if (response.error) {
+                            swal("Có lỗi!", response.error_message, "error");
+                        }
+                    }
+                });
+            });
+        }
+    }
+    /** End subscribe news letter **/
+
+    function validateEmail(email) {
+        var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(email);
+    }
+</script>

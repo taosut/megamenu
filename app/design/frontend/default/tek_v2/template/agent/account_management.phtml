@@ -1,0 +1,844 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: Teko
+ * Date: 9/6/2017
+ * Time: 11:10 AM
+ */
+?>
+
+<?php
+$currentUser = Mage::getSingleton('customer/session')->getCustomer();
+$agentInfo = json_decode($currentUser->getAgentInfo());
+$agentChannels = array(
+    1 => 'Mạng xã hội',
+    2 => 'Diễn đàn/Website'
+);
+?>
+
+<style>
+    /*basic reset*/
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    /*adding a black bg to the body to make things clearer*/
+    body {
+        background: black;
+    }
+</style>
+
+<script>
+    dataLayer = [];
+</script>
+
+<?php
+$session = Mage::getSingleton('customer/session');
+?>
+
+<?php if ($session->isLoggedIn()): ?>
+    <?php if ($currentUser->getIsAgentDeleted() == 1): ?>
+        <?php echo $this->getChildHtml('agent.warning') ?>
+    <?php else: ?>
+        <div class="agent-content">
+            <div class="row row-eq-height">
+
+                <?php echo $this->getChildHtml('agent.navigation') ?>
+
+                <div class="col-md-10 col-sm-10 col-xs-12">
+                    <div class="row mr-0 pl-15-768">
+                        <div class="col-md-12">
+                            <div class="agent-box agent-update-info">
+                                <div class="agent-box-title">Cập nhật thông tin cá nhân (những mục có dấu <span
+                                            class="red">*</span>
+                                    là bắt
+                                    buộc)
+                                </div>
+                                <div class="agent-submit-form-content">
+                                    <form id="updateInfoForm" class="form-horizontal"
+                                          action="<?php echo $this->getUrl('agent/index/updateAgentInfo') ?>"
+                                          method="post">
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-2" for="name">Họ và tên </label>
+                                            <div class="col-sm-10">
+                                                <input id="agentName" type="text" class="agent-field-input form-control"
+                                                       placeholder="Nhập họ tên"
+                                                       value="<?php echo $currentUser->getFirstname() ?>" disabled>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-2" for="phone_number">Số điện
+                                                thoại </label>
+                                            <div class="col-sm-10">
+                                                <input id="agentPhoneNumber" type="number"
+                                                       class="agent-field-input form-control"
+                                                       placeholder="Nhập số điện thoại"
+                                                       value="<?php echo $currentUser->getPhoneNumber() ?>" disabled>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-2" for="gender">Giới tính <span
+                                                        class="red">*</span></label>
+                                            <div class="col-sm-10">
+                                                <select class="agent-field-input form-control" name="gender">
+                                                    <option value="Nam" <?php if ($agentInfo->gender === 'Nam'): ?> selected <?php endif; ?>>
+                                                        Nam
+                                                    </option>
+                                                    <option value="Nữ" <?php if ($agentInfo->gender === 'Nữ'): ?> selected <?php endif; ?>>
+                                                        Nữ
+                                                    </option>
+                                                    <option value="Khác" <?php if ($agentInfo->gender === 'Khác'): ?> selected <?php endif; ?>>
+                                                        Khác
+                                                    </option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-2" for="email">Email <span
+                                                        class="red">*</span></label>
+                                            <div class="col-sm-10">
+                                                <input id="agentEmail" type="email"
+                                                       class="agent-field-input form-control"
+                                                       placeholder="Nhập email"
+                                                       value="<?php echo $agentInfo->email ?>">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-2" for="dob">Ngày sinh <span
+                                                        class="red">*</span></label>
+                                            <div class="col-sm-10">
+                                                <input type="text"
+                                                       class="agent-datepicker agent-field-input form-control"
+                                                       id="datepicker"
+                                                       name="dob"
+                                                       placeholder="dd/mm/yyyy" value="<?php echo $agentInfo->dob ?>"
+                                                       readonly>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label col-sm-2" for="address">Địa chỉ <span
+                                                        class="red">*</span></label>
+                                            <div class="col-sm-10">
+                                                <input type="text" class="agent-field-input form-control" name="address"
+                                                       placeholder="Nhập địa chỉ"
+                                                       value="<?php echo $agentInfo->address ?>"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group mb-0">
+                                            <div class="col-sm-2 col-sm-offset-2">
+                                                <div class="agent-btn agent-update-info-btn" onclick="updateInfo()"
+                                                     tabindex="0">
+                                                    <img class="agent-ajax-loader no-display"
+                                                         title="Đang tải"
+                                                         src="<?php echo $this->getSkinUrl('images/ajax-loader.gif') ?>"
+                                                         width="16" height="16"/>
+                                                    Cập nhật
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+
+                            <div class="agent-box agent-post-history mb-15">
+                                <div class="agent-box-title h-40">
+                                    Quản lý tài khoản
+                                    <div class="agent-add-account-btn agent-btn" data-toggle="modal"
+                                         data-target="#addAccountModal">
+                                        Thêm tài khoản
+                                    </div>
+                                </div>
+
+                                <div class="agent-recommendation-total">Số tài khoản đang lọc/Tổng số tài khoản: <span class="agent-filtered-count"></span>/<span class="agent-total-count"></span></div>
+
+                                <div class="agent-btn clear-filter-btn pull-right">
+                                    Bỏ lọc
+                                </div>
+                                <div class="table-responsive">
+                                    <table id="datatable" class="table table-striped agent-table">
+                                        <thead>
+                                        <tr>
+                                            <th>STT</th>
+                                            <th>Hệ thống</th>
+                                            <th>Kênh</th>
+                                            <th>Account</th>
+                                            <th>Trạng thái</th>
+                                            <th>Comment của admin</th>
+                                            <th>Thao tác</th>
+                                        </tr>
+                                        </thead>
+                                        <tfoot>
+                                        <tr>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                        </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="updateInfoSucceed" class="modal fade" role="dialog">
+            <div class="modal-dialog" style="margin-top: 25vh">
+                <!-- Modal content-->
+                <div class="modal-content agent-modal-content">
+                    <div class="modal-header agent-modal-header">
+                        <div class="agent-close-modal" data-dismiss="modal">&times;</div>
+                    </div>
+                    <div class="modal-body agent-modal-body">
+                        <div class="a-center">
+                            <img class="agent-modal-body-logo"
+                                 src="<?php echo $this->getSkinUrl('images/agent-logo-green.png') ?>">
+                            <div class="agent-modal-body-text">
+                                Cập nhật thông tin cá nhân thành công!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="updateInfoFailed" class="modal fade" role="dialog">
+            <div class="modal-dialog" style="margin-top: 25vh">
+                <!-- Modal content-->
+                <div class="modal-content agent-modal-content">
+                    <div class="modal-header agent-modal-header">
+                        <div class="agent-close-modal" data-dismiss="modal">&times;</div>
+                    </div>
+                    <div class="modal-body agent-modal-body">
+                        <div class="a-center">
+                            <img class="agent-modal-body-logo"
+                                 src="<?php echo $this->getSkinUrl('images/agent-logo-red.png') ?>">
+                            <div class="row agent-validate-text agent-not-enough-field agent-modal-body-text no-display">
+                                <div class="col-xs-8 col-xs-offset-2">
+                                    Vui lòng nhập đủ thông tin để cập nhật!
+                                </div>
+                            </div>
+                            <div class="row agent-validate-text agent-email-error agent-modal-body-text no-display">
+                                <div class="col-xs-8 col-xs-offset-2">
+                                    Địa chỉ Email không đúng định dạng, vui lòng kiểm tra lại!
+                                </div>
+                            </div>
+                            <div class="row agent-validate-text agent-update-error agent-modal-body-text no-display">
+                                <div class="col-xs-8 col-xs-offset-2">
+                                    Có lỗi xảy ra, xin vui lòng thử lại sau!
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="addAccountModal" class="modal fade">
+            <div class="modal-dialog modal-lg" style="margin-top: 25vh;"><!-- Modal content-->
+                <div class="modal-content agent-modal-content">
+                    <div class="modal-header agent-modal-header">
+                        <div class="agent-close-modal" data-dismiss="modal">&times;</div>
+                    </div>
+                    <div class="modal-body agent-modal-body agent-background-intro">
+                        <h1>Thêm tài khoản mới</h1>
+                        <p>Bạn vui lòng chọn kênh và nhập tên account. Nếu kênh là mạng xã hội thì tên account phải là
+                            link profile tương ứng (VD: kênh là facebook thì account phải là link chứa
+                            'facebook.com')</p>
+                        <form id="addAccountForm" class="form-horizontal"
+                              action="<?php echo $this->getUrl('agent/index/addAccount') ?>" method="post">
+                            <div class="form-group">
+                                <?php
+                                $channelCollection = Mage::getModel('Ved_Agent/agentchannel')->getCollection()
+                                    ->addFieldToFilter('is_active', 1)
+                                    ->addFieldToFilter('is_deleted', 0);
+                                ?>
+                                <label class="control-label col-sm-2" for="channel_type">Chọn kênh <span
+                                            class="red">*</span></label>
+                                <div class="col-sm-10">
+                                    <select id="addChannelId" class="channel_id agent-field-input form-control chosen"
+                                            name="channel_id"
+                                            data-placeholder="Chọn kênh trong danh sách">
+                                        <option value=""></option>
+                                        <?php foreach ($channelCollection as $channel): ?>
+                                            <option value="<?php echo $channel->getId(); ?>"><?php echo $channel->getChannelName(); ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                                <div class="col-sm-10 col-sm-offset-2 agent-error-text red channel-empty no-display">Bạn
+                                    chưa
+                                    chọn kênh cho tài khoản!
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="phone_number">Tên account <span
+                                            class="red">*</span></label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="account_name agent-field-input form-control"
+                                           name="account_name"
+                                           placeholder="Nhập tên account (nếu kênh là mạng xã hội thì nhập vào link đến profile của bạn)"/>
+                                </div>
+                                <div class="col-sm-10 col-sm-offset-2 agent-error-text red account-empty no-display">Bạn
+                                    chưa
+                                    nhập tên account!
+                                </div>
+                            </div>
+                            <div class="form-group mb-0">
+                                <div class="col-sm-2 col-sm-offset-2">
+                                    <div class="agent-btn add-account-btn agent-confirm-add-account-btn" tabindex="0">
+                                        <img class="agent-ajax-loader-add no-display"
+                                             title="Đang tải"
+                                             src="<?php echo $this->getSkinUrl('images/ajax-loader.gif') ?>"
+                                             width="16" height="16"/>
+                                        Xác nhận
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="editAccountModal" class="modal fade">
+            <div class="modal-dialog modal-lg" style="margin-top: 25vh;"><!-- Modal content-->
+                <div class="modal-content agent-modal-content">
+                    <div class="modal-header agent-modal-header">
+                        <div class="agent-close-modal" data-dismiss="modal">&times;</div>
+                    </div>
+                    <div class="modal-body agent-modal-body agent-background-intro">
+                        <h1>Sửa thông tin tài khoản</h1>
+
+                        <form id="editAccountForm" class="form-horizontal"
+                              action="<?php echo $this->getUrl('agent/index/updateAccount') ?>" method="post">
+                            <div class="form-group">
+                                <?php
+                                $channelCollection = Mage::getModel('Ved_Agent/agentchannel')->getCollection()
+                                    ->addFieldToFilter('is_active', 1)
+                                    ->addFieldToFilter('is_deleted', 0);
+                                ?>
+                                <label class="control-label col-sm-2" for="channel_type">Chọn kênh <span
+                                            class="red">*</span></label>
+                                <div class="col-sm-10">
+                                    <select id="editChannelId" class="channel_id agent-field-input form-control chosen"
+                                            name="channel_id"
+                                            data-placeholder="Chọn kênh trong danh sách">
+                                        <option value=""></option>
+                                        <?php foreach ($channelCollection as $channel): ?>
+                                            <option value="<?php echo $channel->getId(); ?>"><?php echo $channel->getChannelName(); ?></option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                                <div class="col-sm-10 col-sm-offset-2 agent-error-text red channel-empty no-display">Bạn
+                                    chưa
+                                    chọn kênh cho tài khoản!
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label col-sm-2" for="phone_number">Tên account <span
+                                            class="red">*</span></label>
+                                <div class="col-sm-10">
+                                    <input id="editAccountName" type="text"
+                                           class="account_name_edit agent-field-input form-control"
+                                           name="account_name"
+                                           placeholder="Nhập tên account (nếu kênh là mạng xã hội thì nhập vào link đến profile của bạn)"/>
+                                </div>
+                                <div class="col-sm-10 col-sm-offset-2 agent-error-text red account-empty no-display">Bạn
+                                    chưa
+                                    nhập tên account!
+                                </div>
+                            </div>
+                            <input type="hidden" id="editAccountId" name="account_id"/>
+                            <div class="form-group mb-0">
+                                <div class="col-sm-2 col-sm-offset-2">
+                                    <div class="agent-btn update-account-btn" tabindex="0">
+                                        <img class="agent-ajax-loader-edit no-display"
+                                             title="Đang tải"
+                                             src="<?php echo $this->getSkinUrl('images/ajax-loader.gif') ?>"
+                                             width="16" height="16"/>
+                                        Cập nhật
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
+<?php else: ?>
+    <?php echo $this->getChildHtml('agent.warning_login') ?>
+<?php endif; ?>
+
+<script>
+    var $j = jQuery.noConflict();
+    var win = $j(window);
+
+    $j('.main-container').find('.container').addClass('ml-0');
+
+    $j('input[type="number"]').keypress(function (e) {
+        var a = [];
+        var k = e.which;
+
+        for (i = 48; i < 58; i++)
+            a.push(i);
+
+        if (!(a.indexOf(k) >= 0))
+            e.preventDefault();
+    });
+
+    $j('#addAccountModal').on('shown.bs.modal', function (e) {
+        $j('.account-empty').addClass('no-display');
+        $j('.channel-empty').addClass('no-display');
+
+        $j('#addChannelId').chosen();
+        $j('#addChannelId').change(function () {
+            $j('.channel-empty').addClass('no-display');
+        });
+
+        $j(".chosen-container").keyup(function (e) {
+            if (e.keyCode === 13) {
+                addAccount();
+            }
+        });
+
+        $j('.account_name').keyup(function (e) {
+            $j('.account-empty').addClass('no-display');
+            if (e.keyCode === 13) {
+                addAccount();
+            }
+        });
+    });
+
+    $j('#editAccountModal').on('shown.bs.modal', function () {
+        $j('.account-empty').addClass('no-display');
+        $j('.channel-empty').addClass('no-display');
+
+        $j('#editChannelId').chosen();
+        $j('#editChannelId').change(function () {
+            $j('.channel-empty').addClass('no-display');
+        });
+
+        $j(".chosen-container").keyup(function (e) {
+            if (e.keyCode === 13) {
+                updateAccount();
+            }
+        });
+
+        $j('.account_name_edit').keyup(function (e) {
+            $j('.account-empty').addClass('no-display');
+            if (e.keyCode === 13) {
+                updateAccount();
+            }
+        });
+    });
+
+    $j(document).ready(function () {
+        $j('.main-container').find('.container').addClass('w-100');
+        $j('.build-pc-btn').addClass('no-display');
+        $j('.facebook-message').addClass('no-display');
+
+        $j("#datepicker").datepicker({
+            dateFormat: 'dd/mm/yy',
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "1950:2017"
+        });
+
+        $j('.clear-filter-btn').css('position', 'absolute').css('right', '30px').css('z-index', '10');
+
+        // Render datatable
+        var table = $j('#datatable').DataTable({
+            "ajax": '<?php echo $this->getUrl('agent/index/getAccountData')?>?user_id=<?php echo $currentUser->getId() ?>',
+            "pagingType": "full_numbers",
+            "language": {
+                "lengthMenu": "Hiển thị _MENU_ bản ghi mỗi trang",
+                "zeroRecords": "Không tìm thấy dữ liệu phù hợp",
+                "info": "Trang _PAGE_ / _PAGES_",
+                "infoEmpty": "",
+                "infoFiltered": "",
+                "search": "Tìm kiếm:",
+                "paginate": {
+                    "previous": "Trước",
+                    "next": "Sau",
+                    "first": "Đầu",
+                    "last": "Cuối"
+                }
+            },
+            "columns": [
+                {"width": "8%"},
+                {"width": "20%"},
+                {"width": "15%"},
+                {"width": "25%"},
+                {"width": "15%"},
+                {"width": "20%", "orderable": false},
+                {"width": "7%", "orderable": false}
+            ],
+            "initComplete": function (settings, json) {
+                $j('div.datatable-loading').remove();
+
+                this.api().columns({search: 'applied'}).every(function () {
+                    var column = this;
+                    var index = column.index();
+                    if (index === 1 || index === 2 || index === 3 || index === 4) {
+
+                        var select = $j('<select id="select-' + index + '" style="color: #727175"><option value="">-- Chọn --</option></select>')
+                            .appendTo($j(column.footer()).empty())
+                            .on('change', function () {
+                                var val = $j.fn.dataTable.util.escapeRegex(
+                                    $j(this).val()
+                                );
+
+                                if (val !== '') {
+                                    $j('#select-' + index).css('color', '#333');
+                                } else {
+                                    $j('#select-' + index).css('color', '#727175');
+                                }
+
+                                column
+                                    .search(val ? '^' + val + '$' : '', true, false)
+                                    .draw();
+                            });
+//
+                        column.data().unique().sort().each(function (d, j) {
+                            var dText = strip(d);
+                            select.append('<option value="' + dText + '">' + dText + '</option>')
+                        });
+                    }
+
+                });
+            },
+            "footerCallback": function (row, data, start, end, display) {
+                getTotalRows();
+                getFilteredRows();
+            }
+        });
+
+        function getTotalRows() {
+            $j('.agent-total-count').empty().append($j('#datatable').DataTable().rows().count());
+        }
+
+        function getFilteredRows(){
+            var info = $j('#datatable').DataTable().page.info();
+            $j('.agent-filtered-count').empty().append(info.recordsDisplay);
+        }
+
+        table.on('draw', function () {
+            table.columns().indexes().each(function (idx) {
+                var select = $j(table.column(idx).footer()).find('select');
+
+                if (select.val() === '') {
+                    select
+                        .empty()
+                        .append('<option value="">-- Chọn --</option>');
+
+                    table.column(idx, {search: 'applied'}).data().unique().sort().each(function (d, j) {
+                        var dText = strip(d);
+                        select.append('<option value="' + dText + '">' + dText + '</option>')
+                    });
+                }
+            });
+        });
+
+        // Add loading text when call ajax
+        $j('tbody').empty();
+        $j('<div class="datatable-loading" style="padding: 15px 0; text-align: center;">Đang tải dữ liệu...</div>').appendTo('tbody');
+        var textMarginLeft = $j('#datatable').width() / 4;
+        var textWidth = $j('#datatable').width() / 2;
+        $j('.datatable-loading').css('width', textWidth + 'px').css('margin-left', textMarginLeft + 'px');
+
+        $j(".add-account-btn").on("click enter", function () {
+            addAccount();
+        }).on('keypress', function (e) {
+            if (e.which === 13) {
+                $j(this).trigger('enter');
+            }
+        });
+
+        $j(".update-account-btn").on("click enter", function () {
+            updateAccount();
+        }).on('keypress', function (e) {
+            if (e.which === 13) {
+                $j(this).trigger('enter');
+            }
+        });
+    });
+
+    // Clear all filters
+    $j('.clear-filter-btn').click(function () {
+        $j('#datatable tfoot input').val('').change();
+        $j('#datatable tfoot select').val('').change();
+        $j('#min').datepicker('setDate', '');
+        $j('#max').datepicker('setDate', '');
+    });
+
+    var updateInfoClickable = true;
+
+    function updateInfo() {
+        if (updateInfoClickable) {
+
+            $j('.agent-validate-text').addClass('no-display');
+
+            var form = $j('#updateInfoForm');
+            var data = form.serializeArray();
+            var name = $j('#agentName').val();
+            var phoneNumber = $j('#agentPhoneNumber').val();
+            var gender = data[0].value;
+            var email = $j('#agentEmail').val().trim();
+            var dob = data[1].value;
+            var address = data[2].value.trim();
+
+            // Check nhap du thong tin
+            if (address === '' || dob === '' || email === '') {
+                $j('.agent-not-enough-field').removeClass('no-display');
+                $j('#updateInfoFailed').modal();
+            }
+            else if (!validateEmail(email)) {
+                $j('.agent-email-error').removeClass('no-display');
+                $j('#updateInfoFailed').modal();
+            }
+            else {
+                updateInfoClickable = false;
+                $j('.agent-ajax-loader').removeClass('no-display');
+                var dataPost = {
+                    name: name,
+                    phone_number: phoneNumber,
+                    user_email: '<?php echo $currentUser->getEmail() ?>',
+                    email: email,
+                    address: address,
+                    dob: dob,
+                    gender: gender
+                };
+
+                $j.ajax({
+                    url: form.attr('action'),
+                    type: form.attr('method'),
+                    dataType: 'json',
+                    data: dataPost,
+                    success: function (response) {
+                        $j('.agent-ajax-loader').addClass('no-display');
+//                    console.log(response);
+                        if (response.success) {
+                            $j('#updateInfoSucceed').modal();
+                        }
+                        else {
+                            $j('.agent-update-error').removeClass('no-display');
+                            $j('#updateInfoFailed').modal();
+                        }
+                        updateInfoClickable = true;
+                    }
+                });
+            }
+        }
+    }
+
+    var addAccountClickable = true;
+
+    function addAccount() {
+        if (addAccountClickable) {
+
+            $j('.agent-error-text').addClass('no-display');
+
+            var form = $j('#addAccountForm');
+            var data = form.serializeArray();
+            var channelId = data[0].value;
+            var accountName = data[1].value.trim();
+
+            // Check nhap du thong tin
+            if (channelId === '') {
+                $j('.channel-empty').removeClass('no-display');
+                if (accountName === '') {
+                    $j('.account-empty').removeClass('no-display');
+                }
+            }
+            else if (accountName === '') {
+                $j('.account-empty').removeClass('no-display');
+            }
+            else {
+                addAccountClickable = false;
+                $j('.agent-ajax-loader-add').removeClass('no-display');
+
+                var dataPost = {
+                    channel_id: channelId,
+                    account_name: accountName,
+                    user_id: '<?php echo $currentUser->getId() ?>'
+                };
+
+                $j.ajax({
+                    url: form.attr('action'),
+                    type: form.attr('method'),
+                    dataType: 'json',
+                    data: dataPost,
+                    success: function (response) {
+                        $j('.agent-ajax-loader-add').addClass('no-display');
+                        $j('.account_name').focus();
+                        $j('.account_name').blur();
+
+                        if (response.success) {
+                            // Clear field after insert
+                            $j('#addChannelId').val('');
+                            $j('#addChannelId').trigger("chosen:updated");
+                            $j('.account_name').val('');
+
+                            // Ajax reload datatable
+                            $j('#datatable').DataTable().ajax.reload();
+
+                            $j('#addAccountModal').modal('toggle');
+                            swal("", "Thêm mới tài khoản thành công!", "success");
+                        }
+                        else {
+                            if (response.no_satisfy) {
+                                swal("", response.error_message, "error");
+                            }
+                            else {
+                                swal("", "Có lỗi trong quá trình thêm mới tài khoản, vui lòng thử lại!", "error");
+                            }
+                        }
+
+                        addAccountClickable = true;
+                    }
+                });
+            }
+        }
+
+    }
+
+    var updateAccountClickable = true;
+
+    function updateAccount() {
+        if (updateAccountClickable) {
+
+            $j('.agent-error-text').addClass('no-display');
+
+            var form = $j('#editAccountForm');
+            var data = form.serializeArray();
+            var channelId = data[0].value;
+            var accountName = data[1].value.trim();
+            var accountId = data[2].value;
+//        console.log(data);
+//        console.log(channelId, accountName, accountId);
+
+            // Check nhap du thong tin
+            if (channelId === '') {
+                $j('.channel-empty').removeClass('no-display');
+                if (accountName === '') {
+                    $j('.account-empty').removeClass('no-display');
+                }
+            }
+            else if (accountName === '') {
+                $j('.account-empty').removeClass('no-display');
+            }
+            else {
+                updateAccountClickable = false;
+                $j('.agent-ajax-loader-edit').removeClass('no-display');
+
+                var dataPost = {
+                    agent_account_id: accountId,
+                    channel_id: channelId,
+                    account_name: accountName,
+                    user_id: '<?php echo $currentUser->getId() ?>'
+                };
+
+                $j.ajax({
+                    url: form.attr('action'),
+                    type: form.attr('method'),
+                    dataType: 'json',
+                    data: dataPost,
+                    success: function (response) {
+                        $j('.agent-ajax-loader-edit').addClass('no-display');
+                        $j('.account_name_edit').focus();
+                        $j('.account_name_edit').blur();
+
+                        if (response.success) {
+                            // Ajax reload datatable
+                            $j('#datatable').DataTable().ajax.reload();
+
+                            $j('#editAccountModal').modal('toggle');
+                            swal("", "Cập nhật thông tin tài khoản thành công!", "success");
+                        }
+                        else {
+                            if (response.no_satisfy) {
+                                swal("", response.error_message, "error");
+                            }
+                            else {
+                                swal("", "Có lỗi trong quá trình cập nhật tài khoản, vui lòng thử lại!", "error");
+                            }
+                        }
+                        updateAccountClickable = true;
+                    }
+                });
+            }
+        }
+
+    }
+
+    function editAccount(value) {
+        // Pass variable to edit account modal form
+        var channelId = $j(value).data('channel-id');
+        var accountName = $j(value).data('account-name');
+        var accountId = $j(value).data('account-id');
+
+        $j('#editChannelId').val(channelId);
+        $j('#editChannelId').trigger("chosen:updated");
+        $j('#editAccountName').val(accountName);
+        $j('#editAccountId').val(accountId);
+        $j('#editAccountModal').modal();
+    }
+
+    function deleteAccount(value) {
+        var accountId = $j(value).data('account-id');
+        swal({
+                title: "Xóa tài khoản?",
+                text: "Bạn có chắc chắn muốn xóa tài khoản này khỏi hệ thống?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#47c834",
+                confirmButtonText: "Xóa",
+                cancelButtonText: "Đóng",
+                showLoaderOnConfirm: true,
+                closeOnConfirm: false
+            },
+            function () {
+                var dataPost = {
+                    agent_account_id: accountId
+                };
+
+                $j.ajax({
+                    url: '<?php echo $this->getUrl('agent/index/deleteAccount') ?>',
+                    type: 'post',
+                    dataType: 'json',
+                    data: dataPost,
+                    success: function (response) {
+//                    console.log(response);
+                        if (response.success) {
+                            // Ajax reload datatable
+                            $j('#datatable').DataTable().ajax.reload();
+
+                            swal("", "Xóa tài khoản thành công!", "success");
+                        }
+                        else {
+                            swal("", "Có lỗi trong quá trình xóa tài khoản, vui lòng thử lại!", "error");
+                        }
+                    }
+                });
+            });
+    }
+
+    function validateEmail(email) {
+        var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(email);
+    }
+
+    function strip(html) {
+        var tmp = document.createElement("DIV");
+        tmp.innerHTML = html;
+        return tmp.textContent || tmp.innerText;
+    }
+</script>

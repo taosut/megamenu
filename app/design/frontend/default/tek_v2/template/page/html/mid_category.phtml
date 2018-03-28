@@ -1,0 +1,24 @@
+<?php
+$_categories = Mage::helper('catalog/category')->getStoreCategories();
+?>
+<?php $version = Teko::getSaleCenterVersion(); ?>
+<?php if (count($_categories) > 0): ?>
+    <?php $i = 0; ?>
+    <?php foreach ($_categories as $_category): ?>
+        <?php $_category = Mage::getModel('catalog/category')->load($_category->getId()); ?>
+        <?php $catIconName = $_category->getDescription(); ?>
+        <div class="col-md-2 col-sm-2 mid-category-item">
+            <a href="<?php echo $_category->getUrl(); ?>" target="_blank">
+                <img alt="<?php echo $_category->getName(); ?>"
+                     title="<?php echo $_category->getName(); ?>"
+                     src="<?php echo $this->getSkinUrl('images/mid-category/') . $catIconName . '_Midcat.png' ?><?php echo "?v=" . $version ?>"/>
+                <div class="mid-category-name"
+                     title="<?php echo $_category->getName(); ?>"><?php echo $_category->getName(); ?></div>
+            </a>
+        </div>
+        <?php
+        $i++;
+        if ($i == 12) break;
+        ?>
+    <?php endforeach; ?>
+<?php endif; ?>

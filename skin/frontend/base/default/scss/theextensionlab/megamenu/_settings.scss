@@ -1,0 +1,19 @@
+//RWD DEFAULTS
+//$bp-xsmall: 479px;
+//$bp-small: 599px;
+//$bp-medium: 770px;
+//$bp-large: 979px;
+//$bp-xlarge: 1199px;
+
+$medium-up: "only screen and (min-width: 771px)";
+$small-only: "only screen and (max-width: 770px)";
+$medium-only: "only screen and (min-width:771px) and (max-width: 979px)";
+$large-only: "only screen and (min-width:980px)";
+$large-up: "only screen and (min-width:980px)";
+
+$medium-down: "only screen and (max-width: 770px)";
+$small-down:"only screen and (max-width: 770px)";
+
+$class-prefix: 'xlab_';
+$grid-columns: 24;
+$container-class: '#{$class-prefix}grid_container';

@@ -1,0 +1,255 @@
+<?xml version="1.0"?>
+<!--
+@author hoangpt
+@package Phongvu_Fault
+-->
+<config>
+    <modules>
+        <Phongvu_Fault>
+            <version>1.0.0</version>
+        </Phongvu_Fault>
+    </modules>
+    
+    <global>
+        <models>
+            <pvfault>
+                <class>Phongvu_Fault_Model</class>
+                <resourceModel>pvfault_mysql4</resourceModel>
+            </pvfault>
+            <pvfault_mysql4>
+                <class>Phongvu_Fault_Model_Mysql4</class>
+                <entities>
+                    <log>
+                        <table>pv_fault_log</table>
+                    </log> 
+                    <attempt>
+                        <table>pv_fault_attempt</table>
+                    </attempt> 
+                    <error>
+                        <table>pv_fault_error</table>
+                    </error> 
+                </entities>
+            </pvfault_mysql4>
+            <admin>
+                <rewrite>
+                    <session>Phongvu_Fault_Model_Admin_Session</session>
+                </rewrite>
+            </admin>
+        </models>
+        
+        <resources>
+            <pvfault_setup>
+                <setup>
+                    <module>Phongvu_Fault</module>
+                </setup>
+                <connection>
+                    <use>core_setup</use>
+                </connection>
+            </pvfault_setup>
+            <pvfault_write>
+                <connection>
+                    <use>core_write</use>
+                </connection>
+            </pvfault_write>
+            <pvfault_read>
+                <connection>
+                    <use>core_read</use>
+                </connection>
+            </pvfault_read>
+        </resources>
+
+        <template>
+            <email>
+                <pvfault_notification translate="label" module="pvfault">
+                    <label>Phongvu Errors Detector Notification</label>
+                    <file>pvfault_notification.html</file>
+                    <type>html</type>
+                </pvfault_notification>
+            </email>
+        </template>
+        <blocks>
+            <pvfault>
+                <class>Phongvu_Fault_Block</class>
+            </pvfault>
+        </blocks>
+         
+        <helpers>
+            <pvfault>
+                <class>Phongvu_Fault_Helper</class>
+            </pvfault>
+        </helpers>
+        
+        <events>
+            <cms_page_render>
+                <observers>
+                    <pvfault_model_observer>
+                        <type>singleton</type>
+                        <class>pvfault/observer</class>
+                        <method>process404</method>
+                    </pvfault_model_observer>
+                </observers>
+          </cms_page_render>
+            <admin_session_user_login_failed>
+                <observers>
+                    <pvfault_model_observer>
+                        <type>singleton</type>
+                        <class>pvfault/observer</class>
+                        <method>processLogin</method>
+                    </pvfault_model_observer>
+                </observers>
+          </admin_session_user_login_failed>          
+        </events>
+    </global>
+    
+    <!-- crontab>
+        <jobs>
+            <pvfault_send>
+                <schedule><cron_expr>7 * * * *</cron_expr></schedule>
+                <run><model>pvfault/observer::checkForErrors</model></run>
+            </pvfault_send>
+            <pvfault_clear>
+                <schedule><cron_expr>0 19 * * */5</cron_expr></schedule>
+                <run><model>pvfault/observer::clearErrors</model></run>
+            </pvfault_clear>
+        </jobs> 
+    </crontab -->
+        
+    <admin>
+        <routers>
+            <adminhtml>
+                <args>
+                    <modules>
+                        <Phongvu_Fault after="Mage_Adminhtml">Phongvu_Fault_Adminhtml</Phongvu_Fault>
+                    </modules>
+                </args>
+            </adminhtml>
+        </routers>
+    </admin> 
+        
+   <adminhtml>
+        <menu>
+		    <report>
+                <children>
+                    <pvfault translate="title" module="pvfault">
+                        <title>Errors Detector</title>
+                        <sort_order>900</sort_order>
+                        <children>
+                            <log translate="title" module="pvfault">
+                                <title>Not Found Pages</title>
+                                <action>adminhtml/pvfault_log/</action>
+                                <sort_order>10</sort_order>
+                            </log> 
+                            <error translate="title" module="pvfault">
+                                <title>System Errors</title>
+                                <action>adminhtml/pvfault_error/</action>
+                                <sort_order>20</sort_order>
+                            </error>
+                            <exception translate="title" module="pvfault">
+                                <title>Exception Log</title>
+                                <action>adminhtml/pvfault_exception/</action>
+                                <sort_order>30</sort_order>
+                            </exception>
+                            <attempt translate="title" module="pvfault">
+                                <title>Failed Login Attempts</title>
+                                <action>adminhtml/pvfault_attempt/</action>
+                                <sort_order>40</sort_order>
+                            </attempt> 
+                            <settings translate="title" module="pvfault">
+                                <title>Settings</title>
+                                <action>adminhtml/system_config/edit/section/pvfault</action>
+                                <sort_order>50</sort_order>
+                            </settings> 
+                        </children>
+                    </pvfault>
+                </children>
+            </report>
+		</menu>     
+   
+		<acl>
+			<resources>
+				<all>
+					<title>Allow Everything</title>
+				</all>
+                <admin>
+                    <children>
+            		    <report>
+                            <children>
+                                <pvfault translate="title" module="pvfault">
+                                    <title>Errors Detector</title>
+                                    <children>
+                                        <log translate="title" module="pvfault">
+                                            <title>Not Found Pages</title>
+                                        </log> 
+                                        <error translate="title" module="pvfault">
+                                            <title>System Errors</title>
+                                        </error>
+                                        <exception translate="title" module="pvfault">
+                                            <title>Exception Log</title>
+                                        </exception>
+                                        <attempt translate="title" module="pvfault">
+                                            <title>Failed Login Attempts</title>
+                                        </attempt> 
+                                        <settings translate="title" module="pvfault">
+                                            <title>Settings</title>
+                                        </settings> 
+                                    </children>
+                                </pvfault>
+                            </children>
+                        </report>
+                        <system>
+                            <children>
+                                <config>
+                                    <children>
+                                        <pvfault translate="title" module="pvfault">
+                                            <title>Errors Detector</title>
+                                        </pvfault>
+                                    </children>
+                                </config>
+                            </children>
+                        </system>            
+                     </children>
+                </admin> 
+			</resources>
+		</acl>
+        <translate>
+            <modules>
+                <Phongvu_Fault>
+                    <files>
+                        <default>Phongvu_Fault.csv</default>
+                    </files>
+                </Phongvu_Fault>
+            </modules>
+        </translate> 
+    </adminhtml> 
+    
+    <default>
+        <pvfault>
+            <log>
+                <skip_ip></skip_ip>
+                <skip_referrer></skip_referrer>
+                <skip_pattern></skip_pattern>
+                <skip_useragent>bingbot,googlebot</skip_useragent>
+            </log>
+            <error>
+                <skip_pattern></skip_pattern>
+                <cron_clear>0</cron_clear>
+            </error>
+            <attempts>
+                <max>4</max>
+                <limit_frame>120</limit_frame>
+                <limit_ip>1</limit_ip>
+                <add_to_blacklist>1</add_to_blacklist>
+                <black></black>
+                <white></white>
+            </attempts>
+            <notification>
+                <freq>4</freq>
+                <email></email>
+                <sender>general</sender>
+                <about_log>1</about_log>
+                <about_error>1</about_error>
+                <about_attempt>1</about_attempt>
+            </notification>
+        </pvfault>
+    </default>
+</config>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <?php echo $this->getChildHtml('head'); ?>
+    <link rel="stylesheet" type="text/css" href="<?php echo $this->getSkinUrl('lib/checkout.css'); ?>"/>
+
+    <script type="text/javascript">
+        var dataLayer = [];
+    </script>
+</head>
+<body>
+
+<!-- Google Tag Manager (noscript) -->
+<noscript>
+    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-W6CW7K7"
+            height="0" width="0" style="display:none;visibility:hidden"></iframe>
+</noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+<div class="wrapper">
+    <!-- Start Header-->
+    <?php echo $this->getChildHtml('header'); ?>
+    <!-- End Header-->
+
+    <!-- Start Content-->
+    <div class="content">
+        <div class="shipping-header payment-shipping-header bd-bottom">
+            <div class="row bs-wizard">
+                <div class="col-xs-4 bs-wizard-step complete">
+                    <span class="bs-wizard-dot address-bar"></span>
+                    <div class="text-center bs-wizard-stepnum text-step">
+                        <span class="color-bar-text">Địa chỉ</span>
+                    </div>
+                    <div class="line"></div>
+                </div>
+
+                <div class="col-xs-4 bs-wizard-step active">
+                    <span class="bs-wizard-dot color-deactive-bar checkout-bar"></span>
+                    <div class="text-center bs-wizard-stepnum text-step">
+                        <span class="hidden-xs">Thanh toán</span>
+                        <span class="visible-xs-inline-block">Thanh toán</span>
+                    </div>
+                    <div class="line"></div>
+                </div>
+
+                <div class="col-xs-4 bs-wizard-step disabled">
+                    <span class="bs-wizard-dot color-deactive-bar done-bar"></span>
+                    <div class="text-center bs-wizard-stepnum text-step">
+                        <span class="hidden-xs">Hoàn tất</span>
+                        <span class="visible-xs-inline-block">Hoàn tất</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php echo $this->getChildHtml('content') ?>
+    </div>
+<!--    <div class="pd-10-15">-->
+<!--                    <?php //echo $this->getChildHtml('right') ?>-->
+
+<!--        <div class="checkout-freeship-block">-->
+<!--            <img src="--><?php //echo $this->getSkinUrl('images/delivery-truck.svg'); ?><!--"/>-->
+<!--            PHONG VŨ Miễn Phí Vận Chuyển cho mọi đơn hàng trên toàn quốc.-->
+<!--        </div>-->
+
+        <!-- Affiliate input block -->
+<!--        <div class="checkbox text-left toggle-affiliate">-->
+<!--            <label>-->
+<!--                <input type="checkbox"> Bạn được giới thiệu mua hàng tại PHONG VŨ?-->
+<!--            </label>-->
+<!--        </div>-->
+<!--        <div id="affiliate-block" class="panel panel-default" hidden>-->
+<!--            <div class="panel-heading">-->
+<!--                <div class="affiliate-title">-->
+<!--                    <i class="fa fa-tag affiliate-icon"></i>-->
+<!--                    Mã giới thiệu-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="panel-body affiliate-body">-->
+<!--                <input name="affiliate_code" form="address-info"-->
+<!--                       class="form-control discount-input input-text affiliate_code"-->
+<!--                       placeholder="Mã giới thiệu"/>-->
+<!--            </div>-->
+<!--        </div>-->
+        <!--Breadcrumb-->
+<!--        <div class="tek-breadcrumb">-->
+<!--            <div>-->
+<!--                <div>-->
+<!--                    <span>Xác nhận địa chỉ giao hàng</span>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+        <!--End Breadcrumb-->
+<!--    </div>-->
+
+
+    <!-- End Content-->
+    <!-- Start Footer-->
+<!--    --><?php //echo $this->getChildHtml('footer'); ?>
+    <!-- End Footer-->
+</div>
+
+<script type="text/javascript">
+    var $j = jQuery.noConflict();
+    $j(document).ready(function(){
+        $j('.search-and-cart-header').hide();
+        // $j('.content').attr("style","margin-top:59px!important");
+        $j('.state-title').html('Địa chỉ');
+        showBackState();
+    });
+
+    $j('.toggle-affiliate').on('click', function () {
+        if ($j('.toggle-affiliate input').is(':checked')) {
+            $j('#affiliate-block').show(200);
+        } else {
+            $j('#affiliate-block').hide(200);
+        }
+    });
+</script>
+
+<!-- Google Tag Manager -->
+<script>
+    (function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({
+            'gtm.start': new Date().getTime(), event: 'gtm.js'
+        });
+        var f = d.getElementsByTagName(s)[0],
+            j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : '';
+        j.async = true;
+        j.src =
+            'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+        f.parentNode.insertBefore(j, f);
+    })(window, document, 'script', 'dataLayer', 'GTM-W6CW7K7');
+</script>
+<!-- End Google Tag Manager -->
+
+</body>
+</html>

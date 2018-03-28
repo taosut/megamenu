@@ -1,0 +1,435 @@
+<div class="panel-heading hidden-lg">Thêm địa chỉ giao hàng mới</div>
+<div class="panel-body">
+<form class="form-horizontal" role="form" id="address-info">
+<div class="form-group row">
+    <label for="full_name" class="col-lg-4 control-label visible-lg-block">Họ tên </label>
+    <div class="col-lg-8">
+        <input type="text" name="full_name" class="form-control address" id="full_name" value="<?php echo trim($this->address['full_name']); ?>" placeholder="Nhập họ tên">
+    </div>
+</div>
+
+<div class="form-group row">
+    <label for="telephone" class="col-lg-4 control-label visible-lg-block">Điện thoại di động</label>
+    <div class="col-lg-8">
+        <input type="tel" name="telephone" class="form-control address" id="telephone" value="<?php echo trim($this->address['telephone']); ?>" placeholder="Nhập số điện thoại">
+    </div>
+</div>
+
+<input type="hidden" id="country_id" name="country_id" value="VN"/>
+<div class="form-group row" hidden="hidden">
+    <label for="country_id" class="col-lg-4 control-label visible-lg-block">Quốc gia</label>
+    <div class="col-lg-8">
+        <select name="country_id" class="form-control address" id="country_id" disabled="disabled">
+            <option value="">Chọn Quốc gia</option>
+            <option value="VN" selected>Việt Nam</option>
+            <option value="AU" >Úc</option>
+            <option value="US" >Hoa Kỳ</option>
+            <option value="AD" >Andorra</option>
+            <option value="AE" >Các Tiểu Vương quốc A-rập Thống nhất</option>
+            <option value="AF" >Afghanistan</option>
+            <option value="AG" >Antigua và Barbuda</option>
+            <option value="AI" >Anguilla</option>
+            <option value="AL" >Albani</option>
+            <option value="AM" >Armenia</option>
+            <option value="AN" >Tây Ấn Hà Lan</option>
+            <option value="AO" >Angola</option>
+            <option value="AQ" >Nam Cực</option>
+            <option value="AR" >Argentina</option>
+            <option value="AS" >Đảo Somoa thuộc Mỹ</option>
+            <option value="AT" >Áo</option>
+            <option value="AW" >Aruba</option>
+            <option value="AX" >Quần đảo Aland</option>
+            <option value="AZ" >Azerbaijan</option>
+            <option value="BA" >Bô-xni-a Héc-xê-gô-vi-na</option>
+            <option value="BB" >Barbados</option>
+            <option value="BD" >Bangladesh</option>
+            <option value="BE" >Bỉ</option>
+            <option value="BF" >Burkina Faso</option>
+            <option value="BG" >Bungari</option>
+            <option value="BH" >Bahrain</option>
+            <option value="BI" >Burundi</option>
+            <option value="BJ" >Benin</option>
+            <option value="BL" >Saint Barthélemy</option>
+            <option value="BM" >Bermuda</option>
+            <option value="BN" >Brunei</option>
+            <option value="BO" >Bolivia</option>
+            <option value="BR" >Bra-xin</option>
+            <option value="BS" >Bahamas</option>
+            <option value="BT" >Bhutan</option>
+            <option value="BV" >Đảo Bouvet</option>
+            <option value="BW" >Botswana</option>
+            <option value="BY" >Belarus</option>
+            <option value="BZ" >Bê-li-xê</option>
+            <option value="CA" >Ca-na-đa</option>
+            <option value="CC" >Quần đảo Cocos</option>
+            <option value="CD" >Congo - Kinshasa</option>
+            <option value="CF" >Cộng hòa Trung Phi</option>
+            <option value="CG" >Công-gô</option>
+            <option value="CH" >Thụy Sĩ</option>
+            <option value="CI" >Bờ Biển Ngà</option>
+            <option value="CK" >Quần Đảo Cook</option>
+            <option value="CL" >Chile</option>
+            <option value="CM" >Ca-mơ-run</option>
+            <option value="CN" >Trung Quốc</option>
+            <option value="CO" >Colombia</option>
+            <option value="CR" >Cốt-xta Ri-ca</option>
+            <option value="CU" >Cu Ba</option>
+            <option value="CV" >Cape Verde</option>
+            <option value="CX" >Đảo Giáng Sinh</option>
+            <option value="CY" >Síp</option>
+            <option value="CZ" >Cộng hòa Séc</option>
+            <option value="DE" >Đức</option>
+            <option value="DJ" >Djibouti</option>
+            <option value="DK" >Đan Mạch</option>
+            <option value="DM" >Dominica</option>
+            <option value="DO" >Cộng hòa Dominica</option>
+            <option value="DZ" >Algeria</option>
+            <option value="EC" >Ecuador</option>
+            <option value="EE" >Estonia</option>
+            <option value="EG" >Ai Cập</option>
+            <option value="EH" >Tây Sahara</option>
+            <option value="ER" >Eritrea</option>
+            <option value="ES" >Tây Ban Nha</option>
+            <option value="ET" >Ethiopia</option>
+            <option value="FI" >Phần Lan</option>
+            <option value="FJ" >Fiji</option>
+            <option value="FK" >Quần Đảo Falkland</option>
+            <option value="FM" >Micronesia</option>
+            <option value="FO" >Quần Đảo Faroe</option>
+            <option value="FR" >Pháp</option>
+            <option value="GA" >Gabon</option>
+            <option value="GB" >Vương quốc Anh</option>
+            <option value="GD" >Grenada</option>
+            <option value="GE" >Georgia</option>
+            <option value="GF" >Quiana thuộc Pháp</option>
+            <option value="GG" >Guernsey</option>
+            <option value="GH" >Ghana</option>
+            <option value="GI" >Gibraltar</option>
+            <option value="GL" >Băng Đảo</option>
+            <option value="GM" >Gambia</option>
+            <option value="GN" >Guinea</option>
+            <option value="GP" >Guadeloupe</option>
+            <option value="GQ" >Guinea Xích Đạo</option>
+            <option value="GR" >Hy Lạp</option>
+            <option value="GS" >Quần đảo Nam Georgia và Nam Sandwich</option>
+            <option value="GT" >Goa-tê-ma-la</option>
+            <option value="GU" >Guam</option>
+            <option value="GW" >Guinea-Bissau</option>
+            <option value="GY" >Guyana</option>
+            <option value="HK" >Đặc khu hành chính Hồng Kông thuộc CHND Trung Hoa</option>
+            <option value="HM" >Đảo Heard và Quần đảo McDonald</option>
+            <option value="HN" >Hôn-đu-rát</option>
+            <option value="HR" >Croatia</option>
+            <option value="HT" >Haiti</option>
+            <option value="HU" >Hungari</option>
+            <option value="ID" >Indonesia</option>
+            <option value="IE" >Ai-len</option>
+            <option value="IL" >Israel</option>
+            <option value="IM" >Đảo Man</option>
+            <option value="IN" >Ấn Độ</option>
+            <option value="IO" >Thuộc địa Anh tại Ấn Độ Dương</option>
+            <option value="IQ" >I-rắc</option>
+            <option value="IR" >I-ran</option>
+            <option value="IS" >Ai-xơ-len</option>
+            <option value="IT" >Ý</option>
+            <option value="JE" >Jersey</option>
+            <option value="JM" >Jamaica</option>
+            <option value="JO" >Jordan</option>
+            <option value="JP" >Nhật Bản</option>
+            <option value="KE" >Kenya</option>
+            <option value="KG" >Kyrgyzstan</option>
+            <option value="KH" >Campuchia</option>
+            <option value="KI" >Kiribati</option>
+            <option value="KM" >Comoros</option>
+            <option value="KN" >Saint Kitts và Nevis</option>
+            <option value="KP" >Bắc Triều Tiên</option>
+            <option value="KR" >Hàn Quốc</option>
+            <option value="KW" >Cô-oét</option>
+            <option value="KY" >Quần Đảo Cayman</option>
+            <option value="KZ" >Kazakhstan</option>
+            <option value="LA" >Lào</option>
+            <option value="LB" >Li-băng</option>
+            <option value="LC" >Saint Lucia</option>
+            <option value="LI" >Liechtenstein</option>
+            <option value="LK" >Sri Lanka</option>
+            <option value="LR" >LIberia</option>
+            <option value="LS" >Lesotho</option>
+            <option value="LT" >Lithuania</option>
+            <option value="LU" >Luxembourg</option>
+            <option value="LV" >Latvia</option>
+            <option value="LY" >Li-bi</option>
+            <option value="MA" >Ma-rốc</option>
+            <option value="MC" >Monaco</option>
+            <option value="MD" >Moldova</option>
+            <option value="ME" >Montenegro</option>
+            <option value="MF" >Saint Martin</option>
+            <option value="MG" >Madagascar</option>
+            <option value="MH" >Quần đảo Marshall</option>
+            <option value="MK" >Macedonia</option>
+            <option value="ML" >Mali</option>
+            <option value="MM" >Myanmar [Miến Điện]</option>
+            <option value="MN" >Mông Cổ</option>
+            <option value="MO" >Đặc khu hành chính Macao thuộc CHND Trung Hoa</option>
+            <option value="MP" >Quần Đảo Bắc Mariana</option>
+            <option value="MQ" >Martinique</option>
+            <option value="MR" >Mauritania</option>
+            <option value="MS" >Montserrat</option>
+            <option value="MT" >Malta</option>
+            <option value="MU" >Mauritius</option>
+            <option value="MV" >Maldives</option>
+            <option value="MW" >Malawi</option>
+            <option value="MX" >Mê-hi-cô</option>
+            <option value="MY" >Malaysia</option>
+            <option value="MZ" >Mozambique</option>
+            <option value="NA" >Namibia</option>
+            <option value="NC" >New Caledonia</option>
+            <option value="NE" >Niger</option>
+            <option value="NF" >Đảo Norfolk</option>
+            <option value="NG" >Nigeria</option>
+            <option value="NI" >Nicaragua</option>
+            <option value="NL" >Hà Lan</option>
+            <option value="NO" >Na Uy</option>
+            <option value="NP" >Nepal</option>
+            <option value="NR" >Nauru</option>
+            <option value="NU" >Niue</option>
+            <option value="NZ" >New Zealand</option>
+            <option value="OM" >Oman</option>
+            <option value="PA" >Pa-na-ma</option>
+            <option value="PE" >Peru</option>
+            <option value="PF" >Polynesia thuộc Pháp</option>
+            <option value="PG" >Papua New Guinea</option>
+            <option value="PH" >Philippin</option>
+            <option value="PK" >Pakistan</option>
+            <option value="PL" >Ba Lan</option>
+            <option value="PM" >Saint Pierre và Miquelon</option>
+            <option value="PN" >Quần đảo Pitcairn</option>
+            <option value="PR" >Puerto Rico</option>
+            <option value="PS" >Lãnh thổ Palestine</option>
+            <option value="PT" >Bồ Đào Nha</option>
+            <option value="PW" >Palau</option>
+            <option value="PY" >Paraguay</option>
+            <option value="QA" >Qatar</option>
+            <option value="RE" >Réunion</option>
+            <option value="RO" >Romania</option>
+            <option value="RS" >Serbia</option>
+            <option value="RU" >Nga</option>
+            <option value="RW" >Rwanda</option>
+            <option value="SA" >A-rập Xê-út</option>
+            <option value="SB" >Quần đảo Solomon</option>
+            <option value="SC" >Seychelles</option>
+            <option value="SD" >Xu-đăng</option>
+            <option value="SE" >Thụy Điển</option>
+            <option value="SG" >Singapore</option>
+            <option value="SH" >Saint Helena</option>
+            <option value="SI" >Slovenia</option>
+            <option value="SJ" >Svalbard và Jan Mayen</option>
+            <option value="SK" >Slovakia</option>
+            <option value="SL" >Sierra Leone</option>
+            <option value="SM" >San Marino</option>
+            <option value="SN" >Senegal</option>
+            <option value="SO" >Somali</option>
+            <option value="SR" >Suriname</option>
+            <option value="ST" >São Tomé và Príncipe</option>
+            <option value="SV" >El Salvador</option>
+            <option value="SY" >Syria</option>
+            <option value="SZ" >Swaziland</option>
+            <option value="TC" >Quần Đảo Turk và Caicos</option>
+            <option value="TD" >Chad</option>
+            <option value="TF" >Thuộc Địa Nam của Pháp</option>
+            <option value="TG" >Togo</option>
+            <option value="TH" >Thái Lan</option>
+            <option value="TJ" >Tajikistan</option>
+            <option value="TK" >Tokelau</option>
+            <option value="TL" >Đông Ti-mo</option>
+            <option value="TM" >Turkmenistan</option>
+            <option value="TN" >Tuy-ni-di</option>
+            <option value="TO" >Tonga</option>
+            <option value="TR" >Thổ Nhĩ Kỳ</option>
+            <option value="TT" >Trinidad và Tobago</option>
+            <option value="TV" >Tuvalu</option>
+            <option value="TW" >Đài Loan</option>
+            <option value="TZ" >Tanzania</option>
+            <option value="UA" >Ukraina</option>
+            <option value="UG" >Uganda</option>
+            <option value="UM" >Các đảo nhỏ xa trung tâm thuộc Mỹ</option>
+            <option value="UY" >Uruguay</option>
+            <option value="UZ" >Uzbekistan</option>
+            <option value="VA" >Va-ti-căng</option>
+            <option value="VC" >Saint Vincent và Grenadines</option>
+            <option value="VE" >Venezuela</option>
+            <option value="VG" >Quần đảo Virgin thuộc Anh</option>
+            <option value="VI" >Quần đảo Virgin thuộc Mỹ</option>
+            <option value="VU" >Vanuatu</option>
+            <option value="WF" >Wallis và Futuna</option>
+            <option value="WS" >Samoa</option>
+            <option value="YE" >Yemen</option>
+            <option value="YT" >Mayotte</option>
+            <option value="ZA" >Nam Phi</option>
+            <option value="ZM" >Zambia</option>
+            <option value="ZW" >Zimbabwe</option>
+        </select>
+    </div>
+</div>
+
+<div class="form-group row">
+    <label for="region_id" class="col-lg-4 control-label visible-lg-block">Tỉnh/Thành phố</label>
+    <div class="col-lg-8">
+        <select name="region_id" class="form-control address" id="region_id">
+            <option value="">Chọn Tỉnh/Thành phố</option>
+            <?php
+                $cities = $this->getListCities();
+                $regionid = null;
+                print "";
+                foreach($cities as $val=>$name){
+                    if($name ==  $this->address['region']){
+                        echo '<option value="'.$val.'" selected >'.$name.'</option>';
+                        $regionid = $val;
+                    }else{
+                        echo '<option value="'.$val.'" >'.$name.'</option>';
+                    }
+                }
+            ?>
+        </select>
+    </div>
+</div>
+
+<div class="form-group row">
+    <label for="city_id" class="col-lg-4 control-label visible-lg-block">Quận/Huyện</label>
+    <div class="col-lg-8">
+        <select name="city_id" class="form-control address" id="city_id">
+            <option value="">Chọn Quận/Huyện</option>
+            <?php
+                if(isset($regionid)){
+                    $districts = $this->getListDistricts($regionid);
+                    var_dump($districts);
+
+                    foreach($districts as $val=>$name){
+                        print $this->address['city'];
+                        if(trim($name) == trim($this->address['city'])){
+                            echo '<option value="'.$val.'" selected >'.trim($name).'</option>';
+                            $regionid = $val;
+                        }else{
+                            echo '<option value="'.$val.'" >'.trim($name).'</option>';
+                        }
+                    }
+                }
+            ?>
+        </select>
+    </div>
+</div>
+<div class="form-group row">
+    <label for="street" class="col-lg-4 control-label visible-lg-block">Địa chỉ</label>
+    <div class="col-lg-8">
+        <textarea name="street" class="form-control address" id="street" placeholder="Nhập địa chỉ"><?php  echo trim($this->address['full_street']); ?></textarea>
+        <span class="help-block"></span>
+    </div>
+</div>
+
+<div class="form-group row">
+    <div class="col-lg-offset-4 col-lg-8" style="text-align: left;">
+        <label for="default_shipping_address" class="icheck-wrap">
+            <div class="icheckbox_square-blue <?php if($this->address['billing']){ echo 'checked'; } ?>" style="position: relative;">
+                <input type="checkbox" id="default_shipping_address" name="default_shipping_address" class="icheck" value="1" style="position: absolute; top: -20%; left: -20%; display: block; width: 140%; height: 140%; margin: 0px; padding: 0px; border: 0px; opacity: 0; background: rgb(255, 255, 255);">
+                <ins class="iCheck-helper" style="position: absolute; top: -20%; left: -20%; display: block; width: 140%; height: 140%; margin: 0px; padding: 0px; border: 0px; opacity: 0; background: rgb(255, 255, 255);" ></ins>
+            </div>
+            Sử dụng địa chỉ này làm mặc định.
+        </label>
+    </div>
+</div>
+<div class="form-group row end">
+    <div class="col-lg-offset-4 col-lg-8">
+        <input type="hidden" name="address_id" value="<?php echo $this->address['id']; ?>"/>
+        <button type="button" id="btn-cancel" class="btn btn-default btn-custom2 visible-lg-inline-block js-hide">Hủy bỏ</button>
+        <?php
+            if(isset($this->address['id']) && !empty($this->address['id'])){
+                echo ' <button id="btn-address" type="button" class="btn btn-primary btn-custom3" value="update">Cập nhật</button>';
+            }else{
+                echo '<button id="btn-address" type="button" class="btn btn-primary btn-custom3" value="create">Giao đến địa chỉ này</button>';
+            }
+        ?>
+    </div>
+</div>
+</form>
+</div>
+<script>
+    $j('#region_id').change(function () {
+        var region_id = this.value;
+        $j("#city_id").empty();
+        $j("#city_id").load("<?php echo $this->getUrl('customer/address/getDistrictsInCity')  ?>?cityId=" + region_id + "&defaultDistrict=");
+    });
+    $j("#default_shipping_address").change(function() {
+        if(this.checked) {
+            $j(this).parent().addClass("checked");
+        }else{
+            $j(this).parent().removeClass("checked");
+        }
+    });
+    $j("#btn-address").click(function(event){
+        url = "<?php echo $this->getUrl('customer/address/ajaxEdit')  ?>";
+        $j.post(url,$j("#address-info").serialize(),function( data ) {
+           if(data.message.full_name != null){
+               if($j("#full_name").siblings(".help-block").length==0){
+                   $j("#full_name").parent().append('<span class="help-block" >' + data.message.full_name  +'</span>');
+               }
+               if(!$j('[for="full_name"]').parent().hasClass('has-error')){
+                   $j('[for="full_name"]').parent().addClass('has-error');
+               }
+           }
+            if(data.message.telephone != null){
+                if($j("#telephone").siblings(".help-block").length==0) {
+                    $j("#telephone").parent().append('<span class="help-block" >' + data.message.telephone + '</span>');
+                }
+                if(!$j('[for="telephone"]').parent().hasClass('has-error')){
+                    $j('[for="telephone"]').parent().addClass('has-error');
+                }
+            }
+            if(data.message.region_id != null){
+                if($j("#region_id").siblings(".help-block").length==0) {
+                    $j("#region_id").parent().append('<span class="help-block" >' + data.message.region_id + '</span>');
+                }
+                if(!$j('[for="region_id"]').parent().hasClass('has-error')){
+                    $j('[for="region_id"]').parent().addClass('has-error');
+                }
+            }
+            if(data.message.city_id != null){
+                if($j("#city_id").siblings(".help-block").length==0) {
+                    $j("#city_id").parent().append('<span class="help-block" >' + data.message.city_id + '</span>');
+                }
+                if(!$j('[for="city_id"]').parent().hasClass('has-error')){
+                    $j('[for="city_id"]').parent().addClass('has-error');
+                }
+            }
+            var val = $j('#btn-address').val();
+            if(data.message.save){
+                if(val == 'create'){
+                    id = $j(this).attr('data-id');
+                    url = "<?php echo $this->getUrl('checkout/shipping/saveAddress');  ?>";
+                    $j.ajax({
+                        url: url,
+                        type: "POST",
+                        data: {id:data.message.save},
+                        dataType: "json"
+                    }).done(function(data) {
+                        if(data.redirect != null){
+                            window.location.href = data.redirect;
+                        }
+                        if(data.message != null){
+                            alert(data.message);
+                        }
+
+                    });
+
+                }else{
+                    $j("#newblock").html("");
+                    window.location.reload();
+                }
+
+            }
+
+
+        },"json");
+    })
+    $j("#btn-cancel").click(function(event){
+        $j("#newblock").html("");
+    });
+</script>

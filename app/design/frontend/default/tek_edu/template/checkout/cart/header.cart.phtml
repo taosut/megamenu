@@ -1,0 +1,701 @@
+<script src="<?php echo $this->getSkinUrl('js/dropdown.js') ?>" type="text/javascript"></script>
+<?php
+$recaptcha_site_key = Mage::getModel('core/variable')->loadByCode('recaptcha_sitekey')->getValue('html');
+?>
+<input type="hidden" id="recaptcha-site-key" value="<?php echo $recaptcha_site_key; ?>">
+<?php $_cartQty = $this->getSummaryCount() ?>
+<div class="box header-cart" id="header-cart">
+    <?php
+    $_items = $this->getItems();
+    $totalFreeItem = 0;
+    ?>
+    <?php foreach ($_items as $_item): ?>
+        <?php
+        $freeItem = unserialize($_item->getAdditionalData());
+        if (isset($freeItem['quantity'])) {
+            $totalFreeItem += $freeItem['quantity'];
+        }
+        ?>
+    <?php endforeach; ?>
+    <div class="head header-cart-icon-mobile" onclick="setLocation('<?php echo $this->getUrl('checkout/cart') ?>')">
+        <a id="header-cart-top">
+            <?php if ($_cartQty): ?>
+                <span class="header-cart-qty"><?php echo $_cartQty - $totalFreeItem ?></span>
+            <?php endif; ?>
+        </a>
+    </div>
+    <div class="head header-cart-icon-normal" onclick="showDropdown('cart-content', 'header-cart')">
+        <a id="header-cart-top">
+            <?php if ($_cartQty): ?>
+                <span class="header-cart-qty"><?php echo $_cartQty - $totalFreeItem?></span>
+            <?php endif; ?>
+        </a>
+    </div>
+    <div class="tracking-order hidden-xs mt-30 tracking-order-top" <!--onclick="showDropdown('cart-content', 'header-cart')-->">
+<!--        <span class="hidden-cart-text">Giỏ hàng <span class="hidden-sm">của bạn</span></span>-->
+        <span class="hidden-cart-text" onclick="trackOrder();">Kiểm tra <span class="hidden-sm">đơn hàng</span></span>
+    </div>
+
+
+    <div class="content" id="cart-content" style="display: none;">
+        <?php
+        $sub_total = Mage::helper('checkout/cart')->getQuote()->getSubtotal();
+        $grand_total = Mage::helper('checkout/cart')->getQuote()->getGrandTotal();
+        $discount_value = $sub_total - $grand_total;
+        ?>
+        <?php if (count($_items)): ?>
+            <h6>Tổng cộng: <?php echo Mage::helper('checkout')->formatPrice($sub_total) ?></h6>
+
+            <?php if ($discount_value): ?><h6>Giảm
+            giá: <?php echo Mage::helper('checkout')->formatPrice($discount_value) ?></h6><?php endif; ?>
+
+            <h6>Thành tiền: <?php echo Mage::helper('checkout')->formatPrice($grand_total) ?></h6>
+
+        <?php if ($_subtotalInclTax = $this->getSubtotalInclTax()): ?>
+        <br/>(
+            <b><?php echo Mage::helper('checkout')->formatPrice($_subtotalInclTax) ?></b> <?php echo Mage::helper('tax')->getIncExcText(true) ?>)
+        <?php endif; ?>
+            <ol>
+                <?php foreach ($_items as $_item): ?>
+                    <?php echo $this->getItemHtml($_item) ?>
+                <?php endforeach; ?>
+            </ol>
+            <script type="text/javascript">decorateList('cart-sidebar', 'non-recursive')</script>
+        <?php endif ?>
+
+        <?php if ($_cartQty && $this->isPossibleOnepageCheckout()): ?>
+            <div class="actions" id="center-buttons">
+                <a class="form-button-header" type="button"
+                   onclick="setLocation('<?php echo $this->getUrl('checkout/shipping') ?>')">
+                    <span><?php echo $this->__('Checkout') ?></span>
+                </a>
+                <a class="form-button-alt-header" type="button"
+                   onclick="setLocation('<?php echo $this->getUrl('checkout/cart') ?>')">
+                    <span><?php echo $this->__('View cart') ?></span>
+                </a>
+            </div>
+        <?php endif ?>
+    </div>
+</div>
+<!--<script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit" async defer></script>-->
+<script>
+    var $j = jQuery.noConflict();
+
+    var recaptcha_sitekey = $j('#recaptcha-site-key').val();
+
+    function showDropdown(el, container) {
+        if ($j(window).width() < 991) {
+            setLocation('<?php echo $this->getUrl('checkout/cart') ?>');
+            return false
+        }
+        dropdown(el, container)
+    }
+
+    function validateVNPhoneNumber(phone_number) {
+        var phoneRe = /^\+?(84|0)([1-9]\d{8,9})$/;
+        return phoneRe.test(phone_number);
+    }
+    // Kiem tra don hang
+    function trackOrder() {
+        swal({
+                title: "Vui lòng nhập số điện thoại",
+                type: "input",
+                showCancelButton: true,
+                confirmButtonColor: "#2c9590",
+                confirmButtonText: "Đăng nhập",
+                cancelButtonText: "Hủy",
+                animation: "slide-from-top",
+                closeOnConfirm: false,
+                showLoaderOnConfirm: true,
+                inputPlaceholder: "Số điện thoại (nhập 84xx hoặc 0xx)..."
+            },
+            function (phoneNumber) {
+                if (phoneNumber === false) return false;
+
+                if (phoneNumber === "") {
+                    swal.showInputError("Bạn chưa nhập số điện thoại!");
+                    return false;
+                }
+                else if (!validateVNPhoneNumber(phoneNumber)) {
+                    swal.showInputError("Số điện thoại không đúng định dạng (phải có dạng 84xxx hoặc 0xxx, chứa 10 hoặc 11 ký tự)!");
+                    return false;
+                }
+
+                $j.ajax({
+                    url: "<?php echo $this->getUrl('tracking/order/ajaxTrackOrder') ?>",
+                    type: 'post',
+                    dataType: 'json',
+                    data: {phone_number: phoneNumber},
+                    success: function (response) {
+
+                        if (response.error_message != '') { // So dien thoai khong hop le
+
+                            if (response.error_message == 'Chưa có tài khoản' || response.error_message == 'Tài khoản chưa active') { // So dien thoai chua dc dang ky TK hoac chua active
+                                swal({
+                                        title: "Vui lòng nhập mã xác nhận",
+                                        text: 'Mã xác nhận đã được gửi vào số điện thoại của bạn. Nếu chưa nhận được vui lòng bấm <a class="resend-code-text" onclick="goToResendCode(\'' + phoneNumber + '\');">vào đây</a><span class="resend-code-loading no-display" title="Đang tải"><img src="<?php echo $this->getSkinUrl('images/tek-ajax-loader.gif') ?>" width="150" height="150"/></span> để gửi lại',
+                                        type: "input",
+                                        showCancelButton: true,
+                                        confirmButtonText: "Xác nhận",
+                                        confirmButtonColor: "#2c9590",
+                                        cancelButtonText: "Hủy",
+                                        closeOnConfirm: false,
+                                        animation: "slide-from-top",
+                                        inputPlaceholder: "Mã xác nhận...",
+                                        showLoaderOnConfirm: true,
+                                        html: true
+                                    },
+                                    function (code) {
+                                        if (code === false) return false;
+
+                                        if (code === "") {
+                                            swal.showInputError("Bạn chưa nhập mã xác nhận");
+                                            return false;
+                                        }
+                                        else {
+                                            confirmCode(phoneNumber, code);
+                                        }
+                                    });
+                            }
+                            else if (response.error_message == 'Tài khoản vượt quá số lần nhập sai mã') { // Tai khoan da nhap sai ma qua so lan
+                                errorInput(phoneNumber);
+                            }
+                            else if (response.error_message == 'Tài khoản cần hỗ trợ') { // Tai khoan da nhap qua so lan gui SMS
+                                swal({
+                                    title: "Bạn cần được hỗ trợ",
+                                    text: "Nếu bạn vẫn chưa nhận được mã xác nhận, vui lòng liên hệ tổng đài <b>19001232</b> để được hỗ trợ!",
+                                    type: "warning",
+                                    showCancelButton: true,
+                                    showConfirmButton: false,
+                                    confirmButtonColor: "#2c9590",
+                                    cancelButtonText: "Đóng",
+                                    closeOnConfirm: false,
+                                    animation: "slide-from-top",
+                                    html: true
+                                });
+                            }
+                            else { // So dien thoai khong co don hang thoa man
+                                swal({
+                                        title: response.error_message,
+                                        type: "warning",
+                                        showCancelButton: true,
+                                        confirmButtonColor: "#2c9590",
+                                        confirmButtonText: "Nhập lại",
+                                        cancelButtonText: "Hủy",
+                                        closeOnConfirm: false,
+                                        animation: "slide-from-top"
+                                    },
+                                    function (isConfirm) {
+                                        if (isConfirm) {
+                                            trackOrder();
+                                        }
+                                    }
+                                );
+                            }
+                        }
+                        else { // So dien thoai co don hang thoa man + da duoc dang ky + active
+                            if (response.is_login == 'true') { // User dang dang nhap (co session)
+                                post('<?php echo $this->getUrl('tracking/order') ?>', {phone_number: phoneNumber});
+                            }
+                            else { // User chua dang nhap (ko co session)
+                                swal({
+                                        title: "Vui lòng nhập mật khẩu",
+                                        text: '<a class="track-order-forgot-password" onclick="goToForgotPassword(\'' + phoneNumber + '\');">Quên mật khẩu</a>',
+                                        type: "input",
+                                        inputType: "password",
+                                        showCancelButton: true,
+                                        confirmButtonText: "Xác nhận",
+                                        confirmButtonColor: "#2c9590",
+                                        cancelButtonText: "Hủy",
+                                        closeOnConfirm: false,
+                                        animation: "slide-from-top",
+                                        inputPlaceholder: "Mật khẩu đăng nhập...",
+                                        showLoaderOnConfirm: true,
+                                        html: true
+                                    },
+                                    function (password) {
+                                        if (password === false) return false;
+
+                                        if (password === "") {
+                                            swal.showInputError("Bạn chưa nhập mật khẩu");
+                                            return false;
+                                        }
+                                        else {
+                                            checkIfPasswordIsValid(phoneNumber, password);
+                                        }
+                                    });
+                            }
+                        }
+                    }
+                });
+
+            }
+        );
+    }
+
+    // Kiem tra loi input tao mat khau
+    function checkError() {
+        var password = $j('.password').val();
+        var rePassword = $j('.re-password').val();
+
+        if (password.length > 0) {
+            $j('.password-error').empty();
+        }
+        else {
+            $j('.password-error').html('Bạn chưa nhập mật khẩu');
+        }
+
+        if (rePassword.length > 0) {
+            $j('.repassword-error').empty();
+        }
+        else {
+            $j('.repassword-error').html('Bạn chưa xác nhận mật khẩu');
+        }
+
+        if (password.length > 0 && rePassword.length > 0 && rePassword == password) {
+            $j('.password-not-match').empty();
+        }
+        else {
+            $j('.password-not-match').html('Mật khẩu không trùng khớp');
+        }
+
+    }
+
+    // Nhap sai ma xac nhan qua so lan
+    function errorInput(phoneNumber) {
+        swal({
+                title: "Vui lòng nhập mã xác nhận",
+                text: 'Mã xác nhận đã được gửi vào số điện thoại của bạn. Nếu chưa nhận được vui lòng bấm <a class="resend-code-text" onclick="goToResendCode(\'' + phoneNumber + '\');">vào đây</a><span class="resend-code-loading no-display" title="Đang tải"><img src="<?php echo $this->getSkinUrl('images/tek-ajax-loader.gif') ?>" width="150" height="150"/></span> để gửi lại</a><br>' +
+                '<span class="resend-code-loading no-display" title="Đang tải"><img src="<?php echo $this->getSkinUrl('images/tek-ajax-loader.gif') ?>" width="150" height="150"/></span>' +
+                '<input class="confirm-code is-display mb5" type="text" placeholder="Mã xác nhận..." value="">' +
+                '<div id="html_element" class="captcha-block"></div>',
+                showCancelButton: true,
+                confirmButtonText: "Xác nhận",
+                confirmButtonColor: "#2c9590",
+                cancelButtonText: "Hủy",
+                closeOnConfirm: false,
+                animation: "slide-from-top",
+                html: true
+            },
+            function (isConfirm) {
+
+                if (isConfirm === false) return false;
+
+                else {
+                    $j('.sa-error-container').removeClass('no-display');
+                    var confirm_code = $j('.confirm-code').val();
+
+                    if (confirm_code === "") {
+                        swal.showInputError("Bạn chưa nhập mã xác nhận");
+                        return false;
+                    }
+                    else {
+                        if (grecaptcha.getResponse(widgetId).length === 0) {
+                            swal.showInputError("Chưa xác nhận reCaptcha");
+                            return false;
+                        }
+                        else {
+                            $j('.sa-error-container').addClass('no-display');
+                            $j('.resend-code-loading').removeClass('no-display');
+                            confirmCode(phoneNumber, confirm_code);
+                        }
+                    }
+                }
+            });
+
+        $j('.resend-code-loading').css('height', $j('.sweet-alert').height() + 20);
+        $j('.sa-input-error').addClass('no-display');
+        var widgetId = grecaptcha.render('html_element', {
+            'sitekey': recaptcha_sitekey
+        });
+//        grecaptcha.reset(widgetId);
+    }
+
+    // Kiem tra ma xac nhan
+    function confirmCode(phoneNumber, code) {
+        $j.ajax({
+            url: "<?php echo $this->getUrl('tracking/order/checkCode') ?>",
+            type: 'post',
+            dataType: 'json',
+            data: {phone_number: phoneNumber, code: code},
+            success: function (response) {
+                if (response.code_is_valid == 'true') { // Ma xac nhan chinh xac, tao mat khau moi
+
+                    swal({
+                            title: "Thiết lập mật khẩu cho tài khoản",
+                            text: 'Để thuận tiện cho việc tra cứu đơn hàng, Tekshop đã tạo tài khoản cho bạn. Vui lòng thiết lập mật khẩu cho tài khoản' +
+                            '<span class="resend-code-loading no-display" title="Đang tải"><img src="<?php echo $this->getSkinUrl('images/tek-ajax-loader.gif') ?>" width="150" height="150"/></span>' +
+                            '<input class="password is-display mb5" type="password" onkeyup="checkError();" placeholder="Nhập mật khẩu..." value=""><div class="password-error text-left"></div><input class="re-password is-display mb5" type="password" onkeyup="checkError();" placeholder="Nhập lại mật khẩu..." value=""><div class="repassword-error text-left"></div><div class="password-not-match text-left"></div>',
+                            showCancelButton: true,
+                            confirmButtonText: "Xác nhận",
+                            confirmButtonColor: "#2c9590",
+                            cancelButtonText: "Hủy",
+                            closeOnConfirm: false,
+                            animation: "slide-from-top",
+                            html: true
+                        },
+                        function (isConfirm) {
+                            if (isConfirm === false) return false;
+
+                            else {
+                                var password = $j('.password').val();
+                                var rePassword = $j('.re-password').val();
+
+                                $j('.password-error').empty();
+                                $j('.repassword-error').empty();
+                                $j('.password-not-match').empty();
+
+                                if (password === "") {
+
+                                    $j('.password-error').html('Bạn chưa nhập mật khẩu');
+                                    if (rePassword === "") {
+                                        $j('.repassword-error').html('Bạn chưa xác nhận mật khẩu');
+                                    }
+                                    return false;
+                                }
+                                if (rePassword === "") {
+                                    $j('.repassword-error').html('Bạn chưa xác nhận mật khẩu');
+                                    return false;
+                                }
+
+                                if (rePassword == password) {
+                                    $j('.resend-code-loading').removeClass('no-display');
+                                    createNewPassword(phoneNumber, password);
+                                }
+                                else {
+                                    $j('.password-not-match').html('Mật khẩu không trùng khớp');
+                                }
+                            }
+                        });
+                    $j('.resend-code-loading').css('height', $j('.sweet-alert').height() - 50);
+
+                }
+                else { // Nhap sai ma xac nhan
+                    if (response.error_input_count < 4) { // So lan nhap sai ma xac nhan < 4
+                        swal({
+                                title: "Nhập sai mã xác nhận",
+                                text: '<div class="sa-error-text blink_me">Bạn đã nhập sai mã xác nhận, vui lòng nhập lại</div>Nếu chưa nhận được vui lòng bấm <a class="resend-code-text" onclick="goToResendCode(\'' + phoneNumber + '\');">vào đây</a><span class="resend-code-loading no-display" title="Đang tải"><img src="<?php echo $this->getSkinUrl('images/tek-ajax-loader.gif') ?>" width="150" height="150"/></span> để gửi lại',
+                                type: "input",
+                                showCancelButton: true,
+                                confirmButtonText: "Xác nhận",
+                                confirmButtonColor: "#2c9590",
+                                cancelButtonText: "Hủy",
+                                closeOnConfirm: false,
+                                animation: "slide-from-top",
+                                inputPlaceholder: "Mã xác nhận...",
+                                showLoaderOnConfirm: true,
+                                html: true
+                            },
+                            function (code) {
+                                if (code === false) return false;
+
+                                if (code === "") {
+                                    swal.showInputError("Bạn chưa nhập mã xác nhận");
+                                    return false;
+                                }
+                                else {
+                                    confirmCode(phoneNumber, code);
+                                }
+                            });
+                    }
+                    else { // So lan nhap sai ma xac nhan == 4
+                        swal({
+                                title: "Nhập sai mã xác nhận",
+                                text: '<div class="sa-error-text blink_me">Bạn đã nhập sai mã xác nhận, vui lòng nhập lại</div>Nếu chưa nhận được vui lòng bấm <a class="resend-code-text" onclick="goToResendCode(\'' + phoneNumber + '\');">vào đây</a><span class="resend-code-loading no-display" title="Đang tải"><img src="<?php echo $this->getSkinUrl('images/tek-ajax-loader.gif') ?>" width="150" height="150"/></span> để gửi lại<br>' +
+                                '<span class="resend-code-loading no-display" title="Đang tải"><img src="<?php echo $this->getSkinUrl('images/tek-ajax-loader.gif') ?>" width="150" height="150"/></span>' +
+                                '<input class="confirm-code is-display mb5" type="text" placeholder="Mã xác nhận..." value="">' +
+                                '<div id="html_element" class="captcha-block"></div>',
+                                showCancelButton: true,
+                                confirmButtonText: "Xác nhận",
+                                confirmButtonColor: "#2c9590",
+                                cancelButtonText: "Hủy",
+                                closeOnConfirm: false,
+                                animation: "slide-from-top",
+                                html: true
+                            },
+                            function (isConfirm) {
+
+                                if (isConfirm === false) return false;
+
+                                else {
+                                    $j('.sa-error-container').removeClass('no-display');
+                                    var confirm_code = $j('.confirm-code').val();
+
+                                    if (confirm_code === "") {
+                                        swal.showInputError("Bạn chưa nhập mã xác nhận");
+                                        return false;
+                                    }
+                                    else {
+                                        if (grecaptcha.getResponse(widgetId).length === 0) {
+                                            swal.showInputError("Chưa xác nhận reCaptcha");
+                                            return false;
+                                        }
+                                        else {
+                                            $j('.sa-error-container').addClass('no-display');
+                                            $j('.resend-code-loading').removeClass('no-display');
+                                            confirmCode(phoneNumber, confirm_code);
+                                        }
+                                    }
+                                }
+                            });
+
+                        $j('.resend-code-loading').css('height', $j('.sweet-alert').height() + 20);
+                        $j('.sa-input-error').addClass('no-display');
+                        var widgetId = grecaptcha.render('html_element', {
+                            'sitekey': recaptcha_sitekey
+                        });
+//                        grecaptcha.reset(widgetId);
+
+                    }
+                }
+            }
+        });
+    }
+
+    // Gui lai ma xac nhan
+    function goToResendCode(phoneNumber) {
+        $j('.resend-code-text').addClass('no-display');
+        $j('.resend-code-loading').removeClass('no-display');
+        $j('.resend-code-loading').css('height', $j('.sweet-alert').height() - 50);
+        $j.ajax({
+            url: "<?php echo $this->getUrl('tracking/order/resendCode') ?>",
+            type: 'post',
+            dataType: 'json',
+            data: {phone_number: phoneNumber},
+            success: function (response) {
+                if (response.send_sms_count < 5) {
+                    swal({
+                            title: "Vui lòng nhập mã xác nhận",
+                            text: '<div class="resend-code-success">Hệ thống đã gửi lại mã xác nhận vào số điện thoại của bạn</div>Nếu chưa nhận được vui lòng bấm <a class="resend-code-text" onclick="goToResendCode(\'' + phoneNumber + '\');">vào đây</a><span class="resend-code-loading no-display" title="Đang tải"><img src="<?php echo $this->getSkinUrl('images/tek-ajax-loader.gif') ?>" width="150" height="150"/></span> để gửi lại',
+                            type: "input",
+                            showCancelButton: true,
+                            confirmButtonText: "Xác nhận",
+                            confirmButtonColor: "#2c9590",
+                            cancelButtonText: "Hủy",
+                            closeOnConfirm: false,
+                            animation: "slide-from-top",
+                            inputPlaceholder: "Mã xác nhận...",
+                            showLoaderOnConfirm: true,
+                            html: true
+                        },
+                        function (code) {
+                            if (code === false) return false;
+
+                            if (code === "") {
+                                swal.showInputError("Bạn chưa nhập mã xác nhận");
+                                return false;
+                            }
+                            else {
+                                confirmCode(phoneNumber, code);
+                            }
+                        });
+                }
+                else {
+                    swal({
+                        title: "Bạn cần được hỗ trợ",
+                        text: "Nếu bạn vẫn chưa nhận được mã xác nhận, vui lòng liên hệ tổng đài <b>19001232</b> để được hỗ trợ!",
+                        type: "warning",
+                        showCancelButton: true,
+                        showConfirmButton: false,
+                        confirmButtonColor: "#2c9590",
+                        cancelButtonText: "Đóng",
+                        closeOnConfirm: false,
+                        animation: "slide-from-top",
+                        html: true
+                    });
+
+                }
+            }
+        });
+    }
+
+    // Tao mat khau moi
+    function createNewPassword(phoneNumber, password) {
+        $j.ajax({
+            url: "<?php echo $this->getUrl('tracking/order/createPassword') ?>",
+            type: 'post',
+            dataType: 'json',
+            data: {phone_number: phoneNumber, password: password},
+            success: function (response) {
+                if (response.is_success == 'true') {
+                    post('<?php echo $this->getUrl('tracking/order') ?>', {phone_number: phoneNumber});
+                }
+            }
+        });
+    }
+
+    // Kiem tra mat khau user nhap
+    function checkIfPasswordIsValid(phoneNumber, password) {
+        $j.ajax({
+            url: "<?php echo $this->getUrl('tracking/order/checkPassword') ?>",
+            type: 'post',
+            dataType: 'json',
+            data: {phone_number: phoneNumber, password: password},
+            success: function (response) {
+                if (response.password_is_valid == 'true') {
+                    post('<?php echo $this->getUrl('tracking/order') ?>', {phone_number: phoneNumber});
+                }
+                else {
+                    swal({
+                            title: "Nhập sai mật khẩu",
+                            text: '<div class="sa-error-text blink_me">Bạn đã nhập sai mật khẩu, vui lòng nhập lại</div><br><a class="track-order-forgot-password" onclick="goToForgotPassword(\'' + phoneNumber + '\');">Quên mật khẩu</a>',
+                            type: "input",
+                            inputType: "password",
+                            showCancelButton: true,
+                            confirmButtonText: "Xác nhận",
+                            confirmButtonColor: "#2c9590",
+                            cancelButtonText: "Hủy",
+                            closeOnConfirm: false,
+                            animation: "slide-from-top",
+                            inputPlaceholder: "Mật khẩu đăng nhập...",
+                            showLoaderOnConfirm: true,
+                            html: true
+                        },
+                        function (inputValue) {
+                            if (inputValue === false) return false;
+
+                            if (inputValue === "") {
+                                swal.showInputError("Bạn chưa nhập mật khẩu");
+                                return false;
+                            }
+                            else {
+                                checkIfPasswordIsValid(phoneNumber, inputValue);
+                            }
+                        });
+                }
+            }
+        });
+    }
+
+    // Quen mat khau
+    function goToForgotPassword(phoneNumber) {
+        swal({
+                title: "Xác nhận thông tin để lấy lại mật khẩu",
+                text: "<div> Số điện thoại: " + phoneNumber + "</div>",
+                showCancelButton: true,
+                confirmButtonText: "Xác nhận",
+                confirmButtonColor: "#2c9590",
+                cancelButtonText: "Quay lại",
+                closeOnConfirm: false,
+                closeOnCancel: false,
+                animation: "slide-from-top",
+                showLoaderOnConfirm: true,
+                html: true
+            },
+            function (isConfirm) {
+                if (isConfirm) {
+                    reRetrievePassword(phoneNumber);
+                }
+                else {
+                    swal({
+                            title: "Vui lòng nhập mật khẩu",
+                            text: '<a class="track-order-forgot-password" onclick="goToForgotPassword(\'' + phoneNumber + '\');">Quên mật khẩu</a>',
+                            type: "input",
+                            inputType: "password",
+                            showCancelButton: true,
+                            confirmButtonText: "Xác nhận",
+                            confirmButtonColor: "#2c9590",
+                            cancelButtonText: "Hủy",
+                            closeOnConfirm: false,
+                            animation: "slide-from-top",
+                            inputPlaceholder: "Mật khẩu đăng nhập...",
+                            showLoaderOnConfirm: true,
+                            html: true
+                        },
+                        function (inputValue) {
+                            if (inputValue === false) return false;
+
+                            if (inputValue === "") {
+                                swal.showInputError("Bạn chưa nhập mật khẩu");
+                                return false;
+                            }
+                            else {
+                                checkIfPasswordIsValid(phoneNumber, inputValue);
+                            }
+                        });
+                }
+            });
+    }
+
+    // Lay lai mat khau
+    function reRetrievePassword(phoneNumber) {
+        $j.ajax({
+            url: "<?php echo $this->getUrl('tracking/order/reRetrievePassword') ?>",
+            type: 'post',
+            dataType: 'json',
+            data: {phone_number: phoneNumber},
+            success: function (response) {
+                if (response.send_sms_count < 5) {
+                    if (response.error_input_count >= 4) {
+                        errorInput(phoneNumber);
+                    }
+                    else {
+                        swal({
+                                title: "Vui lòng nhập mã xác nhận",
+                                text: 'Mã xác nhận đã được gửi vào số điện thoại của bạn. Nếu chưa nhận được vui lòng bấm <a class="resend-code-text" onclick="goToResendCode(\'' + phoneNumber + '\');">vào đây</a><span class="resend-code-loading no-display" title="Đang tải"><img src="<?php echo $this->getSkinUrl('images/tek-ajax-loader.gif') ?>" width="150" height="150"/></span> để gửi lại',
+                                type: "input",
+                                showCancelButton: true,
+                                confirmButtonText: "Xác nhận",
+                                confirmButtonColor: "#2c9590",
+                                cancelButtonText: "Hủy",
+                                closeOnConfirm: false,
+                                animation: "slide-from-top",
+                                inputPlaceholder: "Mã xác nhận...",
+                                showLoaderOnConfirm: true,
+                                html: true
+                            },
+                            function (code) {
+                                if (code === false) return false;
+
+                                if (code === "") {
+                                    swal.showInputError("Bạn chưa nhập mã xác nhận");
+                                    return false;
+                                }
+                                else {
+                                    confirmCode(phoneNumber, code);
+                                }
+                            });
+                    }
+                }
+                else {
+                    swal({
+                        title: "Bạn cần được hỗ trợ",
+                        text: "Nếu bạn vẫn chưa nhận được mã xác nhận, vui lòng liên hệ tổng đài <b>19001232</b> để được hỗ trợ!",
+                        type: "warning",
+                        showCancelButton: true,
+                        showConfirmButton: false,
+                        confirmButtonColor: "#2c9590",
+                        cancelButtonText: "Đóng",
+                        closeOnConfirm: false,
+                        animation: "slide-from-top",
+                        html: true
+                    });
+                }
+            }
+        });
+    }
+
+    function post(path, params, method) {
+        method = method || "post"; // Set method to post by default if not specified.
+
+        // The rest of this code assumes you are not using a library.
+        // It can be made less wordy if you use one.
+        var form = document.createElement("form");
+        form.setAttribute("method", method);
+        form.setAttribute("action", path);
+
+        for (var key in params) {
+            if (params.hasOwnProperty(key)) {
+                var hiddenField = document.createElement("input");
+                hiddenField.setAttribute("type", "hidden");
+                hiddenField.setAttribute("name", key);
+                hiddenField.setAttribute("value", params[key]);
+
+                form.appendChild(hiddenField);
+            }
+        }
+
+        document.body.appendChild(form);
+        form.submit();
+    }
+</script>

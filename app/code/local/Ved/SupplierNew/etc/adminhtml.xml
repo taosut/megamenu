@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<config>
+    <menu>
+        <Ved_SupplierNew translate="title">
+            <title>Supplier</title>
+            <sort_order>40</sort_order>
+            <depends>
+                <module>Ved_SupplierNew</module>
+            </depends>
+            <children>
+                <suppliers>
+                    <title>Supplier List</title>s
+                    <sort_order>1</sort_order>
+                    <action>adminhtml/supplier</action>
+                </suppliers>
+                <products>
+                    <title>Product</title>
+                    <sort_order>2</sort_order>
+                    <action>adminhtml/supplier_product</action>
+                </products>
+                <price>
+                    <title>Price</title>
+                    <sort_order>3</sort_order>
+                    <action>adminhtml/supplier_price</action>
+                </price>
+                <procument>
+                    <title>Procument</title>
+                    <sort_order>4</sort_order>
+                    <action>adminhtml/supplier_procument</action>
+                </procument>
+                <inventory>
+                    <title>Inventory</title>
+                    <sort_order>5</sort_order>
+                    <action>adminhtml/supplier_inventory</action>
+                </inventory>
+                <payment>
+                    <title>Payment</title>
+                    <sort_order>6</sort_order>
+                    <action>adminhtml/supplier_payment</action>
+                </payment>
+            </children>
+        </Ved_SupplierNew>
+    </menu>
+    <acl>
+        <resources>
+            <all>
+                <title>Allow Everything</title>
+            </all>
+            <admin>
+                <children>
+                    <Ved_SupplierNew translate="title">
+                        <title>Supplier</title>
+                        <sort_order>40</sort_order>
+                        <depends>
+                            <module>Ved_SupplierNew</module>
+                        </depends>
+                        <children>
+                            <suppliers>
+                                <title>Supplier List</title>s
+                                <sort_order>1</sort_order>
+                                <action>adminhtml/suppliernew</action>
+                            </suppliers>
+                            <products>
+                                <title>Product</title>
+                                <sort_order>2</sort_order>
+                                <action>adminhtml/suppliernew/products</action>
+                            </products>
+                            <price>
+                                <title>Price</title>
+                                <sort_order>3</sort_order>
+                                <action>adminhtml/suppliernew/price</action>
+                            </price>
+                            <procument>
+                                <title>Procument</title>
+                                <sort_order>4</sort_order>
+                                <action>adminhtml/suppliernew/procument</action>
+                            </procument>
+                            <inventory>
+                                <title>Inventory</title>
+                                <sort_order>5</sort_order>
+                                <action>adminhtml/suppliernew/inventory</action>
+                            </inventory>
+                            <payment>
+                                <title>Payment</title>
+                                <sort_order>6</sort_order>
+                                <action>adminhtml/suppliernew/payment</action>
+                            </payment>
+                        </children>
+                    </Ved_SupplierNew>
+                </children>
+            </admin>
+        </resources>
+    </acl>
+</config>

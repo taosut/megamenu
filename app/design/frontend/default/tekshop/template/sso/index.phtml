@@ -1,0 +1,164 @@
+<?php
+
+$tokenUser = Mage::registry('user');
+$accessToken = Mage::registry('accessToken');
+
+?>
+    <div class="show-403" style="text-align: center;">
+        <img src="<?php echo $this->getSkinUrl('images/403.png') ?>">
+        <div style="margin-top: 10px;">
+            <h1 style="color:#566781"> Bạn không có quyền truy cập khu vực này !</h1>
+            <?php if($accessToken):
+                echo "<h2 style=\"color:#566781\"> Nếu bạn đã có tài khoản Magento Admin, vui lòng xác thực <span id=\"auth-open-form\" style=\"cursor:pointer;text-decoration: underline\">tại đây</span></h2>";
+            endif; ?>
+            <h2> Liên hệ: <a href="https://teko.facebook.com/work/org/linh.dt@teko.vn/" target="_blank">Teko Magento Team</a></h2>
+        </div>
+    </div>
+    <div class="auth-confirm-form" style="display: none">
+        <div class="row row-style-2" style="min-height: 730px;">
+            <div class="col-lg-6 col-md-12 cart-col-1">
+                <div class="panel panel-default address-list payment-address-block">
+                    <div class="panel-body pb-0">
+                        <h3 style="color:#566781">Xác thực tài khoản</h3>
+                        <div class="panel-body">
+                            <form class="form-horizontal" role="form" id="address-info">
+                                <div class="form-group">
+                                    <div  style="color:#566781;text-align: center">
+                                        <p>Vui lòng kiểm tra thông tin cá nhân và xác thực tài khoản Magento Admin:</p>
+                                    </div>
+                                    <div class="text-center message-auth" style="color:red;text-align: center"></div>
+                                </div>
+                                <div class="form-group loading-auth" style="display: none;text-align: center">
+                                    <img src="<?php echo $this->getSkinUrl('images/loading.gif')?>">
+                                </div>
+                                <div class="form-group row" style="margin-top: 52px;">
+                                    <label for="user_name" class="col-lg-4 control-label visible-lg-block label-input">Tài khoản</label>
+                                    <div class="col-lg-8">
+                                        <input type="hidden" name="current_email" id="current_email" value="<?php echo $tokenUser->email ?>">
+                                        <input type="hidden" name="access-token" id="access-token" value="<?php echo $accessToken ?>">
+                                        <input type="text" name="user_name" class="form-control address" id="user_name" placeholder="Nhập tài khoản" required="">
+                                    </div>
+                                </div>
+
+                                <div class="form-group row">
+                                    <label for="password" class="col-lg-4 control-label visible-lg-block label-input">Mật khẩu</label>
+                                    <div class="col-lg-8">
+                                        <input type="password" name="password" class="form-control address" id="password" placeholder="Nhập mật khẩu" required="">
+                                    </div>
+                                </div>
+                                <div class="bottom-static-mobile">
+                                    <div class="form-group row end">
+                                        <div class="col-lg-8 col-lg-offset-4">
+                                            <input type="hidden" name="address_id" value="">
+                                            <button id="btn-auth" type="button" class="btn btn-primary btn-custom3" style="padding: 15px 0;color: white !important;font-size: 14px !important;text-transform: uppercase !important;width: 100% !important;" value="create">
+                                                Xác thực
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-12 cart-col-2">
+                <div class="panel panel-default address-list payment-address-block">
+                    <div class="panel-body pb-0">
+                        <h3 style="color:#566781">Thông tin cá nhân</h3>
+                        <div class="panel-body">
+                            <form class="form-horizontal" role="form" id="address-info">
+                                <div class="form-group row">
+                                    <label for="id" class="col-lg-4 control-label visible-lg-block label-input">Mã nhân viên</label>
+                                    <div class="col-lg-8">
+                                        <input type="number" name="id" class="form-control address" id="id" value="<?php echo $tokenUser->id; ?>" disabled>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="full_name" class="col-lg-4 control-label visible-lg-block label-input">Họ tên</label>
+                                    <div class="col-lg-8">
+                                        <input type="text" name="full_name" class="form-control address" id="full_name" value="<?php echo $tokenUser->name; ?>" disabled>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="role" class="col-lg-4 control-label visible-lg-block label-input">Vị trí</label>
+                                    <div class="col-lg-8">
+                                        <input type="text" name="role" class="form-control address" id="role" value="<?php echo $tokenUser->title; ?>" disabled>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="telephone" class="col-lg-4 control-label visible-lg-block label-input">Điện thoại di
+                                        động</label>
+                                    <div class="col-lg-8">
+                                        <input type="number" name="telephone" class="form-control address" id="telephone" value="<?php echo $tokenUser->phone; ?>" disabled>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label for="email" class="col-lg-4 control-label visible-lg-block label-input">Email</label>
+                                    <div class="col-lg-8">
+                                        <input type="email" name="email" class="form-control address" id="email" value="<?php echo $tokenUser->email; ?>" disabled>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <h2> Liên hệ: <a href="https://teko.facebook.com/work/org/linh.dt@teko.vn/" target="_blank">Teko Magento Team</a></h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    <script>
+        var $j = jQuery.noConflict();
+        $j(document).ready(function(){
+            $j('.footer-container').hide();
+            $j('.header').hide();
+            $j('.btn-pulse').hide();
+        });
+
+        $j('#auth-open-form').on('click',function(e){
+            $j('.show-403').hide(300);
+            $j('.auth-confirm-form').show(300);
+            e.stopPropagation();
+            e.preventDefault();
+        });
+
+        $j('#btn-auth').on('click',function(e){
+            var username = $j('#user_name').val();
+            var password = $j('#password').val();
+            var currentEmail = $j('#current_email').val();
+            var accessToken = $j('#access-token').val();
+            $j(".loading-auth").show();
+            $j.ajax({
+                url : '/tek/sso/index/authenticate',
+                data:{
+                    username : username,
+                    password : password,
+                    email    : currentEmail,
+                    accessToken : accessToken
+                },
+                dataType : 'json',
+                success: function(data)
+                {
+                    console.log(data);
+                    if(data['success']){
+                        $j(".loading-auth").hide();
+                        swal(" Xác thực thành công !");
+                        window.location.href="/sso.php?accessToken=" + accessToken ;
+                    }
+                    if(data['error'])
+                    {
+                        $j(".loading-auth").hide();
+                        $j('.message-auth').html(data['error']);
+                        return;
+                    }
+                }
+            });
+            e.preventDefault();
+            e.stopPropagation();
+        });
+    </script>
+
+
+

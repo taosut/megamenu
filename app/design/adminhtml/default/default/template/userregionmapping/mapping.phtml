@@ -1,0 +1,36 @@
+<style>
+    .entry-edit {
+        max-height: 670px;
+        overflow: scroll;
+    }
+</style>
+<h3>Quản lý user có quyền xem và xử lý đơn hàng thuộc các khu vực (chỉ áp dụng Tekshop Website và Tekshop Mobile)</h3>
+<div class="entry-edit">
+    <div class="entry-edit-head">
+        <h4 class="icon-head head-edit-form fieldset-legend">Khu vực quản lý</h4>
+        <div class="form-buttons"></div>
+    </div>
+    <div class="fieldset ">
+        <form action="<?php echo $this->getSaveUrl(); ?>" method="post">
+            <?php echo $this->getBlockHtml('formkey') ?>
+            <div class="content-header">
+                <?php foreach ($this->getListRegions() as $region_id => $region_name): ?>
+                    <div class="form-group">
+                        <div class="form-control">
+                            <label>
+                                <input type="checkbox" <?php echo in_array($region_id, $this->getListSelected()) ? "checked" : null ?>
+                                       name="region[<?php echo $region_id ?>][region_id]"
+                                       value="<?php echo $region_id ?>"><?php echo $region_name ?>
+                            </label>
+                        </div>
+                    </div>
+                    <input type="hidden" name="region[<?php echo $region_id ?>][user_id]"
+                           value="<?php echo $this->getUserId() ?>">
+                    <input type="hidden" name="region[<?php echo $region_id ?>][region_name]"
+                           value="<?php echo $region_name ?>">
+                <?php endforeach; ?>
+                <button type="submit">Xác nhận</button>
+        </form>
+    </div>
+
+</div>

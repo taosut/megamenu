@@ -1,0 +1,149 @@
+<?php
+
+?>
+<style>
+.tabs{
+	margin: 0px;
+	padding: 0px;
+	list-style: none;
+	background:#2c3e50;
+	border-bottom: 5px #e67e22 solid;
+}
+
+.tabs li{
+	display: inline-block;
+	margin:0;
+	padding: 10px 20px 5px 20px;
+	cursor: pointer;
+		
+	font-size:1.2em;
+	line-height:2em;
+	color:#FFF;
+}
+
+.tabs li:hover {
+	background:#d35400;
+	}
+
+.tabs li.current{
+	background: #e67e22;
+	color: #FFF;
+}
+
+.tab-content{
+	display: none;
+	background: #ededed;
+	padding: 15px;
+			
+	line-height:1.4;
+}
+
+.tab-content.current{
+	display: inherit;
+}
+
+@media only screen and ( max-width: 400px ) {
+    .tabs li {
+        display: block;
+    }
+}
+</style>
+
+
+<div class="page-title">
+	<h1><?php echo $this->__('FAQ List'); ?></h1>
+</div>
+
+<?php //if ($this->hasFaq()): ?>
+<?php if ($this->getCategoryCollection()) : ?>
+
+<ul class="tabs">
+<li class="tab current" data-tab="tab-1">All</li>
+<?php $index=2; foreach ($this->getCategoryCollection() as $category) : ?>
+	<li class="tab" data-tab="tab-<?php echo $index;?>"><?php echo $this->htmlEscape($category->getName()); ?></li>
+<?php $index++; endforeach; ?>		
+</ul>
+<div id="tab-1" class="tab-content current">    	
+	<p><dl class="faq-items">
+	<?php foreach ($this->getFaqCollection() as $faqItem): ?>
+	
+	<dt id="faq-que-<?php echo $faqItem->getId() ?>" onclick="slide1('faq-que-<?php echo $faqItem->getId() ?>','faq-ans-<?php echo $faqItem->getId() ?>')">
+		<?php echo $this->htmlEscape($faqItem->getQuestion()) ?><br>
+	</dt>
+	<dd id="faq-ans-<?php echo $faqItem->getId() ?>" style="display:none;">
+	<?php $_process = Mage::helper('cms')->getBlockTemplateProcessor();?>
+    <?php echo $_process->filter($faqItem->getAnswer()); ?><br>
+	</dd>
+	<?php endforeach; ?>
+</dl></p>
+<script type="text/javascript">
+   function slide1(element1, element2){
+       new Effect.toggle(element2,'Slide', {duration:1});
+	    
+   }
+</script>
+	</div>
+	
+<?php $indexx=2; foreach ($this->getCategoryCollection() as $category) : ?>
+<div id="tab-<?php echo $indexx;?>" class="tab-content">
+    	
+	<p><dl class="faq-items">
+	<?php foreach ($this->getItemCollectionByCategory($category) as $faqItem): ?>
+	
+	<dt id="faq-que2-<?php echo $faqItem->getId() ?>" onclick="slide2('faq-que2-<?php echo $faqItem->getId() ?>','faq-ans2-<?php echo $faqItem->getId() ?>')">
+		<?php echo $this->htmlEscape($faqItem->getQuestion()) ?><br>
+	</dt>
+	<dd id="faq-ans2-<?php echo $faqItem->getId() ?>" style="display:none;">
+	<?php $_process = Mage::helper('cms')->getBlockTemplateProcessor();?>
+    <?php echo $_process->filter($faqItem->getAnswer()); ?><br>
+	</dd>
+	<?php endforeach; ?>
+</dl></p>
+<script type="text/javascript">
+   function slide2(element3, element4){
+       new Effect.toggle(element4,'Slide', {duration:1});
+	     
+   }
+</script>
+	</div>
+<?php $indexx++; endforeach; ?>
+<?php else: ?>
+<p class="faq-items"><?php echo $this->__('There are no FAQ items at the moment.') ?></p>
+<?php endif; ?>
+
+
+
+
+
+<script type="text/javascript">
+// JavaScript Document
+
+jQuery(document).ready(function(){
+	
+	var type = window.location.hash.substr(1);
+	
+	if( type != "" ){
+		
+		jQuery('ul.tabs li').removeClass('current');
+		jQuery('.tab-content').removeClass('current');
+		
+		jQuery('ul.tabs li[ data-tab="'+ type +'" ]').addClass('current');
+		jQuery("#"+type).addClass('current');
+	}
+	
+	//alert(type);
+	
+	jQuery('ul.tabs li').click(function(){
+		var tab_id = jQuery(this).attr('data-tab');
+
+		jQuery('ul.tabs li').removeClass('current');
+		jQuery('.tab-content').removeClass('current');
+
+		jQuery(this).addClass('current');
+		jQuery("#"+tab_id).addClass('current');
+	})
+	
+	
+
+})
+</script>

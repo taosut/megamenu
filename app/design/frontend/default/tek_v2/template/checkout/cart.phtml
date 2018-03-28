@@ -1,0 +1,847 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     base_default
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<?php
+/**
+ * Shopping cart template
+ *
+ * @see Mage_Checkout_Block_Cart
+ */
+?>
+<?php $_cartQty = $this->getSummaryCount() ?>
+<?php $total_free_item_price = 0; ?>
+
+<?php
+$_productImpressions = [];
+$_cartItems = [];
+?>
+
+<link rel="stylesheet" type="text/css" href="<?php echo $this->getSkinUrl('lib/checkout.css'); ?>"/>
+
+<div class="content">
+
+    <!--Breadcrumb-->
+    <div class="row tek-breadcrumb">
+        <div class="col-md-10 col-md-offset-1 content-section">
+            <div class="tek-breadcrumb-content"></div>
+            <div class="tek-breadcrumb-main">
+                <span>Thông tin giỏ hàng</span>
+            </div>
+        </div>
+    </div>
+    <!--End Breadcrumb-->
+
+    <div class="row">
+        <div class="col-md-10 col-md-offset-1 content-section cart-content-block">
+            <!-- Messages block-->
+            <div class="row">
+                <div class="col-md-12 col-sm-12">
+                    <?php echo $this->getMessagesBlock()->getGroupedHtml(); ?>
+                </div>
+            </div>
+            <!-- End Messages block-->
+
+            <div class="row">
+                <!-- Cart products info-->
+                <div class="col-md-9 col-sm-12">
+                    <form id="cart-update-form" action="<?php echo $this->getUrl('checkout/cart/updatePost') ?>"
+                          method="post">
+                        <?php echo $this->getBlockHtml('formkey'); ?>
+                        <!-- Cart button block-->
+                        <div class="cart-button-block">
+                            <button type="button" class="cart-continue-shopping-btn cart-continue-shopping-font"
+                                    title="Tiếp tục mua hàng"
+                                    onclick="continueShopping();">
+                                Tiếp tục mua hàng
+                                <img class="cart-continue-shopping-ajax-loader hidden"
+                                     src="<?php echo $this->getSkinUrl('images/ajax-loader-white.gif'); ?>"/>
+                            </button>
+                            <button id="clear-cart-btn-hidden" type="submit" name="update_cart_action"
+                                    value="empty_cart"
+                                    hidden></button>
+                            <button type="button" name="update_cart_action" value="empty_cart"
+                                    title="Xóa toàn bộ giỏ hàng"
+                                    class="clear-cart-btn"
+                                    onclick="emptyCart();"
+                                    id="empty_cart_button">
+                                Xóa giỏ hàng
+                            </button>
+                        </div>
+                        <!-- End Cart button block-->
+                        <!-- Cart products block-->
+                        <div class="cart-products-block">
+                            <?php foreach ($this->getItems() as $_item): ?>
+                                <?php
+                                $_productObj = new stdClass();
+                                $_productObj->name = $this->escapeHtml($_item->getName());
+                                $_productObj->id = intval($_item->getProduct()->getId());
+                                $_productObj->price = intval($_item->getPrice());
+                                $_productObj->list = 'Cart Page';
+                                $_productImpressions[] = $_productObj;
+
+                                $_productCartObj = new stdClass();
+                                $_productCartObj->name = $this->escapeHtml($_item->getName());
+                                $_productCartObj->id = intval($_item->getProduct()->getId());
+                                $_productCartObj->price = intval($_item->getPrice());
+                                $_productCartObj->quantity = intval($_item->getQty());
+                                $_cartItems[] = $_productCartObj;
+                                ?>
+
+                                <?php
+                                $total = $_item->getPrice() * $_item->getQty();
+                                $freeItem = unserialize($_item->getAdditionalData());
+                                ?>
+                                <?php if (isset($freeItem) && isset($freeItem['quantity']) && isset($freeItem['price'])): ?>
+                                    <?php $total = $total - $freeItem['quantity'] * $freeItem['price']; ?>
+                                    <?php $total_free_item_price += $freeItem['quantity'] * $freeItem['price']; ?>
+                                <?php endif; ?>
+                                <div class="row cart-products-item">
+                                    <div class="col-md-2 col-sm-2 pl-0">
+                                        <a onclick="trackProductClicks(this);"
+                                           data-id="<?php echo $_item->getProduct()->getId(); ?>"
+                                           data-name="<?php echo $this->escapeHtml($_item->getName()); ?>"
+                                           data-price="<?php echo $_item->getPrice(); ?>"
+                                           href="<?php echo $_item->getProduct()->getProductFullUrl(); ?>"
+                                        >
+                                            <img class="cart-product-img"
+                                                 src="<?php echo Mage::helper('catalog/image')->init($_item->getProduct(), 'small_image')->resize(200, 200); ?>">
+                                        </a>
+                                    </div>
+                                    <div class="col-md-6 col-sm-6">
+                                        <a class="cart-product-name"
+                                           onclick="trackProductClicks(this);"
+                                           data-id="<?php echo $_item->getProduct()->getId(); ?>"
+                                           data-name="<?php echo $this->escapeHtml($_item->getName()); ?>"
+                                           data-price="<?php echo $_item->getPrice(); ?>"
+                                           href="<?php echo $_item->getProduct()->getProductFullUrl(); ?>"
+                                           title="<?php echo $this->escapeHtml($_item->getName()); ?>"><?php echo $this->escapeHtml($_item->getName()); ?></a>
+                                        <?php if (!isset($freeItem['parent']) && $_item->getPrice() == 0): ?>
+                                            <span class="cart-promo-text">(Quà tặng)</span>
+                                        <?php endif; ?>
+                                        <?php if ($_item->getProduct()->getTypeID() == 'bundle' && $_options = Mage::helper('bundle/catalog_product_configuration')->getOptions($_item)): ?>
+                                            <dl class="item-options">
+                                                <?php foreach ($_options as $_option) : ?>
+                                                    <?php $_formatedOptionValue = Mage::helper('catalog/product_configuration')->getFormattedOptionValue($_option); ?>
+                                                    <dt><?php echo Mage::helper('core')->escapeHtml($_option['label'], null) ?></dt>
+                                                    <dd<?php if (isset($_formatedOptionValue['full_view'])): ?> class="truncated"<?php endif; ?>>
+                                                        <?php echo $_formatedOptionValue['value'] ?>
+                                                        <?php if (isset($_formatedOptionValue['full_view'])): ?>
+                                                            <div class="truncated_full_value">
+                                                                <dl class="item-options">
+                                                                    <dt><?php echo Mage::helper('core')->escapeHtml($_option['label'], null) ?></dt>
+                                                                    <dd><?php echo $_formatedOptionValue['full_view'] ?></dd>
+                                                                </dl>
+                                                            </div>
+                                                        <?php endif; ?>
+                                                    </dd>
+                                                <?php endforeach; ?>
+                                            </dl>
+                                        <?php elseif ($_item->getProduct()->getTypeID() != 'bundle' && $_options = Mage::helper('catalog/product_configuration')->getOptions($_item)): ?>
+                                            <dl class="item-options">
+                                                <?php foreach ($_options as $_option) : ?>
+                                                    <?php $_formatedOptionValue = Mage::helper('catalog/product_configuration')->getFormattedOptionValue($_option); ?>
+                                                    <dt><?php echo Mage::helper('core')->escapeHtml($_option['label'], null) ?></dt>
+                                                    <dd<?php if (isset($_formatedOptionValue['full_view'])): ?> class="truncated"<?php endif; ?>>
+                                                        <?php echo $_formatedOptionValue['value'] ?>
+                                                        <?php if (isset($_formatedOptionValue['full_view'])): ?>
+                                                            <div class="truncated_full_value">
+                                                                <dl class="item-options">
+                                                                    <dt><?php echo Mage::helper('core')->escapeHtml($_option['label'], null) ?></dt>
+                                                                    <dd><?php echo $_formatedOptionValue['full_view'] ?></dd>
+                                                                </dl>
+                                                            </div>
+                                                        <?php endif; ?>
+                                                    </dd>
+                                                <?php endforeach; ?>
+                                            </dl>
+                                        <?php endif; ?>
+                                        <div class="cart-product-short-desc">
+                                            <?php
+                                            $product_ob = Mage::getModel('catalog/product')->load($_item->getProductId());
+                                            echo $product_ob->getShortDescription();
+                                            ?>
+                                        </div>
+                                        <?php if (!isset($freeItem['parent'])): ?>
+                                            <div class="cart-remove-block">
+                                            <span class="cart-remove-section" onclick="deleteItem(this)"
+                                                  data-id="<?php echo $_item->getId(); ?>"
+                                                  data-product-id="<?php echo $_item->getProduct()->getId(); ?>"
+                                                  data-name="<?php echo $this->escapeHtml($_item->getName()); ?>"
+                                                  data-price="<?php echo $_item->getPrice(); ?>"
+                                                  data-qty="<?php echo $_item->getQty(); ?>"
+                                                  data-url="<?php echo Mage::getUrl('checkout/cart/delete', array('id' => $_item->getId(), 'delete_qty' => $_item->getQty())); ?>">
+                                                <i id="cart-remove-icon-<?php echo $_item->getId(); ?>"
+                                                   class="fa fa-trash cart-remove-icon"></i>
+                                                Xóa
+                                            </span>
+                                                <img id="cart-remove-ajax-loader-<?php echo $_item->getId(); ?>"
+                                                     class="cart-remove-ajax-loader hidden"
+                                                     src="<?php echo $this->getSkinUrl('images/ajax-loader-gray.gif'); ?>"/>
+                                            </div>
+                                        <?php endif; ?>
+                                    </div>
+                                    <div class="col-md-2 col-sm-2 pl-0 pr-0 text-center">
+                                        <span class="cart-product-price"><?php echo number_format($_item->getPrice(), 0, ",", ".") . " ₫"; ?></span>
+                                        <div class="cart-qty-block">
+                                            <span class="cart-qty-btn cart-decrease-qty-btn <?php echo (isset($freeItem['parent']) || $_item->getPrice() == 0) ? 'disabled' : '' ?>"
+                                                  data-id="<?php echo $_item->getId() ?>"
+                                                  data-product-id="<?php echo $_item->getProduct()->getId(); ?>"
+                                                  data-name="<?php echo $this->escapeHtml($_item->getName()); ?>"
+                                                  data-price="<?php echo $_item->getPrice(); ?>"
+                                                  onclick="decreaseQty(this);">-</span>
+                                            <input name="cart[<?php echo $_item->getId() ?>][qty]"
+                                                   id="cart-qty-input-<?php echo $_item->getId() ?>"
+                                                   data-id="<?php echo $_item->getId() ?>"
+                                                   data-product-id="<?php echo $_item->getProduct()->getId(); ?>"
+                                                   data-name="<?php echo $this->escapeHtml($_item->getName()); ?>"
+                                                   data-price="<?php echo $_item->getPrice(); ?>"
+                                                   data-qty="<?php echo $_item->getQty(); ?>"
+                                                   onkeyup="doUpdateCart(this);"
+                                                   type="number"
+                                                   value="<?php echo (isset($freeItem) && isset($freeItem['quantity'])) ? $_item->getQty() - $freeItem['quantity'] : $_item->getQty(); ?>"
+                                                   class="cart-qty-input"
+                                                   maxlength="12"
+                                                <?php echo (isset($freeItem['parent']) || $_item->getPrice() == 0) ? 'disabled' : '' ?>
+                                            />
+                                            <input name="cart[<?php echo $_item->getId() ?>][product_id]"
+                                                   value="<?php echo $_item->getProduct()->getId() ?>"
+                                                   type="hidden"/>
+                                            <input name="cart[<?php echo $_item->getId() ?>][previous_qty]"
+                                                   value="<?php echo $_item->getQty(); ?>"
+                                                   type="hidden"/>
+                                            <input type="hidden"
+                                                   name="cart[<?php echo $_item->getId() ?>][is_free_item]"
+                                                   value="<?php echo (isset($freeItem['parent'])) ? 1 : 0 ?>"/>
+                                            <span class="cart-qty-btn cart-increase-qty-btn <?php echo (isset($freeItem['parent']) || $_item->getPrice() == 0) ? 'disabled' : '' ?>"
+                                                  data-id="<?php echo $_item->getId() ?>"
+                                                  data-product-id="<?php echo $_item->getProduct()->getId(); ?>"
+                                                  data-name="<?php echo $this->escapeHtml($_item->getName()); ?>"
+                                                  data-price="<?php echo $_item->getPrice(); ?>"
+                                                  onclick="increaseQty(this);">+</span>
+                                        </div>
+                                        <img id="cart-update-ajax-loader-<?php echo $_item->getId(); ?>"
+                                             class="cart-update-ajax-loader hidden"
+                                             src="<?php echo $this->getSkinUrl('images/ajax-loader-gray.gif'); ?>"/>
+                                    </div>
+                                    <div class="col-md-2 col-sm-2 pl-10 pr-0 text-right">
+                                        <span class="cart-product-total-price">= <?php echo number_format($total, 0, ",", ".") . " ₫"; ?></span>
+                                    </div>
+                                </div>
+                            <?php endforeach ?>
+                        </div>
+                        <!-- End cart products block-->
+                    </form>
+
+                    <?php
+                    $coupon_code = Mage::getSingleton('checkout/session')->getQuote()->getCouponCode();
+                    $sub_total = Mage::helper('checkout/cart')->getQuote()->getSubtotal();
+                    $grand_total = Mage::helper('checkout/cart')->getQuote()->getGrandTotal();
+                    $discount_value = $sub_total - $grand_total;
+                    ?>
+                    <div class="cart-button-group">
+                        <button type="button" class="cart-button-group-btn" title="Tải file excel báo giá"
+                                onclick="exportExcel()">
+                            Tải file excel báo giá&nbsp;
+                            <i class="fa fa-file-excel-o"></i>
+                        </button>
+                        <button type="button" class="cart-button-group-btn cart-export-image-btn"
+                                title="Tải ảnh báo giá"
+                                onclick="exportImage()">
+                            Tải ảnh báo giá
+                            <i class="fa fa-picture-o"></i>
+                        </button>
+                        <!-- Export images form -->
+                        <form id="export-image-price-sheet"
+                              action="<?php echo $this->getUrl('checkout/cart/exportImage') ?>"
+                              method="post" target="_blank" hidden>
+                            <input type="hidden" name="cartItems"/>
+                            <input type="hidden" name="screen"/>
+                            <input type="hidden" name="discountValue"/>
+                        </form>
+                    </div>
+                </div>
+                <!-- End Cart product info-->
+
+                <!-- Cart total info-->
+                <div class="col-md-3 col-sm-12">
+                    <input type="hidden" id="discount-value" value="<?php echo $discount_value ?>">
+                    <input type="hidden" id="total-free-item-price" value="<?php echo $total_free_item_price ?>">
+                    <div class="panel panel-default panel-cart-total">
+                        <div class="cart-subtotal-block mt-0">
+                            Tạm tính:
+                            <span class="cart-subtotal-price"><?php echo number_format($sub_total - $total_free_item_price, 0, ",", ".") . " ₫"; ?></span>
+                        </div>
+
+                        <div class="cart-discount-block">
+                            Giảm giá:
+                            <span class="cart-discount-value">- <?php echo number_format($discount_value - $total_free_item_price, 0, ",", ".") . " ₫"; ?></span>
+                        </div>
+
+                        <div class="cart-coupon-block">
+                            <form id="discount-coupon-form"
+                                  action="<?php echo $this->getUrl('checkout/cart/couponPostAjax') ?>"
+                                  method="post">
+                                <input type="hidden" name="remove" id="remove-coupon" value="0"/>
+                                <input type="text" class="cart-coupon-input" placeholder="Nhập mã giảm giá tại đây"
+                                       name="coupon_code"
+                                       value="<?php echo $this->escapeHtml($coupon_code) ?>"
+                                       onkeyup="doCouponPost();"/>
+                                <img class="cart-coupon-ajax-loader hidden"
+                                     src="<?php echo $this->getSkinUrl('images/ajax-loader-gray.gif'); ?>"/>
+                                <a class="remove-coupon-btn hidden"
+                                   onclick="applyCouponCode(true)"
+                                   title="Nhập lại mã giảm giá"><span class="fa fa-times"></span></a>
+                                <div class="invalid-coupon text-right red"></div>
+                            </form>
+                        </div>
+
+                        <div class="cart-shipping-fee-block">
+                            Phong Vũ miễn phí vận chuyển cho các đơn hàng trị giá trên 500.000 đ <a
+                                    href="https://phongvu.vn/landing/bieu-phi.html" target="_blank">(Tham khảo biểu phí
+                                dịch vụ)</a>
+                        </div>
+
+                        <div class="cart-total-block">
+                            Thành tiền:
+                            <span class="cart-total-price"><?php echo number_format($grand_total, 0, ",", ".") . " ₫"; ?></span>
+                        </div>
+
+                        <div class="cart-shipping-block">
+                            Phí vận chuyển tạm tính:
+                            <span class="cart-shipping-price">
+                                0 ₫
+                            </span>
+                        </div>
+
+                        <div class="cart-grandtotal-block">
+                            Tổng tiền:
+                            <span class="cart-grandtotal-price"><?php echo number_format($grand_total, 0, ",", ".") . " ₫"; ?></span>
+                        </div>
+
+                        <div class="mb-15 text-right vat-included-text">(Đã bao gồm VAT)</div>
+
+                        <button type="button" class="cart-checkout-btn"
+                                onclick="goToCheckout();">
+                            Thanh toán
+                            <img class="cart-checkout-ajax-loader hidden"
+                                 src="<?php echo $this->getSkinUrl('images/ajax-loader-white.gif'); ?>"/>
+                        </button>
+                    </div>
+                </div>
+                <!-- End Cart total info-->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var $j = jQuery.noConflict();
+    checkShippingFee(<?php echo $grand_total; ?>);
+    /** Enhanced Ecommerce features **/
+    /** Track product impressions **/
+    var productImpressions = <?php echo json_encode($_productImpressions); ?>;
+    dataLayer.push({
+        'event': 'productImpressions',
+        'ecommerce': {
+            'currencyCode': 'VND',
+            'impressions': productImpressions
+        }
+    });
+
+    /** Track product clicks **/
+    function trackProductClicks(value) {
+        var productId = $j(value).data('id');
+        var productName = $j(value).data('name');
+        var productPrice = parseInt($j(value).data('price'));
+
+        dataLayer.push({
+            'event': 'productClick',
+            'ecommerce': {
+                'click': {
+                    'actionField': {'list': 'Cart Page'},
+                    'products': [{
+                        'id': productId,
+                        'name': productName,
+                        'price': productPrice
+                    }]
+                }
+            }
+        });
+    }
+    /** End Enhanced Ecommerce features **/
+
+    /** Empty cart **/
+    function emptyCart() {
+        swal({
+            title: 'Bạn có chắc chắn muốn xóa giỏ hàng?',
+            type: 'warning',
+            showCancelButton: true,
+            cancelButtonText: 'Hủy',
+            closeOnConfirm: false,
+            confirmButtonText: 'Xóa giỏ hàng',
+            confirmButtonColor: '#d42333',
+            showLoaderOnConfirm: true
+        }, function () {
+            $j('#clear-cart-btn-hidden').click();
+        });
+    }
+    /** End empty cart **/
+
+    /** Start coupon functions **/
+    var discountValue = <?php echo $discount_value - $total_free_item_price; ?>;
+
+    checkCouponCode();
+
+    var timeout = null;
+
+    function doCouponPost() {
+        $j('.cart-coupon-ajax-loader').removeClass('hidden');
+        $j('.cart-qty-input').prop('readonly', true);
+        $j('.cart-checkout-btn').prop('disabled', true);
+        $j('.cart-remove-section').addClass('hidden');
+        $j('.remove-coupon-btn').addClass('hidden');
+        $j('.cart-qty-btn').addClass('disabled');
+
+        if ($j('.cart-coupon-input').val() !== '') {
+            if (timeout) {
+                clearTimeout(timeout);
+            }
+            timeout = setTimeout(function () {
+                applyCouponCode(false); // false: not remove coupon code
+            }, 1000);
+        }
+        else {
+            $j('.cart-coupon-ajax-loader').addClass('hidden');
+            $j('.remove-coupon-btn').addClass('hidden');
+            $j('.cart-qty-input').prop('readonly', false);
+            $j('.cart-checkout-btn').prop('disabled', false);
+            $j('.cart-remove-section').removeClass('hidden');
+            $j('.cart-qty-btn').removeClass('disabled');
+            $j('.invalid-coupon').empty();
+        }
+    }
+
+    function applyCouponCode(isRemove) {
+        $j('.cart-coupon-ajax-loader').removeClass('hidden');
+        $j('.cart-qty-input').prop('readonly', true);
+        $j('.cart-checkout-btn').prop('disabled', true);
+        $j('.cart-remove-section').addClass('hidden');
+        $j('.cart-qty-btn').addClass('disabled');
+
+        if (isRemove) {
+            $j('#remove-coupon').val(1);
+        } else {
+            $j('#remove-coupon').val(0);
+        }
+
+        var form = $j('#discount-coupon-form');
+        var data = form.serializeArray();
+        var total_free_item_price = $j('#total-free-item-price').val();
+
+        $j.ajax({
+            url: form.attr('action'),
+            type: form.attr('method'),
+            dataType: 'json',
+            data: data,
+            success: function (response) {
+                $j('.cart-coupon-ajax-loader').addClass('hidden');
+                $j('.cart-qty-input').prop('readonly', false);
+                $j('.cart-checkout-btn').prop('disabled', false);
+                $j('.cart-remove-section').removeClass('hidden');
+                $j('.cart-qty-btn').removeClass('disabled');
+
+                if (!response.is_success) {
+                    localStorage.setItem('coupon_success', false);
+
+                    $j('.cart-coupon-input').prop('disabled', false);
+                    $j('.remove-coupon-btn').removeClass('hidden');
+                    $j('.invalid-coupon').empty().html(response.error_message);
+                    $j('.cart-discount-block').hide();
+                    if (response.is_remove == 1) {
+                        $j('.cart-coupon-input').val('');
+                    }
+                    if ($j('.cart-coupon-input').val() == '') {
+                        $j('.remove-coupon-btn').addClass('hidden');
+                    }
+                    discountValue = 0;
+                }
+                else {
+                    localStorage.setItem('coupon_success', true);
+                    $j('.invalid-coupon').empty();
+                    if (response.is_remove == 1) {
+                        $j('.cart-coupon-input').prop('disabled', false).val('');
+                        $j('.remove-coupon-btn').addClass('hidden');
+                        $j('.cart-discount-block').hide();
+                        discountValue = 0;
+                    }
+                    else {
+                        $j('.cart-coupon-input').prop('disabled', true).css('user-select', 'none');
+                        $j('.remove-coupon-btn').removeClass('hidden');
+                        $j('.cart-discount-block').show();
+                        $j('.cart-discount-value').empty().html('- ' + formatCurrency(response.discount_value - total_free_item_price) + " ₫");
+                        discountValue = response.discount_value - total_free_item_price;
+                    }
+                }
+                checkShippingFee(response.grand_total);
+                $j('.cart-total-price').empty().html(formatCurrency(response.grand_total) + " ₫");
+            }
+        });
+    }
+
+    function checkCouponCode() {
+        var discount_value = $j('#discount-value').val();
+        var total_free_item_price = $j('#total-free-item-price').val();
+
+        if (discount_value - total_free_item_price > 0) {
+            $j('.remove-coupon-btn').removeClass('hidden');
+            if (localStorage.getItem('coupon_success') == 'true') {
+                $j('.cart-coupon-input').prop('disabled', true).css('user-select', 'none');
+            }
+            else if (localStorage.getItem('coupon_success') == 'false') {
+                $j('.remove-coupon-btn').addClass('hidden');
+                $j('.cart-coupon-input').val('').prop('disabled', false);
+            }
+        }
+        else {
+            $j('.cart-discount-block').hide();
+        }
+    }
+    /** End coupon functions **/
+
+    /** Cart functions **/
+    /** Update cart **/
+    var timeout_update = null;
+    function doUpdateCart(value) {
+        var id = $j(value).data('id');
+        $j('.cart-checkout-btn').prop('disabled', true);
+        $j('.cart-qty-input').prop('readonly', true);
+        $j('.cart-coupon-input').prop('readonly', true);
+        $j('#cart-qty-input-' + id).prop('readonly', false);
+        $j('#cart-update-ajax-loader-' + id).removeClass('hidden');
+        $j('.cart-remove-section').addClass('hidden');
+        $j('.cart-qty-btn').addClass('disabled');
+
+        var productId = parseInt($j(value).data('product-id'));
+        var productName = $j(value).data('name');
+        var productPrice = parseInt($j(value).data('price'));
+        var productQty = parseInt($j(value).data('qty'));
+        var newQty = parseInt($j('#cart-qty-input-' + id).val());
+
+        if (timeout_update) {
+            clearTimeout(timeout_update);
+        }
+        timeout_update = setTimeout(function () {
+            updateCart(productId, productName, productPrice, productQty, newQty);
+        }, 1000);
+    }
+
+    function decreaseQty(value) {
+        if (!$j(value).hasClass('disabled')) {
+            var id = $j(value).data('id');
+
+            var oldValue = $j('#cart-qty-input-' + id).val();
+            if (oldValue > 1) {
+                $j('.cart-checkout-btn').prop('disabled', true);
+                $j('.cart-qty-input').prop('readonly', true);
+                $j('.cart-coupon-input').prop('readonly', true);
+                $j('#cart-update-ajax-loader-' + id).removeClass('hidden');
+                $j('.cart-remove-section').addClass('hidden');
+                $j('.cart-qty-btn').addClass('disabled');
+
+                var newVal = parseInt(oldValue) - 1;
+                $j('#cart-qty-input-' + id).val(newVal);
+
+                var productId = parseInt($j(value).data('product-id'));
+                var productName = $j(value).data('name');
+                var productPrice = parseInt($j(value).data('price'));
+
+                /** Track remove from cart **/
+                dataLayer.push({
+                    'event': 'removeFromCart',
+                    'ecommerce': {
+                        'currencyCode': 'VND',
+                        'remove': {
+                            'products': [{
+                                'name': productName,
+                                'id': productId,
+                                'price': productPrice,
+                                'quantity': 1
+                            }]
+                        }
+                    }
+                });
+
+                var form = $j('#cart-update-form');
+                form.submit();
+            } else {
+                return false;
+            }
+        }
+    }
+
+    function increaseQty(value) {
+        if (!$j(value).hasClass('disabled')) {
+            var id = $j(value).data('id');
+
+            var oldValue = $j('#cart-qty-input-' + id).val();
+            if (oldValue < 500) {
+                $j('.cart-checkout-btn').prop('disabled', true);
+                $j('.cart-qty-input').prop('readonly', true);
+                $j('.cart-coupon-input').prop('readonly', true);
+                $j('#cart-update-ajax-loader-' + id).removeClass('hidden');
+                $j('.cart-remove-section').addClass('hidden');
+                $j('.cart-qty-btn').addClass('disabled');
+
+                var newVal = parseInt(oldValue) + 1;
+                $j('#cart-qty-input-' + id).val(newVal);
+
+                var productId = parseInt($j(value).data('product-id'));
+                var productName = $j(value).data('name');
+                var productPrice = parseInt($j(value).data('price'));
+
+                /** Track add to cart **/
+                dataLayer.push({
+                    'event': 'addToCart',
+                    'ecommerce': {
+                        'currencyCode': 'VND',
+                        'add': {
+                            'products': [{
+                                'name': productName,
+                                'id': productId,
+                                'price': productPrice,
+                                'quantity': 1
+                            }]
+                        }
+                    }
+                });
+
+                var form = $j('#cart-update-form');
+                form.submit();
+            } else {
+                return false;
+            }
+        }
+    }
+
+    function updateCart(productId, productName, productPrice, productQty, newQty) {
+        /** Track add to cart / remove from cart **/
+        if (newQty > productQty) {
+            dataLayer.push({
+                'event': 'addToCart',
+                'ecommerce': {
+                    'currencyCode': 'VND',
+                    'add': {
+                        'products': [{
+                            'name': productName,
+                            'id': productId,
+                            'price': productPrice,
+                            'quantity': newQty - productQty
+                        }]
+                    }
+                }
+            });
+        }
+        else if (newQty < productQty) {
+            dataLayer.push({
+                'event': 'removeFromCart',
+                'ecommerce': {
+                    'currencyCode': 'VND',
+                    'remove': {
+                        'products': [{
+                            'name': productName,
+                            'id': productId,
+                            'price': productPrice,
+                            'quantity': productQty - newQty
+                        }]
+                    }
+                }
+            });
+        }
+
+        var form = $j('#cart-update-form');
+        form.submit();
+    }
+
+    /** Delete item from cart **/
+    function deleteItem(value) {
+        var id = $j(value).data('id');
+        var deleteUrl = $j(value).data('url');
+        var productId = parseInt($j(value).data('product-id'));
+        var productName = $j(value).data('name');
+        var productPrice = parseInt($j(value).data('price'));
+        var productQty = parseInt($j(value).data('qty'));
+
+        $j('.cart-checkout-btn').prop('disabled', true);
+        $j('.cart-qty-input').prop('readonly', true);
+        $j('.cart-coupon-input').prop('readonly', true);
+        $j('#cart-remove-ajax-loader-' + id).removeClass('hidden');
+        $j('.cart-remove-section').addClass('hidden');
+        $j('.cart-qty-btn').addClass('disabled');
+
+        /** Track remove from cart **/
+        dataLayer.push({
+            'event': 'removeFromCart',
+            'ecommerce': {
+                'currencyCode': 'VND',
+                'remove': {
+                    'products': [{
+                        'name': productName,
+                        'id': productId,
+                        'price': productPrice,
+                        'quantity': productQty
+                    }]
+                }
+            }
+        });
+
+        window.location.href = deleteUrl;
+    }
+
+    /** Export excel price sheet **/
+    function exportExcel() {
+        swal({
+            title: 'Bạn muốn tải file excel báo giá?',
+            type: 'info',
+            showCancelButton: true,
+            cancelButtonText: 'Hủy',
+            closeOnConfirm: false,
+            confirmButtonText: 'Xác nhận',
+            confirmButtonColor: '#2d3877',
+            showLoaderOnConfirm: true
+        }, function () {
+            var cartItems = <?php echo json_encode($_cartItems); ?>;
+
+            var data = {
+                'cartItems': cartItems,
+                'discountValue': discountValue
+            };
+
+            $j.ajax({
+                url: '<?php echo $this->getUrl('checkout/cart/exportExcel') ?>',
+                type: 'POST',
+                dataType: 'json',
+                data: data,
+                success: function (response) {
+                    swal.close();
+                    window.location.href = response['url'];
+                }
+            });
+        });
+    }
+
+    /** Export image price sheet **/
+    function exportImage() {
+        swal({
+            title: 'Bạn muốn tải ảnh báo giá?',
+            type: 'info',
+            showCancelButton: true,
+            cancelButtonText: 'Hủy',
+            closeOnConfirm: true,
+            confirmButtonText: 'Xác nhận',
+            confirmButtonColor: '#2d3877'
+        }, function () {
+            var cartItems = <?php echo json_encode($_cartItems); ?>;
+            var bpString = JSON.stringify(cartItems);
+
+            var screen = 'web';
+
+            $j('#export-image-price-sheet input[name=cartItems]').val(bpString);
+            $j('#export-image-price-sheet input[name=screen]').val(screen);
+            $j('#export-image-price-sheet input[name=discountValue]').val(discountValue);
+            $j('#export-image-price-sheet').submit();
+        });
+    }
+    /** End cart functions **/
+
+    /** Go to checkout **/
+    var cartItems = <?php echo json_encode($_cartItems); ?>;
+    function goToCheckout() {
+        $j('.cart-checkout-btn').prop('disabled', true);
+        $j('.cart-checkout-ajax-loader').removeClass('hidden');
+
+        /** Track checkout step 1 **/
+        dataLayer.push({
+            'event': 'checkout',
+            'ecommerce': {
+                'checkout': {
+                    'actionField': {'step': 1},
+                    'products': cartItems
+                }
+            },
+            'eventCallback': function () {
+                window.location.href = '<?php echo $this->getUrl('checkout/shipping'); ?>';
+            }
+        });
+    }
+    /** End go to checkout **/
+
+    /** Continue shopping **/
+    function continueShopping() {
+        $j('.cart-continue-shopping-btn').prop('disabled', true);
+        $j('.cart-continue-shopping-ajax-loader').removeClass('hidden');
+        window.location.href = '<?php echo $this->getContinueShoppingUrl(); ?>';
+    }
+    /** End continue shopping **/
+
+    function checkShippingFee(price) {
+        if (price < 500000) {
+            shipping_fee = 11000;
+            $j('.cart-grandtotal-price').empty().html(formatCurrency(price + 11000) + " ₫");
+            $j('.cart-shipping-price').empty().html(formatCurrency(shipping_fee) + " ₫");
+        } else {
+            shipping_fee = 0;
+            $j('.cart-grandtotal-price').empty().html(formatCurrency(price) + " ₫");
+            $j('.cart-shipping-price').empty().html(formatCurrency(shipping_fee) + " ₫");
+        }
+    }
+
+    /** Common functions **/
+    preventKeyInput();
+
+    function preventKeyInput() {
+        $j('input[type="number"]').keypress(function (e) {
+            if (e.which === 8) { // to allow BackSpace
+                return;
+            }
+            if (e.which < 48 || e.which > 57 || e.keyCode === 13) {
+                e.preventDefault();
+            }
+        });
+
+        $j('.cart-coupon-input').keypress(function (e) {
+            if (e.which === 32 || e.keyCode === 10 || e.keyCode === 13) {
+                e.preventDefault();
+            }
+        });
+    }
+
+    function formatCurrency(n) {
+        return n.toFixed(0).replace(/./g, function (c, i, a) {
+            return i > 0 && c !== "." && (a.length - i) % 3 === 0 ? "." + c : c;
+        });
+    }
+    /** End common functions **/
+</script>

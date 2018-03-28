@@ -1,0 +1,442 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     base_default
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<?php $version = Teko::getSaleCenterVersion(); ?>
+<!--Jquery Lazy-->
+<script type="text/javascript"
+        src="<?php echo $this->getSkinUrl('lib/jquery-lazy/jquery.lazy.min.js'); ?><?php echo "?v=" . $version ?>"></script>
+<?php $_productImpressions = []; ?>
+<?php
+$tagProduct = Mage::getModel('tag/tag_relation')
+    ->setTagId(1)// Bao ke gia
+    ->setStoreId((Mage::app()->getStore()->getId()))
+    ->getProductIds();
+$tagOnlinePaymentIds = Mage::getModel('tag/tag_relation')
+    ->setTagId(3)// Giam gia thanh toan online
+    ->setStoreId(Mage::app()->getStore()->getId())
+    ->getProductIds();
+?>
+<div class="content">
+    <!--Cat menu-->
+
+    <!-- End Cat menu-->
+
+    <!-- Slider, hotdeal-->
+    <div class="row">
+        <?php echo $this->getLayout()->createBlock('cms/block')->setBlockId('slider-hotdeal-v2')->toHtml(); ?>
+    </div>
+    <!-- End Slider, hotdeal-->
+
+    <!-- Mid category wrapper-->
+    <div class="row mid-category-wrapper">
+        <div class="col-md-10 col-md-offset-1 content-section mid-category-content">
+            <div class="row">
+                <?php echo $this->getChildHtml('page.mid_category'); ?>
+            </div>
+        </div>
+    </div>
+    <!--End mid category wrapper-->
+
+    <!--Promotion products-->
+    <div class="row promo-products-wrapper">
+        <div class="col-md-10 col-md-offset-1 content-section">
+            <div class="row promo-products-block">
+                <?php echo $this->getChildHtml('page.promotion_products') ?>
+            </div>
+        </div>
+    </div>
+    <!--End Promotion products-->
+
+    <!--Products block-->
+    <div class="row products-block">
+        <div class="col-md-10 col-md-offset-1 content-section">
+            <div class="row">
+                <!--Popular cat products-->
+                <?php
+                $popular_cats = json_decode(Mage::getModel('core/variable')->loadByCode('popular_cat_homepage')->getValue('plain'));
+                ?>
+                <?php if (count($popular_cats->ids) > 0): ?>
+                    <div class="col-md-10 col-sm-12 cat-products-block">
+                        <?php foreach ($popular_cats->ids as $id): ?>
+                            <?php $_category = Mage::getModel('catalog/category')->load($id); ?>
+                            <div class="cat-products-section">
+                                <div class="cat-products-header">
+                                    <div class="cat-name float-left">
+                                        <a href="<?php echo $_category->getUrl(); ?>"><?php echo $_category->getName(); ?></a>
+                                    </div>
+                                    <?php $_subcategories = $_category->getChildrenCategories(); ?>
+                                    <?php if (count($_subcategories) > 0): ?>
+                                        <div class="sub-cats">
+                                            <?php $_subcatCount = 0; ?>
+                                            <?php foreach ($_subcategories as $_subcategory): ?>
+                                                <a data-parent-id="<?php echo $_category->getId(); ?>"
+                                                   data-cat-id="<?php echo $_subcategory->getId(); ?>"
+                                                   data-cat-url="<?php echo $_subcategory->getUrl(); ?>"
+                                                   data-get-cat-products-url="<?php echo $this->getUrl('newcatalog/new/getCatProducts'); ?>">
+                                                    <?php echo $_subcategory->getName(); ?>
+                                                </a>
+                                                <?php
+                                                $_subcatCount++;
+                                                if ($_subcatCount === 5) {
+                                                    break;
+                                                }
+                                                ?>
+                                            <?php endforeach; ?>
+                                        </div>
+                                    <?php endif; ?>
+                                    <div class="view-more">
+                                        <a id="view-more-<?php echo $_category->getId(); ?>"
+                                           href="<?php echo $_category->getUrl(); ?>">Xem tất cả&nbsp;&nbsp;
+                                            <i class="fa fa-caret-right"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                                <div id="cat-products-ajax-loader-<?php echo $_category->getId(); ?>"
+                                     class="cat-products-ajax-loader">
+                                    <img src="<?php echo $this->getSkinUrl('images/ajax-loader-new.gif'); ?>"/>
+                                </div>
+                                <?php
+                                $todayStartOfDayDate = Mage::app()->getLocale()->date()
+                                    ->setTime('00:00:00')
+                                    ->toString(Varien_Date::DATETIME_INTERNAL_FORMAT);
+
+                                $todayEndOfDayDate = Mage::app()->getLocale()->date()
+                                    ->setTime('23:59:59')
+                                    ->toString(Varien_Date::DATETIME_INTERNAL_FORMAT);
+
+                                $_products = $_category->getProductCollection()
+                                    ->setVisibility(Mage::getSingleton('catalog/product_visibility')->getVisibleInCatalogIds())
+                                    ->addAttributeToFilter('news_from_date', array('or' => array(
+                                        0 => array('date' => true, 'to' => $todayEndOfDayDate),
+                                        1 => array('is' => new Zend_Db_Expr('null')))
+                                    ), 'left')
+                                    ->addAttributeToFilter('news_to_date', array('or' => array(
+                                        0 => array('date' => true, 'from' => $todayStartOfDayDate),
+                                        1 => array('is' => new Zend_Db_Expr('null')))
+                                    ), 'left')
+                                    ->addAttributeToFilter(
+                                        array(
+                                            array('attribute' => 'news_from_date', 'is' => new Zend_Db_Expr('not null')),
+                                            array('attribute' => 'news_to_date', 'is' => new Zend_Db_Expr('not null'))
+                                        )
+                                    )
+                                    ->addAttributeToSort('news_from_date', 'desc')
+                                    ->addAttributeToFilter('price', array('gt' => 0))
+                                    ->addAttributeToFilter('instock', array('in' => array(1, 6)))
+                                    ->setPageSize(8)->setCurPage(1);
+                                Mage::getModel('catalog/layer')->prepareProductCollection($_products);
+                                ?>
+                                <?php if (count($_products) > 0): ?>
+                                    <div id="cat-products-content-<?php echo $_category->getId(); ?>"
+                                         class="row cat-products-content">
+                                        <?php foreach ($_products as $_product): ?>
+                                            <?php
+                                            $_productObj = new stdClass();
+                                            $_productObj->name = $this->escapeHtml($_product->getName());
+                                            $_productObj->id = intval($_product->getId());
+                                            $_productObj->price = intval($_product->getFinalPrice());
+                                            $_productObj->list = 'Home Page';
+                                            $_productImpressions[] = $_productObj;
+                                            ?>
+                                            <?php
+                                            $oldPrice = $_product->getPrice();
+                                            $finalPrice = $_product->getFinalPrice();
+                                            ?>
+                                            <?php
+                                            $includedProduct = json_decode($this->helper('catalog/output')->productAttribute($_product, nl2br($_product->getPromotionInfo()), 'promotion_info'));
+                                            $includedProductIds = [];
+                                            $includedProductQty = [];
+                                            if ($includedProduct) {
+                                                $includedProductIds = json_decode($this->helper('catalog/output')->productAttribute($_product, nl2br($_product->getPromotionInfo()), 'promotion_info'))->promotion_ids;
+                                                $includedProductQty = json_decode($this->helper('catalog/output')->productAttribute($_product, nl2br($_product->getPromotionInfo()), 'promotion_info'))->promotion_qty;
+                                            }
+                                            $promotionInfoHtml = '<b>Tặng kèm:</b>';
+                                            ?>
+                                            <?php if (count($includedProductIds) > 0 && count($includedProductQty) > 0): ?>
+                                                <?php foreach ($includedProductIds as $key => $id): ?>
+                                                    <?php
+                                                    $_includedProduct = Mage::getModel('catalog/product')->load($id);
+                                                    $promotionInfoHtml .= '</br>- ' . $includedProductQty[$key] . ' ' . $this->escapeHtml($_includedProduct->getName()) . '';
+                                                    ?>
+                                                <?php endforeach; ?>
+                                            <?php endif; ?>
+                                            <div class="col-md-3 col-sm-3">
+                                                <div class="product-content">
+                                                    <?php if (in_array((string)$_product->getId(), $tagProduct)): ?>
+                                                        <img class="list-tag"
+                                                             src='<?php echo $this->getSkinUrl('images/tag.png') ?>'/>
+                                                    <?php endif; ?>
+                                                    <a href="<?php echo $_product->getProductFullUrl(); ?>"
+                                                       onclick="trackProductClicks(this);"
+                                                       data-id="<?php echo $_product->getId(); ?>"
+                                                       data-name="<?php echo $this->escapeHtml($_product->getName()); ?>"
+                                                       data-price="<?php echo $_product->getFinalPrice(); ?>"
+                                                    >
+                                                        <img class="product-img lazy" src="" alt=""
+                                                             data-src="<?php echo $this->helper('catalog/image')->init($_product, 'small_image')->resize(300, 300); ?>"
+                                                             data-product-name="<?php echo $this->escapeHtml($_product->getName()); ?>"
+                                                             data-product-price="<?php echo number_format($_product->getFinalPrice(), 0, ",", ".") . " ₫"; ?>"
+                                                             data-product-desc="<?php echo $this->escapeHtml($this->helper('catalog/output')->productAttribute($_product, nl2br($_product->getShortDescription()), 'short_description')); ?>"
+                                                        />
+                                                    </a>
+                                                    <div class="product-info">
+                                                        <div class="product-discount">
+                                                            <?php if ($oldPrice != $finalPrice) : ?>
+                                                                <div class="old-price">
+                                                                    <?php echo number_format($oldPrice, 0, ",", ".") . " ₫"; ?>
+                                                                </div>
+                                                                <div class="discount">
+                                                                    <span class="discount-number">
+                                                                        (-<?php echo number_format(($oldPrice - $finalPrice) / $oldPrice * 100, 0) . "%" ?>
+                                                                        )
+                                                                    </span>
+                                                                </div>
+                                                            <?php endif; ?>
+                                                        </div>
+                                                        <div class="final-price">
+                                                            <?php echo number_format($finalPrice, 0, ",", ".") . " ₫"; ?>
+                                                        </div>
+                                                        <div class="tag-online-payment">
+                                                            <?php if (in_array($_product->getId(), $tagOnlinePaymentIds)): ?>
+                                                                <img src="<?php echo $this->getSkinUrl('images/icon_Notify.svg'); ?>"/>
+                                                                Chỉ áp dụng đặt hàng online
+                                                            <?php endif; ?>
+                                                        </div>
+                                                        <?php if (count($includedProductIds) > 0 && count($includedProductQty) > 0): ?>
+                                                            <img class="product-gift-icon" data-toggle="tooltip"
+                                                                 title="<?php echo $promotionInfoHtml; ?>"
+                                                                 src="<?php echo $this->getSkinUrl('images/icon_Gift.svg'); ?>"/>
+                                                        <?php endif; ?>
+                                                        <a class="product-name" onclick="trackProductClicks(this);"
+                                                           data-id="<?php echo $_product->getId(); ?>"
+                                                           data-name="<?php echo $this->escapeHtml($_product->getName()); ?>"
+                                                           data-price="<?php echo $_product->getFinalPrice(); ?>"
+                                                           href="<?php echo $_product->getProductFullUrl(); ?>"
+                                                           title="<?php echo $this->escapeHtml($_product->getName()); ?>">
+                                                            <?php echo $this->escapeHtml($_product->getName()); ?>
+                                                        </a>
+                                                    </div>
+                                                    <div class="product-btn">
+                                                        <?php
+                                                        $addToCartUrl = ($_product->getTypeId() == 'simple') ? Mage::helper('checkout/cart')->getAddUrl($_product) : $_product->getProductFullUrl();
+                                                        ?>
+                                                        <button type="button"
+                                                                class="add-to-cart-btn add-to-cart-from-list-btn"
+                                                                data-product-name="<?php echo $this->escapeHtml($_product->getName()); ?>"
+                                                                data-product-id="<?php echo intval($_product->getId()); ?>"
+                                                                data-product-price="<?php echo intval($_product->getFinalPrice()); ?>"
+                                                                data-product-type="<?php echo $_product->getTypeId(); ?>"
+                                                                data-add-to-cart-url="<?php echo $addToCartUrl; ?>"
+                                                        >
+                                                            Thêm vào giỏ hàng
+                                                            <img class="add-to-cart-from-list-icon hidden-1200"
+                                                                 src="<?php echo $this->getSkinUrl('images/icon_ShoppingCart2.svg'); ?>"/>
+                                                            <img class="add-to-cart-from-list-ajax-loader hidden"
+                                                                 src="<?php echo $this->getSkinUrl('images/ajax-loader-white.gif'); ?>"/>
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endif; ?>
+                <!--End Popular cat products-->
+
+                <!--Right banner-->
+                <div class="col-md-2 hidden-992 right-banner-block">
+                    <?php echo $this->getLayout()->createBlock('cms/block')->setBlockId('right-banner-v2')->toHtml(); ?>
+                </div>
+                <!--End Right banner-->
+            </div>
+        </div>
+    </div>
+    <!--End Products block-->
+
+    <!--Recently viewed products-->
+    <?php echo $this->getChildHtml('page.recently_viewed_products'); ?>
+    <!--End Recently viewed products-->
+
+    <!--PV subscription-->
+    <div class="row subscription-block">
+        <?php echo $this->getChildHtml('page.subscription'); ?>
+    </div>
+    <!--End PV subscription-->
+
+    <!--Tooltip product detail-->
+    <div class="product-detail">
+        <div class="product-detail-header"></div>
+        <div class="product-detail-content">
+            <div class="product-detail-section mt-0"><b>Giá:</b>
+                <span class="product-detail-price"></span></div>
+            <div class="product-detail-section"><b>Bảo hành:</b> 12 tháng</div>
+            <div class="product-detail-section">
+                <b>Mô tả tóm tắt:</b><br>
+                <div class="product-detail-description"></div>
+            </div>
+        </div>
+    </div>
+    <!--End tooltip product detail-->
+</div>
+
+<script type="text/javascript">
+    var $j = jQuery.noConflict();
+
+    /** Lazy load **/
+    $j('.lazy').Lazy({
+        scrollDirection: 'vertical',
+        effect: 'fadeIn',
+        visibleOnly: true,
+        afterLoad: function (element) {
+            element.css('background-image', 'none').css('width', '85%').css('height', 'auto');
+        }
+    });
+
+    /** Randomize slick slider **/
+    $j.fn.randomize = function (selector) {
+        var $elems = selector ? $j(this).find(selector) : $j(this).children(),
+            $parents = $elems.parent();
+
+        $parents.each(function () {
+            $j(this).children(selector).sort(function (childA, childB) {
+                // * Prevent last slide from being reordered
+                if ($j(childB).index() !== $j(this).children(selector).length - 1) {
+                    return Math.round(Math.random()) - 0.5;
+                }
+            }.bind(this)).detach().appendTo(this);
+        });
+
+        return this;
+    };
+    /** End Randomize slick slider **/
+
+    /** Slick slider **/
+    $j('.slider').slick({
+        infinite: false,
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        speed: 200,
+        autoplay: true,
+        autoplaySpeed: 4000,
+        nextArrow: '<img class="slider-next" src="<?php echo $this->getSkinUrl('images/arrowRight.svg'); ?>"/>',
+        prevArrow: '<img class="slider-prev" src="<?php echo $this->getSkinUrl('images/arrowLeft.svg'); ?>"/>'
+    });
+    /** End slick slider **/
+
+    /** Enhanced Ecommerce features **/
+    /** Track product impressions **/
+    var productImpressions = <?php echo json_encode($_productImpressions); ?>;
+    dataLayer.push({
+        'event': 'productImpressions',
+        'ecommerce': {
+            'currencyCode': 'VND',
+            'impressions': productImpressions
+        }
+    });
+
+    /** Track product clicks **/
+    function trackProductClicks(value) {
+        var productId = $j(value).data('id');
+        var productName = $j(value).data('name');
+        var productPrice = parseInt($j(value).data('price'));
+
+        dataLayer.push({
+            'event': 'productClick',
+            'ecommerce': {
+                'click': {
+                    'actionField': {'list': 'Home Page'},
+                    'products': [{
+                        'id': productId,
+                        'name': productName,
+                        'price': productPrice
+                    }]
+                }
+            }
+        });
+    }
+
+    /** Track promotion views **/
+    var promotionImpressions = [];
+    $j('.slider-img').each(function () {
+        promotionImpressions.push({
+            'id': $j(this).attr('alt'),
+            'name': $j(this).attr('alt'),
+            'position': 'Homepage Slider'
+        });
+    });
+    $j('.right-banner-block img').each(function () {
+        promotionImpressions.push({
+            'id': $j(this).attr('alt'),
+            'name': $j(this).attr('alt'),
+            'position': 'Homepage Right Banner'
+        });
+    });
+    dataLayer.push({
+        'event': 'promotionImpressions',
+        'ecommerce': {
+            'promoView': {
+                'promotions': promotionImpressions
+            }
+        }
+    });
+
+    /** Track promotion clicks **/
+    /** Slider image **/
+    $j('.slider-img').click(function () {
+        dataLayer.push({
+            'event': 'promotionClick',
+            'ecommerce': {
+                'promoClick': {
+                    'promotions': [{
+                        'id': $j(this).attr('alt'),
+                        'name': $j(this).attr('alt'),
+                        'position': 'Homepage Slider'
+                    }]
+                }
+            }
+        });
+    });
+
+    /** Right banner image **/
+    $j('.right-banner-block img').click(function () {
+        dataLayer.push({
+            'event': 'promotionClick',
+            'ecommerce': {
+                'promoClick': {
+                    'promotions': [{
+                        'id': $j(this).attr('alt'),
+                        'name': $j(this).attr('alt'),
+                        'position': 'Homepage Right Banner'
+                    }]
+                }
+            }
+        });
+    });
+    /** End Enhanced Ecommerce features **/
+</script>

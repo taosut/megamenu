@@ -1,0 +1,225 @@
+@import "mixins/main";
+@import "settings";
+
+$dropdown-background-color: #fff;
+$dropdown-internals-border-color: #eceff1;
+$dropdwon-external-border-color: #e8eaeb;
+
+/*----------- Main DropDown Positioning ---------------*/
+.megamenu-nav{
+  position: relative;
+  z-index: 150;
+
+  li{
+    position: static;
+  }
+}
+
+.megamenu-nav-primary {
+  display: block;
+  margin-top: 15px;
+  li.level0{
+    display: inline-block;
+    & > a, & > span{
+      text-transform: uppercase;
+      display: inline-block;
+      position:relative;
+      padding: 0 12px 0 8px;
+      text-decoration: none;
+      display:block;
+      cursor:pointer;
+    }
+  }
+
+  a.level0,span.level0{
+    padding: 0 25px;
+    border-bottom:0px;
+  }
+
+  .megamenu{
+    position: absolute;
+    display:none;
+    z-index: 10;
+
+    .button{
+      color:#fff;
+    }
+  }
+
+  .menu-active{
+    .megamenu{
+      display:block;
+    }
+  }
+
+  a,span.level0 {
+    color: #636363;
+    display:block;
+    &:hover{
+      color:#3399cc;
+      text-decoration:none;
+    }
+  }
+
+  a,span.level0,.section-title span{
+    line-height:30px;
+  }
+
+  li{
+    &:hover{
+      > a{
+        color:#3399cc;
+        text-decoration:none;
+      }
+    }
+  }
+}
+
+/*----------- Main DropDown Styling ---------------*/
+
+.megamenu-nav div.megamenu {
+  background-color: $dropdown-background-color;
+  border: 1px solid $dropdwon-external-border-color;
+}
+
+.megamenu-nav .megamenu .column:not(:last-child) {
+  border-right: 1px solid $dropdown-internals-border-color;
+}
+
+.megamenu-nav .megamenu-nav-primary div.megamenu {
+  border-top: 2px solid #64b5f6;
+}
+
+/*----------- Dropdown Types ---------------*/
+.megamenu-nav {
+  li {
+    &.level0 {
+      .absolute-center {
+        left: 0px;
+        right: 0px;
+        width: 100% !important;
+      }
+
+      .absolute-left {
+        left: 0px;
+        right: auto;
+      }
+
+      .absolute-right {
+        right: 0px;
+        left: auto;
+      }
+    }
+  }
+}
+
+/*----------- Content Columns ---------------*/
+$max-content-columns: 5;
+@for $i from 1 through $max-content-columns {
+  .content-columns-#{$i} {
+    -webkit-column-count: $i; /* Chrome, Safari, Opera */
+    -moz-column-count: $i; /* Firefox */
+    column-count: $i;
+  }
+}
+
+/*----------- Featured Product ---------------*/
+
+.megamenu-featured-products {
+  padding: 27px 27px 0px;
+}
+
+.featured-product {
+  text-align: center;
+
+  img {
+    margin: 0 auto 15px;
+    padding: 10px;
+    border: 1px solid $dropdown-internals-border-color;
+    box-sizing: border-box;
+    max-width: 100%;
+  }
+
+  .button {
+    margin-top: 5px;
+  }
+
+  .secondary & {
+    text-align: left;
+
+    .megamenu-nav & {
+      //increase specificity due to resets
+      @include media_object($image-margin: 15px, $max-image-width: 150px, $bd-padding: 30px 0px 0px);
+
+      .button {
+        float: left;
+        padding: 5px;
+        line-height: 16px;
+      }
+
+    }
+  }
+}
+
+/*----------- Featured Category ---------------*/
+.featured-section, .featured-section a {
+  position: relative;
+}
+
+.featured-section {
+  padding: 15px;
+  img {
+    width: 100%;
+  }
+  a {
+    span {
+      background-color: rgba(100, 181, 246, 0.35);
+      bottom: 0;
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: bold;
+      left: 0;
+      margin-right: 10px;
+      padding: 5px 10px;
+      position: absolute;
+      text-align: center;
+      text-transform: uppercase;
+      width: 100%;
+      box-sizing: border-box;
+    }
+  }
+}
+
+/*------------- Component Styles --------------*/
+
+.section-title {
+  font-weight: bold;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+}
+
+
+/*------------- Widget Blocks --------------*/
+
+.list-block {
+  margin-left:20px;
+  padding: 10px 45px;
+  &:first-of-type {
+    padding-top: 35px;
+  }
+  &:last-of-type {
+    padding-bottom: 35px;
+  }
+
+  li {
+    a {
+      padding: 0px;
+      border: 0px;
+    }
+  }
+}
+
+/*------------- Display Classes --------------*/
+.small-only-view-all{
+  display:none;
+}

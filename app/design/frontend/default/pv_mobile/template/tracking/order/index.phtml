@@ -1,0 +1,276 @@
+<?php
+/**
+ * @var Ved_Tracking_Block_Order $this
+ * @var Mage_Sales_Model_Order $order
+ */
+?>
+<!--Tracking Order CSS-->
+<link rel="stylesheet" type="text/css" href="<?php echo $this->getSkinUrl('lib/trackingOrder.css'); ?>"/>
+<script>
+    dataLayer = [];
+</script>
+
+<?php $orders = Mage::registry('orders'); ?>
+<?php $phone_number = Mage::registry('phone_number'); ?>
+<?php
+$countCompletedOrder = 0;
+$totalPayment = 0;
+foreach ($orders as $order) {
+    if ($order->getStatus() == 'delivered' || $order->getState() == 'complete') {
+        $countCompletedOrder++;
+        $totalPayment += $order->getGrandTotal();
+    }
+}
+?>
+<div class="mobile-tracking-order-wrapper" style="display: block">
+    <ul class="nav nav-tabs mobile-tracking">
+        <li class="active"><a data-toggle="tab" href="#inProgress">Đang xử lý</a></li>
+        <li><a data-toggle="tab" href="#Success">Thành công</a></li>
+<!--        <li><a data-toggle="tab" href="#Canceled">Đã hủy</a></li>-->
+    </ul>
+    <div class="mobile-tracking-content">
+        <div class="mobile-tracking-show" id="inProgress" class="tab-pane active">
+            <?php foreach ($orders as $order): ?>
+                <?php if($order->getStatus() == "pending"): ?>
+                    <?php
+                        $order_state = $order->getState();
+                        $order_status = $order->getStatus();
+                    ?>
+                    <div class="tracking-order-item" data-id="<?php echo (string)$order->getIncrementId(); ?>">
+                        <div class="tracking-order-code">
+                            Mã đơn hàng: <span>#<?php echo $order->getIncrementId() ?></span>
+                        </div>
+                        <div class="tracking-order-detail">
+                            <img class="tracking-order-img-detail" src="<?php echo $this->getSkinUrl('images/arrow-right.svg') ?>" alt="Chi tiết"/>
+                        </div>
+                        <div class="tracking-order-date">
+                            Ngày đặt: <span><?php echo date("d/m/Y H:i", strtotime($order->getCreatedAtStoreDate())); ?></span>
+                        </div>
+                        <div class="tracking-order-status">
+                            Trạng thái: <span class="order-pending"><?php echo $this->getStateName($order_state, $order_status) ?></span>
+                        </div>
+                        <div class="tracking-order-products">
+                            Sản phẩm:
+                            <?php
+                                $_items = $order->getItemsCollection();
+                                if(count($_items)>1){
+                                    echo $_items->getFirstItem()->getName();
+                                    echo".... <span> và ";
+                                    echo (count($_items) - 1);
+                                    echo " sản phẩm khác </span>";
+                                }
+                                else{
+                                    echo $_items->getFirstItem()->getName();
+                                }
+                            ?>
+                        </div>
+                    </div>
+                <?php endif; ?>
+            <?php endforeach; ?>
+        </div>
+        <div class="mobile-tracking-show" id="Success" class="tab-pane fade" style="display: none">
+            <?php foreach ($orders as $order): ?>
+                <?php if($order->getStatus() == "delivered"): ?>
+                    <?php
+                    $order_state = $order->getState();
+                    $order_status = $order->getStatus();
+                    ?>
+                    <div class="tracking-order-item">
+                        <div class="tracking-order-code">
+                            Mã đơn hàng: <span>#<?php echo $order->getIncrementId() ?></span>
+                        </div>
+                        <div class="tracking-order-detail">
+                            <img src="<?php echo $this->getSkinUrl('images/arrow-right.svg') ?>" alt="Chi tiết"/>
+                        </div>
+                        <div class="tracking-order-date">
+                            Ngày đặt: <span><?php echo date("d/m/Y H:i", strtotime($order->getCreatedAtStoreDate())); ?></span>
+                        </div>
+                        <div class="tracking-order-status">
+                            Trạng thái: <span class="order-success"><?php echo $this->getStateName($order_state, $order_status) ?></span>
+                        </div>
+                        <div class="tracking-order-products">
+                            Sản phẩm:
+                            <?php
+                            $_items = $order->getItemsCollection();
+                            if(count($_items)>1){
+                                echo $_items->getFirstItem()->getName();
+                                echo".... <span> và ";
+                                echo (count($_items) - 1);
+                                echo " sản phẩm khác </span>";
+                            }
+                            else{
+                                echo $_items->getFirstItem()->getName();
+                            }
+                            ?>
+                        </div>
+                    </div>
+                <?php endif; ?>
+            <?php endforeach; ?>
+        </div>
+        <div class="mobile-tracking-show" id="Canceled" class="tab-pane fade" style="display: none">
+        </div>
+    </div>
+</div>
+<div class="tracking-order-detail-wrapper" style="display:none;">
+
+</div>
+<div class="modal fade" id="trackingLoad" tabindex="-1" role="dialog">
+    <div class="modal-dialog mid-modal" role="document">
+        <div class="modal-content">
+            <div class="order-detail-loading">
+                <img src="<?php echo $this->getSkinUrl('images/ajax-loader-new.gif') ?>" />
+                <p>Đang tải</p>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+
+    var $j = jQuery.noConflict();
+    $j(document).ready(function () {
+        $j('.state-title').html("Quản lý đơn hàng");
+        $j('.search-and-cart-header').hide();
+        showBackState();
+
+    });
+    $j('.tracking-order-item').on('click',function(e){
+        var orderId = $j(this).data('id');
+        $j('#trackingLoad').modal();
+        $j.ajax({
+            url: "<?php echo $this->getUrl('tracking/order/detail')?>",
+            type: 'POST',
+            dataType: 'json',
+            data: {
+                order_id: orderId,
+            },
+            success: function(response){
+                $j('.tracking-order-detail-wrapper').html(response.order_detail_html);
+                $j('.search-and-cart-header').hide();
+                $j('.state-title').html('Quản lý đơn hàng');
+                showBackState();
+                $j('.tracking-order-detail-wrapper').show();
+                $j('#trackingLoad').modal('toggle');
+            }
+        });
+        e.stopPropagation();
+        e.preventDefault();
+    });
+
+    $j(".mobile-tracking > li").on('click',function(e){
+        $j('.mobile-tracking > li').removeClass("active");
+        $j(".mobile-tracking > li").each(function(){
+            var currentID = $j(this).children().attr("href");
+            $j(currentID).hide();
+        });
+        $j(this).addClass("active");
+        var currentID = $j(this).children().attr("href");
+        $j(currentID).show();
+        e.stopPropagation();
+    });
+    preventKeyInput();
+
+    if ($j(window).width() < 500) {
+        toggleOrderList()
+    }
+
+    $j(window).on('resize', function () {
+        if ($j(".search-list-orders").is(':hidden') && $j(window).width() >= 500) {
+            $j(".search-list-orders").toggle()
+        }
+    });
+
+    function preventKeyInput() {
+        $j('input[type="number"]').keypress(function (e) {
+            if (e.which == 8) { // to allow BackSpace
+                return
+            }
+            if (e.which < 48 || e.which > 57 || e.keyCode == 13) {
+                e.preventDefault();
+            }
+        });
+
+        $j('.discount-input').keypress(function (e) {
+            if (e.keyCode === 10 || e.keyCode === 13)
+                e.preventDefault();
+        });
+    }
+
+    function checkOrderDetail(value) {
+
+        var orderId = $j(value).data("id");
+
+        var track_order_item = "track-order-item-" + orderId;
+
+        var data = {
+            order_id: orderId
+        };
+
+        $j('.track-order-item').removeClass('track-order-item-active');
+        $j('#' + track_order_item).addClass('track-order-item-active');
+
+        $j('.track-order-detail').empty();
+        $j('.track-order-detail-loading').removeClass('hidden');
+
+        $j.ajax({
+            url: "<?php echo $this->getUrl('tracking/order/detail') ?>",
+            type: 'POST',
+            dataType: 'json',
+            data: data,
+            success: function (response) {
+                $j('.track-order-detail-loading').addClass('hidden');
+                $j('.track-order-detail').append(response.order_detail_html);
+            }
+        });
+    }
+
+    var timeout = null;
+
+    function doSearchOrder() {
+        $j('.list-orders').empty();
+        $j('.track-order-detail').empty();
+        $j('.search-order-loading').removeClass('hidden');
+        if (timeout) {
+            clearTimeout(timeout);
+        }
+        timeout = setTimeout(function () {
+            searchOrder();
+        }, 1000);
+    }
+
+    // Xu ly ajax tim kiem don hang
+    function searchOrder() {
+        var form = $j('#search-order-form');
+        var data = form.serializeArray();
+        $j.ajax({
+            url: form.attr('action'),
+            type: form.attr('method'),
+            dataType: 'json',
+            data: data,
+            success: function (response) {
+                $j('.list-orders').empty();
+                $j('.track-order-detail').empty();
+                $j('.search-order-loading').addClass('hidden');
+                $j('.list-orders').append(response.search_order_html);
+                $j('.track-order-detail').append(response.order_detail_html);
+            }
+        });
+    }
+
+    function toggleOrderList() {
+        $j(".search-list-orders").toggle(300, function () {
+            if ($j(".search-list-orders").is(':hidden')) {
+                $j('.tracking-order-mobile').find("i").toggleClass('fa-angle-up fa-angle-down');
+            } else {
+                $j('.tracking-order-mobile').find("i").toggleClass('fa-angle-down fa-angle-up');
+            }
+        });
+    }
+
+    /** Continue shopping **/
+    function continueShopping() {
+        $j('.continue-shopping-btn').prop('disabled', true);
+        $j('.continue-shopping-ajax-loader').removeClass('hidden');
+        window.location.href = '<?php echo $this->getUrl(); ?>';
+    }
+    /** End continue shopping **/
+</script>

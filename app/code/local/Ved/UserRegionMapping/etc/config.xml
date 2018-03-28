@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+
+<config>
+    <modules>
+        <Ved_UserRegionMapping>
+            <version>1.0.0</version>
+        </Ved_UserRegionMapping>
+    </modules>
+
+    <global>
+        <models>
+            <userregionmapping>
+                <class>Ved_UserRegionMapping_Model</class>
+                <resourceModel>userregionmapping_resource</resourceModel>
+            </userregionmapping>
+            <userregionmapping_resource>
+                <class>Ved_UserRegionMapping_Model_Resource</class>
+                <entities>
+                    <mapping>
+                        <table>user_region_mapping</table>
+                    </mapping>
+                </entities>
+            </userregionmapping_resource>
+        </models>
+        <resources>
+            <userregionmapping_setup>
+                <setup>
+                    <module>Ved_UserRegionMapping</module>
+                </setup>
+            </userregionmapping_setup>
+        </resources>
+        <blocks>
+            <ved_userregionmapping>
+                <class>Ved_UserRegionMapping_Block</class>
+            </ved_userregionmapping>
+        </blocks>
+
+        <helpers>
+            <ved_userregionmapping>
+                <class>Ved_UserRegionMapping_Helper</class>
+            </ved_userregionmapping>
+        </helpers>
+    </global>
+
+    <admin>
+        <routers>
+            <adminhtml>
+                <args>
+                    <modules>
+                        <Ved_UserRegionMapping before="Mage_Adminhtml">Ved_UserRegionMapping_Adminhtml</Ved_UserRegionMapping>
+                    </modules>
+                </args>
+            </adminhtml>
+        </routers>
+    </admin>
+
+    <adminhtml>
+        <menu>
+            <system>
+                <children>
+                    <userregionmapping>
+                        <title>User Region Mapping</title>
+                        <sort_order>100</sort_order>
+                        <action>adminhtml/userregionmapping</action>
+                    </userregionmapping>
+                </children>
+            </system>
+        </menu>
+        <layout>
+            <updates>
+                <ved_userregionmapping>
+                    <file>ved_userregionmapping.xml</file>
+                </ved_userregionmapping>
+            </updates>
+        </layout>
+    </adminhtml>
+
+</config>

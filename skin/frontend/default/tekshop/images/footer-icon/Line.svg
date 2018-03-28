@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-3225 21708.736 1877.5 37.639">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+        stroke: #f1f1f1;
+      }
+
+      .cls-2 {
+        fill: #001f30;
+      }
+
+      .cls-3 {
+        fill: #fff;
+        opacity: 0.2;
+      }
+    </style>
+  </defs>
+  <g id="Group_2417" data-name="Group 2417" transform="translate(-3225 21452)">
+    <line id="Line_881" data-name="Line 881" class="cls-1" x2="1875" transform="translate(2.5 293.055)"/>
+    <rect id="Rectangle_1328" data-name="Rectangle 1328" class="cls-2" width="1875" height="35" transform="translate(0 258.055)"/>
+    <path id="Path_2067" data-name="Path 2067" class="cls-3" d="M-5601,13360h416.469l-41.469,36.32h-375Z" transform="translate(5601 -13101.945)"/>
+    <path id="Path_2068" data-name="Path 2068" class="cls-3" d="M-5601,13360h706.469l-70.346,36.32H-5601Z" transform="translate(5601 -13101.945)"/>
+    <path id="Path_2069" data-name="Path 2069" class="cls-3" d="M-5569.113,13360l331.175-.076v34.939l-371.035.137Z" transform="translate(7112.645 -13101.945)"/>
+    <path id="Path_2070" data-name="Path 2070" class="cls-3" d="M-5549.461,13360l561.759,1.479v34.467l-621.271-.945Z" transform="translate(6862.645 -13103.264)"/>
+  </g>
+</svg>

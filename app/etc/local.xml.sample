@@ -1,0 +1,124 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category   Mage
+ * @package    Mage_Core
+ * @copyright  Copyright (c) 2008 Irubin Consulting Inc. DBA Varien (http://www.varien.com)
+ * @license    http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+-->
+<config>
+    <global>
+        <install>
+            <date>Tue, 05 May 2015 15:34:42 +0000</date>
+        </install>
+        <crypt>
+            <key>ca020c2f0a71ef622f229c9d825bc65e</key>
+        </crypt>
+        <disable_local_modules>false</disable_local_modules>
+        <resources>
+            <db>
+                <table_prefix></table_prefix>
+            </db>
+            <default_setup>
+                <connection>
+                    <host>14.225.2.95</host>
+                    <username>cuong-dev</username>
+                    <password>secret</password>
+                    <dbname>tekshop_local</dbname>
+                    <initStatements>SET NAMES utf8</initStatements>
+                    <model>mysql4</model>
+                    <type>pdo_mysql</type>
+                    <pdoType></pdoType>
+                    <active>1</active>
+                </connection>
+            </default_setup>
+        </resources>
+
+        <session_save>db</session_save> <!-- files / db -->
+        <redis_session>                       <!-- All options seen here are the defaults -->
+            <host>14.225.2.95</host>            <!-- Specify an absolute path if using a unix socket -->
+            <port>6379</port>
+            <password></password>             <!-- Specify if your Redis server requires authentication -->
+            <timeout>5</timeout>            <!-- This is the Redis connection timeout, not the locking timeout -->
+            <persistent></persistent>         <!-- Specify unique string to enable persistent connections. E.g.: sess-db0; bugs with phpredis and php-fpm are known: https://github.com/nico$
+            <db>4</db>                        <!-- Redis database number; protection from accidental loss is improved by using a unique DB number for sessions -->
+            <compression_threshold>2048</compression_threshold>  <!-- Known bug with strings over 64k: https://github.com/colinmollenhour/Cm_Cache_Backend_Redis/issues/18 -->
+            <compression_lib>gzip</compression_lib>              <!-- gzip, lzf, lz4, snappy or none to disable compression -->
+            <log_level>1</log_level>               <!-- 0 (emergency: system is unusable), 4 (warning; additional information, recommended), 5 (notice: normal but significant condition), 6$
+            <max_concurrency>6</max_concurrency>                 <!-- maximum number of processes that can wait for a lock on one session; for large production clusters, set this to at lea$
+            <break_after_frontend>5</break_after_frontend>       <!-- seconds to wait for a session lock in the frontend; not as critical as admin -->
+            <fail_after>10</fail_after>                          <!-- seconds after which we bail from attempting to obtain lock (in addition to break after time) -->
+            <break_after_adminhtml>30</break_after_adminhtml>
+            <first_lifetime>600</first_lifetime>                 <!-- Lifetime of session for non-bots on the first write. 0 to disable -->
+            <bot_first_lifetime>60</bot_first_lifetime>          <!-- Lifetime of session for bots on the first write. 0 to disable -->
+            <bot_lifetime>7200</bot_lifetime>                    <!-- Lifetime of session for bots on subsequent writes. 0 to disable -->
+            <disable_locking>1</disable_locking>                 <!-- Disable session locking entirely. -->
+            <min_lifetime>60</min_lifetime>                      <!-- Set the minimum session lifetime -->
+            <max_lifetime>2592000</max_lifetime>                 <!-- Set the maximum session lifetime -->
+        </redis_session>
+
+        <warehouse_adapter><![CDATA[phongvu]]></warehouse_adapter><!--phongvu/warehouse-->
+        <sso_url>http://acc.teko.vn/api/</sso_url>
+        <warehouse_api_url>http://mabu.warehouse.gcafe.vn/api/</warehouse_api_url>
+        <supplier_api_url>https://test.supplier.teko.vn/api/</supplier_api_url>
+        <phongvu_api_url><![CDATA[http://test.pvis.teko.vn/warehouse/]]></phongvu_api_url>
+        <rabitmq>
+            <host>white-mynah-bird.rmq.cloudamqp.com</host>
+            <login>test</login>
+            <port>5672</port>
+            <vhost>dev</vhost>
+            <password>9oDiGIC-9NWabuXTTQhLaqXVs5gahFxc</password>
+        </rabitmq>
+        <site_online>20,21</site_online>
+		
+        <pay_online>
+            <base_url><![CDATA[http://fm-dev.teko.vn]]></base_url>
+            <string_version><![CDATA[?db=tk_finance]]></string_version>
+            <gateway_info><![CDATA[api/vnpay/payment_gateway_info]]></gateway_info>
+            <check_payment><![CDATA[api/vnpay/transaction_info]]></check_payment>
+            <submit_order><![CDATA[api/vnpay/created_sale_order]]></submit_order>
+        </pay_online>
+		<alepay>
+                    <apiKey><![CDATA[F3DXPObvPgbHSG4xf1xfH1B9ZAkPbg]]></apiKey>
+                    <encryptKey><![CDATA[MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCRjbH2qm9IJIrXKqguyzu5YLTEJKxhQXvlU9YQesWzxSMFCWKuOLJOKJK/HGPg0QE4vV7WDF2hMu5ezuR6NNu2OhmzyW20Y80FnaQkbrwdM4nGyCgVJ6ybfHd8x/kR7h2GlLfUBmjAvc0whBCk1SqbXrQxGSZJ9/NFzhJfmyfvEwIDAQAB]]></encryptKey>
+                    <checksumKey><![CDATA[p2NVdN0gL9e8CTAxlXYvhN56QfVGS5]]></checksumKey>
+                    <callbackUrl><![CDATA[https://stg.tekshop.vn/tek/checkout/payment/alepay_return]]></callbackUrl>
+                    <cancelURL><![CDATA[https://stg.tekshop.vn/tek/checkout/payment/index/]]></cancelURL>
+                    <env><![CDATA[test]]></env>
+        </alepay>
+        <webpush>
+            <os_chrome_firefox>4390ebf7-8803-4b99-8cab-a4f543c43008</os_chrome_firefox>
+            <os_safari>4390ebf7-8803-4b99-8cab-a4f543c43008</os_safari>
+            <firebase_server>AAAAg2qK8ow:APA91bFWY-GdnKaTffoTA4P78g7Ywn22YSNmZMiT8eYse6X8DLmTy_5m-lW7jGFOAWxSk0lFgC1vl6NyTbg0ASc5zmymXHvFsmlDVL6LBsE_0Emp34g_UhC7ZsFo2PXiarBUIFGPQGq-</firebase_server>
+            <firebase_app>564428206732</firebase_app>
+        </webpush>
+    </global>
+    <admin>
+        <routers>
+            <adminhtml>
+                <args>
+                    <frontName>admin</frontName>
+                </args>
+            </adminhtml>
+        </routers>
+    </admin>
+</config>

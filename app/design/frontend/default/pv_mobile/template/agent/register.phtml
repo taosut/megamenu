@@ -1,0 +1,419 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: Teko
+ * Date: 9/6/2017
+ * Time: 11:10 AM
+ */
+?>
+
+<?php
+$currentUser = Mage::getSingleton('customer/session')->getCustomer();
+?>
+
+<style>
+    /*basic reset*/
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    /*adding a black bg to the body to make things clearer*/
+    body {
+        background: black;
+    }
+
+    canvas {
+        display: block;
+    }
+</style>
+
+<script>
+    dataLayer = [];
+</script>
+
+<canvas style="margin-bottom: -1px;" id="c">
+</canvas>
+
+<?php
+$session = Mage::getSingleton('customer/session');
+?>
+
+<?php if ($session->isLoggedIn()): ?>
+    <div class="agent-content-register">
+        <div class="agent-header">
+            <div class="agent-logo-block">
+                <img src="<?php echo $this->getSkinUrl('images/agent-logo.png') ?>">
+            </div>
+            <div class="agent-register-title">
+                Đăng ký chương trình
+            </div>
+            <div class="agent-register-title mb-40">
+                Đặc vụ Tekshop
+            </div>
+        </div>
+
+        <div class="agent-intro-blocks">
+            <!-- Agent introduction-->
+            <?php
+            echo $this->getLayout()->createBlock('cms/block')->setBlockId('agent_introduction')->toHtml();
+            ?>
+
+            <!-- Agent rights-->
+            <?php
+            echo $this->getLayout()->createBlock('cms/block')->setBlockId('agent_rights')->toHtml();
+            ?>
+
+            <!-- Agent duties-->
+            <?php
+            echo $this->getLayout()->createBlock('cms/block')->setBlockId('agent_duties')->toHtml();
+            ?>
+        </div>
+
+        <!-- Agent register form-->
+        <div class="agent-register-form">
+            <div class="agent-register-form-title">
+                Nhập thông tin đăng ký (những mục có dấu <span class="red">*</span> là bắt buộc)
+            </div>
+            <div class="agent-register-form-content">
+                <form id="registerAgentForm" class="form-horizontal"
+                      action="<?php echo $this->getUrl('agent/index/registerAgent') ?>" method="post">
+                    <div class="row ml-0 mt-20">
+                        <div class="col-sm-4 col-xs-10">
+                            <div class="agent-field-title">Họ và tên</div>
+                            <input id="agentName" type="text" class="agent-field-input form-control"
+                                   placeholder="Nhập họ tên"
+                                   value="<?php echo $currentUser->getFirstname() ?>" disabled>
+                        </div>
+                        <div class="col-sm-4 col-xs-10 mt-20-xs">
+                            <div class="agent-field-title">Số điện thoại</div>
+                            <input id="agentPhoneNumber" type="number" class="agent-field-input form-control"
+                                   placeholder="Nhập số điện thoại"
+                                   value="<?php echo $currentUser->getPhoneNumber() ?>" disabled>
+                        </div>
+                    </div>
+
+                    <div class="row ml-0 mt-20">
+                        <div class="col-sm-4 col-xs-10">
+                            <div class="agent-field-title">Giới tính <span class="red">*</span></div>
+                            <select class="agent-field-input form-control" name="gender">
+                                <option value="Nam">Nam</option>
+                                <option value="Nữ">Nữ</option>
+                                <option value="Khác">Khác</option>
+                            </select>
+                        </div>
+                        <div class="col-sm-4 col-xs-10 mt-20-xs">
+                            <?php
+                            $address = $currentUser->getDefaultShippingAddress();
+                            $email = ($address) ? $address->getCustomerEmail() : '';
+                            ?>
+                            <div class="agent-field-title">Email <span class="red">*</span></div>
+                            <input id="agentEmail" type="email" class="agent-field-input form-control"
+                                   placeholder="Nhập email"
+                                   value="<?php echo $email ?>">
+                        </div>
+
+                    </div>
+
+                    <div class="row ml-0 mt-20">
+                        <div class="col-sm-4 col-xs-10">
+                            <div class="agent-field-title">Ngày sinh <span class="red">*</span></div>
+                            <input type="text" class="agent-datepicker agent-field-input form-control" id="datepicker"
+                                   name="dob" placeholder="dd/mm/yyyy"
+                                   readonly>
+                        </div>
+                        <div class="col-sm-4 col-xs-10 mt-20-xs">
+                            <div class="agent-field-title">Địa chỉ <span class="red">*</span></div>
+                            <input type="text" class="agent-field-input form-control" name="address"
+                                   placeholder="Nhập địa chỉ"/>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="agent-register-confirmation">
+                <div class="agent-register-confirm">
+                    <input id="agentConfirmCheckbox" class="agent-checkbox" type="checkbox">Tôi đã đọc kỹ <span
+                            class=" agent-intro-title agent-hyperlink"
+                            data-toggle="modal"
+                            data-target="#agentRights">Quyền lợi</span>
+                    và <span class=" agent-intro-title agent-hyperlink" data-toggle="modal" data-target="#agentDuties">Nghĩa vụ</span> của
+                    Đặc
+                    vụ Tekshop
+                </div>
+
+                <div class="agent-register-btn" onclick="registerAgent()">
+                    <img class="agent-ajax-loader no-display"
+                         title="Đang tải"
+                         src="<?php echo $this->getSkinUrl('images/ajax-loader.gif') ?>"
+                         width="16" height="16"/>
+                    Đăng ký ngay
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="registerSucceed" class="modal fade" role="dialog">
+        <div class="modal-dialog" style="margin-top: 25vh">
+            <!-- Modal content-->
+            <div class="modal-content agent-modal-content">
+                <div class="modal-header agent-modal-header">
+                    <div class="agent-continue-btn" onclick="goToAgentHome()">Tiếp tục</div>
+                </div>
+                <div class="modal-body agent-modal-body">
+                    <div class="a-center">
+                        <img class="agent-modal-body-logo"
+                             src="<?php echo $this->getSkinUrl('images/agent-logo-green.png') ?>">
+                        <div class="agent-modal-body-text">Chúc mừng <?php echo $currentUser->getFirstname() ?> đã trở
+                            thành đặc vụ Tekshop.
+                        </div>
+                        <div class="agent-modal-body-text"><span class="agent-recommendation-text"></span></div>
+                        <div class="agent-modal-body-text">Mã đặc vụ của bạn là: <span
+                                    class="agent-register-code"></span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="registerFailed" class="modal fade" role="dialog">
+        <div class="modal-dialog" style="margin-top: 25vh">
+            <!-- Modal content-->
+            <div class="modal-content agent-modal-content">
+                <div class="modal-header agent-modal-header">
+                    <div class="agent-close-modal" data-dismiss="modal">&times;</div>
+                </div>
+                <div class="modal-body agent-modal-body">
+                    <div class="a-center">
+                        <img class="agent-modal-body-logo"
+                             src="<?php echo $this->getSkinUrl('images/agent-logo-red.png') ?>">
+                        <div class="row agent-validate-text agent-not-enough-field agent-modal-body-text no-display">
+                            <div class="col-xs-8 col-xs-offset-2">
+                                Vui lòng nhập đủ thông tin cá nhân trước khi Đăng ký trở thành Đặc vụ Tekshop!
+                            </div>
+                        </div>
+                        <div class="row agent-validate-text agent-email-error agent-modal-body-text no-display">
+                            <div class="col-xs-8 col-xs-offset-2">
+                                Địa chỉ Email không đúng định dạng, vui lòng kiểm tra lại!
+                            </div>
+                        </div>
+                        <div class="row agent-validate-text agent-not-check-confirm agent-modal-body-text no-display">
+                            <div class="col-xs-8 col-xs-offset-2">
+                                Bạn chưa xác nhận đã đọc kỹ Quyền lợi và Nghĩa vụ của Đặc vụ Tekshop!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php else: ?>
+    <div class="agent-content-register">
+        <div class="agent-header">
+            <div class="agent-logo-block">
+                <img src="<?php echo $this->getSkinUrl('images/agent-logo.png') ?>">
+            </div>
+            <div class="agent-register-title">
+                Bạn vui lòng đăng nhập trước
+            </div>
+            <div class="agent-register-title">
+                Để có thể đăng ký trở thành đặc vụ Tekshop
+            </div>
+        </div>
+
+        <div class="agent-intro-blocks">
+            <!-- Agent introduction-->
+            <?php
+            echo $this->getLayout()->createBlock('cms/block')->setBlockId('agent_introduction')->toHtml();
+            ?>
+
+            <!-- Agent rights-->
+            <?php
+            echo $this->getLayout()->createBlock('cms/block')->setBlockId('agent_rights')->toHtml();
+            ?>
+
+            <!-- Agent duties-->
+            <?php
+            echo $this->getLayout()->createBlock('cms/block')->setBlockId('agent_duties')->toHtml();
+            ?>
+        </div>
+    </div>
+<?php endif; ?>
+
+<script>
+    var $j = jQuery.noConflict();
+    var win = $j(window);
+
+    $j('.main-container').find('.container').addClass('ml-0');
+
+    /* Background matrix */
+    var c = document.getElementById("c");
+    var ctx = c.getContext("2d");
+
+    //making the canvas full screen
+    win.on('resize', function () {
+        c.height = $j('.agent-content-register').height() + 100
+        c.width = window.innerWidth;
+        if (win.width() > 1170) {
+            var contentMarginLeft = (win.width() - 1170) / 2;
+            $j('.agent-content-register').css('margin-left', contentMarginLeft + 'px');
+        } else $j('.agent-content-register').removeAttr('style')
+    }).trigger('resize');
+
+
+    //chinese characters - taken from the unicode charset
+    var chinese = "ewqoiusdjflaknjpo(@)*#$98309421-0KSJAD!$@%";
+    //converting the string into an array of single characters
+    chinese = chinese.split("");
+
+    var font_size = 10;
+    var columns = c.width / font_size; //number of columns for the rain
+    //an array of drops - one per column
+    var drops = [];
+    //x below is the x coordinate
+    //1 = y co-ordinate of the drop(same for every drop initially)
+    for (var x = 0; x < columns; x++)
+        drops[x] = 1;
+
+    //drawing the characters
+    function draw() {
+        //Black BG for the canvas
+        //translucent BG to show trail
+        ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+        ctx.fillRect(0, 0, c.width, c.height);
+
+        ctx.fillStyle = "#0F0"; //green text
+        ctx.font = font_size + "px arial";
+        //looping over drops
+        for (var i = 0; i < drops.length; i++) {
+            //a random chinese character to print
+            var text = chinese[Math.floor(Math.random() * chinese.length)];
+            //x = i*font_size, y = value of drops[i]*font_size
+            ctx.fillText(text, i * font_size, drops[i] * font_size);
+
+            //sending the drop back to the top randomly after it has crossed the screen
+            //adding a randomness to the reset to make the drops scattered on the Y axis
+            if (drops[i] * font_size > c.height && Math.random() > 0.975)
+                drops[i] = 0;
+
+            //incrementing Y coordinate
+            drops[i]++;
+        }
+    }
+
+    setInterval(draw, 33);
+    /* End background matrix */
+
+    $j('input[type="number"]').keypress(function (e) {
+        var a = [];
+        var k = e.which;
+
+        for (i = 48; i < 58; i++)
+            a.push(i);
+
+        if (!(a.indexOf(k) >= 0))
+            e.preventDefault();
+    });
+
+    $j(document).ready(function () {
+        $j("#datepicker").datepicker({
+            dateFormat: 'dd/mm/yy',
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "1950:2017"
+        });
+    });
+
+    $j('#agentConfirmCheckbox').on('change', function () {
+        this.value = this.checked ? 1 : 0;
+    }).change();
+
+    var clickable = true;
+
+    function registerAgent() {
+        if (clickable) {
+            $j('.agent-validate-text').addClass('no-display');
+
+            var form = $j('#registerAgentForm');
+            var data = form.serializeArray();
+            var name = $j('#agentName').val();
+            var phoneNumber = $j('#agentPhoneNumber').val();
+            var gender = data[0].value;
+            var email = $j('#agentEmail').val().trim();
+            var dob = data[1].value;
+            var address = data[2].value.trim();
+            var isAgentCheckConfirm = Number($j('#agentConfirmCheckbox').val());
+
+            // Check nhap du thong tin
+            if (address === '' || dob === '' || email === '') {
+                $j('.agent-not-enough-field').removeClass('no-display');
+                $j('#registerFailed').modal();
+            }
+            else if (!validateEmail(email)) {
+                $j('.agent-email-error').removeClass('no-display');
+                $j('#registerFailed').modal();
+            }
+            else if (isAgentCheckConfirm === 0) {
+                $j('.agent-not-check-confirm').removeClass('no-display');
+                $j('#registerFailed').modal();
+            }
+            else {
+                clickable = false;
+                $j('.agent-ajax-loader').removeClass('no-display');
+                $j('.agent-register-btn').css('padding', '15px 20px');
+
+                var recommendation_code = "<?php echo $this->getRequest()->getParam('recommendation_code') ?>";
+
+                var dataPost = {
+                    name: name,
+                    phone_number: phoneNumber,
+                    user_email: '<?php echo $currentUser->getEmail(); ?>',
+                    email: email,
+                    address: address,
+                    dob: dob,
+                    gender: gender,
+                    recommendation_code: recommendation_code
+                };
+
+                $j.ajax({
+                    url: form.attr('action'),
+                    type: form.attr('method'),
+                    dataType: 'json',
+                    data: dataPost,
+                    success: function (response) {
+                        $j('.agent-ajax-loader').addClass('no-display');
+                        $j('.agent-register-btn').css('padding', '15px 30px');
+//                    console.log(response);
+                        if (response.success) {
+                            if (response.master_agent_name) {
+                                $j('.agent-recommendation-text').empty();
+                                $j('.agent-recommendation-text').append('Người giới thiệu: Đặc vụ ' + response.master_agent_name + '.');
+                            }
+
+                            $j('.agent-register-code').empty();
+                            $j('.agent-register-code').append(response.agent_code);
+                            $j('#registerSucceed').modal({backdrop: 'static', keyboard: false});
+                        }
+                        else {
+                            clickable = true;
+                            swal("", "Có lỗi xảy ra, vui lòng thử lại hoặc liên hệ Admin Tekshop theo hotline 0988796885 để được hỗ trợ!", "error");
+                        }
+                    }
+                });
+            }
+        }
+    }
+
+    function goToAgentHome() {
+        window.location.href = '<?php echo $this->getUrl('agent'); ?>';
+    }
+
+    function validateEmail(email) {
+        var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(email);
+    }
+
+    function validateVNPhoneNumber(phone_number) {
+        var phoneRe = /^\+?(84|0)([1-9]\d{8,9})$/;
+        return phoneRe.test(phone_number);
+    }
+</script>

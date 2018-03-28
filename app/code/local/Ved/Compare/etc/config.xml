@@ -1,0 +1,32 @@
+<config>
+    <modules>
+        <Ved_Compare>
+            <version>1.0.0</version>
+        </Ved_Compare>
+    </modules>
+    <frontend>
+        <routers>
+            <compare>
+                <use>standard</use>
+                <args>
+                    <module>Ved_Compare</module>
+                    <frontName>compare</frontName>
+                </args>
+            </compare>
+        </routers>
+        <layout>
+            <updates>
+                <compare>
+                    <file>ved_compare.xml</file>
+                </compare>
+            </updates>
+        </layout>
+    </frontend>
+    <global>
+        <blocks>
+            <compare>
+                <class>Ved_Compare_Block</class>
+            </compare>
+        </blocks>
+    </global>
+</config>

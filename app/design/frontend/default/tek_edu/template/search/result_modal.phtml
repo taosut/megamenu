@@ -1,0 +1,111 @@
+<?php
+$catArray = ['667', '662', '665', '721', '722', '663', '664', '723', '668', '669', '660', '659', '650'];
+function getCatUrl($catId)
+{
+    return Mage::getModel('catalog/category')->load($catId)->getUrl();
+}
+
+?>
+<?php $_helper = $this->helper('catalog/output'); ?>
+<?php
+$queryWord = Mage::registry('queryWord');
+$catIdSearch = Mage::registry('catIdSearch');
+$currentPage = Mage::registry('currentPage');
+$pageSize = 12;
+$_products = Mage::getModel('catalog/category')->load($catIdSearch)
+    ->getProductCollection()
+    ->addAttributeToSelect('*')
+    ->addStoreFilter(20)
+    ->addAttributeToFilter('status', 1)
+    ->addAttributeToFilter('visibility', 4)
+    ->addAttributeToFilter('name',
+        array(
+            'like' => $queryWord
+        )
+    )
+    ->setPageSize($pageSize)
+    ->setCurPage($currentPage);
+
+$totalPage = ((int)($_products->getSize() / $pageSize));
+if (($_products->getSize() % $pageSize) != 0) {
+    $totalPage = $totalPage + 1;
+}
+//$currentPage = 1;
+$storeCode = Mage::app()->getStore()->getCode();
+$grid_per_page = Mage::getStoreConfig('catalog/frontend/grid_per_page');
+?>
+<div class="is-last-page"><?php if (intval($currentPage) == $totalPage): ?>true<?php else: ?>false<?php endif; ?></div>
+
+<?php if ($_products->getSize()): ?>
+    <div class="cat-product-area">
+        <div class="container">
+            <div class="row">
+                <input type="hidden" id="totalPage" value="<?php echo $totalPage ?>">
+                <input type="hidden" id="currentPage" value="<?php echo $currentPage ?>">
+                <input type="hidden" id="queryWord" value="<?php echo $queryWord ?>">
+                <div class="paginate-product">
+                    <div class="col-md-12 col-xs-12 bp-products-content no-padding no-display">
+                        <?php foreach ($_products->getItems() as $_product): ?>
+                            <?php if ($_product->getAttributeText('instock_status') === 'Có'): ?>
+                                <div class="col-md-12 col-xs-12 bp-selected-item">
+                                    <div class="col-md-2 col-xs-2 a-center no-padding">
+                                        <img class="bp-product-image"
+                                             src="<?php echo $this->helper('catalog/image')->init($_product, 'small_image')->resize(150, 150); ?>"
+                                             alt="<?php echo $this->escapeHtml($this->getImageLabel($_product, 'small_image')) ?>"
+                                             title="<?php echo $this->escapeHtml($this->getImageLabel($_product, 'small_image')) ?>"
+                                        />
+                                    </div>
+                                    <div class="col-md-7 col-xs-8">
+                                        <div class="bp-product-name">
+                                            <a href="<?php echo $_product->getProductUrl() ?>"
+                                               data-name="<?php echo $_product->getName() ?>"
+                                               data-id="<?php echo $_product->getId() ?>"
+                                               data-price="<?php echo $_product->getFinalPrice() ?>"
+                                               target="_blank"><?php echo $_product->getName(); ?></a>
+                                        </div>
+                                        <div class="bp-product-old-price">
+                                            <?php if ($_product->getPrice() != $_product->getFinalPrice()): ?>
+                                                <?php echo number_format($_product->getPrice(), 0, ",", ".") . " đ"; ?>
+                                            <?php endif; ?>
+                                        </div>
+                                        <div class="bp-product-regular-price">
+                                            <?php echo number_format($_product->getFinalPrice(), 0, ",", ".") . " đ"; ?>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-xs-2 a-right no-padding">
+                                        <?php $shareArray = array_intersect($_product->getCategoryIds(), $catArray) ?>
+                                        <?php if (count($shareArray) > 0): ?>
+                                            <?php
+                                            $itemCatId = array_shift($shareArray);
+                                            ?>
+                                            <button type="button" class="btn btn-success bp-change-btn"
+                                                    onclick="addToBuildPC(this)"
+                                                    data-cat-id="<?php echo $itemCatId ?>"
+                                                    data-cat-url="<?php echo Mage::getModel('catalog/category')->load($itemCatId)->getUrl() ?>"
+                                                    data-product-id="<?php echo $_product->getId() ?>"
+                                                    data-product-name="<?php echo htmlspecialchars($_product->getName()) ?>"
+                                                    data-product-price="<?php echo $_product->getFinalPrice() ?>"
+                                                    data-product-url="<?php echo $_product->getProductUrl() ?>"
+                                                    data-product-image-url="<?php echo $this->helper('catalog/image')->init($_product, 'small_image')->resize(150, 150); ?>"
+                                            >
+                                                <img class="bp-ajax-loader-customize bp-ajax-<?php echo $_product->getId() ?>"
+                                                     title="Đang tải"
+                                                     src="<?php echo $this->getSkinUrl('images/ajax-loader.gif') ?>"
+                                                     width="14" height="14"/>
+                                                <span class="hidden-mobile display-inline">Thêm <span
+                                                        class="hidden-1200">vào cấu hình&nbsp;</span>
+                                            <i class="fa fa-angle-right bp-i-<?php echo $_product->getId() ?>"></i>
+                                                </span>
+                                                <i class="fa fa-plus display-mobile"></i>
+                                            </button>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php endif; ?>

@@ -1,0 +1,495 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     default_default
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<?php
+/**
+ * @see Mage_Adminhtml_Block_Catalog_Product
+ */
+?>
+<div ng-app="purchase" ng-controller="requestCtrl as ctrl">
+    <div class="content-header">
+        <table cellspacing="0">
+            <tr>
+                <td style="width:50%;"><h3 class="icon-head head-products"><?php echo Mage::helper('purchase')->__('Request Item') ?></h3></td>
+                <td class="a-right">
+                    <button ng-click="ctrl.openConfirm()" type="button" class="scalable add">Tạo mới</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="purchase-request">
+        <div class="grid">
+            <div class="hor-scroll">
+                <table width="100%">
+                    <tr>
+                        <td width="30%">
+                            <table cellspacing="0" class="actions">
+                                <tbody><tr>
+                                    <td class="pager">
+                                        Page
+                                        <a title="Previous page" ng-click="ctrl.gotoPage('previous')" ng-if="ctrl.page > 1">
+                                            <img src="<?php echo $this->getSkinUrl('images/pager_arrow_left.gif')?>" alt="Go to Previous page" class="arrow">
+                                        </a>
+                                        <img src="<?php echo $this->getSkinUrl('images/pager_arrow_left_off.gif')?>" ng-if="ctrl.page == 1" alt="Go to Previous page" class="arrow">
+
+                                        <input type="text" name="page" ng-model = "ctrl.page" class="input-text page" enter-click="ctrl.gotoPage()">
+
+                                        <a title="Next page" ng-click="ctrl.gotoPage('next')">
+                                            <img src="<?php echo $this->getSkinUrl('images/pager_arrow_right.gif')?>" alt="Go to Next page" class="arrow">
+                                        </a>
+
+                                        of {{ctrl.total_item % 10 ? ctrl.total_item / 10 + 1 : ctrl.total_item / 10 }} pages
+                                        <span class="separator">|</span>
+                                        Total {{ctrl.total_item}} records found
+                                        <span id="ved_gorders_grid-total-count" class="no-display">{{ctrl.total_item}}</span>
+                                    </td>
+                                </tr>
+                                </tbody></table>
+                            <table cellspacing="0" class="data order-tables">
+                                <colgroup>
+                                    <col width="120px">
+                                    <col width="350px">
+                                    <col>
+                                </colgroup><thead>
+                                <tr class="headings">
+                                    <th><span class="nobr">SKU</span></th>
+                                    <th>Tên sản phẩm</th>
+                                    <th></th>
+                                </tr>
+                                <tr class="filter">
+                                    <th>
+                                        <div class="field-80">
+                                            <input type="text" name="sku" ng-model="ctrl.sku" value="" enter-click="ctrl.searchItem()" class="input-text no-changes">
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="field-250">
+                                            <input type="text" name="name" ng-model="ctrl.name" enter-click="ctrl.searchItem()" value="" class="input-text no-changes">
+                                        </div>
+                                    </th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody  >
+                                <tr class='odd pointer'
+                                    ng-repeat="item in ctrl.items track by $index">
+                                    <td>
+                                        {{item.sku}}
+                                    </td>
+                                    <td>
+                                        {{item.name}}
+                                    </td>
+                                    <td>
+                                        <a ng-click="ctrl.addItem(item, $index)" style="cursor: pointer;"  ng-if="!item.nonClick"><i class="fa fa-plus-square" aria-hidden="true"></i></a>
+                                    </td>
+                                </tr>
+                                <tr ng-if="ctrl.items.length == 0">
+                                    <td colspan="3">No data</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                        <td width="65%">
+                            <div style="color: red" ng-if="ctrl.error">{{ctrl.error}}</div>
+                            <table cellspacing="0" class="data order-tables">
+                                <colgroup>
+                                    <col width="60px">
+                                    <col width="120px">
+                                    <col width="200px">
+                                    <col width="90px">
+                                    <col width="100px">
+                                    <col width="120px">
+                                    <col width="90px">
+                                    <col width="120px">
+                                    <col width="100px">
+                                    <col width="100px">
+                                    <col width="120px">
+                                    <col width="120px">
+                                    <col width="120px">
+                                    <col>
+                                </colgroup><thead>
+                                <tr class="headings">
+                                    <th>STT</th>
+                                    <th><span class="nobr">SKU</span></th>
+                                    <th>Tên sản phẩm</th>
+                                    <th>Số lượng</th>
+                                    <th>Đơn vị</th>
+                                    <th>Giá (trc VAT)</th>
+                                    <th>VAT</th>
+                                    <th>Giá (sau VAT)</th>
+                                    <th>Giá bán</th>
+                                    <th>Margin</th>
+                                    <th>Thành tiền</th>
+                                    <th>Loại hàng</th>
+                                    <th>NCC</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody  >
+                                <tr class='odd pointer'
+                                    ng-repeat="item in ctrl.purchaseItems track by $index">
+                                    <td style="padding-top: 10px;">{{$index + 1}}</td>
+                                    <td style="padding-top: 10px;">{{item.sku}}</td>
+                                    <td style="padding-top: 10px;">{{item.name}}</td>
+                                    <td class="a-center" style="padding-top: 10px;"><input type="number" ng-model="item.quantity" ng-init="item.quantity = 1" style="text-align: center; width: 80px;"> </input></td>
+                                    <td class="a-center" style="padding-top: 10px;">
+                                        <select class="chosen-select form-control" ng-model="item.unit" ng-init="item.unit = 'Chiếc'">
+                                            <option value="Chiếc">Chiếc</option>
+                                            <option value="Thùng">Thùng</option>
+                                            <option value="Mét">Mét</option>
+                                            <option value="Bộ">Bộ</option>
+                                        </select>
+                                    </td>
+                                    <td class="a-center" style="padding-top: 10px;"><input type="number" ng-model="item.price"
+                                                                            ng-change="item.price_vat = (item.price * (1 + 0.01*item.vat) * 100).round() / 100" style="text-align: center; width: 100px;"> </input></td>
+                                    <td class="a-center" style="padding-top: 10px;"><input type="number" ng-model="item.vat" ng-init="item.vat = 10" style="text-align: center; width: 80px;"> </input></td>
+                                    <td class="a-center" style="padding-top: 10px;"><input type="number" ng-model="item.price_vat"
+                                                                            ng-change="item.price = (item.price_vat / (1 + 0.01*item.vat) * 100).round() / 100" style="text-align: center; width: 100px;"> </input></td>
+                                    <td style="padding-top: 10px;">{{item.origin_price | number:0}}</td>
+                                    <td style="padding-top: 10px;">{{((item.origin_price > 0 && item.price_vat > 0) ? ((item.origin_price - item.price_vat)/item.price_vat * 100) : 0) | number:2 }} %</td>
+                                    <td class="a-center" style="padding-top: 10px;"><span class="price">{{item.price_vat * item.quantity | number:0 }} đ</span></td>
+                                    <td class="a-center" style="padding-top: 10px;">
+                                        <select class="chosen-select form-control" ng-model="item.type" ng-init="item.type = '-1'">
+                                            <option value="-1"> - Chọn loại -</option>
+                                            <option value="0">Hàng hóa</option>
+                                            <option value="1">Ký gửi</option>
+                                        </select>
+                                    </td>
+                                    <td class="a-center" style="padding-top: 10px;">
+                                        <select class="chosen-select form-control" ng-model="item.supplier" style="width: 100px;"
+                                                ng-options="supplier.name for supplier in item.suppliers" ng-init="item.supplier = item.suppliers[0] ? item.suppliers[0] : ''">
+                                        </select>
+                                    </td>
+                                    <td class="a-center" style="padding-top: 10px;">
+                                        <a ng-click="ctrl.removeItem(item)" style="cursor: pointer;color:red"><i class="fa fa-minus-square" aria-hidden="true"></i></a>
+                                    </td>
+                                </tr>
+                                <tr ng-if="item.length == 0">
+                                    <td colspan="3">No data</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+
+            </div>
+        </div>
+        <div id="popupConfirm" class="modal fade" tabindex="-1">
+            <div class="modal-dialog  modal-sm">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="modalLabel">Xác nhận</h4>
+                    </div>
+                    <div class="modal-body" style="text-align: center">
+                        <div class="range">
+                            <div class="range-line date">
+                                <span class="label">Ngày nhận dự kiến:</span>
+                                <img style="cursor: pointer" src="<?php echo Mage::getDesign()->getSkinBaseUrl(array('_area'=>'adminhtml')) . '/images/grid-cal.gif' ?>" alt="" class="v-middle"
+                                     id="receive_date_data_trig" title="Date selector">
+                                <input type="text" ng-model="ctrl.receiveDate" name="purchased_on[from]" id="receive_date_data" value="" class="input-text no-changes" style="width:100px; margin: 2px;">
+                            </div>
+                            <div style="text-align: left;padding-left: 15px;padding-top: 10px;padding-right: 20px;">
+                                <span>Kho</span>
+                                <select class="col-sm-4 chosen-select form-control" ng-model="ctrl.warehouse"
+                                        placeholder="Chọn kho"
+                                        ng-options="warehouse.name for warehouse in ctrl.warehouses">
+                                </select>
+                            </div>
+                            <div style="text-align: left;padding-left: 15px;padding-top: 10px;padding-right: 20px;">
+                                <span>Ghi chú</span>
+                                <textarea style="width:100%" rows="5" ng-model="ctrl.description"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="scalable back" data-dismiss="modal">Huỷ</button>
+                        <button type="button" class="btn btn-warning btn-mini" ng-click="ctrl.createPurchaseRequest();">Đặt hàng</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script type="text/javascript">
+    Calendar.setup({
+        inputField : "receive_date_data",
+        ifFormat : "%d/%m/%Y",
+        button : "receive_date_data_trig",
+        showsTime: false,
+        align : "Bl",
+        singleClick : true
+    });
+
+    (function () {
+        var app = angular.module('purchase',[]);
+
+        app.controller('requestCtrl', function ($http, $window) {
+            var vm = this;
+            vm.loading = false;
+            vm.receiveDate = '';
+            vm.description = '';
+            vm.stores = [];
+            vm.sku = '';
+            vm.name = '';
+            vm.items = [];
+            vm.purchaseItems = [];
+            vm.total_item = 0;
+            vm.storeId = 0;
+            vm.warehouse = {};
+
+            getData();
+
+            function getData(){
+                vm.page = 1;
+                vm.stores = <?php echo $this->getStores();?>;
+                vm.items = <?php echo $this->getProducts();?>;
+                vm.total_item = <?php echo $this->getProductCount();?>;
+            }
+
+            vm.gotoPage = function(direction){
+                if(direction == 'next'){
+                    if(vm.page * 10 < vm.total_item){
+                        vm.page += 1;
+                        getItems();
+                    }
+                }else if(direction == 'previous'){
+                    if(vm.page > 1){
+                        vm.page -= 1;
+                        getItems();
+                    }
+                }else{
+                    getItems();
+                }
+            };
+
+            function getItems(){
+                var url = <?php echo json_encode(Mage::getUrl("*/*/getProducts",array('form_key'=>Mage::getSingleton('core/session')->getFormKey()))) ?>;
+                $http.get(url + 'sku/' + vm.sku + '/name/' + vm.name + '/page/' + vm.page)
+                    .then(getProductCompleted);
+
+                function getProductCompleted(response) {
+                    vm.loading = false;
+                    vm.items = response.data;
+                    for(var i = 0; i< vm.items.length; i++){
+                        for(var j = 0; j< vm.purchaseItems.length; j++){
+                            if(vm.items[i].entity_id == vm.purchaseItems[j].entity_id){
+                                vm.items[i].nonClick = true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            vm.searchItem = function(){
+                vm.page = 1;
+                getItems();
+            };
+
+            vm.addItem = function(item, index){
+                var param = {entity_id:[item.entity_id]};
+                $http.get('<?= Mage::getConfig()->getNode('global/warehouse_api_url') . 'products/suppliers'?>?' + decodeURIComponent(jQuery.param(param)))
+                    .then(successCallback);
+                function successCallback(response) {
+                    item.suppliers = response.data.data[item.entity_id];
+                    item.type = item.suppliers[0].type;
+                    item.price_vat = item.suppliers[0].price*1;
+                    item.price = Math.round((item.price_vat / 1.1) * 100) / 100;
+                    vm.purchaseItems.push(item);
+                    vm.items[index].nonClick = true;
+                }
+            };
+
+            vm.removeAllItem = function(){
+                vm.purchaseItems = [];
+                for(var i = 0; i< vm.items.length; i++){
+                    vm.items[i].nonClick = false;
+                }
+            };
+
+            vm.removeItem = function(item) {
+                var index = vm.purchaseItems.indexOf(item);
+                vm.purchaseItems.splice(index, 1);
+                for(var i = 0; i< vm.items.length; i++){
+                    if(vm.items[i].entity_id == item.entity_id){
+                        vm.items[i].nonClick = false;
+                    }
+                }
+
+            };
+
+            vm.openConfirm = function(){
+                if(vm.purchaseItems.length == 0){
+                    vm.error = "Vui lòng nhập đủ dữ liệu";
+                    return false;
+                }
+                for (var index = 0; index < vm.purchaseItems.length; index++) {
+                    if (!(typeof vm.purchaseItems[index].sku !== 'undefined'
+                        && vm.purchaseItems[index].quantity > 0  && vm.purchaseItems[index].price > 0
+                        && vm.purchaseItems[index].type != '-1' && vm.purchaseItems[index].supplier != '')) {
+                        vm.error = "Vui lòng nhập đủ dữ liệu";
+                        return false;
+                    }
+                }
+
+                if(vm.stores.length == 0){
+                    vm.error = "Bạn không quản lý store nào.";
+                    return false
+                }
+
+                vm.websiteId = vm.stores[0].website_id;
+
+                $http.get('http://warehouse.gcafe.vn/api/stores/get_all')
+                    .then(successCallback);
+
+                function successCallback(response) {
+                    vm.warehouses = response.data.data;
+                }
+                jQuery("#popupConfirm").modal('show');
+            };
+
+            vm.createPurchaseRequest = function (){
+                if(vm.isUpdating){
+                    return false;
+                }else{
+                    vm.error = '';
+                    vm.success = '';
+                    vm.isUpdating = true;
+                }
+                vm.error = null;
+                var data = [];
+
+                if(!vm.warehouse || !vm.warehouse.id){
+                    vm.isUpdating = false;
+                    vm.error = 'Vui lòng nhập kho nhận';
+                    return false;
+                }
+
+                for (var index = 0; index < vm.purchaseItems.length; index++) {
+                    if(typeof data[vm.purchaseItems[index].supplier.id] == 'undefined'){
+                        data[vm.purchaseItems[index].supplier.id] = {
+                            supplier_id : vm.purchaseItems[index].supplier.id,
+                            supplier_name : vm.purchaseItems[index].supplier.name,
+                            supplier_info : vm.purchaseItems[index].supplier,
+                            items : [
+                                {
+                                    sku : vm.purchaseItems[index].sku,
+                                    product_name : vm.purchaseItems[index].name,
+                                    entity_id: vm.purchaseItems[index].entity_id,
+                                    quantity : vm.purchaseItems[index].quantity,
+                                    price : vm.purchaseItems[index].price,
+                                    unit : vm.purchaseItems[index].unit,
+                                    type : vm.purchaseItems[index].type,
+                                    vat : vm.purchaseItems[index].vat
+                                }
+                            ]
+                        }
+                    }else{
+                        data[vm.purchaseItems[index].supplier.id].items.push(
+                            {
+                                sku : vm.purchaseItems[index].sku,
+                                product_name : vm.purchaseItems[index].name,
+                                entity_id: vm.purchaseItems[index].entity_id,
+                                quantity : vm.purchaseItems[index].quantity,
+                                price : vm.purchaseItems[index].price,
+                                unit : vm.purchaseItems[index].unit,
+                                type : vm.purchaseItems[index].type,
+                                vat : vm.purchaseItems[index].vat
+                            }
+                        )
+                    }
+                }
+
+                var receiveDate = vm.receiveDate.split("/").reverse().join("-");
+                var param = {
+                    "website_id":vm.websiteId,
+                    "store_id": vm.warehouse.id,
+                    "store_name": vm.warehouse.name,
+                    "purchase_requests" : cleanArray(data),
+                    "receive_date": receiveDate,
+                    "description" : vm.description
+                };
+
+                var url = <?php echo json_encode(Mage::getUrl("*/*/addPurchaseRequest",array('form_key'=>Mage::getSingleton('core/session')->getFormKey())))?>;
+                return $http.post(url, param).then(successCallback, errorCallback);
+
+                function successCallback(response) {
+                    if(response.data.result == 'ok'){
+                        jQuery("#popupConfirm").modal('hide');
+                        vm.isUpdating = false;
+                        $window.location.href = '../index';
+                        return true;
+                    }else{
+                        jQuery("#popupConfirm").modal('hide');
+                        vm.error = "Có lỗi trong quá trình cập nhật dữ liệu, vui lòng thử lại sau";
+                        vm.isUpdating = false;
+                        return false;
+                    }
+                }
+
+                function errorCallback(response) {
+                    jQuery("#popupConfirm").modal('hide');
+                    vm.error = "Có lỗi trong quá trình cập nhật dữ liệu, vui lòng thử lại sau";
+                    vm.isUpdating = false;
+                    return false;
+                }
+
+                function cleanArray(actual) {
+                    var newArray = new Array();
+                    for (var i = 0; i < actual.length; i++) {
+                        if (actual[i]) {
+                            newArray.push(actual[i]);
+                        }
+                    }
+                    return newArray;
+                }
+
+            };
+
+        });
+
+        app.directive('enterClick',enterClick);
+
+        function enterClick(){
+            return function (scope, element, attrs) {
+                element.bind("keydown keypress", function (event) {
+                    var keyCode = event.which || event.keyCode;
+                    if(keyCode === 13) {
+                        scope.$apply(function (){
+                            scope.$eval(attrs.enterClick);
+                        });
+
+                        event.preventDefault();
+                    }
+                });
+            };
+        }
+
+    })();
+</script>

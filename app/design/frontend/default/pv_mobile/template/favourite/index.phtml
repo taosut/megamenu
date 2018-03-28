@@ -1,0 +1,341 @@
+<?php
+$productCollection = Mage::registry('products');
+$totalPage = Mage::registry('totalPage');
+$wishID = Mage::registry('wishID');
+$isOwned = Mage::registry('');
+$customer = Mage::getSingleton('customer/session')->getCustomer();
+$customer_name = $customer->getName();
+$customer_id = $customer->getId();
+$currentPage = Mage::registry('currentPage');
+$isOwned = Mage::registry('owned');
+?>
+<?php
+$tagProduct = Mage::getModel('tag/tag_relation')
+    ->setTagId(1)// Bao ke gia
+    ->setStoreId((Mage::app()->getStore()->getId()))
+    ->getProductIds();
+?>
+<?php $version = Teko::getSaleCenterVersion(); ?>
+<link rel="stylesheet" type="text/css" href="<?php echo $this->getSkinUrl('lib/list.css'); ?>"/>
+<link rel="stylesheet" type="text/css" href="<?php echo $this->getSkinUrl('lib/favorite.css'); ?>"/>
+<div style="margin-top: 60px">
+    <!--Information-->
+    <input type="hidden" id="wishlistID" value="<?php echo $wishID; ?>"/>
+
+    <!--Cat menu-->
+    <!--List block-->
+    <div>
+        <?php if (!$productCollection): ?>
+            <div class="row">
+                <div class="col-md-12 col-sm-12 list-no-products">
+                    <img class="list-no-products-img"
+                         src="<?php echo $this->getSkinUrl('images/giohangtrong.png'); ?>"/>
+                    Danh sách sản phẩm yêu thích của bạn đang trống !
+                </div>
+            </div>
+        <?php else: ?>
+            <!-- Messages block-->
+            <div class="row">
+                <div class="col-md-12 col-sm-12">
+                    <div class="detail-messages purchase-request-messages"></div>
+                </div>
+            </div>
+            <!-- End Messages block-->
+            <!--Product List-->
+            <!--Top banner-->
+            <div class="row list-top-banner">
+                <?php echo $this->getLayout()->createBlock('cms/block')->setBlockId('list-top-banner-v2')->toHtml(); ?>
+            </div>
+            <!--End Top banner-->
+
+            <!--Product list content-->
+            <?PHP
+            include 'template/parts/header.html';
+            ?>
+            <div class="favourite-block">
+                <?php foreach ($productCollection as $_product): ?>
+                <?php
+                $oldPrice = $_product->getPrice();
+                $finalPrice = $_product->getFinalPrice();
+                ?>
+                <div class="item mg-bot-10 pd-10-15" data-url="<?php echo $_product->getProductFullUrl() ?>">
+<!--                    --><?php //if ($oldPrice != $finalPrice) : ?>
+<!--                        <div class="ribbon-favourite">-->
+<!--                            ---><?php //echo number_format(($oldPrice - $finalPrice) / $oldPrice * 100, 0) . "%" ?>
+<!--                        </div>-->
+<!--                    --><?php //endif; ?>
+                        <img src="<?php echo $this->getSkinUrl('images/arrow-right.svg') ?><?php echo "?v=" . $version ?>" alt="Xem chi tiết" />
+                    <div class="col-xs-4 pd-left-0">
+                        <?php if (in_array((string)$_product->getId(), $tagProduct)): ?>
+                            <img class="list-tag"
+                                 src='<?php echo $this->getSkinUrl('images/tag.png') ?><?php echo "?v=" . $version ?>'/>
+                        <?php endif; ?>
+                        <a href="<?php echo $_product->getProductFullUrl() ?>"
+                           title="<?php echo $this->escapeHtml($_product->getName()); ?>">
+                            <img class="list-view-img"
+                                 alt="<?php echo $this->escapeHtml($_product->getName()); ?>"
+                                 src="<?php echo $this->helper('catalog/image')->init($_product, 'small_image')->resize(300, 300); ?>"/>
+                        </a>
+                    </div>
+                    <div class="col-xs-8 promo-info">
+                        <a class="name"
+                           href="<?php echo $_product->getProductFullUrl() ?>"
+                           title="<?php echo $this->escapeHtml($_product->getName()); ?>">
+                            <?php
+                            $name = $this->escapeHtml($_product->getName());
+                            if(strlen($name)>74){
+                                echo substr($this->escapeHtml($_product->getName()),0,71);
+                                echo '...';
+                            }else{
+                                echo $this->escapeHtml($_product->getName());
+                            }
+                            ?>
+                        </a>
+                        <p class="price bold"><?php echo number_format($finalPrice, 0, ",", ".") . " ₫"; ?></p>
+                        <p class="price-old">
+                            <?php if ($oldPrice != $finalPrice) : ?>
+                                <?php echo number_format($oldPrice, 0, ",", ".") . " ₫"; ?>
+                            <?php endif; ?>
+                        </p>
+                    </div>
+<!--                    <div class="fa fa-angle-right fa-lg"></div>-->
+                    <?php if ($isOwned): ?>
+                    <div class="rm-favorite rm-favorite-list fa fa-heart heart-icon" data-product-id="<?= $_product->getId() ?>"></div>
+                    <?php endif; ?>
+
+                </div>
+                <?php endforeach; ?>
+            </div>
+            <!--End Product list content-->
+
+            <!--Filter bottom-->
+            <?php if ($totalPage > 1): ?>
+                <div class="filter-top">
+                    <?php if ($totalPage > 1): ?>
+                        <div class="filter-row row">
+                            <div class="col-md-12 col-sm-12 pagination-block top-pagination-block mt-6">
+                                <?php if ($productCollection->getSize()): ?>
+                                    <?php if ($totalPage > 1): ?>
+                                        <span>Trang <b><?php echo $currentPage; ?>/<?php echo $totalPage; ?></b></span>
+                                        <a class="previous i-previous"
+                                           href="<?php echo $this->getUrlPage(max(1, $currentPage - 1)) ?>"
+                                           title="<?php echo $this->__('Previous') ?>">
+                                            <i class="fa fa-angle-left"></i>
+                                        </a>
+
+                                        <?php foreach ($this->getRange($currentPage, $totalPage) as $_page): ?>
+                                            <?php if ($_page == $currentPage): ?>
+                                                <a class="active"><?php echo $_page ?></a>
+                                            <?php else: ?>
+                                                <a href="<?php echo $this->getUrlPage($_page) ?>"><?php echo $_page ?></a>
+                                            <?php endif; ?>
+                                        <?php endforeach; ?>
+
+                                        <a class="next i-next"
+                                           href="<?php echo $this->getUrlPage(min($totalPage, $currentPage + 1)) ?>"
+                                           title="<?php echo $this->__('Next') ?>">
+                                            <i class="fa fa-angle-right"></i>
+                                        </a>
+                                    <?php endif; ?>
+                                <?php endif ?>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            <?php else: ?>
+                <div class="row">
+                    <div class="col-md-12 col-sm-12">
+                        <div class="mb-15">
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
+            <!--End Filter bottom-->
+        <?php endif; ?>
+    </div>
+    <!--End list block-->
+    <div class="modal fade" id="trackingLoad" tabindex="-1" role="dialog">
+        <div class="modal-dialog mid-modal" role="document">
+            <div class="modal-content">
+                <div class="order-detail-loading">
+                    <img src="<?php echo $this->getSkinUrl('images/ajax-loader-new.gif') ?>" />
+                    <p>Đang tải</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="fv-prompt" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="midModalWrapper">
+                <div class="modal-content">
+                    <div class="fv-modal">
+                        <div class="fv-text-wrap">
+                            Bỏ yêu thích sản phẩm này?
+                            <div class="fv-description">
+                                <p>Yêu thích sản phẩm sẽ giúp bạn ghi</p>
+                                <p>nhớ những sản phẩm muốn mua</p>
+                            </div>
+                        </div>
+                        <div class="prompt-answer">
+                            <div class="prompt-left" data-dismiss="modal">
+                                Hủy
+                            </div>
+                            <div class="prompt-right fv-yes">
+                                Đồng ý
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var $j = jQuery.noConflict();
+
+    $j(document).ready(function(){
+        $j('.state-title').html("Sản phẩm yêu thích");
+        $j('.search-and-cart-header').hide();
+        showBackState();
+    });
+    /** Send purchase request **/
+    function sendPurchaseRequestListView(value) {
+        var productId = $j(value).data('product-id');
+        var productName = $j(value).data('product-name');
+        var require_name = $j('#list-view-require-name-' + productId).val().trim();
+        var require_phone = $j('#list-view-require-phone-' + productId).val().trim();
+        var require_content = $j('#list-view-require-content-' + productId).val().trim();
+
+        var url = "<?php echo $this->getUrl('stockrequest/stockrequest/saveRequest');  ?>";
+        var data = {
+            user_name: require_name,
+            phone_number: require_phone,
+            request_content: require_content,
+            product_id: productId,
+            product_name: productName
+        };
+
+        if (require_name === '') {
+            alert('Vui lòng nhập họ tên');
+        } else if (require_phone === '') {
+            alert('Vui lòng nhập số điện thoại');
+        } else if (require_phone !== '' && !validateVNPhoneNumber(require_phone)) {
+            alert('Số điện thoại không đúng định dạng (phải có dạng 84xxx hoặc 0xxx, chứa 10 hoặc 11 ký tự)');
+        } else if (require_content === '') {
+            alert('Vui lòng nhập nội dung cần yêu cầu');
+        } else {
+            $j('.ajax-loader-pr').show();
+            $j('.btn-send-request').prop('disabled', true);
+            $j.ajax({
+                url: url,
+                type: "POST",
+                data: data,
+                dataType: "json"
+            }).done(function (data) {
+                $j('.ajax-loader-pr').hide();
+                $j('#listViewPurchaseRequestModal-' + productId).modal('hide');
+                $j('.btn-send-request').prop('disabled', false);
+                $j('.detail-messages').empty();
+                if (data.success_message) {
+                    $j('.purchase-request-messages').append('<div class="alert alert-success"><strong>Thành công!</strong> ' + data.success_message + '</div>');
+                } else if (data.error_message) {
+                    $j('.purchase-request-messages').append('<div class="alert alert-danger"><strong>Có lỗi!</strong> ' + data.error_message + '</div>');
+                }
+                $j('html, body').animate({scrollTop: 0}, 400);
+            });
+        }
+    }
+
+    function sendPurchaseRequestGridView(value) {
+        var productId = $j(value).data('product-id');
+        var productName = $j(value).data('product-name');
+        var require_name = $j('#grid-view-require-name-' + productId).val().trim();
+        var require_phone = $j('#grid-view-require-phone-' + productId).val().trim();
+        var require_content = $j('#grid-view-require-content-' + productId).val().trim();
+
+        var url = "<?php echo $this->getUrl('stockrequest/stockrequest/saveRequest');  ?>";
+        var data = {
+            user_name: require_name,
+            phone_number: require_phone,
+            request_content: require_content,
+            product_id: productId,
+            product_name: productName
+        };
+
+        if (require_name === '') {
+            alert('Vui lòng nhập họ tên');
+        } else if (require_phone === '') {
+            alert('Vui lòng nhập số điện thoại');
+        } else if (require_phone !== '' && !validateVNPhoneNumber(require_phone)) {
+            alert('Số điện thoại không đúng định dạng (phải có dạng 84xxx hoặc 0xxx, chứa 10 hoặc 11 ký tự)');
+        } else if (require_content === '') {
+            alert('Vui lòng nhập nội dung cần yêu cầu');
+        } else {
+            $j('.ajax-loader-pr').show();
+            $j('.btn-send-request').prop('disabled', true);
+            $j.ajax({
+                url: url,
+                type: "POST",
+                data: data,
+                dataType: "json"
+            }).done(function (data) {
+                $j('.ajax-loader-pr').hide();
+                $j('#gridViewPurchaseRequestModal-' + productId).modal('hide');
+                $j('.btn-send-request').prop('disabled', false);
+                $j('.detail-messages').empty();
+                if (data.success_message) {
+                    $j('.purchase-request-messages').append('<div class="alert alert-success"><strong>Thành công!</strong> ' + data.success_message + '</div>');
+                } else if (data.error_message) {
+                    $j('.purchase-request-messages').append('<div class="alert alert-danger"><strong>Có lỗi!</strong> ' + data.error_message + '</div>');
+                }
+                $j('html, body').animate({scrollTop: 0}, 400);
+            });
+        }
+    }
+    /** End send purchase request **/
+
+    $j('.rm-favorite').click(function (e) {
+        var currentPage = <?= $currentPage?>;
+        var customer_id = <?php echo $customer_id?>;
+        var product_id = $j(this).data('product-id');
+        $j('.fv-yes').attr({
+            'product_id' : product_id,
+            'customer_id' : customer_id,
+            'currentPage' : currentPage
+        });
+        $j("#fv-prompt").modal();
+        e.preventDefault();
+        e.stopPropagation();
+    });
+
+    $j('.fv-yes').on('click',function(e){
+        $j.ajax({
+            method: 'POST',
+            dataType: 'json',
+            url: '<?php echo Mage::getUrl('favourite/index/removeFromList')?>',
+            data: {
+                'product_id': $j(this).attr('product_id'),
+                'customer_id': $j(this).attr('customer_id'),
+                'currentPage': $j(this).attr('currentPage')
+            },
+            success: function (response) {
+                $j("#fv-prompt").modal('toggle');
+                $j("#trackingLoad").modal();
+                window.location.href = '<?= Mage::getUrl('favourite/index')?>' + '?p=' + response.data.currentPage;
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log("Status: " + textStatus);
+                console.log("Error: " + errorThrown);
+            }
+        });
+        e.stopPropagation();
+    });
+
+    $j('.favourite-block>.item').on('click',function(e){
+        $j("#trackingLoad").modal();
+        window.location.href=$j(this).attr('data-url');
+        e.stopPropagation();
+    });
+
+</script>

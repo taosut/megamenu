@@ -1,0 +1,32 @@
+<div class="entry-edit">
+    <div class="entry-edit-head">
+        <h4 class="icon-head head-edit-form fieldset-legend">Store View Information</h4>
+        <div class="form-buttons"></div>
+    </div>
+    <div class="fieldset ">
+        <form action="<?php echo $this->getSaveUrl(); ?>" method="post">
+            <?php echo $this->getBlockHtml('formkey') ?>
+            <div class="content-header">
+                <?php foreach ($this->getListStore() as $store): ?>
+                    <div class="form-group">
+                        <div class="form-control">
+                            <label>
+                                <input
+                                    type="checkbox" <?php echo in_array($store->getId(), $this->getListSelected()) ? "checked" : null ?>
+                                    name="store[<?php echo $store->getId() ?>][store_id]"
+                                    value="<?php echo $store->getId() ?>"><?php echo $store->getName() ?>
+                            </label>
+                        </div>
+                    </div>
+                    <input type="hidden" name="store[<?php echo $store->getId() ?>][website_id]"
+                           value="<?php echo $store->getWebsiteId() ?>">
+
+                    <input type="hidden" name="store[<?php echo $store->getId() ?>][user_id]"
+                           value="<?php echo $this->getUserId() ?>">
+                <?php endforeach; ?>
+
+                <button type="submit">Submit</button>
+        </form>
+    </div>
+
+</div>

@@ -1,0 +1,35 @@
+<div class="agent-content bg-white">
+    <div class="col-md-12">
+        <div class="agent-header">
+            <div class="agent-logo-block">
+                <img src="<?php echo $this->getSkinUrl('images/agent-logo.png') ?>">
+            </div>
+            <div class="agent-register-title mb-40">
+                Tài khoản của bạn không tồn tại hoặc đã bị xóa !!!
+            </div>
+            <div class="agent-register-title">
+                Vui lòng liên hệ Admin Tekshop theo hotline 0988796885 hoặc email đến
+            </div>
+            <div class="agent-register-title mb-40 mt-0">
+                Địa chỉ hotro@teko.vn để được hỗ trợ nhanh nhất. Xin cảm ơn !
+            </div>
+        </div>
+
+        <div class="agent-intro-blocks">
+            <!-- Agent introduction-->
+            <?php
+            echo $this->getLayout()->createBlock('cms/block')->setBlockId('agent_introduction')->toHtml();
+            ?>
+
+            <!-- Agent rights-->
+            <?php
+            echo $this->getLayout()->createBlock('cms/block')->setBlockId('agent_rights')->toHtml();
+            ?>
+
+            <!-- Agent duties-->
+            <?php
+            echo $this->getLayout()->createBlock('cms/block')->setBlockId('agent_duties')->toHtml();
+            ?>
+        </div>
+    </div>
+</div>

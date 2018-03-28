@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+ 
+<config>
+    <modules>
+        <Ved_Norders>
+            <version>0.0.0.1</version>
+        </Ved_Norders>
+    </modules>
+ 
+    <global>
+        <models>
+            <Ved_Norders>
+                <class>Ved_Norders_Model</class>
+                <resourceModel>ved_norders_resource</resourceModel>
+            </Ved_Norders>
+        </models>
+ 
+        <resources>
+            <ved_norders_setup>
+                <setup>
+                    <module>Ved_Norders</module>
+                </setup>
+            </ved_norders_setup>
+        </resources>
+ 
+        <blocks>
+            <ved_norders>
+                <class>Ved_Norders_Block</class>
+            </ved_norders>
+        </blocks>
+ 
+        <helpers>
+            <ved_norders>
+                <class>Ved_Norders_Helper</class>
+            </ved_norders>
+        </helpers>
+    </global>
+ 
+    <admin>
+        <routers>
+            <adminhtml>
+                <args>
+                    <modules>
+                        <ved_norders before="Mage_Adminhtml">Ved_Norders_Adminhtml</ved_norders>
+                    </modules>
+                </args>
+            </adminhtml>
+        </routers>
+    </admin>
+</config>

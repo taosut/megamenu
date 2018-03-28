@@ -1,0 +1,10 @@
+<layout>
+    <favourite_index_index>
+        <reference name="content">
+            <block type="favourite/favourite" name="favourite.index.index" template="favourite/index.phtml">
+                <block type="core/template" name="page.cat_menu" template="page/html/cat_menu.phtml"/>
+                <block type="core/template" name="page.subscription" template="page/html/subscription.phtml" />
+            </block>
+        </reference>
+    </favourite_index_index>
+</layout>

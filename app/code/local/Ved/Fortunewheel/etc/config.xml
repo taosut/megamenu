@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Ved_Fortunewheel>
+            <version>0.0.2</version>
+        </Ved_Fortunewheel>
+    </modules>
+
+    <frontend>
+        <routers>
+            <wheel>
+                <use>standard</use>
+                <args>
+                    <module>Ved_Fortunewheel</module>
+                    <frontName>wheel</frontName>
+                </args>
+            </wheel>
+        </routers>
+    </frontend>
+
+    <global>
+        <models>
+            <Ved_Fortunewheel>
+                <class>Ved_Fortunewheel_Model</class>
+                <resourceModel>Ved_Fortunewheel_resource</resourceModel>
+            </Ved_Fortunewheel>
+
+            <Ved_Fortunewheel_resource>
+                <class>Ved_Fortunewheel_Model_Resource</class>
+                <entities>
+                    <wheelDetail>
+                        <table>wheel_detail</table>
+                    </wheelDetail>
+                    <wheelInfoSalesrule>
+                        <table>wheel_info_salesrule</table>
+                    </wheelInfoSalesrule>
+                </entities>
+            </Ved_Fortunewheel_resource>
+        </models>
+
+        <blocks>
+            <wheel>
+                <class>Ved_Fortunewheel_Block</class>
+            </wheel>
+        </blocks>
+
+        <helpers>
+            <wheel>
+                <class>Ved_Fortunewheel_Helper</class>
+            </wheel>
+        </helpers>
+
+        <resources>
+            <Ved_Fortunewheel_setup>
+                <setup>
+                    <module>Ved_Fortunewheel</module>
+                </setup>
+                <connection>
+                    <use>core_setup</use>
+                </connection>
+            </Ved_Fortunewheel_setup>
+            <Ved_Fortunewheel_write>
+                <connection>
+                    <use>core_write</use>
+                </connection>
+            </Ved_Fortunewheel_write>
+            <Ved_Fortunewheel_read>
+                <connection>
+                    <use>core_read</use>
+                </connection>
+            </Ved_Fortunewheel_read>
+        </resources>
+    </global>
+
+</config>

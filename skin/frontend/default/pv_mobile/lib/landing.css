@@ -1,0 +1,55 @@
+.mt-10-mobile {
+    margin-top: 10px !important;
+}
+
+.pb-0-mobile {
+    padding-bottom: 0 !important;
+}
+
+.brand {
+    margin: 0;
+}
+
+.landing-promo {
+    padding-bottom: 10px;
+}
+
+.top-banner-landing {
+    visibility: hidden;
+}
+
+.slick-initialized {
+    visibility: visible;
+}
+
+.top-banner-landing .slick-dots {
+    bottom: 10px;
+    left: 0;
+    text-align: center;
+    top: auto;
+    height: auto;
+}
+
+.landing-promo img {
+    width: 100%;
+}
+
+.landing-promo .brand img {
+    padding: 10px 0;
+    max-width: 165px;
+    display: block;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.landing-promo .gpu-text {
+    font-weight: bold;
+}
+
+.top-banner-landing img {
+    width: 100%;
+}
+
+.cat-products-section:last-child {
+    margin-bottom: 0;
+}

@@ -1,0 +1,297 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: Teko
+ * Date: 9/6/2017
+ * Time: 11:10 AM
+ */
+?>
+
+<?php
+$currentUser = Mage::getSingleton('customer/session')->getCustomer();
+$agentInfo = json_decode($currentUser->getAgentInfo());
+$agentChannels = array(
+    1 => 'Mạng xã hội',
+    2 => 'Diễn đàn/Website'
+);
+?>
+
+<style>
+    /*basic reset*/
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    /*adding a black bg to the body to make things clearer*/
+    body {
+        background: black;
+    }
+</style>
+
+<script>
+    dataLayer = [];
+</script>
+
+<?php
+$session = Mage::getSingleton('customer/session');
+?>
+
+<?php if ($session->isLoggedIn()): ?>
+    <?php if ($currentUser->getIsAgentDeleted() == 1): ?>
+        <?php echo $this->getChildHtml('agent.warning') ?>
+    <?php else: ?>
+        <div class="agent-content">
+            <div class="row row-eq-height">
+
+                <?php echo $this->getChildHtml('agent.navigation') ?>
+
+                <div class="col-md-10 col-sm-10 col-xs-12">
+                    <div class="row mr-0">
+                        <div class="col-md-12 col-sm-12 col-xs-12 pl-30-xs">
+                            <div class="row">
+                                <div class="col-md-6 col-sm-6 col-xs-6 pr-7">
+                                    <div class="agent-box agent-achievements">
+                                        <div class="agent-box-title h-40">Điểm thành tích hiệu lực</div>
+                                        <div class="agent-available-point">
+                                            <span><?php echo $agentInfo->available_point ?></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-sm-6 col-xs-6 pl-7">
+                                    <div class="agent-box agent-achievements">
+                                        <div class="agent-box-title h-40">Điểm thành tích đã sử dụng</div>
+                                        <div class="agent-used-point">
+                                            <span><?php echo $agentInfo->used_point ?></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="agent-box agent-post-history mb-15">
+                                <div class="agent-box-title h-40">
+                                    Lịch sử tích lũy điểm
+                                    <div class="agent-btn clear-filter-btn pull-right">
+                                        Bỏ lọc
+                                    </div>
+                                </div>
+
+                                <div class="agent-recommendation-total">Số bản ghi đang lọc/Tổng số bản ghi: <span class="agent-filtered-count"></span>/<span class="agent-total-count"></span></div>
+
+                                <div class="table-responsive">
+                                    <table id="datatable" class="table table-striped agent-table">
+                                        <thead>
+                                        <tr>
+                                            <th>Thời gian</th>
+                                            <th>Biến động</th>
+                                            <th>Nội dung</th>
+                                            <th>Điểm tích lũy</th>
+                                        </tr>
+                                        </thead>
+                                        <tfoot>
+                                        <tr>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                        </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
+<?php else: ?>
+    <?php echo $this->getChildHtml('agent.warning_login') ?>
+<?php endif; ?>
+
+<script>
+    var $j = jQuery.noConflict();
+    var win = $j(window);
+
+    $j('.main-container').find('.container').addClass('ml-0');
+
+    $j('input[type="number"]').keypress(function (e) {
+        var a = [];
+        var k = e.which;
+
+        for (i = 48; i < 58; i++)
+            a.push(i);
+
+        if (!(a.indexOf(k) >= 0))
+            e.preventDefault();
+    });
+
+    $j(document).ready(function () {
+        $j('.main-container').find('.container').addClass('w-100');
+        $j('.build-pc-btn').addClass('no-display');
+        $j('.facebook-message').addClass('no-display');
+
+        $j("#datepicker").datepicker({
+            dateFormat: 'dd/mm/yy',
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "1950:2017"
+        });
+
+        $j('#datatable tfoot th').each(function () {
+            var title = $j('#datatable thead th').eq($j(this).index()).text();
+            var index = $j(this).index();
+            if (index === 0) {
+                $j(this).html('<input id="min" class="mb-5" type="text" placeholder="Từ ngày"><input id="max" type="text" placeholder="Đến ngày">');
+            }
+            else if (index === 2) {
+                $j(this).html('<input type="text" placeholder="' + title + '" />');
+            }
+        });
+
+        // Render datatable
+        var table = $j('#datatable').DataTable({
+            "ajax": '<?php echo $this->getUrl('agent/index/getPointHistory')?>?user_id=<?php echo $currentUser->getId() ?>',
+            "pagingType": "full_numbers",
+            "language": {
+                "lengthMenu": "Hiển thị _MENU_ bản ghi mỗi trang",
+                "zeroRecords": "Không tìm thấy dữ liệu phù hợp",
+                "info": "Trang _PAGE_ / _PAGES_",
+                "infoEmpty": "",
+                "infoFiltered": "",
+                "search": "Tìm kiếm:",
+                "paginate": {
+                    "previous": "Trước",
+                    "next": "Sau",
+                    "first": "Đầu",
+                    "last": "Cuối"
+                }
+            },
+            "columns": [
+                {"width": "20%"},
+                {"width": "20%"},
+                {"width": "40%", "orderable": false},
+                {"width": "20%"}
+            ],
+            "order": [[0, "desc"]],
+            "initComplete": function (settings, json) {
+                $j('div.datatable-loading').remove();
+
+                this.api().columns().every(function () {
+                    var that = this;
+                    var index = that.index();
+                    if (index === 1) {
+
+                        var select = $j('<select id="select-' + index + '" style="color: #727175"><option value="">-- Chọn --</option></select>')
+                            .appendTo($j(that.footer()).empty())
+                            .on('change', function () {
+                                var val = $j.fn.dataTable.util.escapeRegex(
+                                    $j(this).val()
+                                );
+
+                                if (val !== '') {
+                                    $j('#select-' + index).css('color', '#333');
+                                } else {
+                                    $j('#select-' + index).css('color', '#727175');
+                                }
+
+                                that
+                                    .search(val ? '^' + val : '', true, false)
+                                    .draw();
+                            });
+
+                        select.append('<option value="Tăng">Tăng</option><option value="Giảm">Giảm</option>');
+
+                    }
+                    else if (index === 2) {
+                        $j('input', this.footer()).on('keyup change', function () {
+                            if (that.search() !== this.value) {
+                                that
+                                    .search(this.value)
+                                    .draw();
+                            }
+                        });
+                    }
+                });
+            },
+            "footerCallback": function (row, data, start, end, display) {
+                getTotalRows();
+                getFilteredRows();
+            }
+        });
+
+        function getTotalRows() {
+            $j('.agent-total-count').empty().append($j('#datatable').DataTable().rows().count());
+        }
+
+        function getFilteredRows(){
+            var info = $j('#datatable').DataTable().page.info();
+            $j('.agent-filtered-count').empty().append(info.recordsDisplay);
+        }
+
+        // Filter date range
+        $j.fn.dataTable.ext.search.push(
+            function (settings, data, dataIndex) {
+                var min = $j('#min').datepicker("getDate");
+                var max = $j('#max').datepicker("getDate");
+                if (max) {
+                    max.setHours(23, 59, 59, 999);
+                }
+
+                var startDate = new Date(data[0].split("|")[0]);
+
+                if (min == null && max == null) {
+                    return true;
+                }
+                if (min == null && startDate <= max) {
+                    return true;
+                }
+                if (max == null && startDate >= min) {
+                    return true;
+                }
+                if (startDate <= max && startDate >= min) {
+                    return true;
+                }
+                return false;
+            }
+        );
+
+        $j("#min").datepicker({
+            onSelect: function () {
+                table.draw();
+            },
+            dateFormat: 'dd/mm/yy',
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "1950:2017"
+        });
+
+        $j("#max").datepicker({
+            onSelect: function () {
+                table.draw();
+            },
+            dateFormat: 'dd/mm/yy',
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "1950:2017"
+        });
+
+        $j('#min, #max').change(function () {
+            table.draw();
+        });
+        // End filter date range
+
+        // Add loading text when call ajax
+        $j('tbody').empty();
+        $j('<div class="datatable-loading" style="padding: 15px 0; text-align: center;">Đang tải dữ liệu...</div>').appendTo('tbody');
+        $j('.datatable-loading').css('width', $j('#datatable').width() + 'px');
+    });
+
+    // Clear all filters
+    $j('.clear-filter-btn').click(function () {
+        $j('#datatable tfoot input').val('').change();
+        $j('#datatable tfoot select').val('').change();
+        $j('#min').datepicker('setDate', '');
+        $j('#max').datepicker('setDate', '');
+    });
+</script>

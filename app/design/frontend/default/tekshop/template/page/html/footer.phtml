@@ -1,0 +1,626 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     base_default
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+/**
+ * @var Mage_Page_Block_Html_Header $this
+ */
+?>
+
+<!--Promo banner-->
+<?php
+echo $this->getLayout()->createBlock('cms/block')->setBlockId('promo_banner')->toHtml();
+?>
+
+<script>
+    function motogToggleMinimize() {
+        var motogToggleIcon = $j('.motog-toggle-icon');
+        if (motogToggleIcon.text().trim() == '-') {
+            $j('.motog-toggle-icon').text('+');
+            $j('.motog-maximize-content').hide();
+            $j('.motog-minimize-content').show();
+        }
+        else {
+            $j('.motog-toggle-icon').text('-');
+            $j('.motog-maximize-content').show();
+            $j('.motog-minimize-content').hide();
+        }
+    }
+
+    //    (function () {
+    //        var time = 10000,
+    //            delta = 100,
+    //            tid;
+    //
+    //        tid = setInterval(function () {
+    //            if (window.blurred) {
+    //                return;
+    //            }
+    //            time -= delta;
+    //            if (time <= 0) {
+    //                clearInterval(tid);C
+    //                $j('.motog-toggle-icon').text('+');
+    //                $j('.motog-maximize-content').hide();
+    //                $j('.motog-minimize-content').show();
+    //            }
+    //        }, delta);
+    //    })();
+
+    //    window.onblur = function () {
+    //        window.blurred = true;
+    //    };
+    //    window.onfocus = function () {
+    //        window.blurred = false;
+    //    };
+
+    win.on('resize', function () {
+        var winWidth = win.width();
+        var changeWidth = 1920 - winWidth;
+
+        $j('.layout__wrapper').css('width', 1200 - (changeWidth / 1.5));
+        $j('.promobanner').css('width', 320 - (changeWidth / 8));
+        $j('.motog-maximize-content img').css('width', 300 - (changeWidth / 8));
+        $j('.motog-minimize-content').css('width', 300 - (changeWidth / 8));
+        $j('.layout_promo_span').css('left', 272 - (changeWidth / 8));
+    }).trigger('resize');
+</script>
+<?php
+$policiesHyperlink = json_decode(Mage::getModel('core/variable')->loadByCode('policies_hyperlink')->getValue('plain'), true);
+?>
+<!--<div class="fortunate-wheel-event">-->
+<!--    <div class="fw-img">-->
+<!--        <img src="--><?php //echo $this->getSkinUrl('images/forunateWheelClick.png') ?><!--" alt="Vòng quay may mắn"/>-->
+<!--    </div>-->
+<!--    <button class="fortunate-wheel-open">-->
+<!--        vòng quay may mắn-->
+<!--    </button>-->
+<!--</div>-->
+<div class="footer-container">
+    <div class="footer pv-footer">
+        <div class="pv-row">
+            <div class="pv-footer-item ">
+                <a href="<?php echo $policiesHyperlink['phieu-mua-hang']; ?>" target="_blank">
+                    <img class="keogo keogo-0" src="<?php echo $this->getSkinUrl('images/footer-icon/Coupon.svg') ?>"
+                         alt="Phiếu mua hàng" />Phiếu mua hàng
+                </a>
+            </div>
+            <div class="pv-footer-item ">
+                <a href="<?php echo $policiesHyperlink['doi-hang']; ?>" target="_blank">
+                    <img class="keogo" src="<?php echo $this->getSkinUrl('images/footer-icon/Exchange.svg') ?>"
+                         alt="Quy định đổi hàng"/>Quy định đổi hàng
+                </a>
+            </div>
+        </div>
+        <div class="pv-row">
+            <div class="pv-footer-item ">
+                <a href="<?php echo $policiesHyperlink['giao-hang']; ?>" target="_blank">
+                    <img class="keogo" src="<?php echo $this->getSkinUrl('images/footer-icon/Delivery.svg') ?>"
+                         alt="Thanh toán và giao hàng"/>Thanh toán và giao hàng
+                </a>
+            </div>
+            <div class="pv-footer-item ">
+                <a href="<?php echo $policiesHyperlink['the-uu-dai']; ?>" target="_blank">
+                    <img class="keogo" src="<?php echo $this->getSkinUrl('images/footer-icon/Vipcard.svg') ?>"
+                         alt="Thẻ ưu đãi"/>Thẻ ưu đãi
+                </a>
+            </div>
+        </div>
+        <div class="pv-row">
+            <div class="pv-footer-item ">
+                <a href="<?php echo $policiesHyperlink['bao-hanh']; ?>" target="_blank">
+                    <img class="keogo" src="<?php echo $this->getSkinUrl('images/footer-icon/Guarantee.svg') ?>"
+                         alt="Quy định bảo hành"/>Quy định bảo hành
+                </a>
+            </div>
+            <!--            <div class="pv-footer-item ">-->
+            <!--                <a href="" target="_blank">-->
+            <!--                    <img class="keogo keogo-0" src="--><?php //echo $this->getSkinUrl('images/footer-icon/SalesPolicy.svg') ?><!--"-->
+            <!--                         alt="Chính sách bán hàng"/>Chính sách bán hàng-->
+            <!--                </a>-->
+            <!--            </div>-->
+        </div>
+    </div>
+
+    <div class="footer pv-bottom-footer">
+        <div class="footer-strike">
+<!--            <span><a href="https://phongvu.vn/site/contact" alt="Hệ thống của hàng Phong Vũ">Hệ thống cửa hàng Phong Vũ</a></span>-->
+        </div>
+        <div class="keogo-footer">
+            <p>Văn phòng điều hành: Tầng 7, tòa nhà số 198 Nguyễn Thị Minh Khai, Phường 6, Quận 3, TP.Hồ Chí Minh</p>
+            <p>Mail: contact@phongvu.vn</p>
+            <p>Tổng đài hỗ trợ: 19001835</p>
+        </div>
+        <div class="keogo-footer-blur">
+            <p>© 2007 - 2018 Công Ty Cổ Phần Thương Mai Phong Vũ/</p>
+            <p>GPĐKKD số 0304998358 do Sở KHĐT TP.HCM cấp.</p>
+        </div>
+
+    </div>
+    <div class="hide-cr-footer">
+        <div class="footer">
+            <div class="col-md-3 col-sm-3 text-left">
+                <h3>Thông tin liên hệ</h3>
+                <p class="tracking-order no-padding float-none">Tổng đài hỗ trợ: <a href="tel:02473086336">024 7308
+                        6336</a>
+                    (Bấm 6666) - (9h - 18h Thứ 2 đến thứ 6)
+                </p>
+                <p class="tracking-order no-padding float-none">Hotline: <a href="tel:0886222136">0886222136 </a> (8h -
+                    23h
+                    hàng ngày)
+                </p>
+                <p class="tracking-order no-padding float-none">
+                    Email: <a href="mailto:hotro@teko.vn">hotro@teko.vn</a>
+                </p>
+            </div>
+            <div class="col-md-4 col-sm-3 text-left">
+                <h3>Dịch vụ khách hàng</h3>
+                <?php if (Mage::getSingleton('customer/session')->isLoggedIn()): ?>
+                    <p class="tracking-order no-padding float-none"><a
+                                href="<?php echo $this->getUrl('tracking/order'); ?>">Kiểm tra đơn hàng</a></p>
+                    <p class="tracking-order no-padding float-none"><a
+                                href="<?php echo $this->getUrl('buildpc/saving/list'); ?>">
+                            Cấu hình của tôi</a></p>
+                <?php endif; ?>
+                <p class="tracking-order no-padding float-none"><a href="<?php echo $this->getUrl('policy') ?>">Quy định
+                        chung</a></p>
+                <p class="tracking-order no-padding float-none"><a href="<?php echo $this->getUrl('price-payment') ?>">Giá
+                        sản phẩm và thanh toán</a></p>
+                <p class="tracking-order no-padding float-none"><a href="<?php echo $this->getUrl('logistic') ?>">Vận
+                        chuyển
+                        và giao nhận hàng</a></p>
+                <p class="tracking-order no-padding float-none"><a href="<?php echo $this->getUrl('warranty') ?>">Bảo
+                        hành,
+                        bảo trì</a></p>
+                <p class="tracking-order no-padding float-none"><a href="<?php echo $this->getUrl('return') ?>">Đổi trả
+                        và
+                        hoàn tiền</a></p>
+                <p class="tracking-order no-padding float-none"><a href="<?php echo $this->getUrl('privacy') ?>">Bảo mật
+                        thông tin cá nhân</a></p>
+                <p class="tracking-order no-padding float-none"><a
+                            href="https://tekshop.vn/promotion/chinh-sach-bao-ke-gia.html">Chính sách
+                        bảo kê giá</a></p>
+                <p class="tracking-order no-padding float-none"><a
+                            href="https://tekshop.vn/promotion/chinh-sach-tra-gop.html">Chính sách
+                        trả góp</a></p>
+            </div>
+
+            <div class="col-md-5 col-sm-12 text-left">
+                <h3>Thông tin công ty</h3>
+                <p class="tracking-order no-padding float-none"><a href="<?php echo $this->getUrl('about') ?>">Giới
+                        thiệu
+                        Tekshop</a></p>
+
+                <div class="fb-page" data-href="https://www.facebook.com/tekshopvietnam/" data-tabs="page"
+                     data-height="250" data-small-header="true" data-adapt-container-width="false"
+                     data-hide-cover="false" data-show-facepile="true">
+                    <blockquote cite="https://www.facebook.com/tekshopvietnam/" class="fb-xfbml-parse-ignore"><a
+                                href="https://www.facebook.com/tekshopvietnam/">TekShop</a></blockquote>
+                </div>
+            </div>
+
+        </div>
+        <div class="footer">
+            <div class="col-md-8 col-xs-12 text-left">
+                <p style="margin-top: 5px;text-align: left;">Trụ sở chính: Tầng 1, Tòa nhà số 444 Hoàng Hoa Thám, phường
+                    Thụy Khuê, quận Tây Hồ, TP. Hà Nội.
+                    <br/>Văn phòng Đà Nẵng: Tầng 02, Tòa nhà Đại Dương Kính, 466 Nguyễn Hữu Thọ, phường Khuê Trung, quận
+                    Cẩm Lệ, Đà Nẵng
+                    <br/>Văn phòng Hồ Chí Minh: Tầng 7, Tòa nhà số 198 Nguyễn Thị Minh Khai, phường 6, quận 3, TP. Hồ
+                    Chí Minh
+                </p>
+                <p style="margin-top: 5px;text-align: left;">© 2017 - Bản quyền của Công Ty Cổ Phần Công Nghệ Teko Việt
+                    Nam<br/>
+                    Giấy chứng nhận Đăng ký Kinh doanh số 0107705299 do Sở Kế hoạch và Đầu
+                    tư Thành phố Hà Nội cấp ngày
+                    13/01/2017</p>
+            </div>
+            <div class="col-md-3 col-xs-12 text-left">
+                <a href="http://online.gov.vn/HomePage/CustomWebsiteDisplay.aspx?DocId=32374" target="_blank"><img
+                            class="dadangky-img"
+                            src="<?php echo $this->getSkinUrl('images/da-dang-ky.png', array('_secure' => true)); ?>"/></a>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="fortunateHint" class="modal fade" role="dialog">
+    <div class="fortunateDialogWrapper">
+        <div class="fortunateHintDialog">
+            <h1>Quy định vòng quay may mắn</h1>
+            <p>
+                - Mỗi tài khoản chỉ được giới hạn <span> 1 lượt quay</span>
+            </p>
+            <p> - Mỗi mã chỉ được sử dụng 1 lần duy nhất</p>
+            <p>
+                - Thời gian sử dụng mã trước ngày <span>31/01/2018</span>
+            </p>
+            <div>
+                <button class="confirm-hint">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="fortunateModal" class="modal fade" role="dialog">
+    <div style="position: relative">
+        <div class="close-wheel" data-dismiss="modal">✕</div>
+        <img class="mileStone" src="<?php echo $this->getSkinUrl("images/mileStone.png") ?>"/>
+        <canvas id='canvas' width='100%' height='400'>
+            Trình duyệt hiện tại của bạn không hỗ trợ Vòng Quay Phong Vũ
+        </canvas>
+        <div class="spin-button-wrapper">
+            <button class="btn-spin hidden">Bấm để quay <?php $this->getSkinUrl('images') ?></button>
+        </div>
+    </div>
+</div>
+<div id="fortunateResultModal" class="modal fade" role="dialog">
+        <div class="fortunateDialogWrapper">
+            <div class="fortunateDialog">
+                <div class="fortunateModalClose" data-dismiss="modal">✕</div>
+                <div class="fortunateWin" style="display: none">
+                    <div class="fortunateTop">
+                        <span class="mess-gift">Chúc mừng bạn đã trúng Voucher trị giá </span><span class="FWgift"></span>
+                    </div>
+                    <div class="fortunateBottom">
+                        Mã giảm giá: <span class="FWcoupon"></span>
+                    </div>
+                </div>
+                <div class="fortunateLose" style="display: none">
+                    Chúc bạn may mắn lần sau !!
+                </div>
+            </div>
+        </div>
+</div>
+
+<a href="<?php echo $this->getUrl('buildpc') ?>" target="_self" class="build-pc-btn go-to-buildpc static-btn btn-pulse"
+   title="Xây dựng cấu hình PC"></a>
+<a href="https://m.me/phongvuvietnam" target="_blank"
+   class="facebook-message static-btn btn-pulse"
+   title="Gửi tin nhắn qua Facebook"></a>
+<a href="#" class="scrollToTop static-btn"></a>
+<script type="text/javascript" src="<?php echo $this->getSkinUrl('js/Winwheel.js'); ?>"></script>
+<script type="text/javascript" src="<?php echo $this->getSkinUrl('js/TweenMax.min.js'); ?>"></script>
+<script>
+    $j = jQuery.noConflict();
+    var countAlert = 0;
+    var coupon = "";
+    var gift = "";
+    <?php $session = Mage::getSingleton('customer/session'); ?>
+    $j('.fortunate-wheel-event').on('click', function (e) {
+        var isLogin = false;
+        <?php if ($session->isLoggedIn()):?>
+        isLogin = true;
+        <?php endif;?>
+        if (isLogin) {
+            $j('#fortunateHint').modal();
+        } else {
+            $j('#loginModal').modal();
+            var message = "Vui lòng đăng nhập để quay thưởng!";
+            $j('#error-login').html(message);
+        }
+    });
+
+    $j('.confirm-hint').on('click',function(e){
+        $j('#fortunateHint').modal('toggle');
+        $j('#fortunateModal').modal();
+        $j.ajax({
+            url: "<?php echo $this->getUrl('wheel/index/isRoll') ?>",
+            data: {'customer_id': '<?php echo $session->getCustomer()->getId()?>'},
+            type: 'GET',
+            success: function (data) {
+                data = JSON.parse(data);
+                if (data.status == 'is_roll') {
+                    if (data.data.rule_id == 0) {
+                        gift = "do_den";
+                    } else {
+                        gift = addCommas(data.data.rule_name.replace("VQPV_", ""));
+                        coupon = data.data.coupon;
+                    }
+                    var mess = "Bạn đã quay thưởng trúng voucher trị giá ";
+                    appendPrice(mess, gift, coupon);
+                }
+                else {
+                    $j('.btn-spin').removeClass('hidden');
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log("Status: " + textStatus);
+                console.log("Error: " + errorThrown);
+            }
+        });
+    });
+
+    $j('#canvas').attr('width', $j(window).width());
+    var theWheel = new Winwheel({
+        'canvasID': 'myCanvas',
+        'numSegments': 24,
+        'rotationAngle': -22.5,
+        'drawMode': 'image',
+        'segments':
+            [
+                {'text': '1'},
+                {'text': '2'},
+                {'text': '3'},
+                {'text': '4'},
+                {'text': '5'},
+                {'text': '6'},
+                {'text': '7'},
+                {'text': '8'},
+                {'text': '9'},
+                {'text': '10'},
+                {'text': '11'},
+                {'text': '12'},
+                {'text': '13'},
+                {'text': '14'},
+                {'text': '15'},
+                {'text': '16'},
+                {'text': '17'},
+                {'text': '18'},
+                {'text': '19'},
+                {'text': '20'},
+                {'text': '21'},
+                {'text': '22'},
+                {'text': '23'},
+                {'text': '24'}
+            ],
+        'pointerAngle': 270,
+        'lineWidth': 1,
+        'outerRadius': 327,
+        'innerRadius': 50,
+        'lineWidth': 3,
+        'pointerGuide':
+            {
+                'display': false,
+                'strokeStyle': 'red',
+                'lineWidth': 3
+            },
+        'animation':
+            {
+                'type': 'spinToStop',
+                'duration': 12,
+                'spins': 6,
+                'callbackFinished': 'alertPrize()',
+                'easing': 'Power4.easeOut'
+            }
+    });
+    loadedImg = new Image();
+    loadedImg.onload = function () {
+        theWheel.wheelImage = loadedImg;
+        theWheel.draw();
+    };
+
+    loadedImg.src = "<?php echo $this->getSkinUrl('images/Wheel.png') ?>";
+
+    $j('.btn-spin').on('click', function (e) {
+        // $j('.btn-spin').attr('disabled', 'disabled');
+        $j('.btn-spin').addClass('hidden');
+        theWheel.startAnimation();
+        $j.ajax({
+            url: "<?php echo $this->getUrl('wheel') ?>",
+            data: {'customer_id': '<?php echo $session->getCustomer()->getId()?>'},
+            type: 'POST',
+            success: function (data) {
+                data = JSON.parse(data);
+                if (data.status == 'processing') {
+                    swal("Hệ thống đang xử lý, vui lòng đợi trong giây lát!");
+                }
+                else if (data.status) {
+                    gift = data.data.rule_name;
+                    var min = 0;
+                    var max = 0;
+                    switch (gift) {
+                        case 'VQPV_100000':
+                            min = 1;
+                            max = 22;
+                            break;
+                        case 'VQPV_200000':
+                            min = 23;
+                            max = 67;
+                            break;
+                        case 'VQPV_300000':
+                            min = 68;
+                            max = 112;
+                            break;
+                        case 'VQPV_500000':
+                            min = 158;
+                            max = 203;
+                            break;
+                        case 'VQPV_2000000':
+                            min = 293;
+                            max = 337;
+                            break;
+                        case 'VQPV_20000':
+                            min = 203;
+                            max = 247;
+                            break;
+                        case 'VQPV_50000':
+                            min = 113;
+                            max = 157;
+                            break;
+                        default:
+                            min = 248;
+                            max = 292;
+                    }
+                    var stopAt = Math.random() * (max - min) + min + 22.5;
+                    if (data.data.rule_id == 0) {
+                        gift = "do_den";
+                    } else {
+                        gift = addCommas(gift.replace("VQPV_", ""));
+                    }
+                    coupon = data.data.coupon;
+                    theWheel.stopAnimation();
+                    theWheel.rotationAngle = -22.5;
+                    theWheel.draw();
+                    theWheel.animation.stopAngle = stopAt;
+                    theWheel.startAnimation();
+                } else {
+                    swal("Có lỗi xảy ra, vui lòng thử lại !");
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log("Status: " + textStatus);
+                console.log("Error: " + errorThrown);
+            }
+        });
+
+        e.stopPropagation();
+        e.preventDefault();
+    });
+
+    $j('.resetAnimation').on('click', function (e) {
+        $j('.btn-spin').removeAttr('disabled');
+        theWheel.stopAnimation();
+        theWheel.rotationAngle = -22.5;
+        theWheel.draw();
+        e.stopPropagation();
+        e.preventDefault();
+    });
+
+    function alertPrize() {
+        countAlert++;
+        if (countAlert == 2) {
+            var mess = "";
+            appendPrice(mess, gift, coupon);
+        }
+    }
+
+    function appendPrice(_mess, _gift, _coupon) {
+        if (_gift == "do_den") {
+            $j('.fortunateLose').show();
+            $j('#fortunateModal').modal('toggle');
+            $j('#fortunateResultModal').modal();
+            $j('.btn-spin').removeAttr('disabled');
+        } else {
+            _gift = addCommas(_gift.replace("VQPV_", ""));
+            if (_mess !== "") {
+                $j('.mess-gift').html(_mess);
+            }
+            $j('#fortunateModal').modal('toggle');
+            $j('.FWgift').html(_gift);
+            $j('.FWcoupon').html(_coupon);
+            $j('.fortunateWin').show();
+            $j('#fortunateResultModal').modal();
+            $j('.btn-spin').removeAttr('disabled');
+        }
+    }
+
+    function addCommas(str) {
+        var parts = (str + "").split("."),
+            main = parts[0],
+            len = main.length,
+            output = "",
+            first = main.charAt(0),
+            i;
+
+        if (first === '-') {
+            main = main.slice(1);
+            len = main.length;
+        } else {
+            first = "";
+        }
+        i = len - 1;
+        while (i >= 0) {
+            output = main.charAt(i) + output;
+            if ((len - i) % 3 === 0 && i > 0) {
+                output = "." + output;
+            }
+            --i;
+        }
+        // put sign back
+        output = first + output;
+        // put decimal part back
+        if (parts.length > 1) {
+            output += "." + parts[1];
+        }
+        return output;
+    }
+    (function ($) {
+        $(document).ready(function () {
+            var srtop = $('.scrollToTop');
+
+            srtop.css('display', 'none');
+            //Check to see if the window is top if not then display button
+            $(window).scroll(function () {
+                if ($(this).scrollTop() > 100) {
+                    $('.scrollToTop').css('display', 'block');
+                } else {
+                    $('.scrollToTop').css('display', 'none');
+                }
+
+            });
+            //Click event to scroll to top
+            srtop.click(function () {
+                $('html, body').animate({scrollTop: 0}, 800);
+                return false;
+            });
+        });
+    })(jQuery);
+</script>
+
+<?php
+if (Mage::getSingleton('customer/session')->isLoggedIn()) {
+    $customerData = Mage::getSingleton('customer/session')->getCustomer();
+    $address = $customerData->getPrimaryBillingAddress();
+
+    echo "<input type='hidden' value='" . $customerData->getId() . "' id='cur-gcafeid'/>";
+    echo "<input type='hidden' value='" . $customerData->getFirstname() . "' id='cur-name'/>";
+    if ($address) {
+        echo "<input type='hidden' value='" . $address->getTelephone() . "' id='cur-phone'/>";
+    }
+}
+?>
+
+<?php $storeCode = Mage::app()->getStore()->getCode();
+
+if (!function_exists('isWeekend')) {
+    function isWeekend()
+    {
+        $day = date('D', time());
+        if ($day == 'Sun') {
+            return true;
+        }
+        return false;
+    }
+}
+
+if (!function_exists('isOutOfOfficeHours')) {
+    function isOutOfOfficeHours()
+    {
+        date_default_timezone_set("Asia/Ho_Chi_Minh");
+
+        $endHour = 18;
+        $startHour = 9;
+
+        $hour = date('H', time());
+        $min = date('i', time());
+        if (($hour == ($endHour - 1) && $min >= 59) ||
+            ($hour >= $endHour) ||
+            ($hour < ($startHour))
+        ) {
+            return true;
+        }
+        return false;
+    }
+}
+?>
+
+<!--<script src="//load.sumome.com/" data-sumo-site-id="eda7b995b9ac2768625758d6b737385f11a6af7a28dad99d4bc6d25dc999c956" async="async"></script>-->

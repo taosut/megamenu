@@ -1,0 +1,12 @@
+<script type="text/javascript">
+    var config = {
+        '.<?php echo $this->getUniqId() ?> .filter select[multiple],.chosen-select'           : {}
+    }
+    var results = [];
+    for (var selector in config) {
+        var elements = $$(selector);
+        for (var i = 0; i < elements.length; i++) {
+            results.push(new Chosen(elements[i],config[selector]));
+        }
+    }
+</script>

@@ -1,0 +1,215 @@
+<?xml version="1.0"?>
+
+<config>
+    <modules>
+        <Ved_Gorders>
+            <version>2.2.1</version>
+        </Ved_Gorders>
+    </modules>
+
+    <global>
+        <models>
+            <ved_gorders>
+                <class>Ved_Gorders_Model</class>
+                <resourceModel>ved_gorders_resource</resourceModel>
+            </ved_gorders>
+            <ved_gorders_resource>
+                <class>Ved_Gorders_Model_Resource</class>
+                <entities>
+                    <orderitemstock>
+                        <table>sales_order_item_stock</table>
+                    </orderitemstock>
+                    <purchaserequestitem>
+                        <table>sales_flat_purchase_request_item</table>
+                    </purchaserequestitem>
+                    <supplier>
+                        <table>supplier</table>
+                    </supplier>
+                    <transfer>
+                        <table>sales_flat_stock_transfer_request_item</table>
+                    </transfer>
+                    <logsms>
+                        <table>log_sms</table>
+                    </logsms>
+                    <directorycountryregion>
+                        <table>directory_country_region</table>
+                    </directorycountryregion>
+                    <outputrequest>
+                        <table>sales_flat_output_request</table>
+                    </outputrequest>
+                    <order_source>
+                        <table>order_source</table>
+                    </order_source>
+                </entities>
+            </ved_gorders_resource>
+        </models>
+        <resources>
+            <ved_gorders_setup>
+                <setup>
+                    <module>Ved_Gorders</module>
+                </setup>
+            </ved_gorders_setup>
+        </resources>
+        <blocks>
+            <ved_gorders>
+                <class>Ved_Gorders_Block</class>
+            </ved_gorders>
+            <adminhtml>
+                <rewrite>
+                    <sales_order_view_history>Ved_Gorders_Block_Adminhtml_Sales_Order_View_History</sales_order_view_history>
+                </rewrite>
+                <rewrite>
+                    <sales_order_view_items>Ved_Gorders_Block_Adminhtml_Sales_Order_View_Items</sales_order_view_items>
+                </rewrite>
+                <rewrite>
+                    <sales_order_totals>Ved_Gorders_Block_Adminhtml_Sales_Order_Totals</sales_order_totals>
+                </rewrite>
+                <rewrite>
+                    <sales_order_view>Ved_Gorders_Block_Adminhtml_Sales_Order_View</sales_order_view>
+                </rewrite>
+            </adminhtml>
+        </blocks>
+        <helpers>
+            <ved_gorders>
+                <class>Ved_Gorders_Helper</class>
+            </ved_gorders>
+        </helpers>
+        <events>
+            <sales_order_save_before>
+                <observers>
+                    <ved_gorders_order_source>
+                        <class>ved_gorders/observer</class>
+                        <method>salesOrderSaveBefore</method>
+                    </ved_gorders_order_source>
+                </observers>
+            </sales_order_save_before>
+            <sale_order_send_queue_before>
+                <observers>
+                    <ved_gorders_order_source>
+                        <class>ved_gorders/observer</class>
+                        <method>saleOrderSendQueueBefore</method>
+                    </ved_gorders_order_source>
+                </observers>
+            </sale_order_send_queue_before>
+            <order_telephone_confirm_before>
+                <observers>
+                    <ved_gorders_order_source>
+                        <class>ved_gorders/observer</class>
+                        <method>orderTelephoneConfirmBefore</method>
+                    </ved_gorders_order_source>
+                </observers>
+            </order_telephone_confirm_before>
+            <change_product_after_order_create>
+                <observers>
+                    <ved_gorders_order_source>
+                        <class>ved_gorders/observer</class>
+                        <method>changeProductAfterOrderCreate</method>
+                    </ved_gorders_order_source>
+                </observers>
+            </change_product_after_order_create>
+            <update_instock_product_order_cancel_after>
+                <observers>
+                    <ved_gorders_order_source>
+                        <class>ved_gorders/observer</class>
+                        <method>updateInstockProductOrderCancelAfter</method>
+                    </ved_gorders_order_source>
+                </observers>
+            </update_instock_product_order_cancel_after>
+        </events>
+    </global>
+    <admin>
+        <routers>
+            <adminhtml>
+                <ved_gorders>
+                    <use>admin</use>
+                    <args>
+                        <module>Ved_Gorders</module>
+                        <frontName>ved_gorders</frontName>
+                    </args>
+                </ved_gorders>
+                <args>
+                    <modules>
+                        <Ved_Gorders before="Mage_Adminhtml">Ved_Gorders_Adminhtml</Ved_Gorders>
+                    </modules>
+                </args>
+            </adminhtml>
+        </routers>
+    </admin>
+    <adminhtml>
+        <translate>
+            <modules>
+                <Ved_Gorders>
+                    <files>
+                        <default>Ved_Gorders.csv</default>
+                    </files>
+                </Ved_Gorders>
+            </modules>
+        </translate>
+        <layout>
+            <updates>
+                <ved_gorders>
+                    <file>ved_gorders.xml</file>
+                </ved_gorders>
+            </updates>
+        </layout>
+        <acl>
+            <resources>
+                <all>
+                    <title>Allow Everything</title>
+                </all>
+                <admin>
+                    <children>
+                        <sales translate="title" module="sales">
+                            <title>Sales</title>
+                            <children>
+                                <new_order translate="title">
+                                    <title>Orders - New</title>
+                                </new_order>
+                                <processing_order translate="title">
+                                    <title>Orders - Shipping</title>
+                                </processing_order>
+                                <completed_order translate="title">
+                                    <title>Orders - Completed</title>
+                                    <children>
+                                        <actions translate="title">
+                                            <title>Actions</title>
+                                            <children>
+                                                <redelivery_order translate="title"><title>ReDelivery</title></redelivery_order>
+                                                <cancel_completed_order translate="title"><title>Cancel Completed Order</title></cancel_completed_order>
+                                            </children>
+                                        </actions>
+                                    </children>
+                                </completed_order>
+								<order translate="title">
+                                    <title>Orders - All</title>
+									<children>
+                                        <actions translate="title">
+                                            <title>Actions</title>
+                                            <children>
+                                                <affiliate translate="title"><title>Edit Affiliate</title></affiliate>
+                                            </children>
+                                        </actions>
+                                    </children>
+                                    <children>
+                                        <actions translate="title">
+                                            <title>Actions</title>
+                                            <children>
+                                                <deposit translate="title"><title>Edit Deposit</title></deposit>
+                                            </children>
+                                        </actions>
+                                    </children>
+                                </order>
+                                <check_order translate="title">
+                                    <title>Orders - Overdue</title>s
+                                </check_order>
+								<upload_shipment_status>
+                                    <title>Upload Order Status</title>s
+                                </upload_shipment_status>
+                            </children>
+                        </sales>
+                    </children>
+                </admin>
+            </resources>
+        </acl>
+    </adminhtml>
+</config>

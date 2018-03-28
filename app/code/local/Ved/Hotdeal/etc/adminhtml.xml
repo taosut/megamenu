@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+
+<config>
+    <menu>
+        <catalog>
+            <children>
+                <hotdeal>
+                    <title>Hot Deal</title>
+                    <sort_order>3</sort_order>
+                    <children>
+                        <item translate="titl" module="tv_faq">
+                            <title>Manage Items</title>
+                            <action>adminhtml/hotdeal</action>
+                        </item>
+                        <category translate="titl" module="tv_faq">
+                            <title>Manage Hot Deal Category</title>
+                            <action>adminhtml/hotdeal_category</action>
+                        </category>
+                    </children>
+                </hotdeal>
+            </children>
+        </catalog>
+    </menu>
+</config>

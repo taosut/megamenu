@@ -1,0 +1,6 @@
+a.disabled {
+    color: #919191;
+    cursor: default;
+}
+
+input.validation-failed, textarea.validation-failed { background:#fef0ed !important; border:1px dashed #d6340e !important; }

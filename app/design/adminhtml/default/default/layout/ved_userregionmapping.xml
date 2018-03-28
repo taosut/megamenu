@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+    <adminhtml_userregionmapping_index>
+        <reference name="head">
+            <action method="addJs">
+                <script>productimport/jquery-1.11.3.min.js</script>
+            </action>
+            <action method="addJs">
+                <script>productimport/noconflict.js</script>
+            </action>
+            <action method="addJs">
+                <script>productimport/angular.min.js</script>
+            </action>
+            <action method="addJs">
+                <script>productimport/ui-bootstrap-tpls-0.14.3.min.js</script>
+            </action>
+            <action method="addJs">
+                <script>productimport/angular-file-upload.min.js</script>
+            </action>
+            <action method="addJs">
+                <script>productimport/bootstrap-filestyle.js</script>
+            </action>
+            <action method="addCss">
+                <stylesheet>productimport/css/bootstrap.my.css</stylesheet>
+            </action>
+        </reference>
+        <reference name="content">
+            <block type="ved_userregionmapping/adminhtml_userregionmapping" name="userregionmapping"
+                   template="userregionmapping/userregionmapping.phtml">
+                <block type="ved_userregionmapping/adminhtml_grid_role" name="userregionmapping.adminhtml.role.grid"
+                       as="grid"/>
+            </block>
+        </reference>
+    </adminhtml_userregionmapping_index>
+
+    <adminhtml_userregionmapping_edit>
+        <reference name="left">
+            <!--<block type="adminhtml/permissions_editroles" name="adminhtml.permissions.editroles"/>-->
+        </reference>
+    </adminhtml_userregionmapping_edit>
+    <adminhtml_userregionmapping_mapping>
+        <reference name="left">
+            <block type="ved_userregionmapping/adminhtml_userinfo" name="userregionmapping.adminhtml.mapping.user_info"
+                   template="userregionmapping/user_info.phtml"/>
+        </reference>
+        <reference name="content">
+            <block type="ved_userregionmapping/adminhtml_mapping" name="userregionmapping.adminhtml.mapping"
+                   template="userregionmapping/mapping.phtml"/>
+        </reference>
+    </adminhtml_userregionmapping_mapping>
+</layout>

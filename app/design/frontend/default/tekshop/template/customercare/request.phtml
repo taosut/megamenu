@@ -1,0 +1,77 @@
+<?php
+/**
+ * @var Ved_Customercare_Block_Request $this
+ */
+$form = $this->getForm();
+$this->resetFrom();
+?>
+
+<div class="cc-wrapper">
+
+    <div class="row">
+        <!-- Title trung tâm hỗ trợ-->
+        <div class="col-md-6">
+            <div class="cc-title"><a href="<?php echo Mage::app()->getStore()->getUrl('customercare') ?>">Trung tâm hỗ
+                    trợ</a> - Gửi yêu cầu hỗ trợ
+            </div>
+
+            <form class="cc-request-form" method="post"
+                  action="<?php echo Mage::app()->getStore()->getUrl('customercare/request/save') ?>">
+                <div class="col-md-12 no-padding cc-formgroup">
+                    <label class="cc-label-input">Số điện thoại <span class="red">*</span></label>
+                    <input class="cc-input-text required" name="phone" type="text"
+                           value="<?php echo isset($form['phone']['value']) ? $form['phone']['value'] : "" ?>"
+                           placeholder="Số điện thoại...">
+                    <span class="red"><?php echo isset($form['phone']['error']) ? $form['phone']['error'] : "" ?></span>
+                </div>
+                <div class="col-md-12 no-padding cc-formgroup">
+                    <label class="cc-label-input">Tiêu đề <span class="red">*</span></label>
+                    <input name="title"
+                           value="<?php echo isset($form['title']['value']) ? $form['title']['value'] : "" ?>"
+                           class="cc-input-text required" type="text" placeholder="Tiêu đề...">
+                    <span class="red"><?php echo isset($form['title']['error']) ? $form['title']['error'] : "" ?></span>
+                    <div class="cc-note">
+                        Tek Shop sẽ hồi đáp yêu cầu của quý khách trong vòng 24 tiếng. Mọi yêu cầu cần xử lý gấp
+                        xin vui lòng gọi Hotline của Tek Shop: 1900 2331 để được hỗ trợ
+                    </div>
+                </div>
+
+                <div class="col-md-12 no-padding cc-formgroup">
+                    <label class="cc-label-input">Mã đơn hàng</label>
+                    <input name="order_code" class="cc-input-text" type="text" placeholder="Mã đơn hàng...">
+                    <div class="cc-note">
+                        Vui lòng nhập mã đơn hàng (nếu có)
+                    </div>
+                </div>
+
+                <div class="col-md-12 no-padding cc-formgroup">
+                    <label class="cc-label-input">Chọn vấn đề cần hỗ trợ <span class="red">*</span></label>
+                    <select class="cc-input-text" name="type">
+                        <option
+                            <?php echo isset($form['type']['value']) && $form['type']['value'] == 1 ? 'selected' : '' ?>
+                            value="1">
+                            Thông tin sản phẩm
+                        </option>
+                        <option
+                            <?php echo isset($form['type']['value']) && $form['type']['value'] == 2 ? 'selected' : '' ?>
+                            value="2">
+                            Thông tin về đơn hàng
+                        </option>
+                        <option
+                            <?php echo isset($form['type']['value']) && $form['type']['value'] == 3 ? 'selected' : '' ?>
+                            value="3">
+                            Các vấn đề khác
+                        </option>
+                    </select>
+                </div>
+
+                <div class="col-md-12 no-padding cc-formgroup">
+                    <button class="cc-send-request-btn" type="submit">Gửi yêu cầu</button>
+                </div>
+
+            </form>
+        </div>
+
+    </div>
+
+</div>

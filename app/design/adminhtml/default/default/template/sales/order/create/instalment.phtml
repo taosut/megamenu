@@ -1,0 +1,68 @@
+<?php
+/**
+ * @var  Ved_Instalment_Block_Adminhtml_Instalment_Order_Instalment $this
+ */
+$_orderInstalment = $this->getOrderInstalment();
+$_order = $this->getOrder();
+?>
+<div class="entry-edit">
+    <div class="entry-edit-head">
+        <h4 class="icon-head head-payment-method"><?php echo Mage::helper('sales')->__('Instalment Information') ?></h4>
+        <div class="tools"><?php echo $this->getEditLink() ?></div>
+    </div>
+    <div class="fieldset">
+        <div class="hor-scroll">
+            <table cellspacing="0" class="form-list">
+                <?php if ($_order->getIsInstalment() == "1"): ?>
+                    <td class="label">
+                        <label class="accent"><strong><?php echo __("Đơn hàng này là đơn trả góp") ?></strong></label>
+                    </td>
+                    <tr>
+                        <td class="label"><label><?php echo __('Đơn vị') ?></label></td>
+                        <td class="value"><strong><?php echo $_orderInstalment->getProvider() ?></strong></td>
+                        <td class="label"><label><?php echo __('Số hợp đồng') ?></label></td>
+                        <td class="value"><strong><?php echo $_orderInstalment->getData('transaction_id') ?></strong>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label"><label class=""><?php echo __('Trạng thái') ?></label></td>
+                        <td class="value"><strong
+                                    class="accent"><?php echo $_orderInstalment->getStatusLabel() ?></strong></td>
+                        <td class="label"><label><?php echo __('Tổng tiền') ?></label></td>
+                        <td class="value">
+                            <strong><?php echo number_format($_orderInstalment->getAmount(), 0) ?></strong></td>
+                    </tr>
+                    <tr>
+
+                    </tr>
+                    <tr>
+                        <td class="label"><label><?php echo __('Số tiền trả trước') ?></label></td>
+                        <td class="value">
+                            <strong><?php echo number_format($_orderInstalment->getData('prepaid_amount'), 0) ?></strong>
+                        </td>
+                        <td class="label"><label><?php echo __('Phí hồ sơ') ?></label></td>
+                        <td class="value">
+                            <strong><?php echo number_format($_orderInstalment->getData('fee'), 0) ?></strong>
+                        </td>
+                    </tr>
+                    <tr>
+
+                    </tr>
+                    <tr>
+                        <td class="label"><label><?php echo __('Description') ?></label>
+                        </td>
+                        <td class="value" colspan="3">
+                            <?php echo htmlentities($_orderInstalment->getDescription()) ?>
+                        </td>
+                    </tr>
+                <?php else: ?>
+                    <tr>
+                        <td class="label">
+                            <label><?php echo __("Đơn hàng không phải đơn trả góp") ?></label>
+                        </td>
+                    </tr>
+                <?php endif; ?>
+            </table>
+        </div>
+    </div>
+</div>

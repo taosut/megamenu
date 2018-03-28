@@ -1,0 +1,19 @@
+.rm-favorite-list {
+    float: right;
+    margin-top: 15px;
+    color: #333333;
+}
+
+.rm-favorite-list:hover {
+    cursor: pointer;
+    color: #d42333;
+}
+
+.rm-favorite-grid {
+    float: right;
+}
+
+.rm-favorite-grid:hover {
+    cursor: pointer;
+    color: #d42333;
+}

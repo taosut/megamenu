@@ -1,0 +1,275 @@
+<?php $version = Teko::getSaleCenterVersion(); ?>
+<link rel="stylesheet" type="text/css" href="<?php echo $this->getSkinUrl('lib/contact.css'); ?><?php echo "?v=" . $version ?>"/>
+
+<div class="content">
+    <!--Breadcrumb-->
+    <div class="contact-title">
+        Thông tin liên hệ
+    </div>
+    <!--End Breadcrumb-->
+
+    <!-- Contact content-->
+    <div class="contact-content">
+        <!-- Contact form block-->
+        <div class="contact-form-block">
+            <div class="contact-form-content">
+                <div class="contact-form-group">
+                    <div class="contact-form-title">
+                        <img src="<?php echo $this->getSkinUrl('images/Contact_Envelope.svg'); ?>"/>
+                        Hợp tác với chúng tôi
+                    </div>
+                    <p>Email: <a href="mailto:contact@phongvu.vn">contact@phongvu.vn</a></p>
+                </div>
+                <div class="contact-form-group">
+                    <div class="contact-form-title">
+                        <img src="<?php echo $this->getSkinUrl('images/Contact_PhoneCall.svg'); ?>"/>
+                        Khiếu nại đơn hàng
+                    </div>
+                    <p>Số điện thoại: <a href="tel:19001835">1900 1835</a></p>
+                    <p>Email: <a href="mailto:report@phongvu.vn">report@phongvu.vn</a></p>
+                </div>
+                <div class="contact-form-group">
+                    <div class="contact-form-title">
+                        <img src="<?php echo $this->getSkinUrl('images/Contact_Setting.svg'); ?>"/>
+                        Hỗ trợ kỹ thuật
+                    </div>
+                    <p>Hotline hỗ trợ kỹ thuật: <a href="tel:0907903535">0907-903-535</a></p>
+                    <p>Số điện thoại: <a href="tel:02862908777">(028) 6290 8777 (Ext: 106)</a></p>
+                    <p>Email: <a href="mailto:support@vitinhphongvu.com">support@vitinhphongvu.com</a></p>
+                </div>
+            </div>
+
+            <div class="contact-form-content">
+                <div class="contact-form-title">
+                    Tham gia Fanpage Phong Vũ trên facebook để hưởng ngay nhiều ưu đãi
+                </div>
+                <a href="https://www.facebook.com/groups/phongvuvn/" target="_blank">
+                    <img class="contact-fanpage-banner-img"
+                         src="<?php echo $this->getSkinUrl('images/contact-fanpage-banner.png'); ?>"/>
+                </a>
+            </div>
+        </div>
+        <!-- End Contact form block-->
+
+        <!-- Contact main info block-->
+        <div class="contact-main-info-block">
+            <div class="contact-main-info-title">
+                Phong Vũ luôn cung cấp dịch vụ bán hàng và phục vụ hàng đầu:
+            </div>
+            <div class="contact-main-info-section">
+                <img src="<?php echo $this->getSkinUrl('images/Contact_Checked.svg'); ?>"/>
+                <p><b>Sản phẩm da dạng</b> cho mọi khách hàng có nhu cầu về giá, hãng sản
+                    xuất</p>
+            </div>
+            <div class="contact-main-info-section">
+                <img src="<?php echo $this->getSkinUrl('images/Contact_Checked.svg'); ?>"/>
+                <p><b>Miễn phí giao hàng tận nơi</b> trên Toàn Quốc với mọi đơn hàng</p>
+            </div>
+            <div class="contact-main-info-section">
+                <img src="<?php echo $this->getSkinUrl('images/Contact_Checked.svg'); ?>"/>
+                <p><b>Khách hàng thoải mái trải nghiệm</b> sản phẩm yêu thích và hot nhất
+                    thị trường</p>
+            </div>
+            <?php
+            $policiesHyperlink = json_decode(Mage::getModel('core/variable')->loadByCode('policies_hyperlink')->getValue('plain'), true);
+            ?>
+            <div class="contact-main-info-section">
+                <img src="<?php echo $this->getSkinUrl('images/Contact_Checked.svg'); ?>"/>
+                <p><b>Nhân viên tư vấn nhiệt tình</b> giúp khách hàng lựa chọn được sản phẩm
+                    ưng ý và phù hợp nhất</p>
+            </div>
+            <div class="contact-main-info-section">
+                <img src="<?php echo $this->getSkinUrl('images/Contact_Checked.svg'); ?>"/>
+                <p><b>Bảo hành chính hãng</b> cho các sản phẩm mua tại Phong Vũ (<a
+                            href="<?php echo $policiesHyperlink['bao-hanh']; ?>"
+                            target="_blank">Chi tiết Chính sách bảo hành</a>)</p>
+            </div>
+            <div class="contact-main-info-section">
+                <img src="<?php echo $this->getSkinUrl('images/Contact_Checked.svg'); ?>"/>
+                <p><b>Chính sách đổi trả ưu đãi</b> dành cho khách hàng (<a
+                            href="<?php echo $policiesHyperlink['doi-hang']; ?>"
+                            target="_blank">Chi
+                        tiết Chính sách đổi trả</a>)</p>
+            </div>
+            <iframe class="contact-embed-video" width="100%" height="250"
+                    src="https://www.youtube.com/embed/04ZEby__MDw">
+            </iframe>
+            <div class="contact-main-info-row">
+                <div class="contact-company-title">Văn phòng điều hành</div>
+                <p>Tên đầy đủ: Công Ty Cổ Phần Thương Mại – Dịch Vụ PHONG VŨ</p>
+                <p>Địa chỉ: Tầng 7, tòa nhà số 198 Nguyễn Thị Minh Khai, Phường 6, Quận 3, TP. Hồ Chí Minh</p>
+                <div class="contact-embed-map">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.487752606632!2d106.68718511528863!3d10.773905562185146!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f3b5e579381%3A0xbad3d6d98221b778!2zUGhvbmcgVsWp!5e0!3m2!1svi!2s!4v1514272085440"
+                            width="100%" height="600" frameborder="0" style="border:0"
+                            allowfullscreen></iframe>
+                </div>
+            </div>
+            <div class="contact-main-info-row">
+                <div class="contact-company-title">Trung tâm bảo hành</div>
+                <p>Tên đầy đủ : TRUNG TÂM BẢO HÀNH PHONG VŨ</p>
+                <p>Địa chỉ: 31 Nguyễn Thị Diệu, Phường 6, Quận 3, TP.HCM</p>
+                <p>Điện thoại: <a href="tel:02839302277">(028) 39302277</a> – Fax: <a href="tel:02839300029">(028)
+                        39300029</a> - Email:
+                    <a href="mailto:support@vitinhphongvu.com">support@vitinhphongvu.com</a></p>
+                <p>Thời gian làm việc: 08h00 – 20h00</p>
+                <div class="contact-embed-map">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.4664444035493!2d106.68621611528869!3d10.775542362155358!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f3b2d9886df%3A0xab1048b0e8bfcbbe!2zVHJ1bmcgVMOibSBC4bqjbyBIw6BuaCBQaG9uZyBWxak!5e0!3m2!1svi!2s!4v1514272521361"
+                            width="100%" height="600" frameborder="0" style="border:0"
+                            allowfullscreen></iframe>
+                </div>
+            </div>
+        </div>
+        <!-- End Contact main info block-->
+        <div id="store-list"></div>
+        <!-- Contact store list block -->
+        <div class="contact-store-list-block">
+            <div class="contact-company-info">
+                <div class="contact-store-title">
+                    <span>1</span>
+                    Cửa hàng Phong Vũ Trần Đại Nghĩa
+                </div>
+                <p>Địa chỉ: 2A Trần Đại Nghĩa - P. Bách Khoa - Q Hai Bà Trưng - Hà Nội</p>
+                <img class="coming-soon-img" src="<?php echo $this->getSkinUrl('images/coming-soon.png'); ?>"/>
+            </div>
+            <div class="contact-company-info">
+                <div class="contact-store-title">
+                    <span>2</span>
+                    Cửa hàng Phong Vũ Nguyễn Lương Bằng
+                </div>
+                <p>Địa chỉ: 29 Nguyễn Lương Bằng - Liên Chiểu - Đà Nẵng</p>
+                <img class="coming-soon-img" src="<?php echo $this->getSkinUrl('images/coming-soon.png'); ?>"/>
+            </div>
+            <div class="contact-company-info">
+                <div class="contact-store-title">
+                    <span>3</span>
+                    Cửa hàng Phong Vũ Nguyễn Thị Minh Khai
+                </div>
+                <p>Địa chỉ: 264A – 264B – 264C Nguyễn Thị Minh Khai, Phường 6, Quận 3, TP.HCM</p>
+                <p>Điện thoại: <a href="tel:02862908777">(028) 62908777</a> – Fax: <a href="tel:02862908779">(028)
+                        62908779</a> - Email:
+                    <a href="mailto:contact@phongvu.vn">contact@phongvu.vn</a></p>
+                <p>Thời gian làm việc: 08h00 – 21h30</p>
+                <div class="contact-store-embed-map">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.487752606632!2d106.68718511528863!3d10.773905562185146!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752f3b5e579381%3A0xbad3d6d98221b778!2zUGhvbmcgVsWp!5e0!3m2!1svi!2s!4v1514272085440"
+                            width="100%" height="600" frameborder="0" style="border:0"
+                            allowfullscreen></iframe>
+                </div>
+            </div>
+            <div class="contact-company-info">
+                <div class="contact-store-title">
+                    <span>4</span>
+                    Cửa hàng Phong Vũ Bình Dương
+                </div>
+                <p>Địa chỉ: 408 Đại lộ Bình Dương, P. Phú Lợi, TP. Thủ Dầu Một, Tỉnh Bình Dương</p>
+                <p>Điện thoại: <a href="tel:02743856593">(0274) 3856593</a> – Fax: <a href="tel:02743856590">(0274)
+                        3856590</a> - Email:
+                    <a href="mailto:contact@phongvu.vn">contact@phongvu.vn</a></p>
+                <p>Thời gian làm việc: 08h00 – 21h00</p>
+                <div class="contact-store-embed-map">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3916.6920047517774!2d106.66343201528937!3d10.98660415828198!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3174d122bca13ca7%3A0x8ec16224ac9d3faa!2sPhong+V%C5%A9+Computer!5e0!3m2!1svi!2s!4v1514272028288"
+                            width="100%" height="600" frameborder="0" style="border:0"
+                            allowfullscreen></iframe>
+                </div>
+            </div>
+            <div class="contact-company-info">
+                <div class="contact-store-title">
+                    <span>5</span>
+                    Cửa hàng Phong Vũ Đồng Nai
+                </div>
+                <p>Địa chỉ: 54 Đường 30/4, KP3, P.Trung Dũng, TP.Biên Hòa, Tỉnh Đồng Nai</p>
+                <p>Điện thoại: <a href="tel:02513816118">(0251) 381 6118</a> - Fax: <a href="tel:02513816177">(0251) 381
+                        6177</a> - Email:
+                    <a href="mailto:contact@phongvu.vn">contact@phongvu.vn</a></p>
+                <p>Thời gian làm việc: 08h00 – 21h00</p>
+                <div class="contact-store-embed-map">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3917.119083204079!2d106.8227590152894!3d10.95437635887811!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3174dea999a1760b%3A0x705b8a85bf085eb5!2zQ-G7rWEgaMOgbmcgbcOheSB0w61uaCBQaG9uZyBWxak!5e0!3m2!1svi!2s!4v1514272137928"
+                            width="100%" height="600" frameborder="0" style="border:0"
+                            allowfullscreen></iframe>
+                </div>
+            </div>
+            <div class="contact-company-info">
+                <div class="contact-store-title">
+                    <span>6</span>
+                    Cửa hàng Phong Vũ Cộng Hoà - Tân Bình
+                </div>
+                <p>Địa chỉ: 17A Đường Cộng Hòa, Phường 4, Quận Tân Bình, TP.HCM</p>
+                <p>Điện thoại: <a href="tel:02862908777">(028) 62908777</a> – Fax: <a href="tel:02862908779">(028)
+                        62908779</a> - Email:
+                    <a href="mailto:contact@phongvu.vn">contact@phongvu.vn</a></p>
+                <p>Thời gian làm việc: 08h00 – 21h30</p>
+                <div class="contact-store-embed-map">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.1352192890113!2d106.65529121528877!3d10.80095406169278!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x317529373f4a0863%3A0x8bd65369eb375d6b!2zUGhvbmcgVsWpIEPhu5luZyBIb8Og!5e0!3m2!1svi!2s!4v1514272179959"
+                            width="100%" height="600" frameborder="0" style="border:0"
+                            allowfullscreen></iframe>
+                </div>
+            </div>
+            <div class="contact-company-info">
+                <div class="contact-store-title">
+                    <span>7</span>
+                    Cửa hàng Phong Vũ Hậu Giang - Quận 6
+                </div>
+                <p>Địa chỉ: 1081C Hậu Giang, P.11, Q.6, TP.HCM</p>
+                <p>Điện thoại: <a href="tel:02862908777">(028) 62908777</a> – Fax: <a href="tel:02862908779">(028)
+                        62908779</a> - Email:
+                    <a href="mailto:contact@phongvu.vn">contact@phongvu.vn</a></p>
+                <p>Thời gian làm việc: 08h00 – 21h30</p>
+                <div class="contact-store-embed-map">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.861934281391!2d106.62165211528854!3d10.745122462707775!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x31752dd40fbc98ef%3A0x955253ee205c02c5!2sChi+Nh%C3%A1nh+Phong+v%C5%A9+Computer!5e0!3m2!1svi!2s!4v1514272432263"
+                            width="100%" height="600" frameborder="0" style="border:0"
+                            allowfullscreen></iframe>
+                </div>
+            </div>
+            <div class="contact-company-info">
+                <div class="contact-store-title">
+                    <span>8</span>
+                    Cửa hàng Phong Vũ Lê Văn Việt - Quận 9
+                </div>
+                <p>Địa chỉ: 1A Lê Văn Việt, Phường Hiệp Phú, Quận 9, TP.HCM</p>
+                <p>Điện thoại: <a href="tel:02862908777">(028) 62908777</a> – Fax: <a href="tel:02862908779">(028)
+                        62908779</a> - Email:
+                    <a href="mailto:contact@phongvu.vn">contact@phongvu.vn</a></p>
+                <p>Thời gian làm việc: 08h00 – 21h30</p>
+                <div class="contact-store-embed-map">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3918.506553363551!2d106.77252351528894!3d10.849023760814973!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3175270b3dcc37f9%3A0x79f4722a5c61a68f!2sPhong+Vu+Computer!5e0!3m2!1svi!2s!4v1514272477480"
+                            width="100%" height="600" frameborder="0" style="border:0;"
+                            allowfullscreen></iframe>
+                </div>
+            </div>
+            <div class="contact-company-info">
+                <div class="contact-store-title">
+                    <span>9</span>
+                    Cửa hàng Phong Vũ Nguyễn Thị Thập - Quận 7
+                </div>
+                <p>Địa chỉ: Số 9-11 Nguyễn Thị Thập, Phường Tân Phú, Quận 7, TP.HCM</p>
+                <p>Điện thoại: <a href="tel:02862908777">(028) 62908777</a> – Fax: <a href="tel:02862908777">(028)
+                        62908779</a> - Email:
+                    <a href="mailto:contact@phongvu.vn">contact@phongvu.vn</a></p>
+                <p>Thời gian làm việc: 08h00 – 21h30</p>
+                <div class="contact-store-embed-map">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3919.961095000296!2d106.7276530152884!3d10.737481962846234!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3175257bf3dea611%3A0x15bdebd5bc6f7c93!2zUGhvbmcgVsWpIFF14bqtbiA3!5e0!3m2!1svi!2s!4v1514444587408"
+                            width="100%" height="600" frameborder="0" style="border:0"
+                            allowfullscreen></iframe>
+                </div>
+            </div>
+            <div class="contact-company-info">
+                <div class="contact-store-title">
+                    <span>10</span>
+                    Cửa hàng Phong Vũ - Nguyễn Oanh - Quận Gò Vấp
+                </div>
+                <p>Địa chỉ: Số 2A Nguyễn Oanh, Phường 7, Quận Gò Vấp, TP.HCM</p>
+                <p>Điện thoại: <a href="tel:02862908777">(028) 62908777</a> – Fax: <a href="tel:02862908779">(028)
+                        62908779</a> - Email:
+                    <a href="mailto:contact@phongvu.vn">contact@phongvu.vn</a></p>
+                <p>Thời gian làm việc: 08h00 – 21h30</p>
+                <div class="contact-store-embed-map">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3918.7494784942573!2d106.67607161528883!3d10.830473961154084!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x317528fe4596d4dd%3A0xaa8bc6658ea00035!2zQ-G7rWEgSMOgbmcgTcOheSBUw61uaCBQaG9uZyBWxak!5e0!3m2!1svi!2s!4v1514444660763"
+                            width="100%" height="600" frameborder="0" style="border:0"
+                            allowfullscreen></iframe>
+                </div>
+            </div>
+        </div>
+        <!-- End Contact store list block -->
+    </div>
+    <!-- End contact content-->
+
+</div>

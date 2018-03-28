@@ -1,0 +1,9 @@
+<layout>
+<tracking_order_index>
+    <reference name="content">
+        <block type="tracking/order" name="tracking.order.index" template="tracking/order/index.phtml">
+            <block type="core/template" name="page.cat_menu" template="page/html/cat_menu.phtml"/>
+        </block>
+    </reference>
+</tracking_order_index>
+</layout>

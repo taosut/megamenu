@@ -1,0 +1,291 @@
+<?php
+$products = Mage::registry('product');
+$attributeCode = Mage::registry('attribute_set_id');
+$loadProduct = Mage::registry('loadedProduct');
+$additionalData = $loadProduct[0];
+$localStorage = Mage::registry('localStorage');
+$helper = Mage::helper('catalog/output');
+$atrributeKeys = Mage::registry('attributeKeys');
+$label = Mage::registry('label');
+?>
+<input type="hidden" class="attr-code" value="<?php echo $attributeCode; ?>"/>
+<input type="hidden" class="params" value="<?php echo $localStorage; ?>"/>
+
+<div class="tekshop-cat-header cat-header-normal" style="margin-top: 20px;">
+    <div class="tekshop-cat-header-img">
+        <img src="<?php echo $this->getSkinUrl('images/header-icon.png') ?>"/>
+    </div>
+    <div class="tekshop-cat-header-text">So sánh sản phẩm</div>
+</div>
+<div class="col-md-12 col-md-xs-12">
+    <!--    <div class="overview-compare">-->
+    <!--    </div>-->
+    <div class="compare-block">
+        <div class="">
+            <div style="overflow-x: auto">
+                <table class="table table-bordered cp-table-striped compare-fixed">
+                    <tr>
+                        <td class="compare-center cp-unit cp-responive-header">
+                            <!--                            <div class="cp-helper-text">Thêm sản phẩm để so sánh</div>-->
+                            <img class="cp-helper-img" src="<?php echo $this->getSkinUrl('images/collection.jpg') ?>"
+                                 alt="So sánh sản phẩm" title="So sánh sản phẩm">
+                            <!--                            <input id="search" class="form-control" placeholder="Gõ tên sản phẩm....">-->
+                        </td>
+                        <?php foreach ($products as $product): ?>
+                            <td class="compare-center">
+                                <div class="cp-remove" data-id="<?php echo $product->getId() ?>">&times;</div>
+                                <div class="product-image">
+                                    <a class="a-img"
+                                       href="<?php echo $product->getProductUrl() ?>"
+                                       title="<?php echo $product->getProductName() ?>" target="_blank">
+                                        <img class="cp-resimg"
+                                             src="<?php echo Mage::helper('catalog/image')->init($product, 'small_image')->resize(150, 150); ?>"
+                                             alt="<?php echo $this->escapeHtml($this->getImageLabel($product, 'small_image')) ?>"
+                                             title="<?php echo $this->escapeHtml($this->getImageLabel($product, 'small_image')) ?>">
+                                    </a>
+                                </div>
+                                <div class="cp-name"><a href="<?php echo $product->getProductUrl() ?>"
+                                                        title="<?php echo htmlspecialchars($product->getName()) ?>"
+                                                        target="_blank"><?php echo htmlspecialchars($product->getName()) ?></a>
+                                </div>
+                                <div class="bp-product-regular-price">
+                                    <?php echo number_format($product->getFinalPrice(), 0, ",", ".") . " đ"; ?>
+                                </div>
+                            </td>
+                        <?php endforeach; ?>
+                    </tr>
+                    <?php foreach ($additionalData as $data): ?>
+                        <?php $key = array_search($data, $additionalData) ?>
+                        <tr>
+                            <td class="cp-table-header"
+                                style="width: 200px;"><?php echo $this->escapeHtml($this->__($data['label'])) ?></td>
+                            <?php foreach ($loadProduct as $product): ?>
+                                <td class="cp-row"><?php echo $product[$key]['value'] ?></td>
+                            <?php endforeach; ?>
+                        </tr>
+                    <?php endforeach; ?>
+                    <tr>
+                        <td></td>
+                        <?php foreach ($products as $product): ?>
+                            <form action="<?php echo $this->getUrl('checkout/cart/addAjax') ?>" method="post"
+                                  id="product_addtocart_form-<?php echo $product->getId() ?>" <?php if ($product->getOptions()): ?> enctype="multipart/form-data"<?php endif; ?>>
+                                <td class="cp-row">
+                                    <input type="hidden" name="form_key"
+                                           value="<?php echo Mage::getSingleton('core/session')->getFormKey() ?>"/>
+                                    <input type="hidden" name="product" value="<?php echo $product->getId() ?>"/>
+                                    <input type="hidden" name="related_product" value=""/>
+                                    <div class="add_to_cart_messages add_to_cart_messages-<?php echo $product->getId() ?>"></div>
+                                    <button type="button" class="btn btn-success bp-change-btn wish-add-to-cart"
+                                            product-id="<?php echo $product->getId() ?>"
+                                            product-type="<?php echo $product->getTypeID() ?>">
+                                        <span class="hidden-mobile display-inline">Thêm vào giỏ hàng&nbsp;</span>
+                                        <i class="fa fa-angle-right bp-i-<?php echo $product->getId() ?>"></i>
+                                    </button>
+                                </td>
+                                <?php if ($product->getTypeID() === 'bundle'): ?>
+                                    <?php
+                                    $bundleCollection = $product->getTypeInstance(true)
+                                        ->getSelectionsCollection($product->getTypeInstance(true)->getOptionsIds($product), $product);
+                                    ?>
+                                    <?php foreach ($bundleCollection as $_option): ?>
+                                        <input type="hidden" name="bundle_option[<?php echo $_option->getOptionId() ?>]"
+                                               value="<?php echo $_option->getSelectionId() ?>"/>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                                <input type="hidden" name="qty" value="1"/>
+
+                            </form>
+                        <?php endforeach; ?>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    var $j = jQuery.noConflict();
+    bindAddToCart();
+    // Init the localStorage from the params
+    $j('.cp-remove').on('click', function (e) {
+        var productId = $j(this).attr('data-id');
+        var params = $j('.params').value;
+        swal({
+                title: "Xóa khỏi danh sách ?",
+                text: "Bạn có muốn xóa sản phẩm khỏi danh sách so sánh ?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: '#DD6B55',
+                confirmButtonText: 'Xóa ',
+                cancelButtonText: "Hủy bỏ",
+                closeOnConfirm: false,
+                closeOnCancel: false
+            },
+            function (isConfirm) {
+                if (isConfirm) {
+                    var compareList = JSON.parse(localStorage.getItem('compareList'));
+                    var listItem = compareList.listItem;
+                    var newList = [];
+                    listItem.each(function (item) {
+                        if (item.product_id != productId) {
+                            newList.push(item);
+                        }
+                    });
+                    var itemParams = [];
+                    newList.forEach(function (item) {
+                        itemParams.push({
+                            'product_id': item.product_id
+                        });
+                    });
+                    compareList.listItem = newList;
+                    localStorage.setItem('compareList', JSON.stringify(compareList));
+                    compareList.listItem = itemParams;
+                    if (newList.length == 0) {
+                        window.close();
+                        return;
+                    }
+                    window.location.href = "<?php echo $this->getUrl('compare/index/compare') ?>?data=" + btoa(JSON.stringify(compareList));
+                }
+                else {
+                    swal.close();
+                }
+            });
+        e.stopPropagation();
+        e.preventDefault();
+    });
+    function bindAddToCart() {
+        $j('.wish-add-to-cart').bind('click', function (e) {
+            var product_id = $j(this).attr('product-id');
+            $j('.wish-add-to-cart').prop('disabled', true);
+            $j('.ajax-loader-atc').show();
+            $j('.loading').show();
+//        var purchaseQty = parseInt($j('.qty-selector-input').val());
+            /* Enhanced ecommerce add to cart*/
+            /**
+             * Measure adding a product to a shopping cart by using an 'add' actionFieldObject
+             * and a list of productFieldObjects.
+             */
+            /* End Enhanced ecommerce add to cart*/
+
+            var form = $j('#product_addtocart_form-' + product_id);
+
+            var data = form.serializeArray();
+
+//            console.log(data);
+
+            $j.ajax({
+                url: '<?php echo $this->getUrl('checkout/cart/addAjax') ?>',
+                type: 'POST',
+                dataType: 'json',
+                data: data,
+                success: function (response) {
+                    $j('.ajax-loader-atc').hide();
+                    $j('.wish-add-to-cart').prop('disabled', false);
+                    if (response.message !== '') {
+                        $j('.add_to_cart_messages').empty();
+                        if (response.error_flg == 0) {
+                            if (win.width() < 500) {
+                                window.location = '<?php echo $this->getUrl('checkout/cart') ?>';
+                            } else {
+                                swal({
+                                    title: "Thành công!",
+                                    text: "Đã thêm vào giỏ hàng!",
+                                    showConfirmButton: false,
+                                    type: "success"
+                                });
+                                setTimeout(function () {
+                                    swal.close();
+                                }, 3000);
+                            }
+                        }
+                        else {
+                            if (response.message == 'Please specify the product\'s option(s).') {
+                                response.message = 'Sản phẩm có chứa thuộc tính, vui lòng vào chi tiết sản phẩm';
+                            }
+                            $j('.add_to_cart_messages-' + product_id).append("<div class='alert alert-danger mb-0'>" + response.message + "</div>");
+                            if (win.width() < 500) {
+                                $j('#messages_product_view').insertAfter('.share-block');
+                                $j("html, body").animate({scrollTop: $j('#messages_product_view').offset().top + 15}, 500);
+                            }
+                            $j('.btn-tekshop').addClass('opa-1');
+                        }
+                    }
+
+                    // Update Subtotal
+                    $j('.cart-pr-subtotal').empty();
+                    $j('.cart-pr-subtotal').html(addCommas(response.sub_total) + ' ₫');
+
+                    // Update Grandtotal
+                    $j('.cart-pr-grandtotal').empty();
+                    $j('.cart-pr-grandtotal').html(addCommas(response.grand_total) + ' ₫');
+
+                    // Update shopping cart body
+                    $j('#shopping-cart-body').empty();
+                    $j('#shopping-cart-body').append(response.ex_html);
+
+                    // Update shopping cart header
+                    $j('#shopping-cart-header').empty();
+                    $j('#shopping-cart-header').append(response.ex_header_html);
+
+                    $j('.wish-add-to-cart').prop('disabled', false);
+                    $j('.loading').hide();
+                }
+            });
+            e.preventDefault();
+            e.stopPropagation();
+        });
+    }
+
+    function addCommas(str) {
+        var parts = (str + "").split("."),
+            main = parts[0],
+            len = main.length,
+            output = "",
+            first = main.charAt(0),
+            i;
+
+        if (first === '-') {
+            main = main.slice(1);
+            len = main.length;
+        } else {
+            first = "";
+        }
+        i = len - 1;
+        while (i >= 0) {
+            output = main.charAt(i) + output;
+            if ((len - i) % 3 === 0 && i > 0) {
+                output = "." + output;
+            }
+            --i;
+        }
+        // put sign back
+        output = first + output;
+        // put decimal part back
+        if (parts.length > 1) {
+            output += "." + parts[1];
+        }
+        return output;
+    }
+    //* Keep scrollbar if description too long, comment for advance refactor
+    //    $j(window).scroll(function () {
+    //        if ($j(window).scrollTop() >= $j('.tekshop-cat-header').height() + $j('.tekshop-topbar').height() + $j('.overview-compare').height() + $j('.compare-wrapper').height()) {
+    //            if(!$j('.compare-fixed').hasClass('cp-fixed-show')){
+    //                $j('.compare-fixed').addClass('cp-fixed-show');
+    //                $j('.cp-helper-img').hide();
+    //                $j('.cp-helper-text').addClass('cp-helper-nameafter');
+    //                $j('.cp-name').hide();
+    //            }
+    //        }else{
+    //            var currentImage = $j('.cp-name').first();
+    //
+    //            if($j('.compare-fixed').hasClass('cp-fixed-show')){
+    //                $j('.compare-fixed').removeClass('cp-fixed-show');
+    //                $j('.cp-name').show();
+    //                $j('.cp-helper-img').show();
+    //                $j('.cp-helper-text').removeClass('cp-helper-nameafter');
+    //            }
+    //        }
+    //    });
+
+</script>

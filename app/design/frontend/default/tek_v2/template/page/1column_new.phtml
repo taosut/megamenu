@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<?php echo $this->getLang() ?>"
+      lang="<?php echo $this->getLang() ?>">
+<head>
+    <?php echo $this->getChildHtml('head') ?>
+</head>
+<body<?php echo $this->getBodyClass() ? ' class="' . $this->getBodyClass() . '"' : '' ?>>
+
+<!-- Google Tag Manager (noscript) -->
+<noscript>
+    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T9QWVDV"
+            height="0" width="0" style="display:none;visibility:hidden"></iframe>
+</noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+<?php Mage::getSingleton('core/session')->setWelcomeMessage('true'); ?>
+<div id="preloader" class="preloaderlight">
+    <h1>
+        <img src="<?php echo $this->getSkinUrl('images/ajax-loader-new.gif') ?>" alt="Logo"/>
+    </h1>
+</div>
+<script type="text/javascript">
+    setTimeout(function(){ jQuery( "#preloader" ).fadeOut(); }, 50);
+</script>
+
+<?php echo $this->getChildHtml('after_body_start') ?>
+<div class="wrapper">
+    <?php echo $this->getChildHtml('global_notices') ?>
+    <div class="page">
+        <?php echo $this->getChildHtml('header') ?>
+        <div class="main-container col1-layout">
+            <?php echo $this->getChildHtml('top_slider') ?>
+            <?php echo $this->getChildHtml('breadcrumbs') ?>
+            <div class="main">
+                <div class="col-wrapper">
+                    <div class="col-main">
+                        <div class="row">
+                            <div class="col-lg-8 col-md-12 cart-col-1">
+                                <?php echo $this->getChildHtml('global_messages') ?>
+                                <?php echo $this->getChildHtml('content') ?>
+                            </div>
+                            <div class="col-lg-4 col-md-12 cart-col-2">
+                                <div id="right-affix" class="affix-top">
+                                    <?php echo $this->getChildHtml('right') ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <?php echo $this->getChildHtml('footer') ?>
+        <?php echo $this->getChildHtml('global_cookie_notice') ?>
+        <?php echo $this->getChildHtml('before_body_end') ?>
+    </div>
+</div>
+
+<?php
+$GA_TRACK_ID = Mage::getModel('core/variable')->loadByCode('ga_track_id')->getValue('html');
+?>
+
+<script>
+    if (typeof dataLayer !== 'undefined') {
+        dataLayer.push({
+            'gaTrackId': '<?php echo $GA_TRACK_ID; ?>'
+        })
+    }
+</script>
+
+<!-- Google Tag Manager -->
+<script>(function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({
+            'gtm.start': new Date().getTime(), event: 'gtm.js'
+        });
+        var f = d.getElementsByTagName(s)[0],
+            j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : '';
+        j.async = true;
+        j.src =
+            'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+        f.parentNode.insertBefore(j, f);
+    })(window, document, 'script', 'dataLayer', 'GTM-T9QWVDV');</script>
+<!-- End Google Tag Manager -->
+
+<?php echo $this->getAbsoluteFooter() ?>
+</body>
+</html>

@@ -1,0 +1,1704 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     base_default
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+/**
+ * @var Mage_Page_Block_Html_Header $this
+ */
+$version = Teko::getSaleCenterVersion();
+?>
+<?php $version = Teko::getSaleCenterVersion(); ?>
+<link rel="stylesheet" type="text/css" href="<?php echo $this->getSkinUrl('lib/header.css'); ?><?php echo "?v=" . $version ?>"/>
+<?php
+$FB_APP_ID = Mage::getModel('core/variable')->loadByCode('fb_app_id')->getValue('html');
+$keyWord = Mage::registry('keyWord');
+?>
+
+<div id="fb-root"></div>
+
+<script type="text/javascript">
+    var responseFb = {};
+    window.fbAsyncInit = function () {
+        FB.init({
+            appId: '<?php echo $FB_APP_ID; ?>',
+            cookie: true, // enable cookies to allow the server to access
+            // the session
+            xfbml: true, // parse social plugins on this page
+            version: 'v2.10' // use graph api version 2.10
+        });
+
+        FB.getLoginStatus(function (response) {
+            responseFb = response;
+        });
+    };
+    (function (d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s);
+        js.id = id;
+        js.src = "//connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v2.10&appId=" + <?php echo $FB_APP_ID; ?>;
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+
+    if (document.referrer) {
+        if (document.referrer.search("google") > 0) {
+            document.cookie = "c_utmsource=google; path=/";
+        } else if (document.referrer.search("facebook") > 0) {
+            document.cookie = "c_utmsource=facebook; path=/";
+        }
+    }
+
+    if (navigator.userAgent.match(/Android/i)
+        || navigator.userAgent.match(/webOS/i)
+        || navigator.userAgent.match(/iPhone/i)
+        || navigator.userAgent.match(/iPad/i)
+        || navigator.userAgent.match(/iPod/i)
+        || navigator.userAgent.match(/BlackBerry/i)
+        || navigator.userAgent.match(/Windows Phone/i)
+    ) {
+        document.cookie = "_c_agent=mobile; path=/";
+    }
+    else {
+        document.cookie = "_c_agent=desktop; path=/";
+    }
+
+    /** Save utm_campaign/source/medium to cookie (expires time 1 day) **/
+    var url_string = window.location.href;
+    var url = new URL(url_string);
+    var utmSource = url.searchParams.get('utm_source');
+    var utmMedium = url.searchParams.get('utm_medium');
+    var utmCampaign = url.searchParams.get('utm_campaign');
+    if (utmSource && utmSource !== '') {
+        setCookie('utm_source', utmSource, 7);
+    }
+    if (utmMedium && utmMedium !== '') {
+        setCookie('utm_medium', utmMedium, 7);
+    }
+    if (utmCampaign && utmCampaign !== '') {
+        setCookie('utm_campaign', utmCampaign, 7);
+    }
+</script>
+
+<?php $cartQty = Mage::helper('checkout/cart')->getSummaryCount(); ?>
+<?php $session = Mage::getSingleton('customer/session'); ?>
+<div class="header">
+    <div class="mobile-header-wrapper">
+        <div class="top-info-header">
+            <div class="left-side">
+                <div class="menu-block">
+                    <div class="mobile-navigation-wrapper">
+                        <span class="menu-toggle">
+                            <img class="mobile-navigation"
+                                 src="<?php echo $this->getSkinUrl('images/navigator.svg') ?><?php echo "?v=" . $version ?>"
+                                 alt="Menu" data-toggle="modal" data-target="#leftMenu"/>
+                        </span>
+                    </div>
+                    <div class="logo-wrapper">
+                        <a href="<?php echo $this->getUrl(''); ?>">
+                            <img src="<?php echo $this->getSkinUrl("images/logo.png") ?><?php echo "?v=" . $version ?>"
+                                 alt="Logo Phong Vũ"/>
+                        </a>
+                    </div>
+                </div>
+                <div class="back-state-block" onclick="backState()">
+                    <img class="back-state-icon"
+                         src="<?php echo $this->getSkinUrl('images/arrow-left.svg') ?><?php echo "?v=" . $version ?>"
+                         alt="Back"/>
+                    <div class="state-title">
+
+                    </div>
+                </div>
+                <div class="back-popup-block" onclick="backPopup()">
+                    <img class="back-state-icon"
+                         src="<?php echo $this->getSkinUrl('images/arrow-left.svg') ?><?php echo "?v=" . $version ?>"
+                         alt="Back"/>
+                    <div class="popup-title">
+
+                    </div>
+                </div>
+            </div>
+            <div class="right-side">
+                <a href="https://m.me/phongvuvietnam">
+                    <img class="chat-now"
+                         src="<?php echo $this->getSkinUrl('images/Messenger.png') ?><?php echo "?v=" . $version ?>"
+                         alt="Chat ngay"/>
+                </a>
+                <a href="tel:19001835">
+                    <img class="call-support"
+                         src="<?php echo $this->getSkinUrl('images/Call.svg') ?><?php echo "?v=" . $version ?>"
+                         alt="Tổng đài hỗ trợ"/>
+                </a>
+            </div>
+        </div>
+        <div class="search-and-cart-header">
+            <?php
+            $catalogSearchHelper = $this->helper('catalogsearch');
+            ?>
+            <div class="detail-menu-wrapper">
+                <div class="sub-mobile-navigation-wrapper">
+                    <span class="sub-menu-toggle">
+                        <img class="sub-mobile-navigation"
+                             src="<?php echo $this->getSkinUrl('images/navigator.svg') ?><?php echo "?v=" . $version ?>"
+                             alt="Menu" data-toggle="modal" data-target="#leftMenu">
+                    </span>
+                </div>
+            </div>
+            <div class="input-search-wrapper">
+                <div class="real-search" data-toggle="modal" data-target="#searchModal" onclick="checkKeyword()">
+
+                </div>
+                <div class="fake-search">
+                    <span class="mobile-search-confirm"></span>
+                    <input class="mobile-search-input" type="text" placeholder="Tìm sản phẩm bạn muốn mua..."
+                           value="<?php echo $catalogSearchHelper->getEscapedQueryText() ?>"/>
+                </div>
+            </div>
+            <a class="pv-mobile-cart-block" href="<?php echo $this->getUrl('checkout/cart'); ?>">
+                <img src="<?php echo $this->getSkinUrl('images/shoppingCart.png') ?><?php echo "?v=" . $version ?>"
+                     alt="Giỏ hàng"/>
+                <?php if ($cartQty > 0): ?>
+                    <span class="mobile-header-quantity">
+                        <span id="shopping-cart-quantity" class="mobile-header-round"><?php echo $cartQty; ?></span>
+                    </span>
+                <?php endif; ?>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Left Menu Modal -->
+<div class="modal left fade" id="leftMenu" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="submenu" id="submenu">
+                <?php if (!$session->isLoggedIn()): ?>
+                <div class="login block pd-10-15 showLogin">
+                    <?php else: ?>
+                    <div class="login block pd-10-15 account-info-view">
+                        <?php endif; ?>
+                        <div class="block mg-bot-15">
+                            <i class="fa fa-user-circle-o fa-header-user " aria-hidden="true"></i>
+                            <?php if ($session->isLoggedIn()): ?>
+                                <div class="submenu-name"><?php echo $session->getCustomer()->getFirstname() ?></div>
+                            <?php endif; ?>
+                        </div>
+                        <?php if (!$session->isLoggedIn()): ?>
+                            <p class="showLogin" onclick="showLogin()">
+                                <span>Đăng nhập</span> / <span>Đăng ký</span>
+                                <i class="fa fa-angle-right fa-header-right" aria-hidden="true"></i>
+                            </p>
+                        <?php else: ?>
+                            <p class="account-info-view" onclick="showAccountInfo()">
+                                <span>Thông tin tài khoản</span>
+                                <i class="fa fa-angle-right fa-header-right" aria-hidden="true"></i>
+                            </p>
+                        <?php endif; ?>
+                    </div>
+                    <ul class="mobile-sidebar-category">
+                        <a href="<?php echo $this->getUrl(''); ?>">
+                            <li>
+                                <span class="mobile-cate-wrapper">
+                                    <img style="height:33px !important" src="<?php echo $this->getSkinUrl("images/logo-den-trang.png") ?><?php echo "?v=" . $version ?>" alt="Logo Phong Vũ"/>
+                                </span>
+                                <span>Trang chủ</span>
+                                <i class="fa fa-angle-right fa-header-right fa-menu-category"
+                                   aria-hidden="true"></i>
+                            </li>
+                        </a>
+                        <?php $_categories = Mage::helper('catalog/category')->getStoreCategories(); ?>
+                        <?php if (count($_categories) > 0): ?>
+                            <?php foreach ($_categories as $_category): ?>
+                                <?php $_category = Mage::getModel('catalog/category')->load($_category->getId()); ?>
+                                <?php $catIconName = $_category->getDescription(); ?>
+                                <a href="<?php echo $_category->getUrl(); ?>">
+                                    <li>
+                                        <span class="mobile-cate-wrapper">
+                                            <img src="<?php echo $this->getSkinUrl('images/menu-icon/') . $catIconName . '_Black.svg' ?><?php echo "?v=" . $version ?>"/>
+                                        </span>
+                                        <span><?php echo $_category->getName(); ?></span>
+                                        <i class="fa fa-angle-right fa-header-right fa-menu-category"
+                                           aria-hidden="true"></i>
+                                    </li>
+                                </a>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </ul>
+                    <a class="call-mobile" href="tel:19001835">
+                        <img src="<?php echo $this->getSkinUrl('images/call-mobile.svg') ?><?php echo "?v=" . $version ?>"/>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--End Left Menu Modal-->
+
+    <!-- Login / register modal-->
+    <div id="loginMobileView">
+        <div class="login-page">
+            <div class="block text-center bg-white bd-bottom">
+                <ul class="nav nav-tabs">
+                    <li class="active">
+                        <a href="#tab-login" data-toggle="tab" aria-expanded="true">Đăng nhập</a>
+                    </li>
+                    <li>
+                        <a href="#tab-signup" data-toggle="tab" aria-expanded="false">Đăng ký</a>
+                    </li>
+                    <li>
+                        <a href="#tab-linked" data-toggle="tab" aria-expanded="false">Liên kết</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="block tab-content mobile-login-content tab-scroll">
+                <div class="tab-pane active" id="tab-login">
+                    <div class="pd-10-15 login-input">
+                        <div class="mobile-form-control text-center">
+                            <span class="error-message" id="error-login"></span>
+                        </div>
+                        <div class="mobile-form-control text-center loading-login" style="display: none">
+                            <img src="<?php echo $this->getSkinUrl('images/loading.gif') ?><?php echo "?v=" . $version ?>"/>
+                        </div>
+                        <input type="text" id="telephone-login" class="mobile-input m-input-username input"
+                               placeholder="Số điện thoại" pattern="(\\+84|0)\\d{9,10}">
+                        <input type="password" id="password-login" class="mobile-input m-input-password input"
+                               placeholder="Mật khẩu">
+                    </div>
+                    <div class="mobile-form-control">
+                        <button class="btn mobile-login-btn" id="login-submit">
+                            Đăng nhập
+                        </button>
+                    </div>
+                    <div class="mobile-forget-wrapper">
+                        Quên mật khẩu
+                    </div>
+                    <div class="mobile-forget-wrapper">
+                        <div class="strike">
+                            <span>Hoặc đăng nhập bằng</span>
+                        </div>
+                    </div>
+                    <div class="mobile-social-wrapper">
+                        <button class="btn mobile-facebook-btn" onclick="checkLoginState()">
+                            Facebook
+                        </button>
+                    </div>
+                </div>
+                <div class="tab-pane" id="tab-signup">
+                    <div class="pd-10-15 login-input">
+                        <div class="mobile-form-control">
+                            <span class="error-message" id="error-registry"></span>
+                        </div>
+                        <div class="mobile-form-control load-register" style="display: none">
+                            <img src="<?php echo $this->getSkinUrl('images/loading.gif') ?><?php echo "?v=" . $version ?>"/>
+                        </div>
+                        <div class="mobile-form-control">
+                            <input type="text" class="input mobile-input register-input" placeholder="Họ và tên"
+                                   id="register-name" required>
+                        </div>
+                        <div class="mobile-form-control">
+                            <input type="text" class="input mobile-input register-input" placeholder="Số điện thoại"
+                                   id="register-telephone" required>
+                        </div>
+                        <div class="mobile-form-control">
+                            <input type="password" class="input mobile-input register-input" placeholder="Mật khẩu"
+                                   id="register-password" required>
+                        </div>
+                        <div class="mobile-form-control">
+                            <input type="password" class="input mobile-input register-input"
+                                   placeholder="Nhập lại mật khẩu"
+                                   id="register-confirm-password" required>
+                        </div>
+                        <div class="mobile-form-control">
+                            <input type="email" class="input mobile-input register-input" placeholder="Địa chỉ Email"
+                                   id="register-email" required>
+                        </div>
+                        <div class="mobile-form-control">
+                            <button class="btn mobile-login-btn" id="register-submit">
+                                Đăng ký
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane" id="tab-linked">
+                    <div class="pd-10-15 login-input">
+                        <div class="mobile-form-hint">
+                            Vui lòng nhập Số điện thoại của bạn và chúng tôi sẽ gửi cho bạn một tin nhắn chứa mật khẩu.
+                            Mật
+                            khẩu có thể được dùng để đăng nhập nhanh vào Phong Vũ
+                        </div>
+                        <div class="mobile-form-control load-link" style="display: none">
+                            <img src="<?php echo $this->getSkinUrl('images/loading.gif') ?><?php echo "?v=" . $version ?>"/>
+                        </div>
+                        <div class="mobile-form-control">
+                            <span class="error-message" id="error-link"></span>
+                        </div>
+                        <div class="mobile-form-control">
+                            <input type="text" class="input mobile-input register-input" placeholder="Số điện thoại"
+                                   id="link-telephone" pattern="(\\+84|0)\\d{9,10}" required>
+                        </div>
+                        <div class="mobile-form-control">
+                            <button class="btn mobile-login-btn" id="link-submit">
+                                Liên kết
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="forget-page tab-scroll">
+            <div class="pd-10-15 login-input">
+                <div class="forget-password-send">
+                    <div class="mobile-form-hint">
+                        Vui lòng số điện thoại của bạn và chúng tôi sẽ gửi cho bạn một mã xác nhận:
+                    </div>
+                    <div class="mobile-form-hint">
+                        <span class="error-message" id="error-forget"></span>
+                    </div>
+                    <div class="mobile-form-hint load-forget" style="display: none">
+                        <img src="<?php echo $this->getSkinUrl('images/loading.gif') ?><?php echo "?v=" . $version ?>"/>
+                    </div>
+                    <div class="mobile-form-control">
+                        <input type="text" class="input mobile-input register-input" placeholder="Số điện thoại"
+                               id="telephone-forget" required>
+                    </div>
+                    <div class="mobile-form-control">
+                        <button class="btn mobile-login-btn" id="forget-submit">
+                            Tìm lại mật khẩu
+                        </button>
+                    </div>
+                </div>
+                <div class="forget-password-otp">
+                    <div class="mobile-form-hint">
+                        Mã xác thực đã được gửi về: <span id="forget-tele-show"></span>
+                    </div>
+                    <div class="mobile-form-hint text-center">
+                        Vui lòng nhập mã xác thực:
+                    </div>
+                    <div class="mobile-form-hint text-center">
+                        <span class="error-message" id="error-forget-otp"></span>
+                    </div>
+                    <div class="mobile-form-hint text-center load-otp1" style="display: none">
+                        <img src="<?php echo $this->getSkinUrl('images/loading.gif') ?><?php echo "?v=" . $version ?>"/>
+                    </div>
+                    <div class="mobile-form-control">
+                        <input type="hidden" name="customer_id" id="customer_id_otp">
+                        <input type="text" class="input mobile-input register-input" id="otp-confirm" required>
+                    </div>
+                    <div class="mobile-form-control">
+                        <button id="repassword-resend" class="btn duo-button">Gửi lại</button>
+                        <button id="repassword-submit-otp" class="btn duo-button">Xác nhận</button>
+                    </div>
+                </div>
+                <div class="forget-password-confirm">
+                    <div class="mobile-form-hint text-center">
+                        <p> Xin chào: <span id="forget-name-show"></span></p>
+                        Vui lòng nhập lại mật khẩu mới:
+                    </div>
+                    <div class="mobile-form-hint">
+                        <span class="error-message" id="error-forget-otp"></span>
+                    </div>
+                    <div class="mobile-form-control load-forget-pass" style="display: none">
+                        <img src="<?php echo $this->getSkinUrl('images/loading.gif') ?><?php echo "?v=" . $version ?>"/>
+                    </div>
+                    <div class="mobile-form-control">
+                        <input type="hidden" name="customer_id" id="customer_id_reset">
+                        <input id="re-password" type="password" class="input mobile-input register-input"
+                               placeholder="Mật khẩu" required>
+                    </div>
+                    <div class="mobile-form-control">
+                        <input id="reconfirm-password" type="password" class="input mobile-input register-input"
+                               placeholder="Nhập lại mật khẩu" required>
+                    </div>
+                    <div class="mobile-form-control">
+                        <button id="repassword-submit" class="btn mobile-login-btn">
+                            Đặt mật khẩu mới
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="linked-page tab-scroll">
+            <div class="pd-10-15 login-input">
+                <div class="linked-account-otp">
+                    <div class="mobile-form-hint">
+                        Mã xác nhận đã được gửi về <span id="linkTele"></span>
+                    </div>
+                    <div class="mobile-form-hint">
+                        Vui lòng nhập mã xác nhận
+                    </div>
+                    <div class="mobile-form-hint text-center">
+                        <span class="error-message" id="error-linkAcc"></span>
+                    </div>
+                    <div class="mobile-form-control load-link" style="display: none">
+                        <img src="<?php echo $this->getSkinUrl('images/loading.gif') ?><?php echo "?v=" . $version ?>"/>
+                    </div>
+                    <div class="mobile-form-control">
+                        <input type="hidden" name="customer_id" id="customer_id_otp_link">
+                        <input id="link-otp" type="text" class="input mobile-input register-input" required>
+                    </div>
+                    <div class="mobile-form-control" style="margin-top: 20px">
+                        <button id="linkAcc-resend" class="btn duo-button">Gửi lại</button>
+                        <button id="linkAcc-submit-otp" class="btn duo-button">Xác nhận</button>
+                    </div>
+                </div>
+                <div class="linked-account-confirm">
+                    <div class="mobile-form-hint text-center">
+                        Vui lòng cập nhật thông tin tài khoản :
+                    </div>
+                    <div class="mobile-form-hint text-center">
+                        <span class="error-message" id="error-link-update"></span>
+                    </div>
+                    <div class="mobile-form-control load-link-confirm" style="display: none">
+                        <img src="<?php echo $this->getSkinUrl('images/loading.gif') ?><?php echo "?v=" . $version ?>"/>
+                    </div>
+                    <div class="mobile-form-control">
+                        <input type="hidden" name="customer_id" id="customer_id_link">
+                        <input type="hidden" name="linkAcc-telephone" id="linkAcc-telephone">
+                        <input id="linkAcc-name" type="text" class="input mobile-input register-input"
+                               placeholder="Họ và tên"/>
+                    </div>
+                    <div class="mobile-form-control">
+                        <input id="linkAcc-email" type="email" class="input mobile-input register-input"
+                               placeholder="Địa chỉ email"/>
+                    </div>
+                    <div class="mobile-form-control">
+                        <input id="linkAcc-password" type="password" class="input mobile-input register-input"
+                               placeholder="Mật khẩu"/>
+                    </div>
+                    <div class="mobile-form-control">
+                        <input id="linkAcc-confirmPassword" type="password" class="input mobile-input register-input"
+                               placeholder="Nhập lại mật khẩu"/>
+                    </div>
+                    <div class="mobile-form-control">
+                        <button id="linkAcc-submit" class="btn mobile-login-btn">
+                            Cập nhật tài khoản
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="facebook-page tab-scroll">
+            <div class="pd-10-15 login-input">
+                <div class="facebook-page-send">
+                    <div class="mobile-form-hint">
+                        Xin chào, <span id="fbname"></span>
+                        <p> Vui lòng cập nhật thông tin</p>
+                    </div>
+                    <div class="mobile-form-hint">
+                        <span class="error-message" id="error-confirm-facebook"></span>
+                    </div>
+                    <div class="mobile-form-control load-facebook" style="display: none">
+                        <img src="<?php echo $this->getSkinUrl('images/loading.gif') ?><?php echo "?v=" . $version ?>"/>
+                    </div>
+                    <div class="mobile-form-control">
+                        <input type="hidden" name="registryfb-name" id="registryfb-name" tabindex="1"
+                               class="form-control"
+                               value="" placeholder="Tên">
+                        <input type="hidden" name="facebook_id" id="inputFb" tabindex="1" class="form-control" value="">
+                        <input id="fb-login-telephone" type="text" class="input mobile-input register-input"
+                               placeholder="Số điện thoại"/>
+                    </div>
+                    <div class="mobile-form-control">
+                        <button class="btn mobile-login-btn" onclick="pushTelephoneNumber()">
+                            Xác nhận
+                        </button>
+                    </div>
+                </div>
+                <div class="facebook-page-otp">
+                    <div class="mobile-form-hint">
+                        <p>Mã xác nhận đã được gửi về: <span id="fbOtpTele"></span</p>
+                        Vui lòng nhập mã xác nhận :
+                    </div>
+                    <div class="mobile-form-hint text-center">
+                        <span class="error-message" id="error-confirm-facebook-otp"></span>
+                    </div>
+                    <div class="mobile-form-control load-facebook-otp" style="display: none">
+                        <img src="<?php echo $this->getSkinUrl('images/loading.gif') ?><?php echo "?v=" . $version ?>"/>
+                    </div>
+                    <div class="mobile-form-control">
+                        <input type="hidden" name="customer_id" id="customer_id_otp_fb">
+                        <input type="hidden" name="fb_id" id="fb_id_otp">
+                        <input name="registryfb-otp" id="registryfb-otp" tabindex="1" class="form-control" value="">
+                    </div>
+                    <div class="mobile-form-control">
+                        <button id="loginFb-resend" class="btn duo-button">Gửi lại</button>
+                        <button id="loginFb-submit-otp" class="btn duo-button">Xác nhận</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="register-page tab-scroll">
+            <div class="pd-10-15-login-input">
+                <div class="mobile-form-hint">
+                    Mã xác thực đã được gửi về <span id="register-tele-show"></span>
+                </div>
+                <div class="mobile-form-hint text-center">
+                    <span class="error-message" id="error-confirm-facebook-otp"></span>
+                </div>
+                <div class="mobile-form-control load-register" style="display: none">
+                    <img src="<?php echo $this->getSkinUrl('images/loading.gif') ?><?php echo "?v=" . $version ?>"/>
+                </div>
+                <div class="mobile-form-control">
+                    <input type="hidden" name="customer_id" id="customer_id_register">
+                    <input type="text" class="input mobile-input register-input" id="otp-confirm-register"/>
+                </div>
+                <div class="mobile-form-control" style="margin-top: 20px">
+                    <button id="register-resend" class="btn duo-button">Gửi lại</button>
+                    <button id="registry-submit-otp" class="btn duo-button">Xác nhận</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Main compare -->
+    <div id="compare-list" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Danh sách so sánh</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="cp-panel-content row"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="detail-action-btn compare-btn hidden">
+                        SO SÁNH&nbsp;&nbsp;<i class="fa fa-balance-scale"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <?php if ($session->isLoggedIn()): ?>
+        <div class="profileMobileView">
+            <div class="mobile-profile-top">
+                <img src="<?php echo $this->getSkinUrl('images/logged-profile.svg'); ?><?php echo "?v=" . $version ?>"/>
+                <div class="mobile-profile-top-info">
+                    <p class="mobile-profile-name"><?php echo $session->getCustomer()->getFirstname(); ?></p>
+                    <p class="mobile-profile-number"><?php echo $session->getCustomer()->getPhoneNumber(); ?></p>
+                </div>
+            </div>
+            <div class="mobile-profile-feature">
+                <!--            <div class="mobile-feature-item">-->
+                <!--                <img class="img-user-info" src="-->
+                <?php //echo $this->getSkinUrl('images/img-user-info.svg') ?><!--"/>-->
+                <!--                <span> Thông tin tài khoản</span>-->
+                <!--                <img class="arrow-right" src="-->
+                <?php //echo $this->getSkinUrl('images/arrow-right.svg') ?><!--"/>-->
+                <!--            </div>-->
+                <div class="mobile-feature-item">
+                    <a href="<?php echo $this->getUrl('tracking/order/#inProgress'); ?>">
+                        <img class="img-order-manager"
+                             src="<?php echo $this->getSkinUrl('images/img-order-manager.svg') ?><?php echo "?v=" . $version ?>"/>
+                        <span> Quản lý đơn hàng</span>
+                        <img class="arrow-right"
+                             src="<?php echo $this->getSkinUrl('images/arrow-right.svg') ?><?php echo "?v=" . $version ?>"/>
+                    </a>
+                </div>
+                <div class="mobile-feature-item">
+                    <a href="<?php echo $this->getUrl('favourite/index'); ?>">
+                        <img class="img-favourite"
+                             src="<?php echo $this->getSkinUrl('images/img-favourite.svg') ?><?php echo "?v=" . $version ?>"/>
+                        <span> Sản phẩm yêu thích</span>
+                        <img class="arrow-right"
+                             src="<?php echo $this->getSkinUrl('images/arrow-right.svg') ?><?php echo "?v=" . $version ?>"/>
+                    </a>
+                </div>
+                <!--            <div class="mobile-feature-item">-->
+                <!--                <img class="img-address" src="-->
+                <?php //echo $this->getSkinUrl('images/img-address.svg') ?><!--"/>-->
+                <!--                <span> Địa chỉ nhận hàng</span>-->
+                <!--                <img class="arrow-right" src="-->
+                <?php //echo $this->getSkinUrl('images/arrow-right.svg') ?><!--"/>-->
+                <!--            </div>-->
+            </div>
+            <div class="mobile-logout-wrapper">
+                <a href="<?php echo Mage::getUrl('authentication/user/logout'); ?>">
+                    <button class="btn btn-mobile-logout">
+                        Đăng xuất
+                    </button>
+                </a>
+            </div>
+        </div>
+    <?php endif ?>
+    <!--Search Tool-->
+    <div class="modal fade searchModal" id="searchModal">
+        <?php echo $this->getChildHtml('topSearch') ?>
+    </div>
+
+
+    <script type="text/javascript">
+        var $j = jQuery.noConflict();
+
+        /** Enhanced Ecommerce features **/
+        /** Track promotion clicks (Stack banner) **/
+        $j('.stackbanner img').click(function () {
+            dataLayer.push({
+                'event': 'promotionClick',
+                'ecommerce': {
+                    'promoClick': {
+                        'promotions': [{
+                            'id': $j(this).attr('alt'),
+                            'name': $j(this).attr('alt'),
+                            'position': 'Stack Banner'
+                        }]
+                    }
+                }
+            });
+        });
+        /** End Enhanced Ecommerce features **/
+
+        /** For login **/
+        function validateLoginForm() {
+            var telephone = $j('#telephone-login').val();
+            var password = $j('#password-login').val();
+            var message = '';
+            if (telephone === "" || password === "") {
+                message = ("Vui lòng nhập đầy đủ các trường !");
+                $j('#error-login').html(message);
+                return false;
+            }
+            else {
+                if (!/^(84|0)(1\d{9}|9\d{8}|8\d{8})$/.test(telephone)) {
+                    message = ("Số điện thoại không hợp lệ!");
+                    $j('#error-login').html(message);
+                    return false;
+                }
+                if (password.length < 8) {
+                    message = (" Mật khẩu không hợp lệ");
+                    $j('#error-login').html(message);
+                    return false;
+                }
+                $j('#error-login').html("");
+                return true;
+            }
+        }
+
+        function handleLogin() {
+            if (validateLoginForm()) {
+                var data = {
+                    telephone: $j('#telephone-login').val(),
+                    password: $j('#password-login').val()
+                };
+                var message = '';
+                $j(".loading-login").show();
+                $j('.mobile-facebook-btn').attr("disabled");
+                $j('#login-submit').attr("disabled");
+                $j.ajax({
+                    url: "<?php echo Mage::getUrl('authentication/user/login');?>",
+                    type: "post",
+                    dataType: 'json',
+                    data: data,
+                    success: function (response) {
+                        $j('#login-submit').removeAttr("disabled");
+                        $j('.mobile-facebook-btn').removeAttr("disabled");
+                        if (response.status === "account_not_exist" || response.status === "account_not_active") {
+                            message = ("Số điện thoại không tồn tại trong hệ thống!");
+                            $j('#error-login').html(message);
+                            $j(".loading-login").hide();
+                            return false;
+                        }
+                        else if (response.status === "password_is_invalid") {
+                            message = ("Mật khẩu không chính xác. Vui lòng nhập lại!");
+                            $j('#error-login').html(message);
+                            $j(".loading-login").hide();
+                            return false;
+                        }
+                        else {
+                            window.location.href =
+                                '<?php echo $this->getUrl('*/*/*', ['_current' => true,
+                                    '_use_rewrite' => true, '_store' => Mage::app()->getStore()->getId()]); ?>';
+                        }
+                    }
+                });
+            }
+        }
+
+        function handleEnterLogin(e) {
+            if (e.keyCode === 13) {
+                handleLogin();
+                e.preventDefault(); // Ensure it is only this code that rusn
+                e.stopPropagation();
+            }
+        }
+
+        $j('#login-submit').on('click', function (e) {
+            handleLogin();
+            e.preventDefault();
+            e.stopPropagation();
+        });
+        /** End login **/
+
+        /** For register **/
+        function validateRegistryForm() {
+            var name = $j('#register-name').val();
+            var email = $j('#register-email').val();
+            var telephone = $j('#register-telephone').val();
+            var password = $j('#register-password').val();
+            var confirmPass = $j('#register-confirm-password').val();
+            var message = "";
+            if (email === "" || telephone === "" || password === "" || confirmPass === "" || name === "") {
+                message = ("Vui lòng nhập đầy đủ các trường !");
+                $j('#error-registry').html(message);
+                return false;
+            } else {
+                if (!/[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/.test(email)) {
+                    message = ("Địa chỉ Email không hợp lệ!");
+                    $j('#error-registry').html(message);
+                    return false;
+                }
+                if (!/^(84|0)(1\d{9}|9\d{8}|8\d{8})$/.test(telephone)) {
+                    message = ("Số điện thoại không hợp lệ!");
+                    $j('#error-registry').html(message);
+                    return false;
+                }
+                if (password.length < 8) {
+                    message = (" Mật khẩu tối thiểu phải 8 ký tự");
+                    $j('#error-registry').html(message);
+                    return false;
+                }
+                if (password != confirmPass) {
+                    message = ("Mật khẩu nhập lại không khớp!");
+                    $j('#error-registry').html(message);
+                    return false;
+                }
+                $j('#error-registry').html("");
+                return true;
+            }
+        }
+
+        function handleRegister() {
+            if (validateRegistryForm()) {
+                var data = {
+                    telephone: $j('#register-telephone').val(),
+                    email: $j('#register-email').val(),
+                    password: $j('#register-password').val(),
+                    name: $j('#register-name').val()
+                };
+                var message = '';
+                $j('.load-register').show();
+                $j.ajax({
+                    url: "<?php echo Mage::getUrl('authentication/user/register');?>",
+                    type: "post",
+                    dataType: 'json',
+                    data: data,
+                    success: function (response) {
+                        if (response.status === "account_exist") {
+                            message = ("Số điện thoại đã có người sử dụng. Vui lòng nhập số điện thoại khác!");
+                            $j('.load-register').hide();
+                            $j('#error-registry').html(message);
+                        }
+                        else if (response.status === "account_fb_exist") {
+                            swal({
+                                title: 'Liên kết?',
+                                text: "Số điện thoại đã được dùng với một tài khoản facebook khác. Bạn có muốn liên kết tài khoản không?",
+                                type: 'warning',
+                                showCancelButton: true,
+                                confirmButtonColor: '#f7701e',
+                                confirmButtonText: 'Đồng ý',
+                                cancelButtonText: 'Huỷ'
+                            }, function (isConfirm) {
+                                if (isConfirm) {
+                                    var newdata = data;
+                                    newdata.customer_id = response.customer_id;
+                                    $j.ajax({
+                                        url: "<?php echo Mage::getUrl('authentication/user/update');?>",
+                                        type: "post",
+                                        dataType: 'json',
+                                        data: newdata,
+                                        success: function (response) {
+                                            window.location.href =
+                                                '<?php echo $this->getUrl('*/*/*', ['_current' => true,
+                                                    '_use_rewrite' => true, '_store' => Mage::app()->getStore()->getId()]); ?>';
+                                        }
+                                    });
+                                }
+                                else {
+                                    message = ("Vui lòng nhập số điện thoại khác!");
+                                    $j('.load-register').hide();
+                                    $j('#error-registry').html(message);
+                                }
+                            });
+                        }
+                        else if (response.status === "created" || response.status === 'account_not_active') {
+                            $j('.login-page').hide();
+                            $j('.register-page').show();
+                            $j('#customer_id_register').val(response.customer_id);
+                            $j('#error-registry').html("");
+                            $j("#register-tele-show").html($j('#register-telephone').val());
+                        }
+                    }
+                });
+            }
+        }
+
+        $j('#otp-confirm-register').pincodeInput({
+            inputs: 6,
+            hidedigits: false,
+            complete: function (value, e, errorElement) {
+                $j('#registry-submit-otp').off('click');
+                // Check the OTP
+                $j('#registry-submit-otp').on('click', function (event) {
+                    var data = {
+                        'otpCode': value,
+                        'customer_id': $j('#customer_id_register').val()
+                    };
+                    var message = '';
+                    $j('.load-register').show();
+                    $j('#error-register-otp').html('');
+                    $j.ajax({
+                        url: "<?php echo Mage::getUrl('authentication/otp/checkRegister');?>",
+                        type: "post",
+                        dataType: 'json',
+                        data: data,
+                        success: function (response) {
+                            if (response.status === 'right_otp') {
+                                // IF true
+                                window.location.href =
+                                    '<?php echo $this->getUrl('*/*/*', ['_current' => true,
+                                        '_use_rewrite' => true, '_store' => Mage::app()->getStore()->getId()]); ?>';
+                            }
+                            else if (response.status === 'wrong_otp') {
+                                message = ("Mã xác nhận không chính xác!");
+                                $j('.load-register').show();
+                                $j('#error-register-otp').html(message);
+                            }
+                        }
+                    });
+                    event.stopPropagation();
+                    event.preventDefault();
+                })
+            }
+        });
+
+        $j('#register-resend').on('click', function (e) {
+            var data = {
+                'customer_id': $j('#customer_id_register').val()
+            };
+            $j('.load-register').show();
+            $j.ajax({
+                url: "<?php echo Mage::getUrl('authentication/otp/resendSms');?>",
+                type: "post",
+                dataType: 'json',
+                data: data,
+                success: function (response) {
+                    $j('.load-register').hide();
+                    if (response.status === 'over_sms') {
+                        overSendSms();
+                    }
+                    else {
+                        $j('#error-register-otp').html("");
+                        return false;
+                    }
+                }
+            });
+            e.preventDefault();
+            e.stopPropagation();
+        });
+
+        function handleEnterRegister(e) {
+            if (e.keyCode === 13) {
+                handleRegister();
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        }
+
+        $j("#register-submit").on('click', function (e) {
+            handleRegister();
+            e.preventDefault();
+            e.stopPropagation();
+        });
+        /** End register **/
+
+        /** Forget password **/
+        $j('.openLoginMd').on('click', function (e) {
+            $j('#forgetPassword').modal('hide');
+            $j('body').removeClass('modal-open');
+            $j('#loginModal').modal();
+        });
+
+        $j('.forgot-password').on('click', function (e) {
+            $j('#loginModal').modal('hide');
+            $j('body').removeClass('modal-open');
+            $j('#forgetPassword').modal();
+            e.preventDefault();
+            e.stopPropagation();
+        });
+
+        $j('#otp-confirm').pincodeInput({
+            inputs: 6,
+            hidedigits: false,
+            complete: function (value, e, errorElement) {
+                $j('#repassword-submit-otp').off('click');
+                // Check the OTP
+                $j('#repassword-submit-otp').on('click', function (event) {
+                    var data = {
+                        'otpCode': value,
+                        'customer_id': $j('#customer_id_otp').val()
+                    };
+                    var message = '';
+                    $j('.load-otp1').show();
+                    $j('#error-forget-otp').html('');
+                    $j.ajax({
+                        url: "<?php echo Mage::getUrl('authentication/otp/check');?>",
+                        type: "post",
+                        dataType: 'json',
+                        data: data,
+                        success: function (response) {
+                            if (response.status === 'right_otp') {
+                                // IF true
+                                $j('#customer_id_reset').val(response.customer_id);
+                                $j('.load-otp1').hide();
+                                $j('.forget-password-otp').fadeOut(100);
+                                $j('#forget-title').html("Nhập lại mật khẩu");
+                                $j(".forget-password-confirm").show();
+                            }
+                            else if (response.status === 'wrong_otp') {
+                                $j('.load-otp1').hide();
+                                message = ("Mã xác nhận không chính xác!");
+                                $j('#error-forget-otp').html(message);
+                            }
+                        }
+                    });
+                    event.stopPropagation();
+                    event.preventDefault();
+                })
+            }
+        });
+
+        function handleResetPw() {
+            var password = $j('#re-password').val();
+            var confirmPass = $j('#reconfirm-password').val();
+            var customer_id = $j('#customer_id_reset').val();
+            var message = '';
+            if (password.length < 8) {
+                message = (" Mật khẩu tối thiểu phải 8 ký tự");
+                $j('#error-reset-password').html(message);
+                return false;
+            }
+            if (password !== confirmPass) {
+                message = ("Mật khẩu nhập lại không khớp!");
+                $j('#error-reset-password').html(message);
+                return false;
+            }
+            var data = {
+                'password': password,
+                'customer_id': customer_id
+            };
+            $j('.load-forget-pass').show();
+            $j.ajax({
+                url: "<?php echo Mage::getUrl('authentication/password/reset');?>",
+                type: "post",
+                dataType: 'json',
+                data: data,
+                success: function (response) {
+                    if (response.status === 'signed') {
+                        window.location.href =
+                            '<?php echo $this->getUrl('*/*/*', ['_current' => true,
+                                '_use_rewrite' => true, '_store' => Mage::app()->getStore()->getId()]); ?>';
+                    }
+                }
+            });
+        }
+
+        function handleEnterResetPw(e) {
+            if (e.keyCode === 13) {
+                handleResetPw();
+                e.stopPropagation();
+                e.preventDefault();
+                return true;
+            }
+        }
+
+        $j('#repassword-submit').on('click', function (e) {
+            handleResetPw();
+            e.stopPropagation();
+            e.preventDefault();
+        });
+
+        function handleForgetPw() {
+            var telephone = $j('#telephone-forget').val();
+            if (!/^(84|0)(1\d{9}|9\d{8}|8\d{8})$/.test(telephone)) {
+                message = ("Số điện thoại không hợp lệ!");
+                $j('#error-forget').html(message);
+                return false;
+            } else {
+                $j('#forget-submit').prop('disable', true);
+                //Send number to server
+                var data = {
+                    'telephone': telephone
+                };
+                var message = '';
+                $j(".load-forget").show();
+                $j.ajax({
+                    url: "<?php echo Mage::getUrl('authentication/password/forget');?>",
+                    type: "post",
+                    dataType: 'json',
+                    data: data,
+                    success: function (response) {
+                        if (response.status === 'not_exist_customer') {
+                            message = ("Số điện thoại không có trong hệ thống!");
+                            $j(".load-forget").hide();
+                            $j('#error-forget').html(message);
+                            $j('#forget-submit').prop('disable', false);
+                            return false;
+                        }
+                        else if (response.status === 'true') {
+                            $j('#customer_id_otp').val(response.customer_id);
+                            $j(".load-forget").hide();
+                            $j('#error-forget').html("");
+                            $j(".forget-password-send").hide();
+                            $j("#forget-tele-show").html(telephone);
+                            $j('#forget-name-show').html(response.name);
+                            $j(".forget-password-otp").show(100);
+                        }
+                        else {
+                            overSendSms();
+                        }
+                    }
+                });
+            }
+        }
+
+        function handleEnterForget(e) {
+            if (e.keyCode === 13) {
+                handleForgetPw();
+                e.stopPropagation();
+                e.preventDefault();
+            }
+        }
+
+        $j('#forget-submit').on('click', function (e) {
+            handleForgetPw();
+            e.stopPropagation();
+            e.preventDefault();
+        });
+        /** End forget password **/
+
+        /** For link accout **/
+        function handleLink() {
+            var telephone = $j('#link-telephone').val();
+            var message = '';
+            if (!/^(84|0)(1\d{9}|9\d{8}|8\d{8})$/.test(telephone)) {
+                message = ("Số điện thoại không hợp lệ!");
+                $j('#error-link').html(message);
+                return false;
+            } else {
+                // Check telephone
+                var data = {
+                    'telephone': telephone
+                };
+                $j('.load-link').show();
+                $j.ajax({
+                    url: "<?php echo Mage::getUrl('authentication/linked/index');?>",
+                    type: "post",
+                    dataType: 'json',
+                    data: data,
+                    success: function (response) {
+                        if (response.status === 'order_not_exist') {
+                            message = ("Số điện thoại không có đơn hàng nào trong hệ thống!");
+                            $j('.load-link').hide();
+                            $j('#error-link').html(message);
+                            $j('#link-submit').prop('disabled', false);
+                            return false;
+                        }
+                        else if (response.status === 'phone_exist') {
+                            message = ("Số điện thoại có người sử dụng!");
+                            $j('.load-link').hide();
+                            $j('#error-link').html(message);
+                            $j('#link-submit').prop('disabled', false);
+                            return false;
+                        }
+                        else if (response.status === 'phone_linked') {
+                            message = ("Số điện thoại đã được sử dụng để liên kết!");
+                            $j('.load-link').hide();
+                            $j('#error-link').html(message);
+                            $j('#link-submit').prop('disabled', false);
+                            return false;
+                        }
+                        else if (response.status === 'allow_link' || response.status === 'not_active') {
+                            // If telephone existed
+                            $j('#customer_id_otp_link').val(response.customer_id);
+                            $j('.login-page').hide();
+                            $j('#linkTele').html(telephone);
+                            $j("#linkAcc-telephone").val(telephone);
+                            $j('.load-link').hide();
+                            $j('#link-submit').prop('disabled', false);
+                            $j('.linked-page').show();
+                        }
+                    }
+                });
+            }
+        }
+
+        function handleEnterLink(event) {
+            if (event.keyCode === 13) {
+                handleLink();
+                event.preventDefault();
+                event.stopPropagation();
+                return true;
+            }
+        }
+
+        $j('#link-submit').on('click', function (e) {
+            handleLink();
+            e.preventDefault();
+            e.stopPropagation();
+        });
+
+        $j('#link-otp').pincodeInput({
+            inputs: 6,
+            hidedigits: false,
+            complete: function (value, e, errorElement) {
+                $j('#linkAcc-submit-otp').off('click');
+                // Check the OTP
+                $j('#linkAcc-submit-otp').on('click', function (event) {
+                    var message = '';
+                    $j('#error-linkAcc').html(message);
+                    var data = {
+                        'otpCode': value,
+                        'customer_id': $j('#customer_id_otp_link').val()
+                    };
+                    $j('.load-link').show();
+                    $j.ajax({
+                        url: "<?php echo Mage::getUrl('authentication/otp/check');?>",
+                        type: "post",
+                        dataType: 'json',
+                        data: data,
+                        success: function (response) {
+                            $j('.load-link').hide();
+                            if (response.status === 'right_otp') {
+                                // IF true
+                                $j('#customer_id_link').val(response.customer_id);
+                                $j(".linked-account-otp").hide();
+                                $j('.linked-account-confirm').show();
+                            }
+                            else {
+                                message = ("Mã xác nhận không chính xác!");
+                                $j('#error-linkAcc').html(message);
+                            }
+                        }
+                    });
+                    event.preventDefault();
+                    event.stopPropagation();
+                })
+            }
+        });
+
+        function handleSubmitLink() {
+            var name = $j("#linkAcc-name").val();
+            var password = $j("#linkAcc-password").val();
+            var confirmPassword = $j('#linkAcc-confirmPassword').val();
+            var telephone = $j("#linkAcc-telephone").val();
+            var email = $j('#linkAcc-email').val();
+            var message = "";
+            if (name && email) {
+                if (!/[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/.test(email)) {
+                    message = ("Địa chỉ Email không hợp lệ!");
+                    $j('.load-otp2').hide();
+                    $j('#error-link-update').html(message);
+                    return false;
+                }
+                if (password.length < 8) {
+                    message = (" Mật khẩu tối thiểu phải 8 ký tự");
+                    $j('.load-otp2').hide();
+                    $j('#error-link-update').html(message);
+                    return false;
+                }
+                if (password !== confirmPassword) {
+                    message = ("Mật khẩu nhập lại không khớp!");
+                    $j('.load-otp2').hide();
+                    $j('#error-link-update').html(message);
+                    return false;
+                }
+                // Update Information
+                var data = {
+                    'name': name,
+                    'password': password,
+                    'email': email,
+                    'telephone': telephone,
+                    'customer_id': $j('#customer_id_link').val()
+                };
+                $j('.load-link-confirm').show();
+                $j.ajax({
+                    url: "<?php echo Mage::getUrl('authentication/user/update');?>",
+                    type: "post",
+                    dataType: 'json',
+                    data: data,
+                    success: function (response) {
+                        window.location.href =
+                            '<?php echo $this->getUrl('*/*/*', ['_current' => true,
+                                '_use_rewrite' => true, '_store' => Mage::app()->getStore()->getId()]); ?>';
+                    }
+                });
+            } else {
+                message = "Vui lòng nhập đầy đủ các trường";
+                $j('.load-link-confirm').hide();
+                $j("#error-link-update").html(message);
+            }
+        }
+
+        function handleEnterSubmitLink(event) {
+            if (event.keyCode === 13) {
+                handleSubmitLink();
+                event.preventDefault();
+                event.stopPropagation();
+                return true;
+            }
+        }
+
+        $j('#linkAcc-submit').on('click', function (e) {
+            handleSubmitLink();
+            e.preventDefault();
+            e.stopPropagation();
+        });
+
+        $j('#linkAcc-resend').on('click', function (e) {
+            var data = {
+                'customer_id': $j('#customer_id_otp_link').val()
+            };
+            $j('loading-link').show();
+            $j.ajax({
+                url: "<?php echo Mage::getUrl('authentication/otp/resendSms');?>",
+                type: "post",
+                dataType: 'json',
+                data: data,
+                success: function (response) {
+                    $j('loading-link').hide();
+                    if (response.status === 'over_sms') {
+                        overSendSms();
+                    }
+                    else {
+                        $j('#error-linkAcc').html("");
+                        return false;
+                    }
+                }
+            });
+            e.preventDefault();
+            e.stopPropagation();
+        });
+        /** End link accout **/
+
+        /** For login Facebook **/
+        function otpForFB(id, name) {
+            $j('.login-page').hide();
+            $j('#fbname').html(name);
+            $j('#inputFb').val(id);
+            $j('#registryfb-name').val(name);
+            $j('.facebook-page').show();
+        }
+
+        function checkLoginState() {
+            if (responseFb.status === 'connected') {
+                FB.api('/me', {fields: 'id, name'}, function (response) {
+                    var data = {
+                        'fbid': response.id
+                    };
+                    $j('.loading-login').show();
+                    $j('#login-submit').attr('disabled');
+                    $j('.mobile-facebook-btn').attr('disabled');
+                    $j.ajax({
+                        url: "<?php echo Mage::getUrl('authentication/facebook/login');?>",
+                        type: "post",
+                        dataType: 'json',
+                        data: data,
+                        success: function (response_ajax) {
+                            $j('.loading-login').hide();
+                            $j('#login-submit').removeAttr('disabled');
+                            $j('.mobile-facebook-btn').removeAttr('disabled');
+                            if (response_ajax.status === 'email_is_not_exist' ||
+                                response_ajax.status === 'phone_not_active') {
+                                otpForFB(response.id, response.name);
+                            }
+                            else {
+                                window.location.href =
+                                    '<?php echo $this->getUrl('*/*/*', ['_current' => true,
+                                        '_use_rewrite' => true, '_store' => Mage::app()->getStore()->getId()]); ?>';
+                            }
+                        }
+                    });
+                });
+            }
+            else {
+                FB.login(function (response_login) {
+                    if (response_login.status === 'connected') {
+                        FB.api('/me', {fields: 'id, name'}, function (response) {
+                            var data = {
+                                'fbid': response.id
+                            };
+                            $j.ajax({
+                                url: "<?php echo Mage::getUrl('authentication/facebook/checkRegister');?>",
+                                type: "post",
+                                dataType: 'json',
+                                data: data,
+                                success: function (response_ajax) {
+                                    if (response_ajax.status === 'exist') {
+                                        $j.ajax({
+                                            url: "<?php echo Mage::getUrl('authentication/facebook/login');?>",
+                                            type: "post",
+                                            dataType: 'json',
+                                            data: data,
+                                            success: function (response_ajax) {
+                                                if (response_ajax.status === 'email_is_not_exist' ||
+                                                    response_ajax.status === 'phone_not_active') {
+                                                    otpForFB(response.id, response.name);
+                                                }
+                                                else {
+                                                    window.location.href =
+                                                        '<?php echo $this->getUrl('*/*/*', ['_current' => true,
+                                                            '_use_rewrite' => true, '_store' => Mage::app()->getStore()->getId()]); ?>';
+                                                }
+                                            }
+                                        });
+                                    }
+                                    else {
+                                        var name = response.name;
+                                        var id = response.id;
+                                        otpForFB(id, name);
+                                    }
+                                }
+                            });
+                        });
+                    }
+                }, {scope: 'public_profile, email'});
+            }
+        }
+
+        function handleLoginFb(event) {
+            if (event.keyCode === 13) {
+                pushTelephoneNumber();
+                event.preventDefault();
+                event.stopPropagation();
+                return true;
+            }
+        }
+
+        // Validate the form
+        function pushTelephoneNumber() {
+            var telephone = $j('#fb-login-telephone').val();
+            var name = $j('#registryfb-name').val();
+            var message = '';
+            if (telephone) {
+                if (!/^(84|0)(1\d{9}|9\d{8}|8\d{8})$/.test(telephone)) {
+                    message = ("Số điện thoại không hợp lệ!");
+                    $j('#error-confirm-facebook').html(message);
+                    return false;
+                }
+                else {
+                    var id = $j('#inputFb').val();
+                    var data = {
+                        'fbid': id,
+                        'telephone': telephone,
+                        'name': name
+                    };
+                    $j('.load-facebook').show();
+                    $j.ajax({
+                        url: "<?php echo Mage::getUrl('authentication/facebook/register');?>",
+                        type: "post",
+                        dataType: 'json',
+                        data: data,
+                        success: function (response) {
+                            $j('.load-facebook').hide();
+                            if (response.status === "phone_existed") {
+                                message = ("Số điện thoại đã có người sử dụng. Vui lòng nhập số điện thoại khác!");
+                                $j('.update-profile-load-fb').hide();
+                                $j('#error-confirm-facebook').html(message);
+                            }
+                            else if (response.status === "over_sms") {
+                                overSendSms();
+                            }
+                            else {
+                                $j('.fb-confirm-header').html('');
+                                $j('#fbOtpTele').html(telephone);
+                                $j('#customer_id_otp_fb').val(response.customer_id);
+                                $j('#fb_id_otp').val(id);
+                                $j('.facebook-page-send').fadeOut(100);
+                                $j(".facebook-page-otp").delay(100).fadeIn(100);
+                            }
+
+                        }
+                    });
+                }
+            } else {
+                message = "Vui lòng nhập đầy đủ các trường";
+                $j('#error-confirm-facebook').html(message);
+                return false;
+            }
+        }
+
+        $j('#registryfb-otp').pincodeInput({
+            inputs: 6,
+            hidedigits: false,
+            complete: function (value, e, errorElement) {
+                $j('#loginFb-submit-otp').off('click');
+                // Check the OTP
+                $j('#loginFb-submit-otp').on('click', function () {
+                    var data = {
+                        'otpCode': value,
+                        'customer_id': $j('#customer_id_otp_fb').val(),
+                        'fb_id': $j('#fb_id_otp').val()
+                    };
+                    var message = '';
+                    $j('load-facebook-otp').show();
+                    $j.ajax({
+                        url: "<?php echo Mage::getUrl('authentication/otp/checkAndLogin');?>",
+                        type: "post",
+                        dataType: 'json',
+                        data: data,
+                        success: function (response) {
+                            $j('load-facebook-otp').hide();
+                            if (response.status === 'right_otp') {
+                                window.location.href =
+                                    '<?php echo $this->getUrl('*/*/*', ['_current' => true,
+                                        '_use_rewrite' => true, '_store' => Mage::app()->getStore()->getId()]); ?>';
+                            }
+                            else {
+                                message = ("Mã xác nhận không chính xác!");
+                                $j('#error-confirm-facebook-otp').html(message);
+                            }
+                        }
+                    });
+                });
+            }
+        });
+
+        $j('#loginFb-resend').on('click', function (e) {
+            var data = {
+                'customer_id': $j('#customer_id_otp_fb').val()
+            };
+            $j('.load-facebook-otp').show();
+            $j.ajax({
+                url: "<?php echo Mage::getUrl('authentication/otp/resendSms');?>",
+                type: "post",
+                dataType: 'json',
+                data: data,
+                success: function (response) {
+                    $j('.load-facebook-otp').hide();
+                    if (response.status === 'over_sms') {
+                        overSendSms();
+                    }
+                    else {
+                        $j('#error-confirm-facebook').html("");
+                        return false;
+                    }
+                }
+            });
+            e.preventDefault();
+            e.stopPropagation();
+        });
+        /** End login Facebook **/
+
+        function overSendSms() {
+            swal({
+                title: "Bạn cần được hỗ trợ",
+                text: "Nếu bạn vẫn chưa nhận được mã xác nhận, vui lòng liên hệ tổng đài <b>19001232</b> để được hỗ trợ!",
+                type: "warning",
+                showCancelButton: false,
+                showConfirmButton: true,
+                confirmButtonColor: "#f7701e",
+                confirmButtonText: "Đóng",
+                closeOnConfirm: false,
+                animation: "slide-from-top",
+                html: true
+            }, function (isConfirm) {
+                if (isConfirm) {
+                    window.location.href =
+                        '<?php echo $this->getUrl('*/*/*', ['_current' => true,
+                            '_use_rewrite' => true, '_store' => Mage::app()->getStore()->getId()]); ?>';
+                }
+            });
+        }
+
+        $j(document).ready(function () {
+            if ($j('.compare-checkbox').length) {
+                $j('.header-compare-block').show();
+            }
+            if(getIsHomePage()){
+                $j('.menu-block').css('display','block');
+            }
+        });
+
+        $j('.btn-facebook').hover(function () {
+            $j('.fb-image').hide();
+            $j('.fb-image-white').show();
+        }, function () {
+            $j('.fb-image-white').hide();
+            $j('.fb-image').show();
+        });
+
+        function showLogin(){
+            $j('#leftMenu').modal('hide');
+            $j('.search-and-cart-header').hide();
+            $j('#loginMobileView').show();
+            $j('.menu-block').hide();
+            $j('.back-state-block').hide();
+            $j('.back-popup-block').show();
+            $j('.popup-title').html("Đăng nhập");
+        }
+
+        function showAccountInfo(){
+            $j('#leftMenu').modal('hide');
+            $j('.search-and-cart-header').hide();
+            $j('.profileMobileView').show();
+            $j('.menu-block').hide();
+            $j('.back-state-block').hide();
+            $j('.back-popup-block').show();
+            $j('.popup-title').html("Quản lý tài khoản");
+        }
+
+        function backPopup(){
+            if(getIsHomePage()||(window.location.href.indexOf("checkout/payment/success/") > -1)){
+                $j('.menu-block').show();
+            } else {
+                $j('.back-state-block').show();
+            }
+            $j('.search-and-cart-header').show();
+            $j('.back-popup-block').hide();
+            $j('#loginMobileView').hide();
+            $j('.profileMobileView').hide();
+        }
+
+        function backState(){
+            if(localStorage.cartFlag && Number(localStorage.cartFlag)>1){
+                window.history.go(Number(-localStorage.cartFlag));
+                localStorage.removeItem('cartFlag');
+            } else {
+                window.history.back();
+            }
+        }
+
+        function showBackState(){
+            $j('.back-state-block').show();
+            $j('.menu-block').hide();
+        }
+
+        function getIsHomePage() {
+            return '<?php echo Mage::getBlockSingleton('page/html_header')->getIsHomePage(); ?>';
+        }
+
+        $j('.mobile-forget-wrapper').on('click', function (e) {
+            $j('.login-page').hide();
+            $j('.forget-page').show();
+            $j('.popup-title').html("Quên mật khẩu");
+            e.stopPropagation();
+        });
+
+        // function toBackArrow(title, showClass=null, hideClass=null, backToNormal=false, backTitle, backHistory = false, times = 0, oldState = null) {
+        //     $j('.mobile-navigation').hide();
+        //     $j('.menu-toggle').addClass('back-navigation');
+        //     $j('.menu-toggle').attr({
+        //         'hideClass': hideClass,
+        //         'showClass': showClass,
+        //         'backToNormal': backToNormal,
+        //         'backHistory': backHistory,
+        //         'times': times
+        //     });
+        //     $j('.logo-wrapper').hide();
+        //     $j('.header-title').html(title);
+        //     $j('.header-title').show();
+        //     $j('.header-back').show();
+        // }
+
+        // $j(".menu-toggle").click(function (e) {
+        //     if ($j(this).hasClass('toggle-login-fix')){
+        //         if($j('.forget-page').is(":visible")){
+        //             $j('.forget-page').hide();
+        //             $j('.login-page').show();
+        //         }
+        //         $j('#loginMobileView').hide();
+        //         $j('.search-and-cart-header').show();
+        //         if($j('.categoryName').val()){
+        //             $j('.header-title').html($j('.categoryName').val());
+        //         }else{
+        //             $j('.header-title').html("Chi tiết sản phẩm");
+        //         }
+        //         $j('.mobile-navigation').hide();
+        //         $j('.logo-wrapper').hide();
+        //         $j('.header-title').show();
+        //         $j('.header-back').show();
+        //         $j('.sub-mobile-navigation-wrapper').show();
+        //         $j('.input-search-wrapper').addClass('active');
+        //         if($j(this).hasClass("toggle-login-detail-fix")){
+        //             $j('.header-back').bind('click',function(e){
+        //                 window.history.back();
+        //             });
+        //         }else{
+        //             $j('.header-back').bind('click',function(e){
+        //                 window.location.href = "/";
+        //             });
+        //         }
+        //         return;
+        //     }
+        //     if ($j(this).hasClass('back-navigation')) {
+        //         var hideClass = $j(this).attr('hideClass');
+        //         var showClass = $j(this).attr('showClass');
+        //         var backToNormal = $j(this).attr('backToNormal');
+        //         var backHistory = $j(this).attr('backHistory');
+        //         var times = Number($j(this).attr('times'));
+        //         if (times) {
+        //             times = times - 1;
+        //             if (times == 0) {
+        //                 $j(this).removeAttr('times');
+        //             } else {
+        //                 $j(this).attr('times', times);
+        //             }
+        //             $j(hideClass).hide();
+        //             $j(showClass).show();
+        //             return;
+        //         } else {
+        //             $j(hideClass).hide();
+        //             $j(showClass).show();
+        //             if (backHistory == "true") {
+        //                 if(localStorage.cartFlag && Number(localStorage.cartFlag)>1){
+        //                     window.history.go(Number(-localStorage.cartFlag));
+        //                     localStorage.removeItem('cartFlag');
+        //                 } else {
+        //                     window.history.back();
+        //                 }
+        //                 return;
+        //             }
+        //             if (backToNormal) {
+        //                 $j('.menu-toggle').removeClass('back-navigation');
+        //                 $j('.header-back').hide();
+        //                 $j('.mobile-navigation').show();
+        //                 $j('.header-title').hide();
+        //                 $j('.logo-wrapper').show();
+        //                 $j('.search-and-cart-header').show();
+        //                 $j('#loginMobileView').hide();
+        //             }
+        //         }
+        //     }
+        // });
+
+        function checkKeyword(){
+            var keyword = '<?php echo $catalogSearchHelper->getEscapedQueryText() ?>';
+            if(keyword!= ""){
+                $j('#search-id').val('<?php echo $catalogSearchHelper->getEscapedQueryText() ?>');
+            }
+        }
+
+        $j('.pv-mobile-cart-block').click(function (e) {
+           localStorage.setItem('cartFlag',1);
+        });
+
+    </script>

@@ -1,0 +1,21 @@
+<?php
+$_products = Mage::registry('suggestion_products');
+?>
+
+<?php foreach ($_products->getItems() as $_product): ?>
+    <a class="search-suggestion-item row" href="<?php echo $_product->getProductFullUrl(); ?>">
+        <div class="search-suggestion-img">
+            <img src="<?php echo $this->helper('catalog/image')->init($_product, 'small_image')->resize(150, 150); ?>">
+        </div>
+        <div class="search-suggestion-info">
+            <div class="search-suggestion-name" title="<?php echo $_product->getName(); ?>"><?php echo $_product->getName(); ?></div>
+            <div class="search-suggestion-sku-price">
+                <span class="search-suggestion-sku"><?php echo $_product->getSku() ?></span>
+                <span class="search-suggestion-price">Giá: <?php echo number_format($_product->getFinalPrice(), 0, ",", ".") . " ₫"; ?></span>
+            </div>
+        </div>
+    </a>
+<?php endforeach; ?>
+<div class="search-suggestion-view-all"
+     data-search-url="<?php echo $this->getUrl('catalogsearch/result'); ?>">Xem tất cả
+</div>

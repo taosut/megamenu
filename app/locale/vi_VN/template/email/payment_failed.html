@@ -1,0 +1,68 @@
+<!--@subject Nhắc nhở thanh toán thất bại @-->
+<!--@vars
+{"var reason":"Transaction Failed Reason",
+"var checkoutType":"Checkout Type",
+"var customerEmail":"Customer Email",
+"var customer":"Customer Name",
+"var items":"Shopping Cart Items",
+"var total":"Total",
+"var billingAddress.format('html')":"Billing Address",
+"var shippingAddress.format('html')":"Shipping Address",
+"var shippingMethod":"Shipping Method",
+"var paymentMethod":"Payment Method",
+"var dateAndTime":"Date and Time of Transaction"}
+@-->
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<table>
+    <thead>
+        <tr>
+            <th>Giao dịch thanh toán thất bại.</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                <p>
+                    <b>Lý do</b><br />
+                    {{var reason}}
+                </p>
+                <p>
+                    <b>Kiểu thanh toán</b><br />
+                    {{var checkoutType}}
+                </p>
+                <p>
+                    <b>Khách hàng:</b><br />
+                    <a href="mailto:{{var customerEmail}}">{{var customer}}</a> &lt;{{var customerEmail}}&gt;
+                </p>
+                <p>
+                    <b>Sản phẩm</b><br />
+                    {{var items}}
+                </p>
+                <p>
+                    <b>Tổng cộng:</b><br />
+                    {{var total}}
+                </p>
+                <p>
+                    <b>Địa chỉ thanh toán:</b><br />
+                    {{var billingAddress.format('html')}}
+                </p>
+                <p>
+                    <b>Địa chỉ nhận hàng:</b><br />
+                    {{var shippingAddress.format('html')}}
+                </p>
+                <p>
+                    <b>Phương thức vận chuyển:</b><br />
+                    {{var shippingMethod}}
+                </p>
+                <p>
+                    <b>Phương thức thanh toán:</b><br />
+                    {{var paymentMethod}}
+                </p>
+                <p>
+                    <b>Ngày và Giờ:</b><br />
+                    {{var dateAndTime}}
+                </p>
+            </td>
+        </tr>
+    </tbody>
+</table>

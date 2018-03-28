@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Ved_Sso>
+            <version>1.0.0</version>
+        </Ved_Sso>
+    </modules>
+    <frontend>
+        <routers>
+            <sso>
+                <use>standard</use>
+                <args>
+                    <module>Ved_Sso</module>
+                    <frontName>sso</frontName>
+                </args>
+            </sso>
+        </routers>
+    </frontend>
+    <global>
+        <blocks>
+            <sso>
+                <class>Ved_Sso_Block</class>
+            </sso>
+        </blocks>
+    </global>
+</config>

@@ -1,0 +1,186 @@
+<?php
+/**
+ * @var Ved_Customercare_Block_Customercare $this
+ */
+?>
+
+<div class="cc-wrapper">
+
+    <div class="row cc-head">
+        <!-- Title trung tâm hỗ trợ-->
+        <div class="col-md-3">
+            <div class="cc-title">
+                <a href="<?php echo Mage:: app()->getStore()->getUrl('customercare') ?>">Trung tâm hỗ trợ</a>
+            </div>
+        </div>
+
+        <!-- Tìm kiếm câu hỏi-->
+        <div class="col-md-9 text-right cc-search">
+            <form>
+                <input type="text" class="cc-input-text" id="input-search-answer" placeholder="Tìm kiếm câu hỏi...">
+                <button id="btn-search-answer" class="btn-tk"><i class="fa fa-search"></i> Tìm kiếm</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Sidebar menu-->
+        <div class="col-md-3 cc-sidebar">
+            <?php foreach ($this->getCategoryCollection() as $key => $category): ?>
+                <?php
+                /**
+                 * @var TV_Faq_Model_Category $category
+                 */
+                ?>
+                <div class="cc-sidebar-item" data-id="<?php echo $category->getId() ?>">
+                    <span><img src="<?php echo $this->getSkinUrl($category->getCategoryImage()); ?>"/></span>
+                    <?php echo $this->escapeHtml($category->getName()) ?>
+                </div>
+            <?php endforeach; ?>
+        </div>
+
+        <!-- Sample question-->
+        <span class="cc-sample-question-loading no-display" title="Đang tải">
+            <img src="<?php echo $this->getSkinUrl('images/loading.gif') ?>"/>
+        </span>
+        <div class="col-md-9 cc-sample-question">
+            <div class="row cc-new-customer">
+                <div class="col-md-12 cc-customer-title">Khách hàng mới</div>
+                <div class="col-md-12">
+                    <div class="col-md-15 cc-question-item">
+                        <div class="cc-thumb">
+                            <i class="icon-orrder-cart"></i>
+                        </div>
+                        <h5>Đặt hàng tại Tekshop như thế nào?</h5>
+                    </div>
+                    <div class="col-md-15 cc-question-item">
+                        <div class="cc-thumb">
+                            <i class="icon-thanhtoan"></i>
+                        </div>
+                        <h5>Hình thức thanh toán như thế nào?</h5>
+                    </div>
+                    <div class="col-md-15 cc-question-item">
+                        <div class="cc-thumb">
+                            <i class="icon-giao-hang"></i>
+                        </div>
+                        <h5>Tekshop giao hàng trong bao lâu?</h5>
+                    </div>
+                    <div class="col-md-15 cc-question-item">
+                        <div class="cc-thumb">
+                            <i class="icon-khuyenmai"></i>
+                        </div>
+                        <h5>Xem chương trình khuyến mãi ở đâu?</h5>
+                    </div>
+                    <div class="col-md-15 cc-question-item">
+                        <div class="cc-thumb">
+                            <i class="icon-check-list"></i>
+                        </div>
+                        <h5>Các nhân biết sản phẩm còn hay hết?</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="row cc-ordered-customer">
+                <div class="col-md-12 cc-customer-title">Khách hàng đã đặt hàng</div>
+                <div class="col-md-12">
+                    <div class="col-md-15 cc-question-item">
+                        <div class="cc-thumb">
+                            <i class="icon-phi-van-chuyen"></i>
+                        </div>
+                        <h5>Gshop có tính phí vận chuyển không?</h5>
+                    </div>
+                    <div class="col-md-15 cc-question-item">
+                        <div class="cc-thumb">
+                            <i class="icon-bao-hanh"></i>
+                        </div>
+                        <h5>Chính sách bảo hành như thế nào?</h5>
+                    </div>
+                    <div class="col-md-15 cc-question-item">
+                        <div class="cc-thumb">
+                            <i class="icon-trahang"></i>
+                        </div>
+                        <h5>Làm thế nào để trả sản phẩm khi đã nhận hàng?</h5>
+                    </div>
+                    <div class="col-md-15 cc-question-item">
+                        <div class="cc-thumb">
+                            <i class="icon-huy-don-hang"></i>
+                        </div>
+                        <h5>Làm thế nào để hủy đơn hàng?</h5>
+                    </div>
+                    <div class="col-md-15 cc-question-item">
+                        <div class="cc-thumb">
+                            <i class="icon-qa"></i>
+                        </div>
+                        <h5>Đặt nhiều sản phẩm mà vì sao chỉ nhận 1 sản phẩm, các
+                            sản phẩm khác đâu?</h5>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    var $j = jQuery.noConflict();
+
+    $j('.cc-sidebar-item').click(function () {
+        loadingAnswer();
+        callAjax({faq_category: $j(this).data('id')})
+    });
+
+    $j("#btn-search-answer").click(function () {
+        loadingAnswer();
+        callAjax({query: $j('#input-search-answer').val()})
+        return false;
+    });
+
+    function check(value) {
+        $j('.qa-item').removeClass('active');
+        $j('.qa-item').each(function (e, index) {
+            if (value == index) {
+                toggleContent(value);
+            } else {
+                hideOther(this);
+            }
+        });
+        $j(value).addClass('active');
+    }
+
+    function toggleContent(div) {
+        var fa = $j(div).find('.fa');
+        if (fa.hasClass('fa-angle-right')) {
+            fa.removeClass('fa-angle-right').addClass('fa-angle-down')
+        } else {
+            fa.removeClass('fa-angle-down').addClass('fa-angle-right')
+        }
+        $j(div).find('.cc-content').toggle();
+    }
+
+    function hideOther(div) {
+        var fa = $j(div).find('.fa');
+        fa.removeClass('fa-angle-down').addClass('fa-angle-right');
+        $j(div).find('.cc-content').hide();
+        $j(div).removeClass('active');
+    }
+
+    function callAjax(data) {
+        $j.ajax({
+            url: "<?php echo $this->getUrl('customercare/index/list') ?>",
+            type: 'POST',
+            dataType: 'json',
+            data: data,
+            success: function (response) {
+                $j('.cc-sample-question-loading').removeClass('is-display');
+                $j('.cc-sample-question').html(response.question_list_html);
+            }
+        });
+    }
+
+    function loadingAnswer() {
+        $j('.cc-sidebar-item').removeClass('cc-sidebar-item-active');
+        $j(this).addClass('cc-sidebar-item-active');
+        $j('.cc-sample-question').empty();
+        $j('.cc-sample-question-loading').addClass('is-display');
+    }
+
+</script>

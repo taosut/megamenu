@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<!--
+* @category    TheExtensionLab
+* @package     TheExtensionLab_MegaMenu
+* @copyright   Copyright (c) 2015 TheExtensionLab (http://www.theextensionlab.com)
+* @license     Open Software License (OSL 3.0)
+* @author      James Anelay @ TheExtensionLab <james@theextensionlab.com>
+-->
+<layout>
+    <default>
+        <reference name="head">
+            <action method="addJs">
+                <script>theextensionlab/megamenu/adminhtml/grid/json/serializer.js</script>
+            </action>
+        </reference>
+    </default>
+
+    <adminhtml_menu_catalog_product_widget_chooser>
+        <block type="core/text_list" name="root" output="toHtml">
+        </block>
+    </adminhtml_menu_catalog_product_widget_chooser>
+
+    <adminhtml_menu_catalog_product_widget_choosergridonly>
+        <block type="core/text_list" name="root" output="toHtml">
+        </block>
+    </adminhtml_menu_catalog_product_widget_choosergridonly>
+
+    <adminhtml_menu_attribute_option_widget_chooser>
+        <block type="core/text_list" name="root" output="toHtml">
+        </block>
+    </adminhtml_menu_attribute_option_widget_chooser>
+
+    <adminhtml_menu_attribute_option_widget_choosergridonly>
+        <block type="core/text_list" name="root" output="toHtml">
+        </block>
+    </adminhtml_menu_attribute_option_widget_choosergridonly>
+
+    <add_widget_override>
+        <reference name="head">
+            <action method="addItem"><type>skin_css</type><name>theextensionlab/megamenu/css/widget/draggable.css</name></action>
+            <action method="addJs"><script>theextensionlab/megamenu/wysiwyg/widget.js</script></action>
+        </reference>
+    </add_widget_override>
+
+    <editor>
+        <update handle="add_widget_override"/>
+    </editor>
+
+    <adminhtml_widget_instance_edit>
+        <update handle="add_widget_override"/>
+    </adminhtml_widget_instance_edit>
+
+    <adminhtml_mobile_edittemplate>
+        <update handle="add_widget_override"/>
+    </adminhtml_mobile_edittemplate>
+
+</layout>

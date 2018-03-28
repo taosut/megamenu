@@ -1,0 +1,80 @@
+.cat-products-header .landing-title {
+    user-select: none;
+    color: #d42333;
+    width: 27%;
+}
+
+.sub-cats {
+    width: 60%;
+}
+
+.landing-promo {
+    padding-bottom: 20px;
+}
+
+.landing-promo img {
+    width: 100%;
+}
+
+.landing-promo .brand img {
+    padding: 20px 0;
+    max-width: 165px;
+    display: block;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.landing-promo .gpu-text {
+    font-weight: bold;
+}
+
+.top-banner-landing .slick-arrow {
+    color: #d42333;
+    font-size: 30px;
+    top: 45%;
+}
+
+.top-banner-landing .slider-prev {
+    left: 100px;
+}
+
+.top-banner-landing .slider-next {
+    right: 100px;
+}
+
+.top-banner-landing:hover .slick-arrow {
+    display: block !important;
+}
+
+.top-banner-landing img {
+    width: 100%;
+}
+
+.top-banner-landing .slick-arrow {
+    height: 110px;
+    width: 110px;
+    top: 40%;
+}
+
+@media screen and (min-width: 768px) {
+    .landing-promo .gpu img {
+        width: 80px;
+    }
+
+    .landing-promo .screen img {
+        width: 65%;
+        display: block;
+        margin-right: auto;
+        margin-left: auto;
+    }
+}
+
+@media screen and (min-width: 992px) {
+    .landing-promo .gpu img {
+        width: 100px;
+    }
+
+    .landing-promo .screen img {
+        width: 100%;
+    }
+}

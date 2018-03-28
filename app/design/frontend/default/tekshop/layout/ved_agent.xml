@@ -1,0 +1,68 @@
+<layout>
+    <agent_index_register>
+        <reference name="content">
+            <block type="core/template" name="agent.index.register" template="agent/register.phtml">
+            </block>
+        </reference>
+    </agent_index_register>
+
+    <agent_index_index>
+        <reference name="content">
+            <block type="core/template" name="agent.index.index" template="agent/index.phtml">
+                <block type="core/template" name="agent.navigation" template="agent/shared/navigation.phtml" />
+                <block type="core/template" name="agent.warning" template="agent/shared/warning.phtml" />
+                <block type="core/template" name="agent.warning_login" template="agent/shared/warning_login.phtml" />
+            </block>
+        </reference>
+    </agent_index_index>
+
+    <agent_index_accountmanagement>
+        <reference name="content">
+            <block type="core/template" name="agent.index.account.management" template="agent/account_management.phtml">
+                <block type="core/template" name="agent.navigation" template="agent/shared/navigation.phtml" />
+                <block type="core/template" name="agent.warning" template="agent/shared/warning.phtml" />
+                <block type="core/template" name="agent.warning_login" template="agent/shared/warning_login.phtml" />
+            </block>
+        </reference>
+    </agent_index_accountmanagement>
+
+    <agent_index_redemption>
+        <reference name="content">
+            <block type="core/template" name="agent.index.redemption" template="agent/redemption.phtml">
+                <block type="core/template" name="agent.navigation" template="agent/shared/navigation.phtml" />
+                <block type="core/template" name="agent.warning" template="agent/shared/warning.phtml" />
+                <block type="core/template" name="agent.warning_login" template="agent/shared/warning_login.phtml" />
+            </block>
+        </reference>
+    </agent_index_redemption>
+
+    <agent_index_redemptionhistory>
+        <reference name="content">
+            <block type="core/template" name="agent.index.redemption.history" template="agent/redemption_history.phtml">
+                <block type="core/template" name="agent.navigation" template="agent/shared/navigation.phtml" />
+                <block type="core/template" name="agent.warning" template="agent/shared/warning.phtml" />
+                <block type="core/template" name="agent.warning_login" template="agent/shared/warning_login.phtml" />
+            </block>
+        </reference>
+    </agent_index_redemptionhistory>
+
+    <agent_index_agentlist>
+        <reference name="content">
+            <block type="core/template" name="agent.index.agent.list" template="agent/agent_list.phtml">
+                <block type="core/template" name="agent.navigation" template="agent/shared/navigation.phtml" />
+                <block type="core/template" name="agent.warning" template="agent/shared/warning.phtml" />
+                <block type="core/template" name="agent.warning_login" template="agent/shared/warning_login.phtml" />
+            </block>
+        </reference>
+    </agent_index_agentlist>
+
+    <agent_index_pointhistory>
+        <reference name="content">
+            <block type="core/template" name="agent.index.point.history" template="agent/point_history.phtml">
+                <block type="core/template" name="agent.navigation" template="agent/shared/navigation.phtml" />
+                <block type="core/template" name="agent.warning" template="agent/shared/warning.phtml" />
+                <block type="core/template" name="agent.warning_login" template="agent/shared/warning_login.phtml" />
+            </block>
+        </reference>
+    </agent_index_pointhistory>
+</layout>

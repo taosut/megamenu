@@ -1,0 +1,133 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Ved_Crosscheck>
+            <version>1.0.0</version>
+        </Ved_Crosscheck>
+    </modules>
+    <global>
+
+        <blocks>
+            <ved_crosscheck>
+                <class>Ved_Crosscheck_Block</class>
+            </ved_crosscheck>
+        </blocks>
+        <models>
+            <ved_crosscheck>
+                <class>Ved_Crosscheck_Model</class>
+                <resourceModel>ved_crosscheck_resource</resourceModel>
+            </ved_crosscheck>
+            <ved_crosscheck_resource>
+                <class>Ved_Crosscheck_Model_Resource</class>
+                <entities>
+                    <paymentcrosscheck>
+                        <table>sales_payment_crosscheck</table>
+                    </paymentcrosscheck>
+                    <paymentCrosscheckItem>
+                        <table>sales_payment_crosscheck_item</table>
+                    </paymentCrosscheckItem>
+                    <importLog>
+                        <table>import_log</table>
+                    </importLog>
+                </entities>
+            </ved_crosscheck_resource>
+        </models>
+        <resources>
+            <ved_crosscheck_setup>
+                <setup>
+                    <module>Ved_Crosscheck</module>
+                </setup>
+            </ved_crosscheck_setup>
+        </resources>
+        <helpers>
+            <crosscheck>
+                <class>Ved_Crosscheck_Helper</class>
+            </crosscheck>
+        </helpers>
+    </global>
+    <admin>
+        <routers>
+            <adminhtml>
+                <ved_crosscheck>
+                    <use>admin</use>
+                    <args>
+                        <module>Ved_Crosscheck</module>
+                        <frontName>ved_crosscheck</frontName>
+                    </args>
+                </ved_crosscheck>
+                <args>
+                    <modules>
+                        <Ved_Crosscheck before="Mage_Adminhtml">Ved_Crosscheck_Adminhtml</Ved_Crosscheck>
+                    </modules>
+                </args>
+            </adminhtml>
+        </routers>
+    </admin>
+    <adminhtml>
+        <menu>
+            <crosscheck module="crosscheck">
+                <title>Crosscheck</title>
+                <sort_order>25</sort_order>
+                <children>
+                    <overdue_order module="crosscheck">
+                        <title>Over due payment order</title>
+                        <sort_order>0</sort_order>
+                        <action>adminhtml/crosscheck/overdue</action>
+                    </overdue_order>
+                    <payment module="crosscheck">
+                        <title>Manage Received Payment</title>
+                        <sort_order>1</sort_order>
+                        <action>adminhtml/crosscheck/payment</action>
+                    </payment>
+                    <upload_status module="crosscheck">
+                        <title>Upload status</title>
+                        <sort_order>2</sort_order>
+                        <action>adminhtml/crosscheck/uploadStatus</action>
+                    </upload_status>
+                </children>
+            </crosscheck>
+        </menu>
+        <acl>
+            <resources>
+                <all>
+                    <title>Allow Everything</title>
+                </all>
+                <admin>
+                    <children>
+                        <crosscheck translate="title" module="crosscheck">
+                            <title>Crosscheck</title>
+                            <sort_order>1000</sort_order>
+                            <children>
+                                <overdue_order translate="title">
+                                    <title>Over due payment order</title>
+                                </overdue_order>
+                                <payment translate="title">
+                                    <title>Manage Received Payment</title>
+                                </payment>
+                                <upload_status translate="title">
+                                    <title>Upload status</title>
+                                </upload_status>
+                            </children>
+                        </crosscheck>
+                    </children>
+                </admin>
+            </resources>
+        </acl>
+        <layout>
+            <updates>
+                <crosscheck>
+                    <file>ved_crosscheck.xml</file>
+                </crosscheck>
+            </updates>
+        </layout>
+        <translate>
+            <modules>
+                <Ved_Crosscheck>
+                    <files>
+                        <default>Ved_Crosscheck.csv</default>
+                    </files>
+                </Ved_Crosscheck>
+            </modules>
+        </translate>
+    </adminhtml>
+</config> 

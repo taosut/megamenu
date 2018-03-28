@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<config>
+    <menu>
+        <Ved_Instalment translate="title">
+            <title>Instalment</title>
+            <sort_order>40</sort_order>
+            <depends>
+                <module>Ved_Instalment</module>
+            </depends>
+            <children>
+                <Ved_Instalment>
+                    <title>New Order</title>
+                    <sort_order>1</sort_order>
+                    <action>adminhtml/NewInstalment</action>
+                </Ved_Instalment>
+            </children>
+        </Ved_Instalment>
+    </menu>
+    <acl>
+        <resources>
+            <all>
+                <title>Allow Everything</title>
+            </all>
+            <admin>
+                <children>
+                    <Ved_Instalment translate="title">
+                        <title>Instalment</title>
+                        <sort_order>40</sort_order>
+                        <depends>
+                            <module>Ved_Instalment</module>
+                        </depends>
+                        <children>
+                            <Ved_Instalment>
+                                <title>Ved_Instalment</title>
+                                <sort_order>1</sort_order>
+                                <action>adminhtml/NewInstalment</action>
+                            </Ved_Instalment>
+                        </children>
+                    </Ved_Instalment>
+                </children>
+            </admin>
+        </resources>
+    </acl>
+</config>

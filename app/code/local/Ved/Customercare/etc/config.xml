@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Ved_Customercare>
+            <version>1.0.0</version>
+        </Ved_Customercare>
+    </modules>
+    <frontend>
+        <routers>
+            <customercare>
+                <use>standard</use>
+                <args>
+                    <module>Ved_Customercare</module>
+                    <frontName>customercare</frontName>
+                </args>
+            </customercare>
+        </routers>
+        <!--<layout>-->
+        <!--<updates>-->
+        <!--<unique_identifier module="Ved_Tracking">-->
+        <!--<file>ved_tracking.xml</file>-->
+        <!--</unique_identifier>-->
+        <!--</updates>-->
+        <!--</layout>-->
+    </frontend>
+    <global>
+        <blocks>
+            <customercare>
+                <class>Ved_Customercare_Block</class>
+            </customercare>
+        </blocks>
+    </global>
+</config>

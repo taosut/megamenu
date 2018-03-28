@@ -1,0 +1,33 @@
+
+<config>
+    <modules>
+        <Ved_Search>
+            <version>1.0.0</version>
+        </Ved_Search>
+    </modules>
+    <frontend>
+        <routers>
+            <search>
+                <use>standard</use>
+                <args>
+                    <module>Ved_Search</module>
+                    <frontName>search</frontName>
+                </args>
+            </search>
+        </routers>
+        <layout>
+            <updates>
+                <search>
+                    <file>ved_search.xml</file>
+                </search>
+            </updates>
+        </layout>
+    </frontend>
+    <global>
+        <blocks>
+            <search>
+                <class>Ved_Search_Block</class>
+            </search>
+        </blocks>
+    </global>
+</config>

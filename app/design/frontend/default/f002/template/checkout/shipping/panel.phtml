@@ -1,0 +1,104 @@
+<div class="panel panel-default address-list">
+    <div class="panel-body">
+        <div id="dialog" title="Confirmation"> </div>
+        <?php
+        $addresses = $this->getListAddress();
+        if(count($addresses)>0){
+            ?>
+            <h5 class="visible-lg-block">Chọn địa chỉ giao hàng có sẵn bên dưới:</h5>
+            <div class="row row-address-list">
+                <?php
+                foreach($addresses as $address){
+                    ?>
+                <form id="form-address" method="post" action="/checkout/shipping/saving_shipping_address">
+                    <div class="col-lg-6 col-md-6 col-sm-6 item" id="item-<?php echo $address['id']; ?>">
+                        <div class="panel panel-default address-item <?php if($address['default']){ echo 'is-default'; }?>">
+                            <div class="panel-body">
+                                <p class="name">Địa chỉ: <?php echo $address['name']; ?></p>
+                                <p class="address"><?php echo $address['full_address']; ?></p>
+                                <p class="address"><?php echo $address['country']; ?></p>
+                                <p class="phone">Điện thoại: <?php echo $address['phone']; ?></p>
+                                <p class="action">
+                                    <button type="button" class="btn btn-default btn-custom1 saving-address is-blue" data-id="<?php echo $address['id']; ?>">Giao đến địa chỉ này</button>
+                                    <button type="button" class="btn btn-default btn-custom1 edit-address" data-id="<?php echo $address['id']; ?>">Sửa</button>
+                                    <?php
+                                    if(!$address['default']){
+                                        ?>
+                                        <button type="button" class="btn btn-default btn-custom1 deleting" data-id="<?php echo $address['id']; ?>">
+                                            <img src="https://vcdn.tikicdn.com/assets/img/trash.png" alt="">
+                                        </button>
+                                    <?php
+                                    }
+                                    ?>
+
+                                </p>
+                                <span class="default">Mặc định</span>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <?php
+                }
+                ?>
+            </div>
+            <p class="other">Bạn muốn giao hàng đến địa chỉ khác? <a href="javascript:void(0)" id="addNewAddress">Thêm địa chỉ giao hàng mới</a></p>
+        <?php
+        }else{
+            echo $this->getLayout()->createBlock('ved_customer/address')->setTemplate('checkout/shipping/form.phtml')->toHtml();
+        }
+        ?>
+    </div>
+    <div class="panel panel-default address-form is-edit" style="display: block;" id="newblock"></div>
+</div>
+<script>
+    $j('#addNewAddress').click(function(event){
+        $j.ajax({
+            url: "<?php echo $this->getUrl('customer/address/ajaxAddressInfo')  ?>"
+        }).done(function(data) {
+            $j("#newblock").html(data);
+        });
+    });
+    $j('.edit-address').click(function(event){
+        id = $j(this).attr('data-id');
+        url = "<?php echo $this->getUrl('customer/address/ajaxAddressInfo');  ?>";
+        url = url + '?id=' + id;
+        $j.ajax({
+            url: url
+        }).done(function(data) {
+            $j("#newblock").html(data);
+        });
+    });
+    $j('.deleting').click(function(event){
+        //Display dialog to confirm
+        bootbox.confirm("Bạn có muốn xóa địa chỉ này ?", function(result) {
+            if(result){
+                id = $j('.deleting').attr('data-id');
+                url = "<?php echo $this->getUrl('customer/address/ajaxDelete');  ?>";
+                url = url + '?id=' + id;
+                $j.ajax({
+                    url: url
+                }).done(function(data) {
+                    location.reload();
+                });
+            }
+        });
+    });
+    $j('.saving-address').click(function(event){
+        id = $j(this).attr('data-id');
+        url = "<?php echo $this->getUrl('checkout/shipping/saveAddress');  ?>";
+        $j.ajax({
+            url: url,
+            type: "POST",
+            data: {id:id},
+            dataType: "json"
+        }).done(function(data) {
+            if(data.redirect != null){
+                window.location.href = data.redirect;
+            }
+            if(data.message != null){
+                alert(data.message);
+            }
+
+        });
+    });
+</script>

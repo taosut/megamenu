@@ -1,0 +1,95 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    Mage
+ * @package     Errors
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<html lang="vi">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <title>Lỗi hệ thống</title>
+    <style>
+        body {
+            overflow: hidden;
+        }
+
+        .maintenance-title {
+            font-size: 60px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .maintenance-content {
+            display: flex;
+            align-items: center;
+            margin: 150px 0 0 0;
+        }
+
+        .maintenance-content-block {
+            padding: 0 30px;
+        }
+
+        .maintenance-content-block p {
+            font-size: 20px;
+        }
+
+        .maintenance-highlight-time {
+            font-weight: bold;
+            color: #d42333;
+        }
+
+        .maintenance-img {
+            width: 60%;
+            display: block;
+            margin: auto;
+        }
+
+        @media screen and (max-width: 1200px) {
+            .maintenance-title {
+                font-size: 40px;
+                margin-bottom: 15px;
+            }
+
+            .maintenance-content-block p {
+                font-size: 18px;
+            }
+        }
+
+        @media screen and (max-width: 767px) {
+            .maintenance-content {
+                display: block;
+                margin-top: 100px;
+            }
+
+            .maintenance-img {
+                margin-top: 50px;
+            }
+        }
+    </style>
+</head>
+<?php require_once $contentTemplate; ?>
+</html>

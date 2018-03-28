@@ -1,0 +1,41 @@
+<?php /* @var $this Mage_Core_Block_Template */ ?>
+<?php if ($suppliers = $this->getSuppliers()): ?>
+<p class="switcher">
+    <label for="store_switcher">
+        <?php echo $this->__('Choose Supplier View:') ?>
+    </label>
+<select name="supplier_switcher" id="supplier_switcher" onchange="return switchSupplier(this);">
+<?php if ($this->hasDefaultOption()): ?>
+    <option value=""><?php echo $this->getDefaultOption() ?></option>
+<?php endif; ?>
+    <?php foreach ($suppliers as $supplier): ?>
+        <option value="<?php echo $this->escapeHtml($supplier->getSupplier_code()) ?>"
+               <?php if($this->getSupplierCode() == $supplier->getSupplier_code()): ?> selected="selected"
+               <?php endif; ?>
+            >&nbsp;&nbsp;&nbsp;&nbsp;
+            <?php echo $this->escapeHtml($supplier->getSupplier_name()) ?>
+        </option>
+    <?php endforeach; ?>
+</select>
+<?php echo $this->getHintHtml() ?>
+</p>
+<script type="text/javascript">
+    function switchSupplier(obj) {
+        var storeParam = obj.value ? 'supplier/' + obj.value + '/' : '';
+        if (obj.switchParams) {
+            storeParam += obj.switchParams;
+        }
+    <?php if ($this->getUseConfirm()): ?>
+        if (confirm("<?php echo $this->__('Please confirm site switching. All data that hasn\'t been saved will be lost.') ?>")) {
+            setLocation('<?php echo $this->getSwitchUrl() ?>' + storeParam);
+            return true;
+        } else {
+            obj.value = '<?php echo $this->getSupplierId() ?>';
+        }
+        return false;
+    <?php else: ?>
+        setLocation('<?php echo $this->getSwitchUrl() ?>' + storeParam);
+    <?php endif; ?>
+    }
+</script>
+<?php endif; ?>

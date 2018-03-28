@@ -1,0 +1,100 @@
+<?xml version="1.0"?>
+<!--
+@author hoangpt
+@package Phongvu_Fault
+-->
+<config>
+        <menu>
+		    <report>
+                <children>
+                    <pvfault translate="title" module="pvfault">
+                        <title>Errors Detector</title>
+                        <sort_order>900</sort_order>
+                        <children>
+                            <log translate="title" module="pvfault">
+                                <title>Not Found Pages</title>
+                                <action>pvfault/adminhtml_log</action>
+                                <sort_order>10</sort_order>
+                            </log> 
+                            <error translate="title" module="pvfault">
+                                <title>System Errors</title>
+                                <action>pvfault/adminhtml_error</action>
+                                <sort_order>20</sort_order>
+                            </error>
+                            <exception translate="title" module="pvfault">
+                                <title>Exception Log</title>
+                                <action>pvfault/adminhtml_expception</action>
+                                <sort_order>30</sort_order>
+                            </exception>
+                            <attempt translate="title" module="pvfault">
+                                <title>Failed Login Attempts</title>
+                                <action>pvfault/adminhtml_attempt</action>
+                                <sort_order>40</sort_order>
+                            </attempt> 
+                            <settings translate="title" module="pvfault">
+                                <title>Settings</title>
+                                <action>adminhtml/system_config/edit/section/pvfault</action>
+                                <sort_order>50</sort_order>
+                            </settings> 
+                        </children>
+                    </pvfault>
+                </children>
+            </report>
+		</menu>     
+   
+		<acl>
+			<resources>
+				<all>
+					<title>Allow Everything</title>
+				</all>
+                <admin>
+                    <children>
+            		    <report>
+                            <children>
+                                <pvfault translate="title" module="pvfault">
+                                    <title>Errors Detector</title>
+                                    <children>
+                                        <log translate="title" module="pvfault">
+                                            <title>Not Found Pages</title>
+                                        </log> 
+                                        <error translate="title" module="pvfault">
+                                            <title>System Errors</title>
+                                        </error>
+                                        <exception translate="title" module="pvfault">
+                                            <title>Exception Log</title>
+                                        </exception>
+                                        <attempt translate="title" module="pvfault">
+                                            <title>Failed Login Attempts</title>
+                                        </attempt> 
+                                        <settings translate="title" module="pvfault">
+                                            <title>Settings</title>
+                                        </settings> 
+                                    </children>
+                                </pvfault>
+                            </children>
+                        </report>
+                        <system>
+                            <children>
+                                <config>
+                                    <children>
+                                        <pvfault translate="title" module="pvfault">
+                                            <title>Errors Detector</title>
+                                        </pvfault>
+                                    </children>
+                                </config>
+                            </children>
+                        </system>            
+                     </children>
+                </admin> 
+			</resources>
+		</acl>
+        <translate>
+            <modules>
+                <Phongvu_Fault>
+                    <files>
+                        <default>Phongvu_Fault.csv</default>
+                    </files>
+                </Phongvu_Fault>
+            </modules>
+        </translate> 
+</config> 

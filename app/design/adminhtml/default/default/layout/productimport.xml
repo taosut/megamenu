@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+    <productimport_productimport_index>
+        <reference name="head">
+            <action method="addJs">
+                <script>productimport/jquery-1.11.3.min.js</script>
+            </action>
+            <action method="addJs">
+                <script>productimport/noconflict.js</script>
+            </action>
+            <action method="addJs">
+                <script>productimport/angular.min.js</script>
+            </action>
+            <action method="addJs">
+                <script>productimport/ui-bootstrap-tpls-0.14.3.min.js</script>
+            </action>
+            <action method="addJs">
+                <script>productimport/angular-file-upload.min.js</script>
+            </action>
+            <action method="addJs">
+                <script>productimport/bootstrap-filestyle.js</script>
+            </action>
+            <action method="addCss">
+                <stylesheet>productimport/css/bootstrap.my.css</stylesheet>
+            </action>
+        </reference>
+        <reference name="content">
+            <block type="core/template" name="productimport"
+                   template="productimport/import.phtml"/>
+        </reference>
+    </productimport_productimport_index>
+    <productimport_importlog_index>
+        <reference name="content">
+            <block type="productimport/adminhtml_importlog" name="importlog"/>
+        </reference>
+    </productimport_importlog_index>
+</layout>

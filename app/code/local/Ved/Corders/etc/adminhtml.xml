@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+ 
+<config>
+    <menu>
+        <sales>
+            <children>
+                <ved_corders translate="title" module="ved_corders">
+                    <sort_order>10</sort_order>
+                    <title>Orders - Completed</title>
+                    <action>adminhtml/order/</action>
+                </ved_corders>
+            </children>
+        </sales>
+    </menu>
+</config>

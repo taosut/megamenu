@@ -1,0 +1,571 @@
+<?php
+$productCollection = Mage::registry('products');
+$totalPage = Mage::registry('totalPage');
+$wishID = Mage::registry('wishID');
+$isOwned = Mage::registry('');
+$customer = Mage::getSingleton('customer/session')->getCustomer();
+$customer_name = $customer->getName();
+$customer_id = $customer->getId();
+$currentPage = Mage::registry('currentPage');
+$isOwned = Mage::registry('owned');
+?>
+<?php
+$tagProduct = Mage::getModel('tag/tag_relation')
+    ->setTagId(1)// Bao ke gia
+    ->setStoreId((Mage::app()->getStore()->getId()))
+    ->getProductIds();
+?>
+<link rel="stylesheet" type="text/css" href="<?php echo $this->getSkinUrl('lib/list.css'); ?>"/>
+<link rel="stylesheet" type="text/css" href="<?php echo $this->getSkinUrl('lib/favorite.css'); ?>"/>
+<script type="text/javascript" src="<?php echo $this->getSkinUrl('lib/list.js'); ?>"></script>
+<div class="content">
+    <!--Information-->
+    <input type="hidden" id="wishlistID" value="<?php echo $wishID; ?>"/>
+
+    <!--Breadcrumb-->
+    <div class="row tek-breadcrumb">
+        <div class="col-md-10 col-md-offset-1 content-section">
+            <div class="tek-breadcrumb-content" style="padding: 6px 0 5px 0;"></div>
+            <div class="tek-breadcrumb-main">
+                <span>Sản phẩm yêu thích của <?php echo $customer_name ?></span>
+            </div>
+        </div>
+    </div>
+    <!--End Breadcrumb-->
+
+    <!--List block-->
+    <div class="row list-block">
+        <div class="col-md-10 col-md-offset-1 pr-0 content-section">
+            <?php if (!$productCollection): ?>
+                <div class="row">
+                    <div class="col-md-12 col-sm-12 list-no-products">
+                        <img class="list-no-products-img"
+                             src="<?php echo $this->getSkinUrl('images/giohangtrong.png'); ?>"/>
+                        Danh sách sản phẩm yêu thích của bạn đang trống !
+                    </div>
+                </div>
+            <?php else: ?>
+                <!-- Messages block-->
+                <div class="row">
+                    <div class="col-md-12 col-sm-12">
+                        <div class="detail-messages purchase-request-messages"></div>
+                    </div>
+                </div>
+                <!-- End Messages block-->
+                <div class="row">
+                    <!--Product List-->
+                    <div class="col-md-10 col-md-offset-1 pr-0 content-section">
+                        <!--Top banner-->
+                        <div class="row list-top-banner">
+                            <?php echo $this->getLayout()->createBlock('cms/block')->setBlockId('list-top-banner-v2')->toHtml(); ?>
+                        </div>
+                        <!--End Top banner-->
+
+                        <!--Filter top-->
+                        <div class="row">
+                            <div class="col-md-12 col-sm-12">
+                                <div class="filter-top">
+                                    <?php if ($totalPage > 1): ?>
+                                        <div class="filter-row row">
+                                            <div class="col-md-12 col-sm-12 pagination-block top-pagination-block mt-6">
+                                                <?php if ($productCollection->getSize()): ?>
+                                                    <?php if ($totalPage > 1): ?>
+                                                        <span>Trang <b><?php echo $currentPage; ?>
+                                                                /<?php echo $totalPage; ?></b></span>
+                                                        <a href="<?php echo $this->getUrlPage(1) ?>"
+                                                           title="<?php echo $this->__('Last Previous') ?>"><i
+                                                                    class="fa fa-angle-double-left"></i></a>
+                                                        <a class="previous i-previous"
+                                                           href="<?php echo $this->getUrlPage(max(1, $currentPage - 1)) ?>"
+                                                           title="<?php echo $this->__('Previous') ?>">
+                                                            <i class="fa fa-angle-left"></i>
+                                                        </a>
+
+                                                        <?php foreach ($this->getRange($currentPage, $totalPage) as $_page): ?>
+                                                            <?php if ($_page == $currentPage): ?>
+                                                                <a class="active"><?php echo $_page ?></a>
+                                                            <?php else: ?>
+                                                                <a href="<?php echo $this->getUrlPage($_page) ?>"><?php echo $_page ?></a>
+                                                            <?php endif; ?>
+                                                        <?php endforeach; ?>
+
+                                                        <a class="next i-next"
+                                                           href="<?php echo $this->getUrlPage(min($totalPage, $currentPage + 1)) ?>"
+                                                           title="<?php echo $this->__('Next') ?>">
+                                                            <i class="fa fa-angle-right"></i>
+                                                        </a>
+                                                        <a href="<?php echo $this->getUrlPage($totalPage) ?>"
+                                                           title="<?php echo $this->__('Last Next') ?>"><i
+                                                                    class="fa fa-angle-double-right"></i></a>
+                                                    <?php endif; ?>
+                                                <?php endif ?>
+                                            </div>
+                                        </div>
+                                        <div class="filter-row row mt-18">
+                                            <div class="col-md-12 col-sm-12 view-switch-block">
+                                                <span class="switch-btn switch-list-view-btn"
+                                                      title="Xem dạng danh sách">
+                                                <i class="fa fa-th-list"></i>
+                                            </span>
+                                                <span class="switch-btn switch-grid-view-btn" title="Xem dạng lưới">
+                                                <i class="fa fa-th"></i>
+                                            </span>
+                                            </div>
+                                        </div>
+                                    <?php else: ?>
+                                        <div class="filter-row row">
+                                            <div class="col-md-12 col-sm-12 view-switch-block">
+                                                <span class="switch-btn switch-list-view-btn"
+                                                      title="Xem dạng danh sách">
+                                                <i class="fa fa-th-list"></i>
+                                            </span>
+                                                <span class="switch-btn switch-grid-view-btn" title="Xem dạng lưới">
+                                                <i class="fa fa-th"></i>
+                                            </span>
+                                            </div>
+                                        </div>
+                                    <?php endif; ?>
+                                </div>
+                            </div>
+                        </div>
+                        <!--End Filter top-->
+
+                        <!--Product list content-->
+                        <div class="row">
+                            <div class="col-md-12 col-sm-12">
+                                <!--List view-->
+                                <div class="list-view">
+                                    <?php foreach ($productCollection as $_product): ?>
+                                        <?php
+                                        $oldPrice = $_product->getPrice();
+                                        $finalPrice = $_product->getFinalPrice();
+                                        ?>
+                                        <div class="row list-view-item">
+                                            <div class="col-md-3 col-sm-3">
+                                                <?php if (in_array((string)$_product->getId(), $tagProduct)): ?>
+                                                    <img class="list-tag"
+                                                         src='<?php echo $this->getSkinUrl('images/tag.png') ?>'/>
+                                                <?php endif; ?>
+                                                <a href="<?php echo $_product->getProductFullUrl() ?>"
+                                                   title="<?php echo $this->escapeHtml($_product->getName()); ?>">
+                                                    <img class="list-view-img"
+                                                         alt="<?php echo $this->escapeHtml($_product->getName()); ?>"
+                                                         src="<?php echo $this->helper('catalog/image')->init($_product, 'small_image')->resize(300, 300); ?>"/>
+                                                </a>
+                                                <?php if ($oldPrice != $finalPrice) : ?>
+                                                    <div class="ribbon-favourite">
+                                                        -<?php echo number_format(($oldPrice - $finalPrice) / $oldPrice * 100, 0) . "%" ?>
+                                                    </div>
+                                                <?php endif; ?>
+                                            </div>
+                                            <div class="col-md-7 col-sm-6">
+                                                <a class="list-view-product-name"
+                                                   href="<?php echo $_product->getProductFullUrl() ?>"
+                                                   title="<?php echo $this->escapeHtml($_product->getName()); ?>">
+                                                    <?php echo $this->escapeHtml($_product->getName()); ?>
+                                                </a>
+                                                <div class="list-view-product-info">
+                                                    <?php echo $this->helper('catalog/output')->productAttribute($_product, nl2br($_product->getShortDescription()), 'short_description'); ?>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2 col-sm-3 pl-0">
+                                                <div class="list-view-final-price">
+                                                    <?php echo number_format($finalPrice, 0, ",", ".") . " ₫"; ?>
+                                                </div>
+                                                <div class="list-view-old-price">
+                                                    <?php if ($oldPrice != $finalPrice) : ?>
+                                                        <?php echo number_format($oldPrice, 0, ",", ".") . " ₫"; ?>
+                                                    <?php endif; ?>
+                                                </div>
+                                                <?php
+                                                $instockStatus = $_product->getInstock();
+                                                $addToCartUrl = ($_product->getTypeId() == 'simple') ? Mage::helper('checkout/cart')->getAddUrl($_product) : $_product->getProductFullUrl();
+                                                ?>
+                                                <?php if (in_array($instockStatus, array(1, 6))): ?>
+                                                    <button type="button"
+                                                            class="list-view-action-btn list-view-add-to-cart-btn add-to-cart-from-list-btn"
+                                                            data-product-name="<?php echo $this->escapeHtml($_product->getName()); ?>"
+                                                            data-product-id="<?php echo intval($_product->getId()); ?>"
+                                                            data-product-price="<?php echo intval($_product->getFinalPrice()); ?>"
+                                                            data-product-type="<?php echo $_product->getTypeId(); ?>"
+                                                            data-add-to-cart-url="<?php echo $addToCartUrl; ?>"
+                                                    >
+                                                        Thêm vào giỏ hàng
+                                                        <img class="add-to-cart-from-list-icon related-add-to-cart-icon hidden-1200"
+                                                             src="<?php echo $this->getSkinUrl('images/icon_ShoppingCart2.svg'); ?>"/>
+                                                        <img class="add-to-cart-from-list-ajax-loader hidden"
+                                                             src="<?php echo $this->getSkinUrl('images/ajax-loader-white.gif'); ?>"/>
+                                                    </button>
+                                                <?php else: ?>
+                                                    <button type="button"
+                                                            class="list-view-action-btn list-view-require-purchase-btn"
+                                                            data-toggle="modal"
+                                                            data-target="#listViewPurchaseRequestModal-<?php echo $_product->getId(); ?>">
+                                                        Đặt hàng trước <span class="hidden-1200">(<?php echo $instockStatus == 3 ? 'Tạm hết hàng' : 'Hàng sắp về' ;?>)</span>
+                                                    </button>
+                                                    <!-- Modal purchase request -->
+                                                    <div id="listViewPurchaseRequestModal-<?php echo $_product->getId(); ?>"
+                                                         class="purchase-request-modal modal fade"
+                                                         role="dialog">
+                                                        <div class="modal-dialog">
+                                                            <!-- Modal content-->
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <button type="button" class="close"
+                                                                            data-dismiss="modal">&times;
+                                                                    </button>
+                                                                    <h4 class="modal-title a-center">Gửi yêu cầu đặt
+                                                                        hàng</h4>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <div class="form-group">
+                                                                        <label for="name">Họ tên <span
+                                                                                    class="red">*</span></label>
+                                                                        <input type="text" class="form-control"
+                                                                               id="list-view-require-name-<?php echo $_product->getId(); ?>">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label for="phone">Số điện thoại <span
+                                                                                    class="red">*</span></label>
+                                                                        <input type="number" class="form-control"
+                                                                               id="list-view-require-phone-<?php echo $_product->getId(); ?>">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label for="phone">Nội dung yêu cầu (tối đa 500
+                                                                            ký tự) <span class="red">*</span></label>
+                                                                        <textarea class="form-control" rows="4"
+                                                                                  id="list-view-require-content-<?php echo $_product->getId(); ?>"
+                                                                                  maxlength="500"></textarea>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button"
+                                                                            class="btn btn-primary btn-send-request"
+                                                                            data-product-id="<?php echo $_product->getId(); ?>"
+                                                                            data-product-name="<?php echo $_product->getName(); ?>"
+                                                                            onclick="sendPurchaseRequestListView(this)">
+                                                                        &nbsp;Xác nhận
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                <?php endif; ?>
+                                                <?php if ($isOwned): ?>
+                                                    <span class="rm-favorite rm-favorite-list"
+                                                          title="Xoá sản phẩm khỏi danh sách yêu thích"
+                                                          data-product-id="<?= $_product->getId() ?>">
+                                                        Xoá khỏi danh sách
+                                                    </span>
+                                                <?php endif; ?>
+                                                <div class="clearfix"></div>
+                                            </div>
+                                        </div>
+                                    <?php endforeach; ?>
+                                </div>
+                                <!--End List view-->
+
+                                <!--Grid view-->
+                                <div class="grid-view">
+                                    <div class="row grid-view-content">
+                                        <?php foreach ($productCollection as $_product): ?>
+                                            <?php
+                                            $oldPrice = $_product->getPrice();
+                                            $finalPrice = $_product->getFinalPrice();
+                                            ?>
+                                            <div class="col-md-3 col-sm-3 grid-view-item">
+                                                <?php if ($isOwned): ?>
+                                                    <span class="rm-favorite rm-favorite-grid"
+                                                          title="Xoá khỏi danh sách yêu thích"
+                                                          data-product-id="<?= $_product->getId() ?>">
+                                                        <i class="fa fa-close"></i>
+                                                    </span>
+                                                <?php endif; ?>
+                                                <a href="<?php echo $_product->getProductFullUrl() ?>"
+                                                   title="<?php echo $this->escapeHtml($_product->getName()); ?>">
+                                                    <img class="grid-view-img"
+                                                         alt="<?php echo $this->escapeHtml($_product->getName()); ?>"
+                                                         src="<?php echo $this->helper('catalog/image')->init($_product, 'small_image')->resize(300, 300); ?>">
+                                                </a>
+                                                <?php if ($oldPrice != $finalPrice) : ?>
+                                                    <div class="ribbon-favourite">
+                                                        -<?php echo number_format(($oldPrice - $finalPrice) / $oldPrice * 100, 0) . "%" ?>
+                                                    </div>
+                                                    <?php if (in_array((string)$_product->getId(), $tagProduct)): ?>
+                                                        <img class="list-tag-discount"
+                                                             src='<?php echo $this->getSkinUrl('images/tag.png') ?>'/>
+                                                    <?php endif; ?>
+                                                <?php else: ?>
+                                                    <?php if (in_array((string)$_product->getId(), $tagProduct)): ?>
+                                                        <img class="list-tag"
+                                                             src='<?php echo $this->getSkinUrl('images/tag.png') ?>'/>
+                                                    <?php endif; ?>
+                                                <?php endif; ?>
+
+                                                <a class="grid-view-product-name"
+                                                   href="<?php echo $_product->getProductFullUrl() ?>"
+                                                   title="<?php echo $this->escapeHtml($_product->getName()); ?>">
+                                                    <?php echo $this->escapeHtml($_product->getName()); ?>
+                                                </a>
+
+                                                <div class="grid-view-final-price">
+                                                    <?php echo number_format($finalPrice, 0, ",", ".") . " ₫"; ?>
+                                                </div>
+                                                <div class="grid-view-old-price">
+                                                    <?php if ($oldPrice != $finalPrice) : ?>
+                                                        <?php echo number_format($oldPrice, 0, ",", ".") . " ₫"; ?>
+                                                    <?php endif; ?>
+                                                </div>
+                                                <?php
+                                                $instockStatus = $_product->getInstock();
+                                                $addToCartUrl = ($_product->getTypeId() == 'simple') ? Mage::helper('checkout/cart')->getAddUrl($_product) : $_product->getProductFullUrl();
+                                                ?>
+                                                <?php if (in_array($instockStatus, array(1, 6))): ?>
+                                                    <button class="grid-view-action-btn grid-view-add-to-cart-btn add-to-cart-from-list-btn"
+                                                            data-product-name="<?php echo $this->escapeHtml($_product->getName()); ?>"
+                                                            data-product-id="<?php echo intval($_product->getId()); ?>"
+                                                            data-product-price="<?php echo intval($_product->getFinalPrice()); ?>"
+                                                            data-product-type="<?php echo $_product->getTypeId(); ?>"
+                                                            data-add-to-cart-url="<?php echo $addToCartUrl; ?>"
+                                                    >
+                                                        Thêm vào giỏ hàng
+                                                        <img class="add-to-cart-from-list-icon related-add-to-cart-icon hidden-1200"
+                                                             src="<?php echo $this->getSkinUrl('images/icon_ShoppingCart2.svg'); ?>"/>
+                                                        <img class="add-to-cart-from-list-ajax-loader hidden"
+                                                             src="<?php echo $this->getSkinUrl('images/ajax-loader-white.gif'); ?>"/>
+                                                    </button>
+                                                <?php elseif (in_array($instockStatus, array(3, 4))): ?>
+                                                    <button type="button"
+                                                            class="grid-view-action-btn grid-view-require-purchase-btn full-width"
+                                                            data-toggle="modal"
+                                                            data-target="#gridViewPurchaseRequestModal-<?php echo $_product->getId(); ?>">
+                                                        Đặt hàng trước <span class="hidden-1200">(<?php echo $instockStatus == 3 ? 'Tạm hết hàng' : 'Hàng sắp về' ;?>)</span>
+                                                    </button>
+                                                    <!-- Modal purchase request -->
+                                                    <div id="gridViewPurchaseRequestModal-<?php echo $_product->getId(); ?>"
+                                                         class="purchase-request-modal modal fade"
+                                                         role="dialog">
+                                                        <div class="modal-dialog">
+                                                            <!-- Modal content-->
+                                                            <div class="modal-content">
+                                                                <div class="modal-header">
+                                                                    <button type="button" class="close"
+                                                                            data-dismiss="modal">&times;
+                                                                    </button>
+                                                                    <h4 class="modal-title a-center">Gửi yêu cầu đặt
+                                                                        hàng</h4>
+                                                                </div>
+                                                                <div class="modal-body">
+                                                                    <div class="form-group">
+                                                                        <label for="name">Họ tên <span
+                                                                                    class="red">*</span></label>
+                                                                        <input type="text" class="form-control"
+                                                                               id="grid-view-require-name-<?php echo $_product->getId(); ?>">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label for="phone">Số điện thoại <span
+                                                                                    class="red">*</span></label>
+                                                                        <input type="number" class="form-control"
+                                                                               id="grid-view-require-phone-<?php echo $_product->getId(); ?>">
+                                                                    </div>
+                                                                    <div class="form-group">
+                                                                        <label for="phone">Nội dung yêu cầu (tối đa 500
+                                                                            ký tự) <span class="red">*</span></label>
+                                                                        <textarea class="form-control" rows="4"
+                                                                                  id="grid-view-require-content-<?php echo $_product->getId(); ?>"
+                                                                                  maxlength="500"></textarea>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <button type="button"
+                                                                            class="btn btn-primary btn-send-request"
+                                                                            data-product-id="<?php echo $_product->getId(); ?>"
+                                                                            data-product-name="<?php echo $_product->getName(); ?>"
+                                                                            onclick="sendPurchaseRequestGridView(this)">
+                                                                        &nbsp;Xác nhận
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                <?php endif; ?>
+                                            </div>
+                                        <?php endforeach; ?>
+                                    </div>
+                                </div>
+                                <!--End Grid view-->
+                            </div>
+                        </div>
+                        <!--End Product list content-->
+
+                        <!--Filter bottom-->
+                        <?php if ($totalPage > 1): ?>
+                            <div class="row">
+                                <div class="col-md-12 col-sm-12">
+                                    <div class="filter-bottom mb-15">
+                                        <div class="filter-row">
+                                            <div class="pagination-block bottom-pagination-block"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php else: ?>
+                            <div class="row">
+                                <div class="col-md-12 col-sm-12">
+                                    <div class="mb-15">
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+                        <!--End Filter bottom-->
+                    </div>
+                </div>
+            <?php endif; ?>
+        </div>
+    </div>
+    <!--End list block-->
+</div>
+
+<script type="text/javascript">
+    var $j = jQuery.noConflict();
+
+    /** Send purchase request **/
+    function sendPurchaseRequestListView(value) {
+        var productId = $j(value).data('product-id');
+        var productName = $j(value).data('product-name');
+        var require_name = $j('#list-view-require-name-' + productId).val().trim();
+        var require_phone = $j('#list-view-require-phone-' + productId).val().trim();
+        var require_content = $j('#list-view-require-content-' + productId).val().trim();
+
+        var url = "<?php echo $this->getUrl('stockrequest/stockrequest/saveRequest');  ?>";
+        var data = {
+            user_name: require_name,
+            phone_number: require_phone,
+            request_content: require_content,
+            product_id: productId,
+            product_name: productName
+        };
+
+        if (require_name === '') {
+            alert('Vui lòng nhập họ tên');
+        } else if (require_phone === '') {
+            alert('Vui lòng nhập số điện thoại');
+        } else if (require_phone !== '' && !validateVNPhoneNumber(require_phone)) {
+            alert('Số điện thoại không đúng định dạng (phải có dạng 84xxx hoặc 0xxx, chứa 10 hoặc 11 ký tự)');
+        } else if (require_content === '') {
+            alert('Vui lòng nhập nội dung cần yêu cầu');
+        } else {
+            $j('.ajax-loader-pr').show();
+            $j('.btn-send-request').prop('disabled', true);
+            $j.ajax({
+                url: url,
+                type: "POST",
+                data: data,
+                dataType: "json"
+            }).done(function (data) {
+                $j('.ajax-loader-pr').hide();
+                $j('#listViewPurchaseRequestModal-' + productId).modal('hide');
+                $j('.btn-send-request').prop('disabled', false);
+                $j('.detail-messages').empty();
+                if (data.success_message) {
+                    $j('.purchase-request-messages').append('<div class="alert alert-success"><strong>Thành công!</strong> ' + data.success_message + '</div>');
+                } else if (data.error_message) {
+                    $j('.purchase-request-messages').append('<div class="alert alert-danger"><strong>Có lỗi!</strong> ' + data.error_message + '</div>');
+                }
+                $j('html, body').animate({scrollTop: 0}, 400);
+            });
+        }
+    }
+
+    function sendPurchaseRequestGridView(value) {
+        var productId = $j(value).data('product-id');
+        var productName = $j(value).data('product-name');
+        var require_name = $j('#grid-view-require-name-' + productId).val().trim();
+        var require_phone = $j('#grid-view-require-phone-' + productId).val().trim();
+        var require_content = $j('#grid-view-require-content-' + productId).val().trim();
+
+        var url = "<?php echo $this->getUrl('stockrequest/stockrequest/saveRequest');  ?>";
+        var data = {
+            user_name: require_name,
+            phone_number: require_phone,
+            request_content: require_content,
+            product_id: productId,
+            product_name: productName
+        };
+
+        if (require_name === '') {
+            alert('Vui lòng nhập họ tên');
+        } else if (require_phone === '') {
+            alert('Vui lòng nhập số điện thoại');
+        } else if (require_phone !== '' && !validateVNPhoneNumber(require_phone)) {
+            alert('Số điện thoại không đúng định dạng (phải có dạng 84xxx hoặc 0xxx, chứa 10 hoặc 11 ký tự)');
+        } else if (require_content === '') {
+            alert('Vui lòng nhập nội dung cần yêu cầu');
+        } else {
+            $j('.ajax-loader-pr').show();
+            $j('.btn-send-request').prop('disabled', true);
+            $j.ajax({
+                url: url,
+                type: "POST",
+                data: data,
+                dataType: "json"
+            }).done(function (data) {
+                $j('.ajax-loader-pr').hide();
+                $j('#gridViewPurchaseRequestModal-' + productId).modal('hide');
+                $j('.btn-send-request').prop('disabled', false);
+                $j('.detail-messages').empty();
+                if (data.success_message) {
+                    $j('.purchase-request-messages').append('<div class="alert alert-success"><strong>Thành công!</strong> ' + data.success_message + '</div>');
+                } else if (data.error_message) {
+                    $j('.purchase-request-messages').append('<div class="alert alert-danger"><strong>Có lỗi!</strong> ' + data.error_message + '</div>');
+                }
+                $j('html, body').animate({scrollTop: 0}, 400);
+            });
+        }
+    }
+    /** End send purchase request **/
+
+    $j('.rm-favorite').click(function (e) {
+        var currentPage = <?= $currentPage?>;
+        var customer_id = <?php echo $customer_id?>;
+        var product_id = $j(this).data('product-id');
+
+        swal({
+                title: "Xóa khỏi danh sách yêu thích ?",
+                text: "Bạn có muốn xóa sản phẩm khỏi danh sách yêu thích ?",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: '#DD6B55',
+                confirmButtonText: 'Xóa sản phẩm',
+                cancelButtonText: "Hủy bỏ",
+                closeOnConfirm: false,
+                closeOnCancel: false
+            },
+            function (isConfirm) {
+                if (isConfirm) {
+                    $j.ajax({
+                        method: 'POST',
+                        dataType: 'json',
+                        url: '<?php echo Mage::getUrl('favourite/index/removeFromList')?>',
+                        data: {
+                            'product_id': product_id,
+                            'customer_id': customer_id,
+                            'currentPage': currentPage
+                        },
+                        success: function (response) {
+                            window.location.href = '<?= Mage::getUrl('favourite/index')?>' + '?p=' + response.data.currentPage;
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            console.log("Status: " + textStatus);
+                            console.log("Error: " + errorThrown);
+                        }
+                    });
+                }
+                else {
+                    swal.close();
+                }
+            });
+        e.preventDefault();
+        e.stopPropagation();
+    });
+</script>

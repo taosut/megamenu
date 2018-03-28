@@ -1,0 +1,305 @@
+<!--Block Ved_Gorders_Block_Adminhtml_Sales_Order_Purchase -->
+<?php
+/**
+ * @var Ved_Gorders_Block_Adminhtml_Sales_Order_Purchase $this
+ */
+
+$standard_product_id = $this->getProduct()->getStandardProductId();
+?>
+<div class="content-header">
+    <h3 class="icon-head head-sales-order">Order # <?php echo $this->getOrder()->getIncrementId() ?>
+        | <?php echo $this->getOrder()->getCreatedAt() ?></h3>
+    <p class="form-buttons">
+        <a href="<?php echo $this->getBackUrl(); ?>">
+            <button title="Quay lại" type="button" class="scalable back"> Quay lại</button>
+        </a>
+    </p>
+</div>
+
+<div class="grid">
+    <div class="content-header">
+        Thông tin sản phẩm
+    </div>
+
+    <table class="data">
+        <tr>
+            <td>
+                Tên sản phẩm
+            </td>
+            <td>
+                <?php echo $this->getProduct()->getName() ?>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Số lượng yêu cầu
+            </td>
+            <td>
+                <?php echo (int)$this->getQtyItem(); ?>
+            </td>
+
+        </tr>
+        <td>
+            Mã kho
+        </td>
+        <td>
+            <?php echo $this->getProduct()->getWarehouseSku(); ?>
+        </td>
+    </table>
+
+</div>
+<br/>
+<br/>
+<form id="purchase_warehouse" action="<?php echo $this->saveWarehouseUrl() ?>" method="post">
+    <input name="form_key" type="hidden" value="<?php echo $this->getFormKey(); ?>"/>
+    <div class="grid">
+        <table class="data">
+            <tbody>
+            <?php $storeIn = $this->checkProductWarehouse($this->getOrder()->getId(),
+                $this->getOrder()->getItemById($this->getProduct()->getId())->getProductId(), $standard_product_id); ?>
+            <?php if ($storeIn): ?>
+                <tr class="headings">
+                    <th colspan="3">
+                        <b>Check hàng trong kho</b>
+                    </th>
+                </tr>
+                <tr>
+                    <td width="300px">Tổng số lượng tồn kho</td>
+                    <?php
+                    $stock = 0;
+                    $hold = 0;
+                    $storeHold = [];
+                    foreach ($storeIn['stock'][$standard_product_id] as $key => $value) {
+                        $stock += $value['can_export_quantity'];
+                    }
+
+                    foreach ($storeIn['hold'] as $key => $value) {
+                        $hold += $value['total_request'];
+                        $storeHold[$value['store_id']] = $value['total_request'];
+                    }
+
+                    $requestWarehouse = max($this->getQtyItem(), 0);
+                    ?>
+                    <td width="150px">
+                        <label><?php echo($stock) ?></label>
+                    </td>
+                    <td rowspan="3">
+                        Chi tiết tồn kho:
+                        <table>
+                            <tr class="headings">
+                                <th class="a-center">Kho</th>
+                                <th class="a-center">Số lượng</th>
+                                <th class="a-center">Tạm hold</th>
+                            </tr>
+                            <?php foreach ($storeIn['stock'][$standard_product_id] as $key => $value): ?>
+                                <?php if ($value['store_id'] != 6): ?>
+                                    <tr>
+                                        <td><?php echo $value['store_name'] ?></td>
+                                        <td><?php echo $value['can_export_quantity'] ?></td>
+                                        <td><?php echo isset($storeHold[$value['store_id']]) ? $storeHold[$value['store_id']] : 0 ?></td>
+                                    </tr>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Sô lượng đang đặt kho</td>
+                    <td>
+                        <label><?php echo($hold) ?></label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Sô lượng tồn kho cho phép xuất hàng</td>
+                    <td>
+                        <label><?php echo max($stock - $hold, 0) ?></label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Lấy hàng từ kho:</td>
+                    <td>
+
+                        <select name="data[warehouse][store_id]" id="warehouse_store_id">
+                            <option value="">--- Chọn kho hàng ---</option>
+                            <?php foreach ($storeIn['stock'][$standard_product_id] as $key => $value): ?>
+                                <?php if ($value['store_id'] != 6): ?>
+                                    <option data-store-name="<?= $value['store_name'] ?>"
+                                            data-can-export="<?= $value['can_export_quantity'] ?>"
+                                            data-hold-qty="<?= isset($storeHold[$value['store_id']]) ? $storeHold[$value['store_id']] : 0 ?>"
+                                            value="<?= $value['store_id'] ?>"><?= $value['store_name'] ?></option>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        </select>
+                    <td>
+                        <input type="hidden" name="data[warehouse][old_stock_id]" id="warehouse_old_stock"
+                               value="<?php echo $storeIn['old_stock']['id'] ?>">
+                        <input type="hidden" id="old_stock_qty"
+                               value="<?php echo $storeIn['old_stock']['quantity'] ? $storeIn['old_stock']['quantity'] : 0 ?>">
+                        <input type="hidden" name="data[warehouse][store_name]" id="warehouse_store_name">
+                        <input type="hidden" name="data[warehouse][can_order]" id="warehouse_can_order"
+                               value="<?php echo (int)$requestWarehouse ?>">
+                        <span>Số lượng đặt: </span><input type="number" name="data[warehouse][quantity]"
+                                                          id="wh_request_qty"
+                                                          class="input-text" style="width: 100px" placeholder="Số lượng"
+                                                          value="<?php echo (int)$requestWarehouse ?>">
+                    </td>
+                </tr>
+                <?php if ($storeIn['old_stock'] != null): ?>
+                    <tr>
+                        <td><b>Lịch sử đặt kho</b></td>
+                        <td><b>Kho đã đặt</b>: <?php echo $storeIn['old_stock']['store_name']; ?></td>
+                        <td><b>Số lượng</b>: <?php echo $storeIn['old_stock']['quantity']; ?></td>
+                    </tr>
+                <?php endif; ?>
+            <?php endif; ?>
+            <tr>
+                <td colspan="3">
+                    <b></b>
+                </td>
+            </tr>
+            <tr class="headings">
+                <td colspan="3">
+                    <b>Yêu cầu hàng từ nhà cung cấp</b>
+                </td>
+            </tr>
+            <?php if ($this->getStoreList()): ?>
+                <tr>
+                    <td>Nhà cung cấp</td>
+                    <td>
+                        <table>
+                            <tr>
+                                <td><select id="supplier_store_id" name="data[supplier][store_id]">
+                                        <option data-code="" value="" data-name="">-- Chọn kho hàng --</option>
+                                        <?php foreach ($this->getStoreList() as $supplier): ?>
+                                            <?php if ($supplier['id'] != 6): ?>
+                                                <option data-name="<?= $supplier['name'] ?>"
+                                                        data-code="<?= $supplier['province_code'] ?>"
+                                                        value="<?= $supplier['id'] ?>"><?= $supplier['name'] ?></option>
+                                            <?php endif ?>
+                                        <?php endforeach; ?>
+                                    </select></td>
+                                <td><select name="data[supplier][supplier_id]" id="supplier_supplier_id">
+                                        <option data-name="" value="">-- Chọn nhà cung cấp --</option>
+                                    </select></td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td style="padding-top: 5px;">
+                        <input type="hidden" name="data[supplier][store_name]" id="supplier_store_name">
+                        <input type="hidden" name="data[supplier][supplier_name]" id="supplier_supplier_name">
+                        <input type="number" name="data[supplier][quantity]" id="supplier_quantity" class="input-text"
+                               placeholder="Số lượng">
+                    </td>
+                </tr>
+                <tr>
+                    <td>Ghi chú đặt hàng</td>
+                    <td><textarea name="data[supplier][note_purchase]" id="supplier_note_purchase" cols="55" rows="3"
+                                  placeholder="Ghi chú"></textarea></td>
+                    <td></td>
+                </tr>
+                <?php if ($storeIn['old_request'] != null): ?>
+                    <tr>
+                        <input type="hidden" name="data[supplier][old_request_id]" id="old_request_id"
+                               value="<?php echo $storeIn['old_request']['id'] ?>">
+                        <td><b>Trạng
+                                thái</b>: <?php echo Mage::helper('ved_gorders')->getPreStatusName($storeIn['old_request']['pre_status']) ?>
+                        </td>
+                        <td><b>Ghi chú check
+                                hàng</b>: <?php echo end(json_decode($storeIn['old_request']['note_check'])); ?></td>
+                        <td>
+                            <b>Kho nhập</b>: <?php echo $storeIn['old_request']['store_name']; ?> <br>
+                            <b>Nhà cung cấp</b>: <?php echo $storeIn['old_request']['supplier_name']; ?> <br>
+                            <b>Số lượng</b>: <?php echo $storeIn['old_request']['quantity']; ?> <br>
+                        </td>
+                    </tr>
+                <?php endif; ?>
+            <?php endif; ?>
+            <tr class="headings">
+                <td colspan="2">
+                    <b>Kiểm tra tồn kho Phong Vũ</b>
+                </td>
+            </tr>
+            <tbody class="a-center" id="view-warehouse-content">
+
+            </tbody>
+            </tbody>
+        </table>
+    </div>
+    <button class="button" id="btn-save">Save</button>
+</form>
+<div id="modalFadeScreen" class="modal fade" data-backdrop="static" data-keyboard="false"></div>
+<script>
+    $j(document).ready(function () {
+
+        var supplier_api_url = "<?= Mage::getConfig()->getNode('global/supplier_api_url') .
+        'listSupplierByProductId'?>";
+        $j('#supplier_store_id').change(function (e) {
+            var code = $j(this).children('option:selected').data('code');
+            $j.ajax({
+                url: supplier_api_url,
+                data: {
+                    region_code: code,
+                    product_ids: [<?= $standard_product_id ?>]
+                }
+            }).done(function (data) {
+                $j('#supplier_supplier_id').html('');
+                if (data[<?= $standard_product_id?>]) {
+                    var value = data[<?= $standard_product_id?>];
+                    value.each(function (v) {
+                        $j('#supplier_supplier_id').append($j('<option>', {
+                            value: v.id,
+                            "data-name": v.name,
+                            text: v.name
+                        }))
+                    });
+                } else {
+                    $j('#supplier_supplier_id').append($j('<option>', {
+                        value: '',
+                        "data-name": '',
+                        text: "-- Không có NCC -- "
+                    }));
+                }
+                $j('#supplier_supplier_id').change();
+            });
+            $j('#supplier_store_name').val($j(this).children('option:selected').data('name'));
+        });
+
+        var phongvu_url_api = "<?= Mage::getConfig()->getNode('global/phongvu_api_url') . 'product/in-stock-quantity'?>";
+        var sku = '<?php echo $this->getProduct()->getWarehouseSku()?>';
+        $j.ajax({
+            url: phongvu_url_api,
+            data: {
+                product_skus: sku
+            }
+        }).done(function (response) {
+            var html = '';
+            if (response.data[sku].length > 0) {
+                for (var i = 0; i < response.data[sku].length; i++) {
+                    html += '<tr><td>' + response.data[sku][i].store_name + '</td>'
+                        + '<td>' + response.data[sku][i].inventory + '</td></tr>';
+                }
+            }
+            else {
+                html = "Sản phẩm không tồn tại hoặc hết hàng!";
+            }
+            $j('#view-warehouse-content').empty();
+            $j('#view-warehouse-content').append(html);
+        });
+    });
+
+    $j('#btn-save').on('click', function () {
+        $j("#purchase_warehouse").submit();
+        $j(this).prop('disabled', true);
+        $j(this).addClass('scalable').addClass('back');
+        $j('#loading-mask').show();
+    });
+
+    $j('#supplier_supplier_id').change(function () {
+        $j('#supplier_supplier_name').val($j(this).children('option:selected').data('name'));
+    });
+    $j('#warehouse_store_id').change(function () {
+        $j('#warehouse_store_name').val($j(this).children('option:selected').data('store-name'));
+        $j('#warehouse_can_order').val(Math.max(0, $j(this).children('option:selected').data('can-export') -
+            $j(this).children('option:selected').data('hold-qty') + parseInt($j('#old_stock_qty').val())));
+    });
+</script>

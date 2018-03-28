@@ -1,0 +1,117 @@
+<?xml version="1.0"?>
+<!--
+ * @category    TheExtensionLab
+ * @package     TheExtensionLab_MultiselectFilters
+ * @copyright   Copyright (c) TheExtensionLab (http://www.theextensionlab.com)
+ * @license     Open Software License (OSL 3.0)
+ * @author      James Anelay @ TheExtensionLab <james@theextensionlab.com>
+ *
+-->
+<config>
+    <modules>
+        <TheExtensionLab_MultiselectFilters>
+            <version>0.1.1</version>
+        </TheExtensionLab_MultiselectFilters>
+    </modules>
+
+    <global>
+        <blocks>
+            <theextensionlab_multiselectfilters>
+                <class>TheExtensionLab_MultiselectFilters_Block</class>
+            </theextensionlab_multiselectfilters>
+        </blocks>
+
+        <models>
+            <theextensionlab_multiselectfilters>
+                <class>TheExtensionLab_MultiselectFilters_Model</class>
+            </theextensionlab_multiselectfilters>
+        </models>
+        <events>
+            <sales_order_item_save_before>
+                <observers>
+                    <theextensionlab_multiselectfilters>
+                        <class>theextensionlab_multiselectfilters/observer</class>
+                        <method>salesOrderItemBeforeSave</method>
+                    </theextensionlab_multiselectfilters>
+                </observers>
+            </sales_order_item_save_before>
+        </events>
+    </global>
+
+    <adminhtml>
+
+        <layout>
+            <updates>
+                <theextensionlab_multiselectfilters>
+                    <file>theextensionlab/multiselectfilters.xml</file>
+                </theextensionlab_multiselectfilters>
+            </updates>
+        </layout>
+
+        <events>
+            <core_block_abstract_to_html_before>
+                <observers>
+                    <theextensionlab_multiselectfilters>
+                        <class>theextensionlab_multiselectfilters/observer</class>
+                        <method>coreBlockAbstractToHtmlBefore</method>
+                    </theextensionlab_multiselectfilters>
+                </observers>
+            </core_block_abstract_to_html_before>
+
+            <core_block_abstract_to_html_after>
+                <observers>
+                    <theextensionlab_multiselectfilters>
+                        <class>theextensionlab_multiselectfilters/observer</class>
+                        <method>coreBlockAbstractToHtmlAfter</method>
+                    </theextensionlab_multiselectfilters>
+                </observers>
+            </core_block_abstract_to_html_after>
+
+            <sales_convert_order_to_quote>
+                <observers>
+                    <theextensionlab_multiselectfilters>
+                        <class>theextensionlab_multiselectfilters/observer</class>
+                        <method>salesEventOrderToQuote</method>
+                    </theextensionlab_multiselectfilters>
+                </observers>
+            </sales_convert_order_to_quote>
+        </events>
+    </adminhtml>
+    <frontend>
+        <events>
+            <customer_session_init>
+                <observers>
+                    <theextensionlab_multiselectfilters>
+                        <class>theextensionlab_multiselectfilters/observer</class>
+                        <method>customerSessionInit</method>
+                    </theextensionlab_multiselectfilters>
+                </observers>
+            </customer_session_init>
+
+            <sales_order_save_after>
+                <observers>
+                    <theextensionlab_multiselectfilters>
+                        <class>theextensionlab_multiselectfilters/observer</class>
+                        <method>salesOrderSaveAfter</method>
+                    </theextensionlab_multiselectfilters>
+                </observers>
+            </sales_order_save_after>
+
+            <sales_order_save_before>
+                <observers>
+                    <theextensionlab_multiselectfilters>
+                        <class>theextensionlab_multiselectfilters/observer</class>
+                        <method>salesOrderSaveBefore</method>
+                    </theextensionlab_multiselectfilters>
+                </observers>
+            </sales_order_save_before>
+        </events>
+    </frontend>
+    <phpunit>
+        <suite>
+            <modules>
+                <TheExtensionLab_MultiselectFilters/>
+            </modules>
+        </suite>
+    </phpunit>
+</config>

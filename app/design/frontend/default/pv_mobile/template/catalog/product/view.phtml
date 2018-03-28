@@ -1,0 +1,1070 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     base_default
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+
+/**
+ * Product view template
+ *
+ * @see Mage_Catalog_Block_Product_View
+ * @see Mage_Review_Block_Product_View
+ *
+ * @var Mage_Catalog_Block_Product_View $this
+ *
+ */
+?>
+
+<?php
+$_helper = $this->helper('catalog/output');
+$_product = $this->getProduct();
+$oldPriceMain = $_product->getPrice();
+$finalPriceMain = $_product->getFinalPrice();
+?>
+
+<?php
+$tagOnlinePaymentIds = Mage::getModel('tag/tag_relation')
+    ->setTagId(3)// Giam gia thanh toan online
+    ->setStoreId(Mage::app()->getStore()->getId())
+    ->getProductIds();
+?>
+
+<?php
+$_mainProduct = [];
+$_productObj = new stdClass();
+$_productObj->name = $this->escapeHtml($_product->getName());
+$_productObj->id = intval($_product->getId());
+$_productObj->price = intval($_product->getFinalPrice());
+$_mainProduct[] = $_productObj;
+?>
+
+<?php $_productImpressions = []; ?>
+
+<?php
+$catArray = ['553', '552', '548', '636', '637', '554', '541', '549', '555', '540', '543', '542', '544', '781'];
+$productCatIds = $_product->getCategoryIds();
+$bundleItems = array();
+$attributeSetId = $_product->getAttributeSetId();
+$laptopAttributeSetId = 29;
+$vgaAttributeSetId = 47;
+$mainboardAttributeSetId = 46;
+$buildpcAttributeSetId = 62;
+$cpuAttributeSetId = 48;
+$relatedItems = $this->getRelatedItems();
+?>
+
+<?php $instock_status = $_product->getAttributeText('instock_status'); ?>
+
+<?php
+$session = Mage::getSingleton('customer/session');
+$isLogin = $session->isLoggedIn();
+$customerId = $session->getCustomer()->getId();
+$customerWishList = Mage::getModel('wishlist/wishlist')
+    ->getCollection()
+    ->addFieldToFilter('customer_id', $customerId)
+    ->getData();
+if (count($customerWishList)) {
+    $wishlist = $customerWishList[0];
+    $wishlistItemModel = Mage::getModel('wishlist/item');
+    $wishlistItemCollection = $wishlistItemModel->getCollection();
+    $item = $wishlistItemCollection
+        ->addFieldToFilter('wishlist_id', $wishlist['wishlist_id'])
+        ->addFieldToFilter('product_id', $_product->getId())
+        ->getData();
+    if (count($item)) {
+        $isFavourite = true;
+    } else {
+        $isFavourite = false;
+    }
+} else {
+    $isFavourite = false;
+}
+?>
+
+<?php
+$tagProduct = Mage::getModel('tag/tag_relation')
+    ->setTagId(1)// Bao ke gia
+    ->setStoreId((Mage::app()->getStore()->getId()))
+    ->getProductIds();
+?>
+
+<!--Get configurable product child ids to track facebook pixel-->
+<?php
+$_configChildIds = Mage::getModel('catalog/product_type_configurable')->getChildrenIds($_product->getId());
+?>
+<script type="text/javascript">
+    var optionsPrice = new Product.OptionsPrice(<?php echo $this->getJsonConfig() ?>);
+</script>
+
+<div class="content">
+    <input type="hidden" class="is-detail-page" value="1"/>
+
+    <!--Detail block-->
+    <div class="detail-block">
+        <!-- Messages block-->
+        <div class="row">
+            <div class="col-xs-12 detail-messages-block">
+                <div class="detail-messages cart-messages"></div>
+                <div class="detail-messages purchase-request-messages"></div>
+            </div>
+        </div>
+        <!-- End Messages block-->
+
+        <div class="row">
+            <!--Product info-->
+            <div class="col-xs-12">
+                <form action="<?php echo $this->getUrl('checkout/cart/addAjax') ?>" method="post"
+                      id="product_addtocart_form" <?php if ($_product->getOptions()): ?> enctype="multipart/form-data"<?php endif; ?>>
+                    <?php echo $this->getBlockHtml('formkey'); ?>
+                    <input type="hidden" name="product" value="<?php echo $_product->getId() ?>"/>
+                    <input type="hidden" name="related_product" id="related-products-field" value=""/>
+
+                    <!--Product common info-->
+                    <div class="row product-common-block">
+                        <div class="col-xs-12 detail-product-name">
+                            <?php echo $_helper->productAttribute($_product, $_product->getName(), 'name'); ?>
+                            <div class="detail-product-sku">
+                                <?php if ($_product->getWarehouseSku()): ?>Mã sản phẩm: <?php echo $_product->getWarehouseSku(); ?><?php endif; ?>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 text-center">
+                            <?php if ($oldPriceMain != $finalPriceMain) : ?>
+                                <div class="detail-ribbon">
+                                    -<?php echo number_format(($oldPriceMain - $finalPriceMain) / $oldPriceMain * 100, 0) . "%" ?>
+                                </div>
+                            <?php endif; ?>
+                            <?php echo $this->getChildHtml('media'); ?>
+                        </div>
+                        <!-- Social buttons-->
+                        <div class="col-xs-12 social-btn-block">
+                            <input type="hidden" class="isLogin" value="<?php echo $isLogin; ?>"/>
+                            <?php if (!$isFavourite): ?>
+                                <button type="button" class="social-btn favorite-btn add-to-wish-list"
+                                        data-product-id="<?php echo $_product->getId(); ?>">
+                                    <i class="fa fa-heart"></i>
+                                    <span class="favorite-btn-text">Yêu thích</span>
+                                    <img class="favorite-ajax-loader hidden"
+                                         src="<?php echo $this->getSkinUrl('images/ajax-loader-black.gif'); ?>"/>
+                                </button>
+                            <?php else: ?>
+                                <button type="button" class="social-btn favorite-btn remove-from-wish-list"
+                                        data-product-id="<?php echo $_product->getId(); ?>">
+                                    <i class="fa fa-heart"></i>
+                                    <span class="favorite-btn-text">Đã thích</span>
+                                    <img class="favorite-ajax-loader hidden"
+                                         src="<?php echo $this->getSkinUrl('images/ajax-loader-black.gif'); ?>"/>
+                                </button>
+                            <?php endif; ?>
+                            <button type="button" class="social-btn share-btn"><i class="fa fa-share-alt"></i>
+                                Chia sẻ
+                            </button>
+                        </div>
+                        <!-- End Social buttons-->
+                        <div class="col-xs-12 detail-price-block">
+                            <?php if ($oldPriceMain != $finalPriceMain) : ?>
+                                <div class="detail-price-row">
+                                    <span class="detail-vat-included-text">Giá gốc:</span>
+                                    <span class="detail-old-price">
+                                        <?php echo number_format($oldPriceMain, 0, ",", ".") . " ₫"; ?>
+                                    </span>
+                                </div>
+                            <?php endif; ?>
+                            <div class="detail-price-row">
+                                <span class="detail-final-price-text">Giá sản phẩm:</span>
+                                <span class="detail-final-price"><?php echo number_format($finalPriceMain, 0, ",", ".") . " ₫"; ?></span>
+                            </div>
+                            <?php if (in_array($_product->getId(), $tagOnlinePaymentIds)): ?>
+                                <div class="tag-online-payment tag-online-payment-detail">
+                                    <img src="<?php echo $this->getSkinUrl('images/icon_Notify.svg'); ?>"/>
+                                    Áp dụng đặt hàng online
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                        <div class="col-xs-12 detail-add-to-cart-block">
+                            <?php if ($this->hasOptions()): ?>
+                                <div class="detail-product-included">
+                                    <?php if ($_product->getTypeId() == 'bundle'): ?>
+                                        <h4 class="detail-product-included-title">
+                                            Sản phẩm bao gồm
+                                            <?php
+                                            $catBuildPC = Mage::getModel('catalog/category')
+                                                ->getCollection()
+                                                ->addAttributeToFilter('url_key', 'build-pc')
+                                                ->getFirstItem();
+                                            $childrenIds = $catBuildPC->getResource()->getChildren($catBuildPC);
+                                            array_push($childrenIds, $catBuildPC->getId());
+                                            ?>
+                                            <?php if (count($childrenIds) > 0 && count($productCatIds) > 0): ?>
+                                                <?php if (in_array($catBuildPC->getId(), $productCatIds)): ?>
+                                                    <?php
+                                                    $bundleCollection = $_product->getTypeInstance(true)
+                                                        ->getSelectionsCollection($_product->getTypeInstance(true)->getOptionsIds($_product), $_product);
+                                                    foreach ($bundleCollection as $item) {
+                                                        $shareArray = array_intersect($item->getCategoryIds(), $catArray);
+                                                        if (count($shareArray) > 0) {
+                                                            $itemCatId = array_shift($shareArray);
+                                                            $productTemp = Mage::getModel('catalog/product')->load($item->getId());
+                                                            $itemImageUrl = Mage::helper('catalog/image')->init($productTemp, 'small_image')->resize(150, 150);
+                                                            if (isset($itemCatId)) {
+                                                                $bundleItems[] = (object)array(
+                                                                    'catId' => $itemCatId,
+                                                                    'catUrl' => Mage::getModel('catalog/category')->load($itemCatId)->getUrl(),
+                                                                    'productId' => $item->getId(),
+                                                                    'productName' => $item->getName(),
+                                                                    'productPrice' => intval($item->getFinalPrice()),
+                                                                    'productUrl' => $item->getProductFullUrl(),
+                                                                    'productImageUrl' => "$itemImageUrl",
+                                                                    'productQty' => intval($item->getSelectionQty())
+                                                                );
+                                                            }
+                                                        }
+                                                    }
+                                                    ?>
+                                                    <button type="button" class="detail-build-pc-btn"
+                                                            onclick="customizeBuildPC()">
+                                                        Tùy chỉnh
+                                                        <img class="detail-build-pc-ajax-loader hidden"
+                                                             src="<?php echo $this->getSkinUrl('images/ajax-loader-white.gif'); ?>"/>
+                                                    </button>
+                                                <?php endif; ?>
+                                            <?php endif; ?>
+                                        </h4>
+                                    <?php endif; ?>
+                                    <div class="detail-product-included-content">
+                                        <?php echo $this->getChildChildHtml('container2', '', true, true) ?>
+                                    </div>
+                                </div>
+                            <?php endif; ?>
+                            <?php if (!$this->hasOptions()): ?>
+                                <div class="add-to-box">
+                                    <?php echo $this->getChildHtml('addtocart'); ?>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                    <!--End Product common info-->
+
+                    <!-- Product promotion info-->
+                    <?php
+                    $includedProduct = json_decode($this->helper('catalog/output')->productAttribute($_product, nl2br($_product->getPromotionInfo()), 'promotion_info'));
+                    $includedProductIds = [];
+                    $includedProductQty = [];
+                    if ($includedProduct) {
+                        $includedProductIds = json_decode($this->helper('catalog/output')->productAttribute($_product, nl2br($_product->getPromotionInfo()), 'promotion_info'))->promotion_ids;
+                        $includedProductQty = json_decode($this->helper('catalog/output')->productAttribute($_product, nl2br($_product->getPromotionInfo()), 'promotion_info'))->promotion_qty;
+                    }
+                    ?>
+                    <?php if (count($includedProductIds) > 0 && count($includedProductQty) > 0): ?>
+                        <div class="row included-products-block">
+                            <div class="col-xs-12">
+                                <div class="included-products-title">
+                                    <img src="<?php echo $this->getSkinUrl('images/icon_Gift.svg'); ?>"/>
+                                    <span>Quà tặng</span>
+                                </div>
+                                <div class="row included-products">
+                                    <?php foreach ($includedProductIds as $key => $id): ?>
+                                        <?php $_product = Mage::getModel('catalog/product')->load($id); ?>
+                                        <a class="col-xs-4 related-products-item"
+                                           href="<?php echo $_product->getProductFullUrl(); ?>"
+                                           onclick="trackProductClicks(this);"
+                                           data-id="<?php echo $_product->getId(); ?>"
+                                           data-name="<?php echo $this->escapeHtml($_product->getName()); ?>"
+                                           data-price="<?php echo $_product->getFinalPrice(); ?>"
+                                        >
+                                            <img class="related-product-img"
+                                                 src="<?php echo $this->helper('catalog/image')->init($_product, 'small_image')->resize(300, 300); ?>"/>
+                                            <div class="related-product-name">
+                                                <?php echo $this->escapeHtml($_product->getName()); ?>
+                                            </div>
+                                            <div class="related-product-final-price">
+                                                <?php echo number_format($_product->getFinalPrice(), 0, ",", ".") . " ₫"; ?>
+                                            </div>
+                                            <div class="included-product-qty">
+                                                SL tặng kèm: <?php echo $includedProductQty[$key]; ?>
+                                            </div>
+                                        </a>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                    <!-- End product promotion info-->
+
+                    <div class="row detail-attribute-block">
+                        <div class="detail-block-title">
+                            Thông số kỹ thuật
+                        </div>
+                        <?php echo $this->getChildHtml('additional'); ?>
+                    </div>
+
+                    <div class="row detail-description-block">
+                        <div class="detail-block-title" data-toggle="collapse" href="#detailDescription"
+                             onclick="toggleIcon(this)">
+                            Thông tin sản phẩm
+                            <i class="detail-toggle-icon fa fa-angle-double-down"></i>
+                        </div>
+                        <div id="detailDescription" class="panel-collapse collapse">
+                            <?php echo $this->getChildHtml('description'); ?>
+                        </div>
+                    </div>
+
+                    <div class="row detail-comment-block">
+                        <div class="detail-block-title">Bình luận về sản phẩm</div>
+                        <div class="detail-comment-content">
+                            <div class="fb-comments" data-order-by="reverse_time"
+                                 data-href="<?php echo explode('?', $_product->getProductFullUrl())[0]; ?>"
+                                 data-numposts="5" data-width="100%"></div>
+                        </div>
+                    </div>
+
+                    <?php if (in_array($_product->getInstock(), array(1, 6)) && $_product->isSaleable()): ?>
+                        <button type="button" class="detail-action-btn add-to-cart-btn" onclick="addToCart();">
+                            Mua ngay
+                            <img class="add-to-cart-ajax-loader hidden"
+                                 src="<?php echo $this->getSkinUrl('images/ajax-loader-white.gif'); ?>"/>
+                        </button>
+                    <?php else: ?>
+                        <button type="button" class="detail-action-btn require-purchase-btn" data-toggle="modal"
+                                data-target="#purchaseRequestModal">
+                            Đặt hàng trước
+                            (<?php echo ($_product->getInstock() == 3 || !$_product->isSaleable()) ? 'Tạm hết hàng' : 'Hàng sắp về'; ?>
+                            )
+                        </button>
+                    <?php endif; ?>
+
+                    <!--Related products-->
+                    <div class="row related-products-block">
+                        <div class="col-xs-12">
+                            <div class="related-products-title">Sản phẩm tương tự</div>
+                            <div class="related-products">
+                                <?php foreach ($relatedItems as $_item): ?>
+                                    <?php
+                                    $_productObj = new stdClass();
+                                    $_productObj->name = $this->escapeHtml($_item->getName());
+                                    $_productObj->id = intval($_item->getId());
+                                    $_productObj->price = intval($_item->getFinalPrice());
+                                    $_productObj->list = 'Detail Page';
+                                    $_productImpressions[] = $_productObj;
+                                    ?>
+                                    <?php
+                                    $oldPrice = $_item->getPrice();
+                                    $finalPrice = $_item->getFinalPrice();
+                                    ?>
+                                    <a class="col-xs-4 related-products-item"
+                                       href="<?php echo $_item->getProductFullUrl(); ?>"
+                                       onclick="trackProductClicks(this);"
+                                       data-id="<?php echo $_item->getId(); ?>"
+                                       data-name="<?php echo $this->escapeHtml($_item->getName()); ?>"
+                                       data-price="<?php echo $_item->getFinalPrice(); ?>"
+                                    >
+                                        <?php if (in_array((string)$_item->getId(), $tagProduct)): ?>
+                                            <img class="list-tag"
+                                                 src="<?php echo $this->getSkinUrl('images/tag.png') ?>"/>
+                                        <?php endif; ?>
+                                        <img class="related-product-img"
+                                             src="<?php echo $this->helper('catalog/image')->init($_item, 'small_image')->resize(300, 300); ?>"/>
+                                        <div class="related-product-name">
+                                            <?php echo $this->escapeHtml($_item->getName()); ?>
+                                        </div>
+                                        <div class="related-product-old-price">
+                                            <?php if ($oldPrice != $finalPrice) : ?>
+                                                <?php echo number_format($oldPrice, 0, ",", ".") . " ₫"; ?>
+                                            <?php endif; ?>
+                                        </div>
+                                        <div class="related-product-final-price">
+                                            <?php echo number_format($finalPrice, 0, ",", ".") . " ₫"; ?>
+                                        </div>
+                                        <div class="tag-online-payment">
+                                            <?php if (in_array($_item->getId(), $tagOnlinePaymentIds)): ?>
+                                                <img src="<?php echo $this->getSkinUrl('images/icon_Notify.svg'); ?>"/>
+                                                Áp dụng đặt hàng online
+                                            <?php endif; ?>
+                                        </div>
+                                    </a>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                    </div>
+                    <!--End Related products-->
+                </form>
+            </div>
+            <!--End Product info-->
+        </div>
+    </div>
+    <!--End Detail block-->
+</div>
+
+<script type="text/javascript">
+    var $j = jQuery.noConflict();
+
+    var mainProduct = <?php echo json_encode($_mainProduct); ?>;
+
+    /** Track facebook pixel ViewContent **/
+    var contentIds = [mainProduct[0]['id'].toString()];
+    var contentType = 'product';
+    var productType = '<?php echo $_product->getTypeId(); ?>';
+    if (productType == 'configurable') {
+        contentIds = <?php echo json_encode($_configChildIds[0]); ?>;
+        contentType = 'product_group';
+        contentIds = $j.map(contentIds, function (value, index) {
+            return [value];
+        });
+    }
+
+    dataLayer.push({
+        'contentIds': contentIds, // top 5-10 results
+        'contentType': contentType,
+        'value': mainProduct[0]['price']
+    });
+    /** End track facebook pixel ViewContent **/
+
+    /** Enhanced Ecommerce features **/
+    /** Track product detail view **/
+    dataLayer.push({
+        'event': 'viewDetail',
+        'ecommerce': {
+            'detail': {
+                'actionField': {'list': '<?php echo !is_array($_product->getAttributeText('manufacturer')) ? $_product->getAttributeText('manufacturer') : $_product->getAttributeText('manufacturer')[0]; ?>'},
+                'products': mainProduct
+            }
+        }
+    });
+
+    /** Track product impressions  **/
+    var productImpressions = <?php echo json_encode($_productImpressions); ?>;
+    dataLayer.push({
+        'event': 'productImpressions',
+        'ecommerce': {
+            'currencyCode': 'VND',
+            'impressions': productImpressions
+        }
+    });
+
+    /** Track product clicks **/
+    function trackProductClicks(value) {
+        var productId = $j(value).data('id');
+        var productName = $j(value).data('name');
+        var productPrice = parseInt($j(value).data('price'));
+
+        dataLayer.push({
+            'event': 'productClick',
+            'ecommerce': {
+                'click': {
+                    'actionField': {'list': 'Detail Page'},
+                    'products': [{
+                        'id': productId,
+                        'name': productName,
+                        'price': productPrice
+                    }]
+                }
+            }
+        });
+    }
+    /** End Enhanced Ecommerce features **/
+
+    /** Toggle read more icon **/
+    function toggleIcon(value) {
+        $j(value).find('.detail-toggle-icon').toggleClass('fa-angle-double-down fa-angle-double-up');
+    }
+    /** End Toggle read more icon **/
+
+    /** Send purchase request **/
+    function sendPurchaseRequest() {
+        var require_name = $j("#require-name").val().trim();
+        var require_phone = $j("#require-phone").val().trim();
+        var require_content = $j("#require-content").val().trim();
+        var require_product_id = $j("#require-product-id").val().trim();
+        var require_product_name = $j("#require-product-name").val().trim();
+
+        var url = "<?php echo $this->getUrl('stockrequest/stockrequest/saveRequest');  ?>";
+        var data = {
+            user_name: require_name,
+            phone_number: require_phone,
+            request_content: require_content,
+            product_id: require_product_id,
+            product_name: require_product_name
+        };
+
+        if (require_name === '') {
+            alert('Vui lòng nhập họ tên');
+        } else if (require_phone === '') {
+            alert('Vui lòng nhập số điện thoại');
+        } else if (require_phone !== '' && !validateVNPhoneNumber(require_phone)) {
+            alert('Số điện thoại không đúng định dạng (phải có dạng 84xxx hoặc 0xxx, chứa 10 hoặc 11 ký tự)');
+        } else if (require_content === '') {
+            alert('Vui lòng nhập nội dung cần yêu cầu');
+        } else {
+            $j('.ajax-loader-pr').show();
+            $j('.btn-send-request').prop('disabled', true);
+            $j.ajax({
+                url: url,
+                type: "POST",
+                data: data,
+                dataType: "json"
+            }).done(function (data) {
+                $j('.ajax-loader-pr').hide();
+                $j('#purchaseRequestModal').modal('hide');
+                $j('.btn-send-request').prop('disabled', false);
+                $j('.detail-messages').empty();
+                if (data.success_message) {
+                    $j('.purchase-request-messages').append('<div class="alert alert-success"><strong>Thành công!</strong> ' + data.success_message + '</div>');
+                } else if (data.error_message) {
+                    $j('.purchase-request-messages').append('<div class="alert alert-danger"><strong>Có lỗi!</strong> ' + data.error_message + '</div>');
+                }
+                $j('html, body').animate({scrollTop: 0}, 400);
+            });
+        }
+    }
+    /** End send purchase request **/
+
+    /** Click customize PC **/
+    function setStorage(key, value) {
+        var expires = (24 * 60 * 60);  // default: seconds for 1 day
+        var now = Date.now();  //millisecs since epoch time, lets deal only with integer
+        var schedule = now + expires * 1000;
+        try {
+            localStorage.setItem(key, value);
+            localStorage.setItem(key + '_expiresIn', schedule);
+        } catch (e) {
+            return false;
+        }
+        return true;
+    }
+
+    function customizeBuildPC() {
+        $j('.detail-build-pc-btn').prop('disabled', true);
+        $j('.add-to-cart-btn').prop('disabled', true);
+        $j('.detail-build-pc-ajax-loader').removeClass('hidden');
+
+        var bundleItems = <?php echo json_encode($bundleItems) ?>;
+
+        setStorage("build_pc_array", JSON.stringify(bundleItems));
+        window.location.href = '<?php echo $this->getUrl('buildpc') ?>';
+    }
+    /** End click customize PC **/
+
+    /** Wishlist functions **/
+    function addToWishlist() {
+        var isLogin = $j('.isLogin').val();
+        if (isLogin) {
+            $j('.favorite-ajax-loader').removeClass('hidden');
+            $j('.favorite-btn').prop('disabled', true);
+            var product = $j('.favorite-btn').data('product-id');
+
+            $j.ajax({
+                type: "POST",
+                url: '<?php echo $this->getUrl('favourite/index/addToWishlist') ?>',
+                data: {
+                    'product': product
+                },
+                success: function (data) {
+                    $j('.favorite-ajax-loader').addClass('hidden');
+                    $j('.favorite-btn').prop('disabled', false);
+                    data = JSON.parse(data);
+                    if (data['success']) {
+                        $j('.favorite-btn-text').text('Đã thích');
+                        $j('.add-to-wish-list').toggleClass('add-to-wish-list remove-from-wish-list');
+                        swal("Thành công!", data.success);
+                    } else {
+                        swal("Không thành công!", data.failed, "error");
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    $j('.favorite-ajax-loader').addClass('hidden');
+                    $j('.favorite-btn').prop('disabled', false);
+                    console.log("Status: " + textStatus);
+                    console.log("Error: " + errorThrown);
+                }
+            });
+        } else {
+            showLogin();
+            return false;
+        }
+    }
+
+    function removeFromWishlist() {
+        $j('.favorite-ajax-loader').removeClass('hidden');
+        $j('.favorite-btn').prop('disabled', true);
+        var product = $j('.favorite-btn').data('product-id');
+
+        $j.ajax({
+            type: "POST",
+            url: '<?php echo $this->getUrl('favourite/index/removeFromDetail') ?>',
+            data: {
+                'product': product
+            },
+            success: function (data) {
+                $j('.favorite-ajax-loader').addClass('hidden');
+                $j('.favorite-btn').prop('disabled', false);
+                data = JSON.parse(data);
+                if (data['success']) {
+                    $j('.favorite-btn-text').text('Yêu thích');
+                    $j('.remove-from-wish-list').toggleClass('add-to-wish-list remove-from-wish-list');
+                    swal("Thành công!", data.success);
+                } else {
+                    swal("Không thành công!", data.failed, "error");
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                $j('.favorite-ajax-loader').addClass('hidden');
+                $j('.favorite-btn').prop('disabled', false);
+                console.log("Status: " + textStatus);
+                console.log("Error: " + errorThrown);
+            }
+        });
+    }
+
+    $j('.favorite-btn').bind('click', function (e) {
+        if ($j(this).hasClass('add-to-wish-list')) {
+            addToWishlist();
+            e.stopPropagation();
+        }
+        if ($j(this).hasClass('remove-from-wish-list')) {
+            removeFromWishlist();
+            e.stopPropagation();
+        }
+        e.preventDefault();
+    });
+    /** End Wishlist functions **/
+
+    /** Share functions **/
+    $j('.share-btn').bind('click', function (e) {
+        shareFB();
+        e.preventDefault();
+        e.stopPropagation();
+    });
+
+    function shareFB() {
+        FB.ui({
+            method: 'feed',
+            link: '<?php echo Mage::helper('core/url')->getCurrentUrl(); ?>'
+        }, function (response) {
+        });
+    }
+    /** End share functions **/
+
+    /** Compare functions **/
+    $j(document).ready(function () {
+        var compareList = JSON.parse(localStorage.getItem('compareList'));
+        var productId = $j('.add-to-compare-block').attr('data-product-id');
+        if (compareList && compareList.listItem) {
+            var listItem = compareList.listItem;
+            var isInside = 0;
+            if (listItem.length) {
+                for (var i = 0; i < listItem.length; i++) {
+                    $j('#cp' + listItem[i].product_id).html("<span>&#10003;</span>");
+                    if (Number(productId) === Number(listItem[i].product_id)) {
+                        isInside = 1;
+                    }
+                }
+            }
+            if (isInside) {
+                $j('.compare-checkbox').html("<span>&#10003;</span >");
+            }
+        }
+    });
+
+    checkCompareListCount();
+
+    $j('.add-to-compare-block-relate').click(function (e) {
+        var addToCompareCheckbox = $j(this).find('input');
+        addToCompareCheckbox.prop("checked", !addToCompareCheckbox.prop("checked"));
+        var productId = $j(this).data('product-id');
+        var attributeSetId = $j(this).data('attribute-set-id');
+        var productName = $j(this).data('product-name');
+        var productUrl = $j(this).data('product-url');
+        var imageUrl = $j(this).data('image-url');
+        addProductToCompareRelate(productId, attributeSetId, productName, productUrl, imageUrl);
+        e.stopPropagation();
+        e.preventDefault();
+    });
+
+    function addProductToCompareRelate(productId, attributeSetId, productName, productUrl, imageUrl) {
+        var attributeCode = attributeSetId;
+        var compareList = localStorage.getItem('compareList');
+        if (!compareList) {
+            compareList = {};
+            compareList.attributeCode = attributeCode;
+            compareList.listItem = [];
+        } else {
+            compareList = JSON.parse(compareList);
+            if (compareList.attributeCode) {
+                if (compareList.attributeCode != attributeCode && compareList.listItem.length > 0) {
+                    swal({
+                        title: "Không thành công",
+                        text: "Sản phẩm phải cùng thuộc tính với danh sách so sánh",
+                        type: "error",
+                        showConfirmButton: false
+                    });
+                    setTimeout(function () {
+                        swal.close();
+                    }, 2000);
+                    $j('#compare-list').modal('show');
+                    return false;
+                }
+            } else {
+                compareList.attributeCode = attributeCode;
+            }
+        }
+
+        var listItem = compareList.listItem;
+        var itemNameArray = [];
+        for (var i = 0; i < listItem.length; i++) {
+            itemNameArray.push(listItem[i].name);
+        }
+        var isNew = 1;
+        if (listItem.length) {
+            for (var i = 0; i < listItem.length; i++) {
+                if (productId === listItem.product_id) {
+                    isNew = 0;
+                    break;
+                }
+            }
+        }
+        if (isNew) {
+            $j('#cp' + productId).html("<span>&#10003;</span >");
+        }
+
+        var currentItem = {
+            'url': productUrl,
+            'product_id': productId,
+            'image_url': imageUrl,
+            'name': productName
+        };
+
+        if (listItem.length < 4) {
+            if (listItem.length == 0) {
+                compareList.attributeCode = attributeCode;
+            }
+
+            if (itemNameArray.indexOf(currentItem.name) === -1) {
+                compareList.listItem.push(currentItem);
+            }
+            compareList = JSON.stringify(compareList);
+            localStorage.removeItem('compareList');
+            localStorage.setItem('compareList', compareList);
+            renderCompareList();
+        } else {
+            if (itemNameArray.indexOf(currentItem.name) === -1) {
+                swal({
+                    title: 'Không thành công',
+                    text: 'Chỉ so sánh được tối đa 4 sản phẩm cùng lúc',
+                    type: "error",
+                    showConfirmButton: false
+                });
+                setTimeout(function () {
+                    swal.close();
+                }, 2000);
+            }
+        }
+        $j('#compare-list').modal('show');
+        checkCompareListCount();
+    }
+
+
+    $j('.add-to-compare-block').click(function (e) {
+        var addToCompareCheckbox = $j(this).find('input');
+        addToCompareCheckbox.prop("checked", !addToCompareCheckbox.prop("checked"));
+        var productId = $j(this).data('product-id');
+        var attributeSetId = $j(this).data('attribute-set-id');
+        var productName = $j(this).data('product-name');
+        var productUrl = $j(this).data('product-url');
+        var imageUrl = $j(this).data('image-url');
+        addProductToCompare(productId, attributeSetId, productName, productUrl, imageUrl);
+        e.stopPropagation();
+        e.preventDefault();
+    });
+
+    function addProductToCompare(productId, attributeSetId, productName, productUrl, imageUrl) {
+        // Edit add to compare for view
+        var attributeCode = attributeSetId;
+        var compareList = localStorage.getItem('compareList');
+        if (!compareList) {
+            compareList = {};
+            compareList.attributeCode = attributeCode;
+            compareList.listItem = [];
+        } else {
+            compareList = JSON.parse(compareList);
+            if (compareList.attributeCode != attributeCode && compareList.listItem.length > 0) {
+                swal({
+                    title: "Không thành công",
+                    text: "Sản phẩm phải cùng thuộc tính với danh sách so sánh",
+                    type: "error",
+                    showConfirmButton: false
+                });
+                setTimeout(function () {
+                    swal.close();
+                }, 2000);
+                $j('#compare-list').modal('show');
+                return false;
+            }
+        }
+
+        var listItem = compareList.listItem;
+        var itemNameArray = [];
+        for (var i = 0; i < listItem.length; i++) {
+            itemNameArray.push(listItem[i].name);
+        }
+        var isNew = 1;
+        if (listItem.length) {
+            for (var i = 0; i < listItem.length; i++) {
+                if (productId === listItem.product_id) {
+                    isNew = 0;
+                    break;
+                }
+            }
+        }
+        if (isNew) {
+            $j('.compare-checkbox').html("<span>&#10003;</span >");
+        }
+
+        var currentItem = {
+            'url': productUrl,
+            'product_id': productId,
+            'image_url': imageUrl,
+            'name': productName
+        };
+
+        if (listItem.length < 4) {
+            if (listItem.length == 0) {
+                compareList.attributeCode = attributeCode;
+            }
+
+            if (itemNameArray.indexOf(currentItem.name) === -1) {
+                compareList.listItem.push(currentItem);
+            }
+            compareList = JSON.stringify(compareList);
+            localStorage.removeItem('compareList');
+            localStorage.setItem('compareList', compareList);
+            renderCompareList();
+        } else {
+            if (itemNameArray.indexOf(currentItem.name) === -1) {
+                swal({
+                    title: 'Không thành công',
+                    text: 'Chỉ so sánh được tối đa 4 sản phẩm cùng lúc',
+                    type: "error",
+                    showConfirmButton: false
+                });
+                setTimeout(function () {
+                    swal.close();
+                }, 2000);
+            }
+        }
+
+        $j('#compare-list').modal('show');
+        checkCompareListCount();
+    }
+
+    $j('.compare-btn').click(function () {
+        var compareList = JSON.parse(localStorage.getItem('compareList'));
+
+        var itemParams = [];
+        compareList.listItem.forEach(function (item) {
+            itemParams.push({
+                'product_id': item.product_id
+            });
+        });
+        compareList.listItem = itemParams;
+        var params = btoa(unescape(encodeURIComponent(JSON.stringify(compareList))));
+        window.open("<?php echo $this->getUrl('compare/index/compare') ?>?data=" + params, '_blank');
+    });
+
+    function checkCompareListCount() {
+        var compareList = JSON.parse(localStorage.getItem('compareList'));
+        if (compareList) {
+            var listItem = compareList.listItem;
+            if (listItem.length >= 2) {
+                $j('.compare-btn').removeClass('hidden');
+            }
+            else {
+                $j('.compare-btn').addClass('hidden');
+            }
+        }
+    }
+
+    renderCompareList();
+
+    function renderCompareList() {
+        var compareList = JSON.parse(localStorage.getItem('compareList'));
+        if (compareList && compareList.listItem) {
+            var listItem = compareList.listItem;
+            if (listItem.length > 0) {
+                var content = "";
+                listItem.forEach(function (item) {
+                    content = content +
+                        '<div class="col-md-12 col-sm-12 cp-panel-row" id="item' + item.product_id + '">' +
+                        '<div class="col-md-2 col-sm-2 cp-panel-img">' +
+                        '<img src="' + item.image_url + '">' +
+                        '</div>' +
+                        '<div class="col-md-9 col-sm-9 cp-panel-product-name">' +
+                        '<a href="' + item.url + '" target="_blank">' + item.name + '</a>' +
+                        '</div>' +
+                        '<div class="col-md-1 col-sm-1 cp-remove-btn">' +
+                        '<i class="fa fa-trash-o" data-product-id="' + item.product_id + '"></i>' +
+                        '</div>' +
+                        '</div>'
+                });
+                $j('.cp-panel-content').html(content);
+            }
+        }
+    }
+
+    $j('.cp-panel-content').on('click', '.cp-remove-btn i', function () {
+        var productId = $j(this).data('product-id');
+        var currentId = $j(".add-to-compare-block").attr("data-product-id");
+        if (Number(currentId) === Number(productId)) {
+            $j('.compare-checkbox').html("<span></span >");
+        }
+        // if delete in related product
+        $j('#cp' + productId).html("<span></span>");
+        //
+
+        var compareList = JSON.parse(localStorage.getItem('compareList'));
+        var listItem = compareList.listItem;
+        var newList = [];
+        listItem.forEach(function (item) {
+            if (item.product_id != productId) {
+                newList.push(item);
+            }
+        });
+        compareList.listItem = newList;
+        localStorage.setItem('compareList', JSON.stringify(compareList));
+        $j('#item' + productId).hide();
+        checkCompareListCount();
+    });
+    /** End compare functions **/
+
+    /** Change price configurable product **/
+    $j('.product-options').find("select").each(function (index) {
+        $j(this).change(function () {
+            var price = <?php echo $finalPriceMain; ?>;
+            $j('.product-options').find("select").each(function (index, item) {
+                var priceChange = parseInt($j(item).find(":selected").attr("price"));
+                if (isNaN(priceChange)) {
+                    priceChange = 0;
+                }
+                price += priceChange;
+            });
+            if (isNaN(price)) {
+                price = <?php echo $finalPriceMain; ?>;
+            }
+            $j('.detail-final-price').html(formatCurrency(price) + " ₫");
+        });
+    });
+    /** End Change price configurable product **/
+
+    /** Cart functions **/
+    /** Add to cart **/
+    function addToCart() {
+        $j('.add-to-cart-btn').prop('disabled', true);
+        $j('.detail-build-pc-btn').prop('disabled', true);
+        $j('.add-to-cart-ajax-loader').removeClass('hidden');
+
+        var form = $j('#product_addtocart_form');
+        var data = form.serializeArray();
+
+        /** Track facebook pixel AddToCart **/
+        dataLayer.push({
+            'contentIds': [mainProduct[0]['id'].toString()],
+            'value': mainProduct[0]['price']
+        });
+
+        /** Track add to cart **/
+        dataLayer.push({
+            'event': 'addToCart',
+            'ecommerce': {
+                'currencyCode': 'VND',
+                'add': {
+                    'products': [{
+                        'name': <?php echo json_encode($_product->getName()); ?>,
+                        'id': <?php echo intval($_product->getId()); ?>,
+                        'price': <?php echo intval($_product->getFinalPrice()); ?>,
+                        'quantity': 1
+                    }]
+                }
+            }
+        });
+
+        $j.ajax({
+            url: form.attr('action'),
+            type: form.attr('method'),
+            dataType: 'json',
+            data: data,
+            success: function (response) {
+                $j('.detail-messages').empty();
+                if (response.error_flg == 0) {
+                    // Send success message to cart page
+                    localStorage.setItem('addToCartSuccessMessage', response.message);
+                    window.location.href = '<?php echo $this->getUrl('checkout/cart'); ?>';
+                }
+                else {
+                    $j('.add-to-cart-btn').prop('disabled', false);
+                    $j('.detail-build-pc-btn').prop('disabled', false);
+                    $j('.add-to-cart-ajax-loader').addClass('hidden');
+                    if (response.message == 'Please specify the product\'s option(s).') {
+                        response.message = 'Vui lòng lựa chọn thuộc tính sản phẩm!';
+                    }
+                    $j('.cart-messages').append('<div class="alert alert-danger"><strong>Có lỗi!</strong> ' + response.message + '</div>');
+                    $j('html, body').animate({scrollTop: 0}, 400);
+                }
+            }
+        });
+        localStorage.setItem('cartFlag', 1);
+    }
+    /** End cart functions **/
+
+    /** Common functions **/
+    function formatCurrency(n) {
+        return n.toFixed(0).replace(/./g, function (c, i, a) {
+            return i > 0 && c !== "." && (a.length - i) % 3 === 0 ? "." + c : c;
+        });
+    }
+
+    function validateVNPhoneNumber(phone_number) {
+        var phoneRe = /^\+?(84|0)([1-9]\d{8,9})$/;
+        return phoneRe.test(phone_number);
+    }
+    /** End common functions **/
+</script>
+<script>
+    $j(document).ready(function () {
+        $j('.state-title').html("Chi tiết sản phẩm");
+        showBackState();
+        $j('.sub-mobile-navigation-wrapper').show();
+        $j('.input-search-wrapper').addClass('active');
+        $j('.header-back').on('click', function (e) {
+            window.history.back();
+        });
+        $j('.showLogin').unbind('click').click(function (e) {
+            $j('#leftMenu').modal('hide');
+            $j('.search-and-cart-header').hide();
+            $j('#loginMobileView').show();
+            $j('.menu-toggle').addClass('toggle-login-fix');
+            $j('.menu-toggle').addClass('toggle-login-detail-fix');
+            toBackArrow("", null, '#loginMobileView', true, "", null, 0);
+            $j('.logo-wrapper').show();
+            $j('.header-back').unbind('click');
+            e.stopPropagation();
+        });
+    });
+</script>

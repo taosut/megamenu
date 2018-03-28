@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<config>
+    <api2>
+        <resource_groups>
+            <purchase translate="title" module="api2">
+                <title>Update Purchase Item</title>
+                <sort_order>10</sort_order>
+            </purchase>
+            <stocktransfer translate="title" module="api2">
+                <title>Update Stock Transfer Item</title>
+                <sort_order>10</sort_order>
+            </stocktransfer>
+        </resource_groups>
+        <resources>
+            <purchase translate="title" module="api2">
+                <group>purchase</group>
+                <model>ved_purchase/api2_purchaseitem</model>
+                <title>Update Purchase Item</title>
+                <sort_order>10</sort_order>
+                <privileges>
+                    <admin>
+                        <create>1</create>
+
+                    </admin>
+                </privileges>
+                <attributes>
+                    <code>Purchase Code</code>
+                    <items>Items</items>
+                </attributes>
+                <routes>
+                    <route>
+                        <route>/purchase/update_import</route>
+                        <action_type>collection</action_type>
+                    </route>
+                </routes>
+                <versions>1</versions>
+            </purchase>
+            <stocktransfer translate="title" module="api2">
+                <group>purchase</group>
+                <model>ved_purchase/api2_stocktransferitem</model>
+                <title>Update Stock Transfer Item</title>
+                <sort_order>10</sort_order>
+                <privileges>
+                    <admin>
+                        <create>1</create>
+
+                    </admin>
+                </privileges>
+                <attributes>
+                    <code>Transfer Code</code>
+                    <items>Items</items>
+                </attributes>
+                <routes>
+                    <route>
+                        <route>/transfer/update_import</route>
+                        <action_type>collection</action_type>
+                    </route>
+                </routes>
+                <versions>1</versions>
+            </stocktransfer>
+        </resources>
+    </api2>
+</config>

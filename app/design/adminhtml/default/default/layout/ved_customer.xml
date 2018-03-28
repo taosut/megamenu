@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<layout>
+    <adminhtml_sms_index>
+        <reference name="content">
+        </reference>
+    </adminhtml_sms_index>
+</layout>

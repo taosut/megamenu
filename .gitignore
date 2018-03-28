@@ -1,0 +1,23 @@
+#IDE & Lib
+.idea/
+vendor
+composer.lock
+
+#config
+app/etc/*.xml
+app/etc/domain
+errors/local.xml
+app/etc/fpc.xml
+downloader/connect.cfg
+
+app/code/local/Ved/Gcafe/etc/config.xml
+.htaccess
+.user.ini
+
+#subfolder
+promotion/
+
+#ops
+media*/
+var
+downloader/

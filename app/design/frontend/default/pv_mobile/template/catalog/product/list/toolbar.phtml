@@ -1,0 +1,101 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     base_default
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<?php
+/**
+ * Product list toolbar
+ *
+ * @see Mage_Catalog_Block_Product_List_Toolbar
+ */
+?>
+<?php
+$_sortableAttributes = array(
+    'Hot nhất' => array(
+        'attr' => 'most_viewed',
+        'dir' => 'desc'
+    ),
+    'Giá tăng dần' => array(
+        'attr' => 'price',
+        'dir' => 'asc'
+    ),
+    'Giá giảm dần' => array(
+        'attr' => 'price',
+        'dir' => 'desc'
+    ),
+    'Tên (A -> Z)' => array(
+        'attr' => 'name',
+        'dir' => 'asc'
+    ),
+    'Tên (Z -> A)' => array(
+        'attr' => 'name',
+        'dir' => 'desc'
+    )
+);
+?>
+<?php if (strpos(Mage::helper('core/url')->getCurrentUrl(), 'catalogsearch/result')):?>
+    <?php
+    $_sortableAttributes = array('Phổ biến nhất' => array('attr' => 'relevance', 'dir' => 'desc')) + $_sortableAttributes;
+    ?>
+<?php endif;?>
+<?php if ($this->getCollection()->getSize()): ?>
+    <div class="col-md-5 col-sm-5 sort-block">
+        <?php if ($this->isExpanded()): ?>
+            <form>
+            <?php foreach ($_sortableAttributes as $_label => $_sort): ?>
+                <div class="list-radio" onclick="">
+                    <label>
+                        <?php echo $this->__($_label); ?>
+                        <input onclick="window.location.href = this.value;" name="sort" value="<?php echo $this->getOrderUrl($_sort['attr'], $_sort['dir']) ?>" type="radio" <?php if ($this->isOrderCurrent($_sort['attr']) && $this->getCurrentDirection() == $_sort['dir']): ?> checked="checked"<?php endif; ?>>
+                    </label>
+                </div>
+            <?php endforeach ?>
+            </form>
+        <?php endif; ?>
+    </div>
+    <div class="bp-sort-block hidden">
+        <?php if ($this->isExpanded()): ?>
+            <span class="sort-title">Sắp xếp theo:</span>
+            <select class="sort-select" onchange="sortProductModal(this.value);">
+                <?php foreach ($_sortableAttributes as $_label => $_sort): ?>
+                    <option value="<?php echo $this->getOrderUrl($_sort['attr'], $_sort['dir']) ?>"<?php if ($this->isOrderCurrent($_sort['attr']) && $this->getCurrentDirection() == $_sort['dir']): ?> selected="selected"<?php endif; ?>><?php echo $this->__($_label); ?></option>
+                <?php endforeach ?>
+            </select>
+        <?php endif; ?>
+    </div>
+    <div class="col-md-7 col-sm-7 pagination-block top-pagination-block mt-6">
+        <?php echo $this->getPagerHtml(); ?>
+    </div>
+    <div class="hidden-limiter">
+        Xem:
+        <select class="view-select" onchange="window.location.href = this.value;">
+            <?php foreach ($this->getAvailableLimit() as $_key => $_limit): ?>
+                <option value="<?php echo $this->getLimitUrl($_key) ?>"<?php if ($this->isLimitCurrent($_key)): ?> selected="selected"<?php endif ?>>
+                    <?php echo $_limit ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+    </div>
+<?php endif ?>

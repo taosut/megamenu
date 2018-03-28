@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <!--Version cá»§a module-->
+        <Ved_Vandon>
+            <version>0.1.0</version>
+        </Ved_Vandon>
+    </modules>
+    
+    <!-- Khai báo để rewrite controller -->
+    <admin>
+        <routers>
+            <adminhtml>
+                <args>
+                    <modules>
+                        <Ved_Vandon_Adminhtml before="Mage_Adminhtml">Ved_Vandon_Adminhtml</Ved_Vandon_Adminhtml>
+                    </modules>
+                </args>
+            </adminhtml>
+        </routers>
+    </admin>
+    
+    <global>
+
+        <!--Khai bÃ¡o block Ä‘á»ƒ cÃ³ thá»ƒ dÃ¹ng Ä‘Æ°á»£c vÃ  rewrite block-->
+
+        <blocks>
+            <Ved_Vandon>
+                <class>Ved_Vandon_Block</class>
+            </Ved_Vandon>
+            <adminhtml>
+                <rewrite>
+                    <sales_order_grid>Ved_Vandon_Block_Adminhtml_Order_Grid</sales_order_grid>
+                </rewrite>
+            </adminhtml>
+        </blocks>
+        
+        <models>
+            <vandon>
+                <class>Ved_Vandon_Model</class>
+            </vandon>
+        </models>
+        
+        <resources>
+         <Vandon_setup>
+            <setup>
+               <module>Ved_Vandon</module>
+            </setup>
+            <connection>
+               <use>core_setup</use>
+            </connection>
+         </Vandon_setup>
+         <Vandon_write>
+            <connection>
+               <use>core_write</use>
+            </connection>
+         </Vandon_write>
+         <Vandon_read>
+            <connection>
+               <use>core_read</use>
+            </connection>
+         </Vandon_read>
+      </resources>
+        
+    </global>
+    
+    
+	
+</config>

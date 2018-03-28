@@ -1,0 +1,590 @@
+<?php $access = Mage::registry('access'); ?>
+<div ng-app="coupon" ng-controller="couponRequestController as ctrl">
+    <div class="content-header">
+        <table cellspacing="0">
+            <tr>
+                <td style="">
+                    <h3 class="icon-head head-products"> Yêu cầu tạo Coupon</h3>
+                </td>
+                <td class="a-right">
+                    <?php if($access): ?>
+                    <button ng-click = "ctrl.approveRequest()"> Chấp nhận yêu cầu</button>
+                    <?php endif; ?>
+                    <button ng-click = "ctrl.createNewRequest()">Tạo yêu cầu</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="purchase-request">
+        <div class="grid">
+            <div class="hor-scroll">
+                <table width="100%">
+                    <tbody>
+                        <table cellspacing="0" class="actions">
+                            <tbody>
+                                <tr>
+                                    <td class="pager">
+                                        Page
+                                        <a style="text-decoration: none" title="Previous page"
+                                           ng-click="ctrl.gotoPage('previous')" ng-if="ctrl.page > 1">
+                                            <img src="<?php echo $this->getSkinUrl('images/pager_arrow_left.gif') ?>"
+                                                 alt="Go to Previous page" class="arrow">
+                                        </a>
+                                        <img src="<?php echo $this->getSkinUrl('images/pager_arrow_left_off.gif') ?>"
+                                             ng-if="ctrl.page == 1" alt="Go to Previous page" class="arrow">
+
+                                        <input type="text" name="page" ng-model="ctrl.page" class="input-text page"
+                                               enter-click="ctrl.gotoPage()">
+
+                                        <a style="text-decoration: none" title="Next page"
+                                           ng-click="ctrl.gotoPage('next')">
+                                            <img src="<?php echo $this->getSkinUrl('images/pager_arrow_right.gif') ?>"
+                                                 alt="Go to Next page" class="arrow">
+                                        </a>
+                                        of {{ctrl.total_page }} pages
+                                        <span class="separator">|</span>
+                                        Total {{ctrl.total_item}} records found
+                                        <span id="ved_gorders_grid-total-count"
+                                              class="no-display">{{ctrl.total_item}}</span>
+                                        <table cellspacing="0" class="data order-tables">
+                                            <colgroup>
+
+                                            </colgroup>
+                                            <thead>
+                                                <tr class="headings">
+                                                    <th>
+
+                                                    </th>
+                                                    <th>
+                                                        Sale name
+                                                    </th>
+                                                    <th>
+                                                        Request order
+                                                    </th>
+                                                    <th>
+                                                        Status
+                                                    </th>
+                                                    <th>
+                                                        Discount Amount
+                                                    </th>
+                                                    <th>
+                                                        Date Request
+                                                    </th>
+                                                    <th>
+                                                        Coupon
+                                                    </th>
+                                                    <th>
+                                                        Date Approve
+                                                    </th>
+                                                </tr>
+                                            <tr class="filter">
+                                                <th></th>
+                                                <th>
+                                                    <div class="field-250">
+                                                        <input type="text" name="sale_name" ng-model="ctrl.sale_name" value=""
+                                                               enter-click="ctrl.searchItem()" class="input-text no-changes" style="width: 50%">
+                                                    </div>
+                                                </th>
+                                                <th>
+                                                    <div class="field-80">
+                                                        <input type="text" name="sale_name" ng-model="ctrl.request_order" value=""
+                                                               enter-click="ctrl.searchItem()" class="input-text no-changes" style="width: 50%">
+                                                    </div>
+                                                </th>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                                <th>
+                                                    <div class="field-250">
+                                                        <input type="text" name="coupon" ng-model="ctrl.coupon" value=""
+                                                               enter-click="ctrl.searchItem()" class="input-text no-changes" style="width: 50%">
+                                                    </div>
+                                                </th>
+                                                <th>
+
+                                                </th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr class='odd pointer' ng-repeat="item in ctrl.requestList">
+                                                    <td>
+                                                        <div ng-if="item.show && ctrl.showBox">
+                                                            <input type="checkbox" ng-model="item.checked" ng-click ="ctrl.addRequest(item.id)"  />
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        {{item.sale_name}}
+                                                    </td>
+                                                    <td>
+                                                        {{item.request_order}}
+                                                    </td>
+                                                    <td>
+                                                        <p ng-if="item.status == 1">
+                                                            Approved
+                                                        </p>
+                                                        <p ng-if="item.status == 0">
+                                                            Not Approve
+                                                        </p>
+                                                    </td>
+                                                    <td>
+                                                        {{item.discount_amount || floor}}
+                                                    </td>
+                                                    <td>
+                                                        {{item.date_request}}
+                                                    </td>
+                                                    <td>
+                                                        {{item.coupon_code}}
+                                                    </td>
+                                                    <td>
+                                                        {{item.date_approve}}
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div id="createRequest" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="modalLabel">Create New Coupon Request</h4>
+                </div>
+                <div class="modal-body" style="text-align: center">
+                    <div class="range">
+                        <div style="text-align: left;padding-left: 15px;padding-top: 10px;padding-right: 20px;">
+                            <fieldset class="np">
+                                <div class="hor-scroll">
+                                    <table cellspacing="0" class="form-list" style="width: 100%">
+                                        <tbody>
+                                        <tr>
+                                            <td class="label">
+                                                <label for="sale_name">Sale Name :</label>
+                                            </td>
+                                            <td>
+                                                <input class="input-text" id="sale_name" ng-model="ctrl.form.sale_name" type="text" style="width: 50%" disabled>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="label">
+                                                <label for="request_order">Request Order :<span class="required">*</span></label>
+                                            </td>
+                                            <td>
+                                                <input class="input-text" id="request_order" ng-model="ctrl.form.request_order" type="text" style="width: 50%" ng-change="ctrl.updateCoupon()">
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="label">
+                                                <label for="discount_amount">Discount Amount :<span class="required">*</span></label>
+                                            </td>
+                                            <td>
+                                                <input class="input-text" id="discount_amount" ng-model="ctrl.form.discount_amount" type="text" style="width: 50%" ng-change="ctrl.updateCoupon()" format="number">
+                                            </td>
+                                        </tr>
+<!--                                        <tr>-->
+<!--                                            <td class="label">-->
+<!--                                                <label for="Date Approve">Date Approve :<span class="required">*</span></label>-->
+<!--                                            </td>-->
+<!--                                            <td>-->
+<!--                                                <input type="text" ng-model="ctrl.form.date_approve" name="purchased_on[from]" id="receive_date_data" value="" class="input-text no-changes" style="width:50%; margin-right: 2px;" disabled>-->
+<!--                                                <img style="cursor: pointer"-->
+<!--                                                     src="--><?php //echo Mage::getDesign()->getSkinBaseUrl(array('_area' => 'adminhtml')) . '/images/grid-cal.gif' ?><!--"-->
+<!--                                                     alt="" class="v-middle"-->
+<!--                                                     id="receive_date_data_trig" title="Date selector">-->
+<!--                                            </td>-->
+<!--                                        </tr>-->
+                                        <tr>
+                                            <td class="label">
+                                                <label for="coupon_code">Coupon Code :</label>
+                                            </td>
+                                            <td>
+                                                <input class="input-text" id="coupon_code" type="text" ng-model="ctrl.form.coupon" style="width: 50%" disabled>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="scalable back" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-warning btn-mini btn-new-request" ng-click="ctrl.newRequest();">
+                        Create Coupon Request
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="confirmedRequest" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="modalLabel">Danh sách các Yêu cầu Coupon đã chọn</h4>
+                </div>
+                <div class="modal-body" style="text-align: center">
+                    <div class="range">
+                        <div style="text-align: left;padding-left: 15px;padding-top: 10px;padding-right: 20px;">
+                            <div class="grid">
+                                <div class="hor-scroll">
+                                    <table cellspacing="0" class="actions" width="100%">
+                                        <tbody>
+                                        <tr>
+                                            <td class="pager">
+                                                <table>
+                                                    <thead>
+                                                    <tr class="headings">
+                                                        <th>
+                                                            Sale name
+                                                        </th>
+                                                        <th>
+                                                            Request order
+                                                        </th>
+                                                        <th>
+                                                            Status
+                                                        </th>
+                                                        <th>
+                                                            Discount Amount
+                                                        </th>
+                                                        <th>
+                                                            Date Request
+                                                        </th>
+                                                        <th>
+                                                            Coupon
+                                                        </th>
+                                                        <th>
+                                                            Date Approve
+                                                        </th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <tr class='odd pointer' ng-repeat="item in ctrl.chosenItems">
+                                                        <td>
+                                                            {{item.sale_name}}
+                                                        </td>
+                                                        <td>
+                                                            {{item.request_order}}
+                                                        </td>
+                                                        <td>
+                                                            <p ng-if="item.status == 1">
+                                                                Approved
+                                                            </p>
+                                                            <p ng-if="item.status == 0">
+                                                                Not Approve
+                                                            </p>
+                                                        </td>
+                                                        <td>
+                                                            {{item.discount_amount || floor}}
+                                                        </td>
+                                                        <td>
+                                                            {{item.date_request}}
+                                                        </td>
+                                                        <td>
+                                                            {{item.coupon_code}}
+                                                        </td>
+                                                        <td>
+                                                            {{item.date_approve}}
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="scalable back btn-accept" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-warning btn-mini btn-accept" ng-click="ctrl.acceptRequest();">
+                        Create Coupon Request
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+//    Calendar.setup({
+//        inputField: "receive_date_data",
+//        ifFormat: "%Y-%m-%d",
+//        button: "receive_date_data_trig",
+//        showsTime: true,
+//        align: "Bl",
+//        singleClick: true
+//    });
+    (function(){
+        var app = angular.module('coupon', []);
+        app.directive('format',  format);
+        format.$inject = ['$filter'];
+        function format($filter) {
+            return {
+                require: '?ngModel',
+                link: function (scope, elem, attrs, ctrl) {
+                    if (! ctrl) return;
+
+                    ctrl.$formatters.unshift(function (a) {
+                        return $filter(attrs.format)(ctrl.$modelValue)
+                    });
+
+                    ctrl.$parsers.unshift(function (viewValue) {
+                        var plainNumber = viewValue.replace(/[^\d|\-+|\.+]/g, '');
+                        elem.val($filter(attrs.format)(plainNumber));
+                        return plainNumber;
+                    });
+                }
+            };
+        }
+
+        app.directive('enterClick', enterClick);
+
+        function enterClick() {
+            return function (scope, element, attrs) {
+                element.bind("keydown keypress", function (event) {
+                    var keyCode = event.which || event.keyCode;
+                    if (keyCode === 13) {
+                        scope.$apply(function () {
+                            scope.$eval(attrs.enterClick);
+                        });
+
+                        event.preventDefault();
+                    }
+                });
+            };
+        }
+
+        app.controller('couponRequestController', function ($http, $window) {
+            var vm = this;
+            vm.page = 1;
+            vm.requestList = [];
+            vm.params = {};
+            vm.params.page = 1;
+            vm.total_item = 0;
+            vm.total_page = 0;
+            vm.sale_name = "";
+            vm.coupon = "";
+            vm.request_order = "";
+            vm.form = {};
+            vm.form.sale_name = "<?php echo $this->getName() ?>";
+            vm.form.coupon = "";
+            vm.form.date_approve = "";
+            vm.form.request_order = "";
+            vm.form.discount_amount = "";
+            vm.user_name = "<?php echo $this->getUserName() ?>";
+            vm.chosenRequest = [];
+            vm.chosenItems = [];
+            vm.showBox = true;
+            <?php if(!$access): ?>
+                vm.showBox = false;
+            <?php endif; ?>
+            getRequestList();
+            function getRequestList() {
+                vm.params.page = vm.page;
+                vm.params.sale_name = vm.sale_name;
+                vm.params.request_order = vm.request_order;
+                var link = "<?php echo Mage::getUrl("*/coupon_index/getCouponList")?>";
+                jQuery('#loading-mask').modal();
+                $http.get(link +"?"+ decodeURIComponent(jQuery.param(vm.params)))
+                    .then(getListCompleted, getListError);
+
+                function getListCompleted(response){
+                    vm.requestList = response.data.data;
+                    var notAprrove = [];
+                    var approved = [];
+                    for(var i = 0 ; i<vm.requestList.length; i++){
+                        vm.requestList[i].discount_amount = Math.floor(vm.requestList[i].discount_amount);
+                        if(vm.requestList[i].status === "1"){
+                            vm.requestList[i].show = false;
+                        }else{
+                            vm.requestList[i].show = true;
+                        }
+                        if(vm.chosenRequest.includes(vm.requestList[i].id) && vm.requestList[i].status !== "1"){
+                            vm.requestList[i].checked = true;
+                        }else{
+                            vm.requestList[i].checked = false;
+                        }
+                        if(vm.requestList[i].status === "1"){
+                            approved.push(vm.requestList[i]);
+                        }else{
+                            notAprrove.push(vm.requestList[i]);
+                        }
+                    }
+                    vm.requestList = jQuery.merge(notAprrove,approved);
+                    vm.total_item = response.data.totalItems;
+                    vm.total_page = response.data.total_page;
+                    jQuery('#loading-mask').modal('toggle');
+                }
+
+                function getListError(response){
+                    vm.error = "Có lỗi xảy ra trong quá trình lấy dữ liệu, vui lòng thử lại sau";
+                    alert(vm.error);
+                    jQuery('#loading-mask').modal('toggle');
+                    return false;
+                }
+            }
+
+            function createRequest(){
+                var link = "<?php echo Mage::getUrl("*/coupon_index/createRequest")?>";
+                $http.get(link +"?"+ decodeURIComponent(jQuery.param(vm.form)))
+                    .then(createCompleted, createError);
+                function createCompleted(response){
+                    if(response.data.status === "success"){
+                        jQuery('#loading-mask').modal('toggle');
+                        jQuery('#createRequest').modal('toggle');
+                        getRequestList();
+                    }else{
+                        vm.message = response.message;
+                        alert(vm.message);
+                        jQuery('#loading-mask').modal('toggle');
+                        jQuery('#createRequest').modal('toggle');
+                    }
+                }
+                function createError(response){
+                    vm.message = "Có lỗi xảy ra trong quá trình truyền dữ liệu, vui lòng thử lại sau";
+                    alert(vm.message);
+                    jQuery('#loading-mask').modal('toggle');
+                    return false;
+                }
+            }
+
+            vm.gotoPage = function(direction) {
+                if(direction == 'next'){
+                    if(vm.page*10 < vm.total_item){
+                        vm.page +=1;
+                    }
+                    getRequestList();
+                    return;
+                }
+                if(direction == 'previous'){
+                    if (vm.page > 1) {
+                        vm.page -= 1;
+                        getRequestList();
+                        return;
+                    }
+                }else{
+                    getRequestList();
+                    return;
+                }
+            };
+
+            vm.searchItem = function(){
+                vm.page = 1;
+                getRequestList();
+            };
+            vm.createNewRequest = function(){
+                jQuery('#createRequest').modal();
+            };
+
+            vm.updateCoupon = function() {
+                vm.form.coupon = vm.user_name.toUpperCase() +"_"+ vm.form.request_order +"_"+ vm.form.discount_amount;
+            };
+
+            vm.newRequest = function(){
+                jQuery('#loading-mask').modal();
+                jQuery('.btn-new-request').prop('disabled', true);
+                if(!vm.form.request_order){
+                    vm.message = "Vui lòng nhập mã đơn hàng";
+                    alert(vm.message);
+                    jQuery('#loading-mask').modal('toggle');
+                    return;
+                }
+                if(!vm.form.discount_amount){
+                    vm.message = "Vui lòng nhập giá giảm";
+                    alert(vm.message);
+                    jQuery('#loading-mask').modal('toggle');
+                    return;
+                }
+                jQuery('.btn-new-request').prop('disabled', false);
+                createRequest();
+            };
+            vm.addRequest = function(id){
+                if(vm.chosenRequest.includes(id)){
+                    vm.chosenRequest = vm.chosenRequest.filter(function(item){
+                        if(item.id === id){
+                            item.checked = false;
+                        }
+                        return item !== id;
+                    });
+                    vm.chosenItems = vm.chosenItems.filter(function(item){
+                        if(item.id !== id){
+                            return item;
+                        }
+                    });
+                }else{
+                    vm.chosenRequest.push(id);
+                    vm.requestList.filter(function(item){
+                        if(item.id === id){
+                            vm.chosenItems.push(item);
+                        }
+                    });
+                }
+            };
+            vm.approveRequest = function() {
+                jQuery('#confirmedRequest').modal();
+            }
+
+            vm.acceptRequest = function(){
+                jQuery('#loading-mask').modal();
+                jQuery('.btn-accept').prop('disabled', true);
+                var link = "<?php echo Mage::getUrl("*/coupon_index/approveCoupon")?>";
+                $http.get(link +"?"+ decodeURIComponent(jQuery.param({
+                            'params' : vm.chosenRequest
+                        })))
+                    .then(acceptCompleted, acceptError);
+                function acceptCompleted(response){
+                    console.log(response);
+                    if(response.data.status==="success"){
+                        jQuery('#loading-mask').modal('toggle');
+                        jQuery('.btn-accept').prop('disabled', false);
+                        jQuery('#confirmedRequest').modal('toggle');
+                        vm.chosenRequest = [];
+                        vm.chosenItems = [];
+                        getRequestList();
+
+                    }else{
+                        vm.message = response.message;
+                        jQuery('#loading-mask').modal('toggle');
+                        jQuery('.btn-accept').prop('disabled', false);
+                        jQuery('#confirmedRequest').modal('toggle');
+                        alert(vm.message);
+                        vm.chosenRequest = [];
+                        vm.chosenItems = [];
+                        getRequestList();
+
+                    }
+                }
+                function acceptError(response){
+                    vm.message = "Có lỗi xảy ra trong quá trình truyền dữ liệu, vui lòng thử lại sau";
+                    jQuery('#loading-mask').modal('toggle');
+                    return false;
+                }
+            };
+        });
+        app.filter('roundup', function () {
+            return function (input) {
+                return Math.ceil(input);
+            };
+        });
+
+        app.filter('floor',function(){
+            return function(input){
+                return Math.floor(input);
+            };
+        });
+
+    })();
+
+</script>

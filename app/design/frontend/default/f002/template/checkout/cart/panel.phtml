@@ -1,0 +1,65 @@
+<div id="panel-cart">
+    <div class="panel panel-default cart">
+        <div class="panel-body">
+            <?php
+//            $totals = Mage::getSingleton('checkout/session')->getQuote()->getTotals();
+//            var_dump($totals);
+            $info =  $this->getCartInfo();
+            $cart_qty = $info['cart_qty'];
+            $products = $info['products'];
+            $total_discount = $info['total_discount'];
+            $grand_total = $info['grand_total'];
+            $shipping_amount = $info['shipping_amount'];
+            $cod = $info['cod'];
+            ?>
+            <div class="order">
+                <span class="title">Đơn Hàng</span>
+                <span class="title"> (<?php echo $cart_qty; ?> sản phẩm)</span>
+                <a href="/checkout/cart/" class="btn btn-default btn-custom1">Sửa</a>
+            </div>
+            <div class="product">
+                <?php
+                foreach($products as $item){
+                    ?>
+                    <div class="item">
+                        <p class="title">
+                            <strong><?php echo $item['quantity']; ?> x </strong>
+                            <a href="<?php echo $item['url']; ?>" target="_blank">
+                                <?php echo $item['name']; ?>
+                            </a>
+                        </p>
+                        <p class="type"><span></span></p>
+                        <p class="price">
+                            <span><?php echo Mage::helper('core')->currency($item['grand_total'], true, false); ?></span>
+                        </p>
+                    </div>
+                <?php
+                }
+                ?>
+            </div>
+            <p class="total">
+                Tạm Tính:
+                <span><?php echo Mage::helper('core')->currency($grand_total, true, false); ?></span>
+            </p>
+            <p class="total">
+                Giảm giá:
+                <span><?php echo Mage::helper('core')->currency($total_discount, true, false); ?></span>
+            </p>
+            <p class="shipping">
+                Phí vận chuyển:
+                <span>
+                    <?php
+                        if( $shipping_amount == -1){
+                            echo "Chưa có";
+                        } else {
+                            echo Mage::helper('core')->currency($shipping_amount, true, false);
+                        }
+                    ?>
+                </span>
+            </p>
+            <p class="total2">
+                Thành tiền:<span><?php echo Mage::helper('core')->currency($cod, true, false); ?></span>
+            </p>
+        </div>
+    </div>
+</div>

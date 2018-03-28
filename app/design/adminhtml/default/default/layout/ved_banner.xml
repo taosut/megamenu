@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+    <adminhtml_banner_index>
+        <reference name="content">
+            <block type="core/template" name="banner"
+                   template="banner/banner.phtml"/>
+        </reference>
+    </adminhtml_banner_index>
+</layout>

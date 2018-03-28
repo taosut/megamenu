@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+	<modules>
+		<TEKShop_PaymentOnline>
+			<active>true</active>
+			<codePool>local</codePool>
+		</TEKShop_PaymentOnline>
+	</modules>
+</config>

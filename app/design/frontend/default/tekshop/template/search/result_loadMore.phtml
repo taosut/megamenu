@@ -1,0 +1,104 @@
+<?php
+$productsCollections = Mage::registry('productsCollections');
+$_helper = $this->helper('catalog/output');
+$productObjList = "Kết quả tìm kiếm";
+?>
+<?php
+$tagProduct = Mage::getModel('tag/tag_relation')
+    ->setTagId(1) // Bao ke gia
+    ->setStoreId($this->getStoreId())
+    ->getProductIds();
+?>
+<div class="paginate-product">
+    <ul class="products-grid grid-recent">
+        <?php foreach ($productsCollections->getItems() as $_product): ?>
+        <?php
+        $productObj = new stdClass();
+        $productObj->name = (string)$_product->getName();
+        $productObj->id = (string)$_product->getId();
+        $productObj->price = (string)$_product->getFinalPrice();
+        $productObj->list = $productObjList;
+        ?>
+
+        <?php $oldPrice = $_product->getPrice();
+        $newPrice = $_product->getFinalPrice(); ?>
+        <li class="detail-product col-md-15 col-xs-6 newitem<?php if ($oldPrice != $newPrice) : ?> saleoff <?php endif ?>">
+            <div class="view team-one">
+                <?php if(in_array((string)$_product->getId(),$tagProduct)): ?>
+                    <img class="detail-tag"
+                         src='<?php echo $this->getSkinUrl('images/tag.png') ?>'/>
+                <?php endif; ?>
+                <div class="mask mask-cat h340"
+                     data-id="<?php echo $_product->getId() ?>"
+                     data-name="<?php echo $_product->getName() ?>"
+                     data-url="<?php echo $_product->getProductUrl() ?>"
+                     data-price="<?php echo $_product->getFinalPrice() ?>"
+                >
+                    <div class="box-holder">
+                        <h5 class="product-name-hover-mask"
+                            title="<?php echo $_product->getName() ?>"><?php echo $this->escapeHtml($_product->getName()) ?></h5>
+                        <div class="product-price mb-15 mt-15">
+                            <?php if ($oldPrice != $newPrice) : ?>
+                                <div class="old-price old-pr-div">
+                                                    <span class="price">
+                                                        <?php echo number_format($oldPrice, 0, ",", ".") . " <sup>đ</sup>"; ?>
+                                                    </span>
+                                </div>
+                            <?php else : {
+                                echo "<div class='old-pr-div'> <span class=\"price \">&nbsp; </span></div>";
+                            } ?>
+                            <?php endif; ?>
+                            <div class="regular-price">
+                                                <span class="price">
+                                                    <?php echo number_format($newPrice, 0, ",", ".") . " <sup>đ</sup>"; ?>
+                                                </span>
+                            </div>
+                        </div>
+                        <span class="short-description-hover-mask mt-30"><?php echo $_helper->productAttribute($_product, nl2br($_product->getShortDescription()), 'short_description') ?></span>
+                    </div>
+                </div>
+                <!--                                </a>-->
+                <div class="product-image">
+                    <a class="a-img" href="<?php echo $_product->getProductUrl() ?>"
+                       title="<?php echo $this->escapeHtml($this->getImageLabel($_product, 'small_image')) ?>">
+                        <img src="<?php echo $this->helper('catalog/image')->init($_product, 'small_image')->resize(300, 300) ?>"
+                             alt="<?php echo $this->escapeHtml($this->getImageLabel($_product, 'small_image')) ?>"
+                             title="<?php echo $this->escapeHtml($this->getImageLabel($_product, 'small_image')) ?>"/>
+                    </a>
+                </div>
+            </div>
+            <div class="hidden-mobile">
+                <h5 class="product-name product-name-border">
+                    <a href="<?php echo $_product->getProductUrl() ?>"
+                       title="<?php echo $this->escapeHtml($_product->getName()) ?>"><?php echo $this->escapeHtml($_product->getName()) ?></a>
+                </h5>
+
+                <div class="product-price">
+                    <?php if ($oldPrice != $newPrice) : ?>
+                        <div class="old-price old-pr-div">
+                                                    <span class="price">
+                                                        <?php echo number_format($oldPrice, 0, ",", ".") . " <sup>đ</sup>"; ?>
+                                                    </span>
+                        </div>
+                    <?php else : {
+                        echo "<div class='old-pr-div'> <span class=\"price \">&nbsp; </span></div>";
+                    } ?>
+
+                    <?php endif ?>
+                    <div class="regular-price">
+                                                <span class="price">
+                                                    <?php echo number_format($newPrice, 0, ",", ".") . " <sup>đ</sup>"; ?>
+                                                </span>
+                    </div>
+                </div>
+            </div>
+
+            <?php if ($oldPrice != $newPrice) : ?>
+                <span class="percent">
+                                    <span>- <?php echo number_format(($oldPrice - $newPrice) / $oldPrice * 100, 0) . "%" ?></span>
+					            </span>
+            <?php endif ?>
+        </li>
+        <?php endforeach; ?>
+    </ul>
+</div>

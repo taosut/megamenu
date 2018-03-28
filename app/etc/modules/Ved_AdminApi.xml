@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Ved_AdminApi>
+            <active>true</active>
+            <codePool>local</codePool>
+        </Ved_AdminApi>
+    </modules>
+</config>

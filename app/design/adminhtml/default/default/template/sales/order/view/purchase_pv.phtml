@@ -1,0 +1,153 @@
+<!--Block Ved_Gorders_Block_Adminhtml_Sales_Order_Purchase -->
+<?php
+/**
+ * @var Ved_Gorders_Block_Adminhtml_Sales_Order_Purchase $this
+ */
+$product_sku = $this->getProduct()->getWarehouseSku();
+?>
+<div class="content-header">
+    <h3 class="icon-head head-sales-order">Order # <?php echo $this->getOrder()->getIncrementId() ?>
+        | <?php echo $this->getOrder()->getCreatedAt() ?></h3>
+    <p class="form-buttons">
+        <a href="<?php echo $this->getBackUrl(); ?>">
+            <button title="Quay lại" type="button" class="scalable back"> Quay lại</button>
+        </a>
+    </p>
+</div>
+
+<div class="grid">
+    <div class="content-header">
+        Thông tin sản phẩm
+    </div>
+
+    <table class="data">
+        <tr>
+            <td>
+                Tên sản phẩm
+            </td>
+            <td>
+                <?php echo $this->getProduct()->getName() ?>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Số lượng yêu cầu
+            </td>
+            <td>
+                <?php echo (int)$this->getQtyItem(); ?>
+            </td>
+
+        </tr>
+        <tr>
+            <td>
+                Mã kho
+            </td>
+            <td>
+                <?php echo $this->getProduct()->getWarehouseSku(); ?>
+            </td>
+        </tr>
+    </table>
+
+</div>
+<br/>
+<br/>
+<form id="purchase_warehouse" action="<?php echo $this->saveWarehouseUrl() ?>" method="post">
+    <input name="form_key" type="hidden" value="<?php echo $this->getFormKey(); ?>"/>
+    <div class="grid">
+        <table class="data">
+            <tbody>
+            <?php $storeIn = $this->checkProductWarehousePV($product_sku); ?>
+            <?php if ($storeIn): ?>
+                <tr class="headings">
+                    <th colspan="3">
+                        <b>Check hàng trong kho</b>
+                    </th>
+                </tr>
+                <tr>
+                    <td width="300px">Tổng số lượng tồn kho</td>
+                    <?php
+                    $stock = 0;
+                    $hold = 0;
+                    $storeHold = [];
+                    foreach ($storeIn['stock'][$product_sku] as $key => $value) {
+                        $stock += $value['inventory'];
+                    }
+
+                    $requestWarehouse = max($this->getQtyItem(),0);
+                    ?>
+                    <td width="150px">
+                        <label><?php echo($stock) ?></label>
+                    </td>
+                    <td rowspan="3">
+                        Chi tiết tồn kho:
+                        <table>
+                            <tr class="headings">
+                                <th class="a-center">Kho</th>
+                                <th class="a-center">Số lượng</th>
+                                <th class="a-center">Tạm hold</th>
+                            </tr>
+                            <?php foreach ($storeIn['stock'][$product_sku] as $key => $value): ?>
+                                <tr>
+                                    <td><?php echo $value['store_name'] ?></td>
+                                    <td><?php echo $value['inventory'] ?></td>
+                                    <td></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Sô lượng đang đặt kho</td>
+                    <td>
+                        <label><?php echo($hold) ?></label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Sô lượng tồn kho cho phép xuất hàng</td>
+                    <td>
+                        <label><?php echo max($stock - $hold, 0) ?></label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Lấy hàng từ kho:</td>
+                    <td>
+
+                        <select name="data[warehouse][store_id]" id="warehouse_store_id">
+                            <option value="">--- Chọn kho hàng ---</option>
+                            <?php foreach ($storeIn['stock'][$product_sku] as $key => $value): ?>
+                                <option data-store-name="<?= $value['store_name'] ?>"
+                                        data-can-export="<?= $value['inventory'] ?>"
+                                        value="<?= $value['store_code'] ?>"><?= $value['store_name'] ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    <td>
+                        <input type="hidden" name="data[warehouse][store_name]" id="warehouse_store_name">
+                        <input type="hidden" name="data[warehouse][can_order]" id="warehouse_can_order"
+                               value="<?php echo (int)$requestWarehouse ?>">
+                        <span>Số lượng đặt: </span><input type="number" name="data[warehouse][quantity]"
+                                                          id="wh_request_qty"
+                                                          class="input-text" style="width: 100px" placeholder="Số lượng"
+                                                          value="<?php echo (int)$requestWarehouse ?>">
+                    </td>
+                </tr>
+            <?php endif; ?>
+            </tbody>
+        </table>
+    </div>
+    <button class="button" id="btn-save">Save</button>
+</form>
+<div id="modalFadeScreen" class="modal fade" data-backdrop="static" data-keyboard="false"></div>
+<script>
+    $j('#btn-save').on('click', function() {
+        $j("#purchase_warehouse").submit();
+        $j(this).prop('disabled', true);
+        $j(this).addClass('scalable').addClass('back');
+        $j('#loading-mask').show();
+    });
+
+    $j('#warehouse_store_id').change(function () {
+        $j('#warehouse_store_name').val($j(this).children('option:selected').data('store-name'));
+        $j('#warehouse_can_order').val(Math.max(0, $j(this).children('option:selected').data('can-export') -
+            $j(this).children('option:selected').data('hold-qty')));
+    });
+</script>

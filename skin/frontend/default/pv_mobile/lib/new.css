@@ -1,0 +1,244 @@
+.home-top-block {
+    background: #f1f0f1;
+}
+
+/*Slider, hotdeal*/
+.slider, .promo-products, .cat-products-content, .recently-viewed-products, .top-banner-landing {
+    visibility: hidden;
+}
+
+.slick-initialized {
+    visibility: visible;
+}
+
+.slider .slick-dots {
+    bottom: 10px;
+    left: 0;
+    text-align: center;
+    top: auto;
+    height: auto;
+}
+
+.promo-products .slick-dots {
+    top: -5px;
+    left: 15px;
+}
+
+.slider a:focus {
+    outline: none;
+}
+
+.slider-img {
+    width: 100%;
+}
+
+/*End Slider, hotdeal*/
+
+/*Products content*/
+.promo-products-wrapper {
+    margin: 0;
+}
+
+.promo-products-section {
+    border-bottom: 1px solid #ebebeb;
+    padding: 0;
+}
+
+.promo-products-section.last {
+    border-bottom: none;
+}
+
+.promo-products-item {
+    margin-top: 30px;
+    padding: 0 15px;
+    color: #333;
+    display: block;
+    position: relative;
+}
+
+.promo-products-item:hover, .promo-products-item:focus {
+    color: #333;
+    text-decoration: none;
+    outline: none;
+}
+
+.promo-info {
+    padding: 0 40px 0 0;
+}
+
+.promo-ribbon {
+    position: absolute;
+    top: -30px;
+    right: 15px;
+    width: 40px;
+    height: 40px;
+    background: url(../images/icon_Ribbon.svg) no-repeat;
+    background-size: 40px;
+    text-align: center;
+    padding-top: 5px;
+    color: #fff;
+    font-size: 15px;
+    z-index: 1;
+}
+
+.cat-name {
+    padding: 7px 15px;
+    font-family: "Open Sans Condensed";
+    font-size: 22px;
+    text-transform: uppercase;
+    color: #d42333;
+}
+
+.promo-products-wrapper .cat-name {
+    border-bottom: 1px solid #ebebeb;
+}
+
+.product-img {
+    width: 100%;
+    margin: auto;
+}
+
+/* Lazy load */
+.product-img.lazy {
+    width: 100px;
+    height: 130px;
+    display: block;
+    background-image: url(../images/ajax-loader-new.gif);
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+}
+
+.old-price {
+    font-size: 11px;
+    text-decoration: line-through;
+    color: #9fa0a2;
+    height: 17px;
+    margin-top: 2px;
+    margin-bottom: -1px;
+}
+
+.final-price {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.promo-products .old-price {
+    height: 17px;
+}
+
+.promo-products .final-price {
+    font-size: 20px;
+}
+
+.discount {
+    font-size: 12px;
+    color: #be271b;
+    height: 17px;
+    font-weight: bold;
+}
+
+.product-name {
+    font-size: 13px;
+    font-weight: 600;
+    height: 55px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    margin-top: 15px;
+}
+
+.promo-products .product-name {
+    height: auto;
+    max-height: 60px;
+    margin-top: 0;
+    font-size: 14px;
+}
+
+.products-block {
+    background: #f1f0f1;
+}
+
+.promo-product-gift-icon {
+    right: 40px;
+}
+
+.cat-products-content {
+    margin: 0 10px;
+}
+
+.cat-products-section {
+    background: #fff;
+    margin: 7px 0;
+}
+
+.cat-products-item {
+    padding: 10px 5px;
+    color: #333;
+    width: 40%;
+}
+
+.cat-products-item:hover, .cat-products-item:focus {
+    color: #333;
+    text-decoration: none;
+    outline: none;
+}
+
+.cat-products-header {
+    display: inline-block;
+    width: 100%;
+}
+
+.cat-products-header .cat-name a {
+    user-select: none;
+    color: #d42333;
+}
+
+.cat-products-header .cat-name a:hover, .cat-products-header .cat-name a:focus {
+    color: #d42333;
+    text-decoration: none;
+}
+
+.view-more {
+    float: right;
+    text-align: right;
+    margin-top: 15px;
+    margin-right: 15px;
+    font-size: 13px;
+    user-select: none;
+}
+
+.view-more a {
+    text-decoration: underline;
+}
+
+.view-more a:hover, .view-more a:focus {
+    text-decoration: underline;
+    color: #337ab7;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.alternate-banner img {
+    width: 100%;
+}
+
+/*End Products content*/
+
+/* Recently viewed products */
+.recently-viewed-block {
+    margin: 0;
+}
+
+.recently-viewed-products {
+    margin: 0 10px;
+}
+
+.recently-viewed-block .slick-dots {
+    top: -20px;
+}
+
+/* End recently viewed products */

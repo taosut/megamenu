@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+ 
+<config>
+    <menu>
+        <sales>
+            <children>
+                <ved_norders translate="title" module="ved_norders">
+                    <sort_order>10</sort_order>
+                    <title>Orders - New</title>
+                    <action>adminhtml/norder/</action>
+                </ved_norders>
+            </children>
+        </sales>
+    </menu>
+</config>

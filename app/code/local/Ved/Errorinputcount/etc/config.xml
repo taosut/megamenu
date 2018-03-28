@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Ved_Errorinputcount>
+            <version>0.1.0</version>
+        </Ved_Errorinputcount>
+    </modules>
+    <global>
+
+        <resources>
+            <Ved_Errorinputcount_setup>
+                <setup>
+                    <module>Ved_Errorinputcount</module>
+                    <class>Mage_Customer_Model_Entity_Setup</class>
+                </setup>
+                <connection>
+                    <use>core_setup</use>
+                </connection>
+            </Ved_Errorinputcount_setup>
+            <Ved_Errorinputcount_write>
+                <connection>
+                    <use>core_write</use>
+                </connection>
+            </Ved_Errorinputcount_write>
+            <Ved_Errorinputcount_read>
+                <connection>
+                    <use>core_read</use>
+                </connection>
+            </Ved_Errorinputcount_read>
+        </resources>
+    </global>
+
+</config>

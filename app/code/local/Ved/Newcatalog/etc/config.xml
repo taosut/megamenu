@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+
+<config>
+    <modules>
+        <Ved_Newcatalog>
+            <version>0.1.0</version>
+        </Ved_Newcatalog>
+    </modules>
+    <frontend>
+        <routers>
+            <newcatalog>
+                <use>standard</use>
+                <args>
+                    <module>Ved_Newcatalog</module>
+                    <frontName>newcatalog</frontName>
+                </args>
+            </newcatalog>
+        </routers>
+    </frontend>
+    <global>
+        <blocks>
+            <newcatalog>
+                <class>Ved_Newcatalog_Block</class>
+            </newcatalog>
+        </blocks>
+    </global>
+</config>

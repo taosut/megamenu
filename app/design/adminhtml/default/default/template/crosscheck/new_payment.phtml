@@ -1,0 +1,72 @@
+<div class="entry-edit">
+    <div class="entry-edit-head">
+        <h4 class="icon-head head-edit-form fieldset-legend">Cập nhật thanh toán</h4>
+        <div class="form-buttons"></div>
+    </div>
+    <div class="fieldset ">
+        <?php $paymentCrosscheck = $this->getPaymentCrosscheck();?>
+        <form action="<?php echo $this->getSaveUrl(); ?>" method="post">
+            <?php echo $this->getBlockHtml('formkey') ?>
+            <table cellspacing="0" class="form-list">
+                <tr>
+                    <td class="label">
+                        Store
+                    </td>
+                    <td class="value">
+                        <select name="payment_store" class="chosen-select form-control" required>
+                            <option value=""> Chọn store </option>
+                            <?php foreach ($this->getListStore() as $store): ?>
+                                <option value="<?php echo $store->getId(); ?>" <?php echo isset($paymentCrosscheck) ? ($store->getId() == $paymentCrosscheck->getStoreId() ? 'selected':'')  : '' ?>><?php echo $store->getName() ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label">
+                        Ngày thanh toán
+                    </td>
+                    <td class="value">
+                        <div class="range-line date">
+                            <input type="text" name="pay_date" id="pay_date"
+                                   value="<?php echo isset($paymentCrosscheck) ? date("d/m/Y", strtotime($paymentCrosscheck->getPayDate())) : '' ?>" class="input-text no-changes" required>
+                            <img style="cursor:pointer;" src="<?php echo Mage::getDesign()->getSkinBaseUrl(array('_area'=>'adminhtml')) . 'images/grid-cal.gif';?>" class="v-middle" id="pay_date_trig" title="Date selector">
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label">
+                        Tổng số tiền
+                    </td>
+                    <td class="value">
+                        <div class="range-line date">
+                            <input type="number" name="total_amount" id="total_amount" value="<?php echo isset($paymentCrosscheck) ? $paymentCrosscheck->getTotalAmount() : '' ?>" class="input-text no-changes" required>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label">
+                        Ghi chú
+                    </td>
+                    <td class="value">
+                        <div class="range-line date">
+                            <textarea name="note" id="note" rows="5"><?php echo  isset($paymentCrosscheck) ? $paymentCrosscheck->getNote() : '' ?></textarea>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            <input type="hidden" name="payment_id" value="<?php echo isset($paymentCrosscheck) ? $paymentCrosscheck->getId() : '' ?>" />
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
+</div>
+<script>
+    Calendar.setup({
+        inputField : "pay_date",
+        ifFormat : "%d/%m/%Y",
+        button : "pay_date_trig",
+        showsTime: false,
+        align : "Bl",
+        singleClick : true
+    });
+</script>

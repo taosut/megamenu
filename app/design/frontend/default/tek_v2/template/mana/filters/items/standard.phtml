@@ -1,0 +1,27 @@
+<?php
+/**
+ * @category    Mana
+ * @package     Mana_Filters
+ * @copyright   Copyright (c) http://www.manadev.com
+ * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ */
+/**
+ * Template for showing options for filter as a HTML list
+ * @author Mana Team
+ * Injected instead of standard catalog/layer/filter.phtml in Mana_Filters_Block_Filter_Attribute constructor.
+ * This template is overridden by copying (template body was pasted from catalog/layer/filter.phtml
+ * and modified as needed). All changes are marked with comments.
+ */
+/* @var $this Mana_Filters_Block_Filter_Attribute */
+?>
+<?php foreach ($this->getItems() as $_item): ?>
+    <?php if ($_item->getCount() > 0): ?>
+        <a class="filter-section-item filter-section-item-standard"
+           href="<?php echo $this->urlEscape($_item->getUrl()); ?>">
+            <?php echo $_item->getLabel() ?>
+            <?php if ($this->shouldDisplayProductCount()): ?>
+                <span>(<?php echo $_item->getCount() ?>)</span>
+            <?php endif; ?>
+        </a>
+    <?php endif; ?>
+<?php endforeach; ?>

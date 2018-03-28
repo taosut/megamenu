@@ -1,0 +1,221 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     base_default
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+/**
+ * @var Mage_Page_Block_Html_Header $this
+ */
+?>
+
+<script type="text/javascript">
+    jQuery("#preloader").fadeOut();
+</script>
+
+<div class="footer-container">
+    <div class="footer">
+        <div class="col-md-3 col-sm-3 text-left">
+            <h3>Thông tin liên hệ</h3>
+            <p class="tracking-order no-padding float-none">Tổng đài tư vấn mua hàng: <a href="tel:02473086336">024 7308
+                    6336 (Bấm 6666)</a>
+            <p class="tracking-order no-padding float-none">Tổng đài hỗ trợ cài đặt: <a href="tel:19001232">19001232</a>
+            </p>
+            <p class="tracking-order no-padding float-none">
+                Hỗ trợ khách hàng: <a href="mailto:hotro@teko.vn">hotro@teko.vn</a>
+            </p>
+            <p class="tracking-order no-padding float-none">
+                Dành cho nhà trường: <a href="mailto:tekshop.edu.vn@teko.vn">tekshop.edu.vn@teko.vn</a>
+            </p>
+
+        </div>
+        <div class="col-md-4 col-sm-3 text-left">
+            <h3>Dịch vụ khách hàng</h3>
+            <p class="tracking-order no-padding float-none"><a onclick="trackOrder()">Kiểm tra đơn hàng</a></p>
+            <p class="tracking-order no-padding float-none"><a href="<?php echo $this->getUrl('policy') ?>">Quy định
+                    chung</a></p>
+            <p class="tracking-order no-padding float-none"><a href="<?php echo $this->getUrl('price-payment') ?>">Giá
+                    sản phẩm và thanh toán</a></p>
+            <p class="tracking-order no-padding float-none"><a href="<?php echo $this->getUrl('logistic') ?>">Vận chuyển
+                    và giao nhận hàng</a></p>
+            <p class="tracking-order no-padding float-none"><a href="<?php echo $this->getUrl('warranty') ?>">Bảo hành,
+                    bảo trì</a></p>
+            <p class="tracking-order no-padding float-none"><a href="<?php echo $this->getUrl('return') ?>">Đổi trả và
+                    hoàn tiền</a></p>
+            <p class="tracking-order no-padding float-none"><a href="<?php echo $this->getUrl('privacy') ?>">Bảo mật
+                    thông tin cá nhân</a></p>
+        </div>
+
+        <div class="col-md-5 col-sm-6 text-left">
+            <h3>Thông tin công ty</h3>
+            <p class="tracking-order no-padding float-none"><a href="<?php echo $this->getUrl('about') ?>">Giới thiệu
+                    Tekshop Education</a></p>
+
+            <div class="fb-page" data-href="https://www.facebook.com/tekshopedu/" data-tabs="page"
+                 data-height="250" data-small-header="true" data-adapt-container-width="true"
+                 data-hide-cover="false" data-show-facepile="true">
+                <blockquote cite="https://www.facebook.com/tekshopedu/" class="fb-xfbml-parse-ignore"><a
+                            href="https://www.facebook.com/tekshopedu/">TekShop</a></blockquote>
+            </div>
+        </div>
+
+    </div>
+    <div class="footer">
+        <div class="col-md-8 col-xs-12 text-left">
+            <p style="margin-top: 5px;text-align: left;">Trụ sở chính: Tầng 1, Tòa nhà số 444 Hoàng Hoa Thám,
+                phường Thụy Khuê, quận Tây Hồ, TP. Hà Nội.
+                <br/>Văn phòng Đà Nẵng: Tầng 02, Tòa nhà Đại Dương Kính, 466 Nguyễn Hữu Thọ, phường Khuê Trung, quận Cẩm
+                Lệ, Đà Nẵng
+                <br/>Văn phòng Hồ Chí Minh: Tầng 7, Tòa nhà số 198 Nguyễn Thị Minh Khai, phường 6, quận 3, TP. Hồ Chí
+                Minh
+            </p>
+            <p style="margin-top: 5px;text-align: left;">© 2017 - Bản quyền của Công Ty Cổ Phần Công Nghệ Teko Việt
+                Nam<br/>
+                Giấy chứng nhận Đăng ký Kinh doanh số 0107705299 do Sở Kế hoạch và Đầu tư Thành phố Hà Nội cấp ngày
+                13/01/2017</p>
+        </div>
+        <div class="col-md-3 col-xs-12 text-left">
+            <a href="http://online.gov.vn/HomePage/CustomWebsiteDisplay.aspx?DocId=36832" target="_blank">
+                <img class="dadangky-img"
+                     src="<?php echo $this->getSkinUrl('images/da-dang-ky.png', array('_secure' => true)); ?>"/>
+            </a>
+        </div>
+    </div>
+</div>
+
+<a href="<?php echo $this->getUrl('buildpc') ?>" target="_self" class="build-pc-btn go-to-buildpc static-btn btn-pulse"
+   title="Xây dựng cấu hình PC"></a>
+<a href="https://www.facebook.com/messages/t/tekshopedu" target="_blank" class="facebook-message"
+   title="Gửi tin nhắn qua Facebook"></a>
+<a href="#" class="scrollToTop"></a>
+
+<?php
+$GA_TRACK_ID = Mage::getModel('core/variable')->setStoreId(Mage::app()->getStore()->getId())->loadByCode('ga_track_id')->getValue('html');
+?>
+
+<script>
+    if (typeof dataLayer !== 'undefined') {
+        dataLayer.push({
+            'gaTrackId': '<?php echo $GA_TRACK_ID; ?>'
+        })
+    }
+</script>
+
+<!-- Google Tag Manager -->
+<script>(function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({
+            'gtm.start': new Date().getTime(), event: 'gtm.js'
+        });
+        var f = d.getElementsByTagName(s)[0],
+            j = d.createElement(s), dl = l != 'dataLayer' ? '&l=' + l : '';
+        j.async = true;
+        j.src =
+            'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+        f.parentNode.insertBefore(j, f);
+    })(window, document, 'script', 'dataLayer', 'GTM-T9QWVDV');</script>
+<!-- End Google Tag Manager -->
+
+<!-- Google Tag Manager (noscript) -->
+<noscript>
+    <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T9QWVDV"
+            height="0" width="0" style="display:none;visibility:hidden"></iframe>
+</noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+<script>
+    (function ($) {
+        $(document).ready(function () {
+
+            var srtop = $('.scrollToTop');
+
+            srtop.css('display', 'none');
+            //Check to see if the window is top if not then display button
+            $(window).scroll(function () {
+                if ($(this).scrollTop() > 100) {
+//                    $('.scrollToTop').fadeIn();
+                    $('.scrollToTop').css('display', 'block');
+                } else {
+//                    $('.scrollToTop').fadeOut();
+                    $('.scrollToTop').css('display', 'none');
+                }
+
+            });
+            //Click event to scroll to top
+            srtop.click(function () {
+                $('html, body').animate({scrollTop: 0}, 800);
+                return false;
+            });
+        });
+    })(jQuery);
+
+</script>
+
+<?php
+if (Mage::getSingleton('customer/session')->isLoggedIn()) {
+    $customerData = Mage::getSingleton('customer/session')->getCustomer();
+    $address = $customerData->getPrimaryBillingAddress();
+
+    echo "<input type='hidden' value='" . $customerData->getId() . "' id='cur-gcafeid'/>";
+    echo "<input type='hidden' value='" . $customerData->getFirstname() . "' id='cur-name'/>";
+    if ($address) {
+        echo "<input type='hidden' value='" . $address->getTelephone() . "' id='cur-phone'/>";
+    }
+
+}
+?>
+
+<?php $storeCode = Mage::app()->getStore()->getCode();
+
+if (!function_exists('isWeekend')) {
+    function isWeekend()
+    {
+        $day = date('D', time());
+        if ($day == 'Sun') {
+            return true;
+        }
+        return false;
+    }
+}
+
+if (!function_exists('isOutOfOfficeHours')) {
+    function isOutOfOfficeHours()
+    {
+
+        date_default_timezone_set("Asia/Ho_Chi_Minh");
+
+        $endHour = 18;
+        $startHour = 9;
+
+        $hour = date('H', time());
+        $min = date('i', time());
+        if (($hour == ($endHour - 1) && $min >= 59) ||
+            ($hour >= $endHour) ||
+            ($hour < ($startHour))
+        ) {
+            return true;
+        }
+        return false;
+    }
+}
+
+?>

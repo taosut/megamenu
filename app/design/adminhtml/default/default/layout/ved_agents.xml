@@ -1,0 +1,47 @@
+<layout>
+    <default>
+        <reference name="head">
+            <action method="addCss">
+                <name>ved_agent/css/font-awesome.min.css</name>
+            </action>
+            <action method="addCss">
+                <name>ved_agent/css/custom.css</name>
+            </action>
+        </reference>
+    </default>
+
+    <adminhtml_agent_account_index>
+        <reference name="head">
+            <action method="addJs">
+                <script>ved_agent/verify-account-index.js</script>
+            </action>
+        </reference>
+    </adminhtml_agent_account_index>
+
+    <adminhtml_agent_achievement_index>
+        <reference name="head">
+            <action method="addJs">
+                <script>ved_agent/custom-save-achievement-index.js</script>
+            </action>
+        </reference>
+    </adminhtml_agent_achievement_index>
+
+    <adminhtml_agent_achievement_edit>
+        <reference name="head">
+            <action method="addJs">
+                <script>ved_agent/custom-save.js</script>
+            </action>
+        </reference>
+    </adminhtml_agent_achievement_edit>
+
+    <adminhtml_agent_gift_new>
+        <reference name="head">
+            <action method="addJs">
+                <script>ved_agent/jquery-3.2.1.min.js</script>
+            </action>
+            <action method="addJs">
+                <script>ved_agent/new-redemption-gift.js</script>
+            </action>
+        </reference>
+    </adminhtml_agent_gift_new>
+</layout>

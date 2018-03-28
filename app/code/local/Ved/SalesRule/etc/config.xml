@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+
+<config>
+    <modules>
+        <Ved_SalesRule>
+            <version>1.1</version>
+        </Ved_SalesRule>
+    </modules>
+<global>
+    <models>
+        <salesrule_resource>
+            <rewrite>
+                <coupon>Ved_SalesRule_Model_Resource_Coupon</coupon>
+            </rewrite>
+        </salesrule_resource>
+    </models>
+    <blocks>
+        <Ved_SalesRule>
+            <class>Ved_SalesRule_Block</class>
+        </Ved_SalesRule>
+        <adminhtml>
+            <rewrite>
+                <promo_quote_edit>Ved_SalesRule_Block_Adminhtml_Promo_Quote_Edit</promo_quote_edit>
+            </rewrite>
+        </adminhtml>
+    </blocks>
+    <resources>
+        <salesrule_setup>
+            <setup>
+                <module>Ved_SalesRule</module>
+            </setup>
+            <connection>
+                <use>core_setup</use>
+            </connection>
+        </salesrule_setup>
+        <salesrule_write>
+            <connection>
+                <use>core_write</use>
+            </connection>
+        </salesrule_write>
+        <salesrule_read>
+            <connection>
+                <use>core_read</use>
+            </connection>
+        </salesrule_read>
+    </resources>
+</global>
+
+<admin>
+    <routers>
+        <adminhtml>
+            <args>
+                <modules>
+                    <Ved_SalesRule before="Mage_Adminhtml">Ved_SalesRule_Adminhtml</Ved_SalesRule>
+                </modules>
+            </args>
+        </adminhtml>
+    </routers>
+</admin>
+
+<adminhtml>
+    <events>
+        <adminhtml_block_salesrule_actions_prepareform>
+            <observers>
+                <ved_salesrule_model_observer>
+                    <type>singleton</type>
+                    <class>Ved_SalesRule_Model_Observer</class>
+                    <method>handleFormCreation</method>
+                </ved_salesrule_model_observer>
+            </observers>
+        </adminhtml_block_salesrule_actions_prepareform>
+    </events>
+</adminhtml>
+
+</config>

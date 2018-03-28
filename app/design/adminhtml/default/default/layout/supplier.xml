@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+  <adminhtml_supplier_index>
+    <reference name="content">
+      <block type="supplier/adminhtml_supplier" name="adminhtml.supplier"/>
+    </reference>
+  </adminhtml_supplier_index>
+  <adminhtml_supplier_grid>
+    <block type="core/text_list" name="root" output="toHtml">
+      <block type="supplier/adminhtml_supplier_grid" name="adminhtml.supplier.grid"/>
+    </block>
+  </adminhtml_supplier_grid>
+</layout>

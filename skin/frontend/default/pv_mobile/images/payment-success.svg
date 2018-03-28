@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="7884 10724 162 144">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #0ea267;
+        font-size: 16px;
+        font-family: OpenSans-Semibold, Open Sans;
+        font-weight: 600;
+      }
+
+      .cls-2, .cls-3 {
+        fill: #fff;
+      }
+
+      .cls-2 {
+        stroke: #0ea267;
+        stroke-width: 5px;
+      }
+
+      .cls-4, .cls-6 {
+        fill: none;
+      }
+
+      .cls-4 {
+        stroke: #038b55;
+        stroke-width: 10px;
+      }
+
+      .cls-5 {
+        stroke: none;
+      }
+    </style>
+  </defs>
+  <g id="Group_2363" data-name="Group 2363" transform="translate(7777 10561)">
+    <text id="Đặt_hàng_thành_công" data-name="Đặt hàng thành công" class="cls-1" transform="translate(107 302)"><tspan x="0" y="0">Đặt hàng thành công</tspan></text>
+    <g id="Group_2362" data-name="Group 2362" transform="translate(-0.5 45)">
+      <g id="Ellipse_12" data-name="Ellipse 12" class="cls-2" transform="translate(131 118)">
+        <circle class="cls-5" cx="53.5" cy="53.5" r="53.5"/>
+        <circle class="cls-6" cx="53.5" cy="53.5" r="51"/>
+      </g>
+      <rect id="Rectangle_33" data-name="Rectangle 33" class="cls-3" width="38" height="38" transform="translate(207 118)"/>
+      <path id="Path_22" data-name="Path 22" class="cls-4" d="M601.7,2398.9l32.5,28.7,63.4-71.9" transform="translate(-453 -2231)"/>
+    </g>
+  </g>
+</svg>

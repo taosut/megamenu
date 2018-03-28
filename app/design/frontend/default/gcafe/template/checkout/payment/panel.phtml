@@ -1,0 +1,262 @@
+<div class="panel panel-default payment">
+    <div class="panel-body">
+        <form class="form-horizontal hide-block" role="form" id="form-payment" action="/checkout/payment/saveOrder" method="post">
+            <input type="hidden" name="region_name" value="<?php  echo $this->info['region_name']; ?>">
+            <input type="hidden" name="city_name" value="<?php  echo $this->info['city_name']; ?>">
+            <input type="hidden" name="current_plan" value="<?php  echo $this->info['current_plan']; ?>">
+            <div class="form-group row">
+                <h4 class="col-lg-12"> Vui lòng bấm vào nút "XÁC NHẬN" để hoàn thành việc mua hàng</h4>
+								<br/><br/><br/>
+								<h4 class="col-lg-12"> Ghi chú:</h4>
+								<h4 class="col-lg-12" style="padding-left: 30px;"> - Đơn hàng của bạn sẽ được giao trong vòng 2-5 ngày</h4>
+            </div>
+            <div class="form-group row row-style-3" style="display:none">
+                <div class="col-lg-1 col-md-1 col-sm-1 col-xs-2">
+                    <label for="default" class="icheck-wrap">
+                        <div class="iradio_square-blue checked" style="position: relative;">
+                            <input checked="" type="radio" name="shipping_plan" value="1" id="plan-1" class="icheck plan" style="position: absolute; top: -20%; left: -20%; display: block; width: 140%; height: 140%; margin: 0px; padding: 0px; border: 0px; opacity: 0; background: rgb(255, 255, 255);">
+                            <ins class="iCheck-helper" style="position: absolute; top: -20%; left: -20%; display: block; width: 140%; height: 140%; margin: 0px; padding: 0px; border: 0px; opacity: 0; background: rgb(255, 255, 255);"></ins>
+                        </div>
+                    </label>
+                </div>
+                <div class="col-lg-11 col-md-11 col-sm-11 col-xs-10">
+                    <label for="plan-1" class="control-label is-large">
+                        <img src="https://vcdn.tikicdn.com/assets/img/sc-standard.png" height="17" width="31" alt="">
+                        Giao hàng tiêu chuẩn (dự kiến giao hàng vào Thứ sáu, 25/03/2016 - Thứ sáu, 25/03/2016)
+                    </label>
+                </div>
+            </div>
+            <div class="form-group row">
+                <h4 class="col-lg-12 is-mt" style="padding-left: 30px;margin-top:0px">- Phương thức: Thanh toán khi nhận hàng (COD)</h4>
+            </div>
+            <div class="form-group row row-style-3 " style="display:none">
+                <div class="col-lg-1 col-md-1 col-sm-1 col-xs-2">
+                    <label for="default" class="icheck-wrap">
+                        <div class="iradio_square-blue checked" style="position: relative;">
+                            <input checked="" type="radio" name="selected_payment_method" value="onepay" id="onepay" class="icheck js-icheck payment-method" style="position: absolute; top: -20%; left: -20%; display: block; width: 140%; height: 140%; margin: 0px; padding: 0px; border: 0px; opacity: 0; background: rgb(255, 255, 255);">
+                            <ins class="iCheck-helper" style="position: absolute; top: -20%; left: -20%; display: block; width: 140%; height: 140%; margin: 0px; padding: 0px; border: 0px; opacity: 0; background: rgb(255, 255, 255);"></ins>
+                        </div>
+                    </label>
+                </div>
+                <div class="col-lg-11 col-md-11 col-sm-11 col-xs-10">
+                    <label for="onepay" class="control-label is-large"> Thanh toán trực tiếp khi giao hàng.</label>
+                </div>
+            </div>
+
+            <input type="hidden" name="access_key" value="<?php  echo $this->token['access_key']; ?>">
+            <input type="hidden" name="profile_id" value="<?php  echo $this->token['profile_id']; ?>">
+            <input type="hidden" name="transaction_uuid" value="<?php  echo $this->token['transaction_uuid']; ?>">
+            <input type="hidden" name="reference_number" value="<?php  echo $this->token['reference_number']; ?>">
+            <input type="hidden" name="device_fingerprint_id" value="<?php  echo $this->token['device_fingerprint_id']; ?>">
+            <input type="hidden" name="customer_ip_address" value="<?php  echo $this->token['customer_ip_address']; ?>">
+            <input type="hidden" name="signed_date_time" value="<?php  echo $this->token['signed_date_time']; ?>">
+            <input type="hidden" name="locale" value="<?php  echo $this->token['locale']; ?>">
+            <input type="hidden" name="currency" value="<?php  echo $this->token['currency']; ?>">
+            <input type="hidden" name="amount" value="<?php  echo $this->token['amount']; ?>">
+            <input type="hidden" name="signature" value="<?php  echo $this->token['signature']; ?>">
+            <!-- Khai bao cong thanh toan ma khach hang se dung, dua vao customer id-->
+            <input type="hidden" name="is_use_gateway_trial" value="1">
+
+            <div class="form-group row row-style-3" style="display:none">
+                <div class="col-lg-1 col-md-1 col-sm-1 col-xs-2">
+                    <label for="icheck-1" class="icheck-wrap">
+                        <div class="icheckbox_square-blue checked" style="position: relative;">
+                            <input checked="checked" name="infoUserBilling[no_change]" data-childclass="infoUserBilling" type="checkbox" id="icheck-1" class="icheck js-icheck"  style="position: absolute; top: -20%; left: -20%; display: block; width: 140%; height: 140%; margin: 0px; padding: 0px; border: 0px; opacity: 0; background: rgb(255, 255, 255);">
+                            <ins class="iCheck-helper" style="position: absolute; top: -20%; left: -20%; display: block; width: 140%; height: 140%; margin: 0px; padding: 0px; border: 0px; opacity: 0; background: rgb(255, 255, 255);"></ins>
+                        </div>
+                    </label>
+                </div>
+
+                <div class="col-lg-11 col-md-11 col-sm-11 col-xs-10">
+                    <label for="icheck-1" class="control-label is-large">Sử dụng Họ tên &amp; Số điện thoại của địa chỉ giao hàng</label>
+                </div>
+            </div>
+
+            <div class="form-group row row-style-3 js-payment-sub" style="display: none;" id="change_shipping_address">
+                <div class="col-lg-11 col-lg-offset-1 col-md-12 col-sm-12 col-xs-12">
+                    <div class="panel panel-default payment-sub">
+                        <div class="panel-body">
+                            <h5>Nếu bạn gửi hàng cho người khác, vui lòng nhập vào Họ tên &amp; Số điện thoại của chính bạn để Gcafe Shop tiện liên lạc.</h5>
+                            <div class="form-group row row-style-4">
+                                <label for="full_name" class="col-lg-2 control-label visible-lg-block">Họ và Tên</label>
+                                <div class="col-lg-6">
+                                    <input type="text" name="infoUserBilling[full_name]" value="Nguyen Van C" placeholder="Họ và Tên" id="full_name" class="form-control infoUserBilling" data-error="Vui lòng nhập họ tên" required="required">
+                                </div>
+                            </div>
+                            <div class="form-group row row-style-4 end">
+                                <label for="telephone" class="col-lg-2 control-label visible-lg-block">Số điện thoại</label>
+                                <div class="col-lg-6">
+                                    <input type="text" name="infoUserBilling[telephone]" value="0904567987" placeholder="Số điện thoại" id="telephone" class="form-control infoUserBilling" data-error="Vui lòng nhập số điện thoại">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group row row-style-3">
+                <div class="col-lg-1 col-md-1 col-sm-1 col-xs-2">
+                    <label for="icheck-2" class="icheck-wrap">
+                        <div class="icheckbox_square-blue " style="position: relative;">
+                            <input type="checkbox" id="icheck-2" name="infoOrderCompany[is_used]" value = '0' data-childclass="infoOrderCompany" class="icheck js-icheck" style="position: absolute; top: -20%; left: -20%; display: block; width: 140%; height: 140%; margin: 0px; padding: 0px; border: 0px; opacity: 0; background: rgb(255, 255, 255);">
+                            <ins class="iCheck-helper" style="position: absolute; top: -20%; left: -20%; display: block; width: 140%; height: 140%; margin: 0px; padding: 0px; border: 0px; opacity: 0; background: rgb(255, 255, 255);"></ins>
+                        </div>
+                    </label>
+                </div>
+                <div class="col-lg-11 col-md-11 col-sm-11 col-xs-10">
+                    <label for="icheck-2" class="control-label is-large">
+                        Yêu cầu xuất hóa đơn đỏ cho đơn đặt hàng này
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group row row-style-3 js-payment-sub" style="display: none;" id="vat">
+                <div class="col-lg-11 col-lg-offset-1 col-md-12 col-sm-12 col-xs-12">
+                    <div class="panel panel-default payment-sub">
+                        <div class="panel-body">
+                            <div class="form-group row row-style-4" id="tax_name">
+                                <label for="company" class="col-lg-3 control-label visible-lg-block">Tên công ty</label>
+                                <div class="col-lg-6">
+                                    <input type="text" name="infoOrderCompany[tax_company_name]" placeholder="Nhập tên công ty đầy đủ" id="company" class="form-control infoOrderCompany hasNote" value="" data-error="Vui lòng nhập tên công ty">
+                                </div>
+                                <span style="display: none; font-size: 11px; color: red;">Vui lòng chỉ nhập Tên công ty.<br>Không nhập lại Loại hình doanh nghiệp</span>
+                            </div>
+
+                            <div class="form-group row row-style-4">
+                                <label for="tax" class="col-lg-3 control-label visible-lg-block">Mã số thuế</label>
+                                <div class="col-lg-6">
+                                    <input type="tel" name="infoOrderCompany[tax_company_code]" placeholder="Mã số thuế" id="tax" class="form-control infoOrderCompany" value="" data-error="Vui lòng nhập mã số thuế">
+                                </div>
+                            </div>
+
+
+                            <div class="form-group row row-style-4 ">
+                                <label for="street" class="col-lg-3 control-label visible-lg-block">Địa chỉ</label>
+                                <div class="col-lg-6">
+                                    <textarea class="form-control infoOrderCompany hasNote" name="infoOrderCompany[tax_company_address]" id="street" cols="30" rows="4" data-error="Vui lòng nhập địa chỉ" placeholder="Nhập địa chỉ công ty (bao gồm Phường/Xã, Quận/Huyện, Tỉnh/Thành phố nếu có)"></textarea>
+                                </div>
+                                <span style="display: none; font-size: 11px; color: red;">Vui lòng chỉ nhập Số nhà, Tên đường,<br>Tên phường (nếu có).<br>Không nhập lại Quận/Huyện và<br>Tỉnh/Thành phố</span>
+                            </div>
+                            <label style="margin-left: 15px" class="control-label"><i>Lưu ý: Gcafe Shop &nbsp; </i> <b style="color: red;">CHỈ XUẤT HÓA ĐƠN ĐỎ 1 LẦN DUY NHẤT </b> <i>theo thông tin bạn đã nhập</i></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row end">
+                <div class="col-lg-6">
+                    <button type="button" id="btn-placeorder" class="btn btn-block btn-default btn-checkout">XÁC NHẬN</button>
+                    <p class="note">Bạn vui lòng kiểm tra lại đơn hàng trước khi Đặt Mua</p>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal Start here-->
+<div class="modal fade bs-example-modal-sm" id="myPleaseWait" tabindex="-1"
+     role="dialog" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">
+                    <span class="glyphicon glyphicon-time">
+                    </span><?php echo $this->__('Loading next step...') ?>
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="progress">
+                    <div class="progress-bar progress-bar-info
+                    progress-bar-striped active"
+                         style="width: 100%">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal ends Here -->
+
+<script>
+    $j("#icheck-1").change(function() {
+        if(this.checked) {
+            $j(this).parent().addClass("checked");
+            $j('#change_shipping_address').hide();
+        }else{
+            $j(this).parent().removeClass("checked");
+            $j('#change_shipping_address').show();
+        }
+    });
+    $j("#icheck-2").change(function() {
+        if(this.checked) {
+            $j(this).parent().addClass("checked");
+            $j(this).val(1);
+            $j('#vat').show();
+        }else{
+            $j(this).parent().removeClass("checked");
+            $j(this).val(0);
+            $j('#vat').hide();
+        }
+    });
+    $j(".btn-checkout").click(function(event){
+			$j('#myPleaseWait').modal('show');
+        url = "<?php echo $this->getUrl('checkout/payment/saveOrder');  ?>";
+        $j.ajax({
+            url: url,
+            type: "POST",
+            data: $j("#form-payment").serialize(),
+            dataType: "json"
+        }).done(function(data) {
+					$j('#myPleaseWait').modal('hide');
+            if(data.redirect != null){
+                window.location.href = data.redirect;
+            }
+            if(data.message != null){
+                alert(data.message);
+            }
+            if(data.full_name){
+                if($j("#full_name").siblings(".help-block").length==0){
+                    $j("#full_name").parent().append('<span class="help-block" >' + data.full_name  +'</span>');
+                }
+                if(!$j('[for="full_name"]').parent().hasClass('has-error')){
+                    $j('[for="full_name"]').parent().addClass('has-error');
+                }
+            }
+            if(data.telephone){
+                if($j("#telephone").siblings(".help-block").length==0){
+                    $j("#telephone").parent().append('<span class="help-block" >' + data.telephone  +'</span>');
+                }
+                if(!$j('[for="telephone"]').parent().hasClass('has-error')){
+                    $j('[for="telephone"]').parent().addClass('has-error');
+                }
+            }
+            if(data.company){
+                if($j("#company").siblings(".help-block").length==0){
+                    $j("#company").parent().append('<span class="help-block" >' + data.company  +'</span>');
+                }
+                if(!$j('[for="company"]').parent().hasClass('has-error')){
+                    $j('[for="company"]').parent().addClass('has-error');
+                }
+            }
+            if(data.tax){
+                if($j("#tax").siblings(".help-block").length==0){
+                    $j("#tax").parent().append('<span class="help-block" >' + data.tax  +'</span>');
+                }
+                if(!$j('[for="tax"]').parent().hasClass('has-error')){
+                    $j('[for="tax"]').parent().addClass('has-error');
+                }
+            }
+            if(data.street){
+                if($j("#street").siblings(".help-block").length==0){
+                    $j("#street").parent().append('<span class="help-block" >' + data.street  +'</span>');
+                }
+                if(!$j('[for="street"]').parent().hasClass('has-error')){
+                    $j('[for="street"]').parent().addClass('has-error');
+                }
+            }
+            if(data.reset){
+                alert("Reset");
+            }
+
+        });
+    });
+</script>

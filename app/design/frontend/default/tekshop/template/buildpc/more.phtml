@@ -1,0 +1,35 @@
+<?php
+$listPC = Mage::registry('myPcs');
+?>
+
+<?php foreach ($listPC as $_myPC): ?>
+    <div class="col-md-12 col-xs-12 bp-selected-item wishlist-show list-bp-hold"
+         style="padding-right: 0!important;" data-id='<?php echo $_myPC->getId() ?>'>
+        <div class="col-md-2 col-xs-2 res-fpc">
+            <div class="bp-mypc-detail">
+                <div class="numberCircle">
+                    <?php echo $_myPC->getAllItem()->count(); ?>
+                </div>
+                <span class="sp-tips">Sản phẩm</span>
+            </div>
+        </div>
+        <div class="col-md-8 col-xs-8">
+            <div class="bp-mypc-name">
+                <a href='<?php echo Mage::getUrl('buildpc') . '?mypc=' . $_myPC->getId(); ?>'
+                   target="_blank" title="<?php echo $_myPC->getName(); ?>">
+                    <?php echo $_myPC->getName(); ?>
+                </a>
+            </div>
+            <div class="bp-product-regular-price">
+                <?php echo number_format($_myPC->getPrice(), 0, ",", ".") . ""; ?><span>đ</span>
+            </div>
+        </div>
+        <div class="col-md-2 col-xs-2 a-right no-padding" style="padding-right: 30px!important;">
+            <button myPC-id="<?php echo $_myPC->getId() ?>" alt="Xóa" title="Xóa khỏi danh sách"
+                    type="button" class="remove-myPC" aria-hidden="true"
+                    deluminate_imagetype="png"></button>
+        </div>
+        <div class="bp-addition-content" id="list<?php echo $_myPC->getId() ?>"
+             style="display:none"></div>
+    </div>
+<?php endforeach; ?>

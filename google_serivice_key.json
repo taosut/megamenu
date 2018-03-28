@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "tekshop-live",
+  "private_key_id": "67c5f50debf97afc7fd7617b484e0e17027ceb0f",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCf8vmCyqXwZ1wc\nekiaCLg8BbOAIyiI4F4Dp6qJLlOEb9tS3Hyh6ojqmr1u1lz+vzKQRkGi/OWzBnbf\n6MNkjKo4POjQ0Z1sUTF7fTctw0z6AqyjYpMGtzO4CgW8JnOxqjOUnTnPqlYBVgrU\nsRQcLw78FYrbjPgyUrsK9RyRRyeP8jfoXDXLh6q1aKJkMQKb7e+ppHL/7Btz0vLN\n+2jEGA6YHi89kgBWPAGSrK5k7dHohKw8YmOLsrXtiWNFYD1OGhXXZrQdnYUV15xU\npl48DRt37r+ImpLApNSZAW7zUBCyRpWXmmcx5fuDBAin9jICmF7CdkJ4DL8tJODr\nHuh56CEBAgMBAAECggEAGRpzjhM7kXxLYN3RVLmPHr5/UlpSQ49BOh4fvgmDCpta\npwnbVrc+V2HDXuiubj34U9vu88Nw0pTuZcx8lCSel5Z5rMJlTGl+1GSN2zUWePuf\n+EGhlTF+IMGT7lhzmnv9vfKiLuVLO8jzCLglEZpSJf7EjRo2HwHMgNcA7Y0nGKh6\nD5pRl1ls8dHSefZrA7R43u+JDWVH+W5+X/1552z38X7jvU89i2EGEoAR1lDoJB72\noKBDUHllUKxbchcJRmZZMJTkAvuQ3ded5DFs0UXacgJE/KmT45wkIhYrthy1K0bO\nX/cu47BbPo6OnlFLHMuKWbq7TBXrQmloO4vxqM1p9QKBgQDRPVqjXFchYMUxOUsX\nc/ZEoq2uaQuKCgSnuAU16RAzISXDPhixVwkOp+yZt7rvW/XEWoF+ZJnRYgz8MRZ6\nS0ZGPQEFL5J9Y6kjeG4bBvQVRyD9t8GA27enHd7yZ/Wxnzrn779XcUepNsRoLThZ\nqyAWciOzCcAwG8EsTwJcg/G0VQKBgQDDsbKwN0BofwYOe4vzzUqqA+lChBcfDNjR\n4kpAMsxKCLxfLN2FUE9XjeST+SJ4y7xgryOhNOSRvPRR9mDjBp6u/oqg4IbLG0TJ\nC1OPHptBcR4GCaeu2c6AnDK5qgllF3bIlbdv0419+T/T7X/0YHA++UcxEDOZaD9L\nusOO0rZF/QKBgQCruotVYEgyoNW3HKrAyO/qTQn3B0ftN2Oys5mzMWGWVTJFGAX0\nJtbMLI5Ha0AFi5geW5nEPpTwAGVf5nnoTTeUFiVsOCsmtlDvR7w2enKBtCsjkVlD\nhREqG54Lnb9M1L7n9SE5h0OlYcm5JsQE9CoVwgACxZHy6hSVZRMvEyuhMQKBgAIw\nUZxQ8eJ5UTsGPLl8WVJvesNosM2DGkW2rzfqmYhWcqzp1oxwKoMDLkRNbApH1RKL\nwu1BpzDOGTl1dP31C/9PD4PfHwLUij9pZgTaxcfEmR5eK0b0Xq/nj1WuRi6gRY7W\nxdd1WUbIa+NV67FzBq5doWM2GC2mEdcp/pfxWWKNAoGBAMx2/hsPEmHkIu+av4vQ\nz/Y82j8M/Duw1QaiGvn8b5zew49Yur3CPn+K9Oqcz1KWJnIbPibTck1zSjyX8fJs\nDj3z+epn9+AwRMB55+go2FD/HTQOTIzBbh+HFokAyeX5+AuMDW79BzSTzLPEXQFQ\nhCBhR68lXTdR2XbFBIKsKBLr\n-----END PRIVATE KEY-----\n",
+  "client_email": "teko-service-key@tekshop-live.iam.gserviceaccount.com",
+  "client_id": "108785896325244932786",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://accounts.google.com/o/oauth2/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/teko-service-key%40tekshop-live.iam.gserviceaccount.com"
+}

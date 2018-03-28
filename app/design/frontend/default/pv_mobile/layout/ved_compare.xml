@@ -1,0 +1,8 @@
+<layout>
+    <compare_index_compare>
+        <reference name="content">
+            <block type="compare/index" name="compare.index.compare" template="compare/index.phtml">
+            </block>
+        </reference>
+    </compare_index_compare>
+</layout>

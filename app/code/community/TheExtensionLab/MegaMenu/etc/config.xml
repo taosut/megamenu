@@ -1,0 +1,217 @@
+<?xml version="1.0"?>
+<!--
+* @category    TheExtensionLab
+* @package     TheExtensionLab_MegaMenu
+* @copyright   Copyright (c) 2015 TheExtensionLab (http://www.theextensionlab.com)
+* @license     Open Software License (OSL 3.0)
+* @author      James Anelay @ TheExtensionLab <james@theextensionlab.com>
+-->
+<config>
+    <modules>
+        <TheExtensionLab_MegaMenu>
+            <version>1.5.7</version>
+        </TheExtensionLab_MegaMenu>
+    </modules>
+
+    <global>
+        <blocks>
+            <theextensionlab_megamenu>
+                <class>TheExtensionLab_MegaMenu_Block</class>
+            </theextensionlab_megamenu>
+        </blocks>
+
+        <helpers>
+            <theextensionlab_megamenu>
+                <class>TheExtensionLab_MegaMenu_Helper</class>
+            </theextensionlab_megamenu>
+        </helpers>
+
+        <models>
+            <theextensionlab_megamenu>
+                <class>TheExtensionLab_MegaMenu_Model</class>
+                <resourceModel>theextensionlab_megamenu_resource</resourceModel>
+            </theextensionlab_megamenu>
+
+            <theextensionlab_megamenu_resource>
+                <class>TheExtensionLab_MegaMenu_Model_Resource</class>
+            </theextensionlab_megamenu_resource>
+        </models>
+
+        <resources>
+            <theextensionlab_megamenu_setup>
+                <setup>
+                    <module>TheExtensionLab_MegaMenu</module>
+                    <class>TheExtensionLab_MegaMenu_Model_Resource_Setup</class>
+                </setup>
+            </theextensionlab_megamenu_setup>
+        </resources>
+
+        <events>
+            <page_block_html_topmenu_gethtml_before>
+                <observers>
+
+                    <!-- Disable default topmenu observer -->
+                    <catalog_add_topmenu_items>
+                        <type>disabled</type>
+                    </catalog_add_topmenu_items>
+
+                    <!-- Add our own -->
+                    <theextensionlab_megamenu>
+                        <class>theextensionlab_megamenu/observer</class>
+                        <method>pageBlockHtmlTopmenuGetHtmlBefore</method>
+                    </theextensionlab_megamenu>
+                </observers>
+            </page_block_html_topmenu_gethtml_before>
+
+            <catalog_category_collection_load_before>
+                <observers>
+                    <theextensionlab_megamenu>
+                        <class>theextensionlab_megamenu/observer</class>
+                        <method>catalogCategoryCollectionLoadBefore</method>
+                    </theextensionlab_megamenu>
+                </observers>
+            </catalog_category_collection_load_before>
+
+            <catalog_category_flat_loadnodes_before>
+                <observers>
+                    <theextensionlab_megamenu>
+                        <class>theextensionlab_megamenu/observer</class>
+                        <method>catalogCategoryFlatLoadnodesBefore</method>
+                    </theextensionlab_megamenu>
+                </observers>
+            </catalog_category_flat_loadnodes_before>
+
+            <cms_wysiwyg_config_prepare>
+                <observers>
+                    <theextensionlab_megamenu>
+                        <class>theextensionlab_megamenu/observer</class>
+                        <method>enableWysiwygInWysiwygConfig</method>
+                    </theextensionlab_megamenu>
+                </observers>
+            </cms_wysiwyg_config_prepare>
+
+            <cms_page_prepare_save>
+                <observers>
+                    <theextensionlab_megamenu>
+                        <class>theextensionlab_megamenu/observer</class>
+                        <method>cmsPagePrepareSave</method>
+                    </theextensionlab_megamenu>
+                </observers>
+            </cms_page_prepare_save>
+        </events>
+
+        <theextensionlab_megamenu>
+            <menu>
+                <tempate_filter>theextensionlab_megamenu/template_filter</tempate_filter>
+                <widget_prefetcher>theextensionlab_megamenu/prefetcher</widget_prefetcher>
+            </menu>
+        </theextensionlab_megamenu>
+
+    </global>
+
+    <theextensionlab_megamenu>
+        <extra_attributes>
+            <include_in_menu/>
+            <menu_section_1_column_width/>
+            <menu_section_2_column_width/>
+            <menu_section_3_column_width/>
+            <menu_section_4_column_width/>
+            <menu_section_5_column_width/>
+            <menu_section_6_column_width/>
+            <menu_section_7_column_width/>
+            <menu_section_1_content/>
+            <menu_section_2_content/>
+            <menu_section_3_content/>
+            <menu_section_4_content/>
+            <menu_section_5_content/>
+            <menu_section_6_content/>
+            <menu_section_7_content/>
+            <menu_link_type/>
+            <menu_link/>
+            <menu_name/>
+            <image/>
+            <menu_dropdown_width/>
+            <menu_dropdown_type/>
+        </extra_attributes>
+    </theextensionlab_megamenu>
+
+    <adminhtml>
+        <events>
+            <adminhtml_block_html_before>
+                <observers>
+                    <theextensionlab_megamenu>
+                        <class>theextensionlab_megamenu/observer</class>
+                        <method>adminhtmlBlockHtmlBefore</method>
+                    </theextensionlab_megamenu>
+                </observers>
+            </adminhtml_block_html_before>
+        </events>
+        <translate>
+            <modules>
+                <theextensionlab_megamenu>
+                    <files>
+                        <default>TheExtensionLab_MegaMenu.csv</default>
+                    </files>
+                </theextensionlab_megamenu>
+            </modules>
+        </translate>
+    </adminhtml>
+
+    <frontend>
+        <layout>
+            <updates>
+                <theextensionlab_megamenu>
+                    <file>theextensionlab/megamenu.xml</file>
+                </theextensionlab_megamenu>
+            </updates>
+        </layout>
+        <translate>
+            <modules>
+                <theextensionlab_megamenu>
+                    <files>
+                        <default>TheExtensionLab_MegaMenu.csv</default>
+                    </files>
+                </theextensionlab_megamenu>
+            </modules>
+        </translate>
+    </frontend>
+
+    <adminhtml>
+        <layout>
+            <updates>
+                <theextensionlab_megamenu>
+                    <file>theextensionlab/megamenu.xml</file>
+                </theextensionlab_megamenu>
+            </updates>
+        </layout>
+    </adminhtml>
+
+    <default>
+        <catalog>
+            <navigation>
+                <include_responsive_styles>1</include_responsive_styles>
+                <sections_count>7</sections_count>
+            </navigation>
+        </catalog>
+    </default>
+
+    <admin>
+        <routers>
+            <adminhtml>
+                <args>
+                    <modules>
+                        <theextensionlab_megamenu before="Mage_Adminhtml">TheExtensionLab_MegaMenu_Adminhtml</theextensionlab_megamenu>
+                    </modules>
+                </args>
+            </adminhtml>
+        </routers>
+    </admin>
+
+    <phpunit>
+        <suite>
+            <modules>
+                <TheExtensionLab_MegaMenu/>
+            </modules>
+        </suite>
+    </phpunit>
+</config>

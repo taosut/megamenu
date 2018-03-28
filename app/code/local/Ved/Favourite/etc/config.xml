@@ -1,0 +1,33 @@
+
+<config>
+    <modules>
+        <Ved_Favourite>
+            <version>1.0.0</version>
+        </Ved_Favourite>
+    </modules>
+    <frontend>
+        <routers>
+            <favourite>
+                <use>standard</use>
+                <args>
+                    <module>Ved_Favourite</module>
+                    <frontName>favourite</frontName>
+                </args>
+            </favourite>
+        </routers>
+        <layout>
+            <updates>
+                <favourite>
+                    <file>ved_favourite.xml</file>
+                </favourite>
+            </updates>
+        </layout>
+    </frontend>
+    <global>
+        <blocks>
+            <favourite>
+                <class>Ved_Favourite_Block</class>
+            </favourite>
+        </blocks>
+    </global>
+</config>

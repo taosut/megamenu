@@ -1,0 +1,48 @@
+<?php
+$productCollection = Mage::registry('products');
+?>
+
+<?php foreach ($productCollection as $_product): ?>
+    <div class="col-md-12 col-xs-12 bp-selected-item wishlist-show">
+        <div class="col-md-2 col-xs-2 a-center no-padding">
+            <img class="bp-product-image"
+                 src="<?php echo $this->helper('catalog/image')->init($_product, 'small_image')->resize(150, 150); ?>"
+                 alt="<?php echo $this->escapeHtml($this->getImageLabel($_product, 'small_image')) ?>"
+                 title="<?php echo $this->escapeHtml($this->getImageLabel($_product, 'small_image')) ?>"
+            />
+        </div>
+        <div class="col-md-7 col-xs-8">
+            <div class="bp-product-name">
+                <a href="<?php echo $_product->getProductUrl() ?>"
+                   data-name="<?php echo $_product->getName() ?>"
+                   data-id="<?php echo $_product->getId() ?>"
+                   data-price="<?php echo $_product->getFinalPrice() ?>"
+                   target="_blank"><?php echo $_product->getName(); ?></a>
+            </div>
+            <div class="bp-product-old-price">
+                <?php if ($_product->getPrice() != $_product->getFinalPrice()): ?>
+                    <?php echo number_format($_product->getPrice(), 0, ",", ".") . " đ"; ?>
+                <?php endif; ?>
+            </div>
+            <div class="bp-product-regular-price">
+                <?php echo number_format($_product->getFinalPrice(), 0, ",", ".") . " đ"; ?>
+            </div>
+        </div>
+        <div class="col-md-3 col-xs-2 a-right no-padding">
+            <button type="button" class="btn btn-success bp-change-btn wish-add-to-cart"
+                    product-id="<?php echo $_product->getId() ?>" style="margin-top: 10%">
+                <img class="bp-ajax-loader-customize bp-ajax-8059 loading" title="Đang tải"
+                     src="http://tekshop.vn/skin/frontend/default/tekshop/images/ajax-loader.gif" width="14"
+                     height="14" style="display: none;">
+                <span class="hidden-mobile display-inline">Thêm <span
+                            class="hidden-1200">vào giỏ hàng&nbsp;</span>
+                        <i class="fa fa-angle-right bp-i-8059"></i>
+                    </span>
+                <i class="fa fa-plus display-mobile"></i>
+            </button>
+                <button product-id="<?php echo $_product->getId() ?>" alt="Xóa" title="Xóa khỏi danh sách"
+                        type="button" class="remove-wishlist" aria-hidden="true"
+                        deluminate_imagetype="png"></button>
+        </div>
+    </div>
+<?php endforeach; ?>

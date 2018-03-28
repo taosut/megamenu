@@ -1,0 +1,178 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     default_default
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<?php $_order = $this->getOrder() ?>
+<div class="grid np">
+    <div class="hor-scroll">
+        <table cellspacing="0" class="data order-tables">
+            <col width="400px">
+            <col/>
+            <col width="1"/>
+            <col width="1"/>
+            <col width="1"/>
+            <col width="1"/>
+            <col width="1"/>
+            <col width="1"/>
+            <col width="1"/>
+            <col width="1"/>
+            <col width="1"/>
+            <thead>
+            <tr class="headings">
+                <th><?php echo $this->helper('sales')->__('Product') ?></th>
+                <th><?php echo "Đặt kho" ?></th>
+                <th><span class="nobr"><?php echo $this->helper('sales')->__('Item Status') ?></span></th>
+                <th><span class="nobr"><?php echo $this->helper('sales')->__('Original Price') ?></span></th>
+                <th><?php echo $this->helper('sales')->__('Price') ?></th>
+                <th class="a-center"><?php echo $this->helper('sales')->__('Qty') ?></th>
+                <th><?php echo $this->helper('sales')->__('Subtotal') ?></th>
+                <th><span class="nobr"><?php echo $this->helper('sales')->__('Final Price') ?></span></th>
+                <th><span class="nobr"><?php echo $this->helper('sales')->__('Discount Amount') ?></span></th>
+                <th class="last"><span class="nobr"><?php echo $this->helper('sales')->__('Row Total') ?></span></th>
+            </tr>
+            </thead>
+            <?php $_items = $this->getItemsCollection() ?>
+            <?php $i = 0;
+            foreach ($_items as $_item): ?>
+                <?php if ($_item->getParentItem()) continue; else $i++; ?>
+                <tbody class="<?php echo $i % 2 ? 'even' : 'odd' ?>">
+                <?php echo $this->getItemHtml($_item) ?>
+                <?php echo $this->getItemExtraInfoHtml($_item) ?>
+                </tbody>
+            <?php endforeach; ?>
+        </table>
+    </div>
+    <div id="popup-view-warehouse" class="modal fade" tabindex="-1" style="padding-top: 100px;">
+        <div class="modal-dialog" style="width:800px">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h2 class="modal-title a-center">TỒN KHO SẢN PHẨM</h2>
+                </div>
+                <div style="padding:5px; overflow-x: auto;">
+                    <div class="grid">
+                        <div class="hor-scroll">
+                            <table cellspacing="0" class="data order-tables" id="popup-content">
+                                <colgroup>
+                                    <col width="400px">
+                                    <col width="400px">
+                                </colgroup>
+                                <thead style="font-size: 13px;">
+                                <tr class="headings">
+                                    <th class="a-center"><h3>Kho</h3></th>
+                                    <th class="a-center"><h3>Số lượng tồn kho</h3></th>
+                                </tr>
+                                </thead>
+                                <tbody class="a-center" id="view-warehouse-content">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br/>
+<style>
+    #popup-content {
+        text-align: center;
+        font-size: 16px;
+    }
+    .instock_info {
+        margin-top: 5px;
+    }
+</style>
+<script type="text/javascript">
+    $j(document).ready(function () {
+        var url_api = "<?= Mage::getConfig()->getNode('global/phongvu_api_url') . 'product/in-stock-quantity?product_skus='?>";
+        <?php foreach ($_items as $_item): ?>
+            url_api += '<?=$_item->getWarehouseSku()?>,';
+        <?php endforeach;?>
+        url_api = url_api.substring(0, url_api.length - 1);
+        $j.ajax({
+            url: url_api
+        }).done(function (response) {
+            <?php foreach ($_items as $_item): ?>
+                var total_instock = 0;
+                var sku = '<?=$_item->getWarehouseSku()?>';
+                for (var i = 0; i < response.data[sku].length; i++) {
+                    total_instock += response.data[sku][i].inventory;
+                }
+                var html = '<div class="instock_info">Tổng tồn kho: ' + total_instock + '</div>';
+                var item_qty = <?= $_item->getQtyOrdered()?>;
+                if (total_instock >= item_qty) {
+                    html += '<div>Trạng thái: <b>Đủ hàng</b></div>';
+                }
+                else {
+                    html += '<div>Trạng thái: <b style="color: red;">Không đủ hàng</b></div>';
+                }
+                $j('#instock_pv_<?= $_item->getWarehouseSku()?>').append(html);
+            <?php endforeach;?>
+        });
+
+        $j('.view-warehouse').click(function () {
+            var phongvu_url_api = "<?= Mage::getConfig()->getNode('global/phongvu_api_url') . 'product/in-stock-quantity'?>";
+            var sku = $j(this).data('sku');
+            $j.ajax({
+                url: phongvu_url_api,
+                data: {
+                    product_skus: sku
+                }
+            }).done(function (response) {
+                var html = '';
+                if (response.data[sku].length > 0) {
+                    html = "<colgroup>\n" +
+                        "<col width=\"400px\">\n" +
+                        "<col width=\"400px\">\n" +
+                        "</colgroup>\n" +
+                        "<thead style=\"font-size: 13px;\">\n" +
+                        "<tr class=\"headings\">\n" +
+                        "<th class=\"a-center\"><h3>Kho</h3></th>\n" +
+                        "<th class=\"a-center\"><h3>Số lượng tồn kho</h3></th>\n" +
+                        "</tr>\n" +
+                        "</thead>\n" +
+                        "<tbody class=\"a-center\" id=\"view-warehouse-content\">\n" +
+                        "</tbody>";
+                    $j('#popup-content').empty();
+                    $j('#popup-content').append(html);
+                    html = '';
+                    for (var i = 0; i < response.data[sku].length; i++) {
+                        html += '<tr><td>' + response.data[sku][i].store_name + '</td>'
+                            + '<td>' + response.data[sku][i].inventory + '</td></tr>';
+                    }
+                    $j('#view-warehouse-content').empty();
+                    $j('#view-warehouse-content').append(html);
+                }
+                else {
+                    html = "Sản phẩm không tồn tại hoặc hết hàng!";
+                    $j('#popup-content').empty();
+                    $j('#popup-content').append(html);
+                }
+                $j('#popup-view-warehouse').modal('show');
+            });
+        });
+    });
+</script>

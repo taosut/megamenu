@@ -1,0 +1,110 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     base_default
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<?php
+/**
+ * Cart cross sell items template
+ *
+ * @see Mage_Checkout_Block_Cart_Crosssell
+ */
+?>
+<?php
+$laptopAttributeSetId = 29;
+$vgaAttributeSetId = 47;
+$mainboardAttributeSetId = 46;
+$buildpcAttributeSetId = 62;
+$cpuAttributeSetId = 48;
+?>
+<?php if ($this->getItems()->count()): ?>
+    <div class="col-md-12">
+        <div class="related-products-title">Khách hàng cũng quan tâm</div>
+        <div class="row related-products">
+            <?php foreach ($this->getItems() as $_item): ?>
+                <?php
+                $oldPrice = $_item->getPrice();
+                $finalPrice = $_item->getFinalPrice();
+                ?>
+                <div class="col-md-3">
+                    <img class="related-product-img" alt="<?php echo $this->escapeHtml($_item->getName()) ?>"
+                         src="<?php echo $this->helper('catalog/image')->init($_item, 'thumbnail')->resize(300); ?>">
+                    <a class="related-product-name" href="<?php echo $_item->getProductUrl(); ?>" target="_blank">
+                        <?php echo $this->escapeHtml($_item->getName()) ?>
+                    </a>
+                    <div class="related-product-rate">
+<!--                        <img class="star-icon"-->
+<!--                             src="--><?php //echo $this->getSkinUrl('images/icon_Star.svg'); ?><!--"/>-->
+<!--                        <img class="star-icon"-->
+<!--                             src="--><?php //echo $this->getSkinUrl('images/icon_Star.svg'); ?><!--"/>-->
+<!--                        <img class="star-icon"-->
+<!--                             src="--><?php //echo $this->getSkinUrl('images/icon_Star.svg'); ?><!--"/>-->
+<!--                        <img class="star-icon"-->
+<!--                             src="--><?php //echo $this->getSkinUrl('images/icon_Star.svg'); ?><!--"/>-->
+<!--                        <img class="star-icon"-->
+<!--                             src="--><?php //echo $this->getSkinUrl('images/icon_Star.svg'); ?><!--"/>-->
+                    </div>
+                    <div class="related-product-final-price"><?php echo number_format($finalPrice, 0, ",", ".") . " ₫"; ?></div>
+                    <div class="related-product-old-price">
+                        <?php if ($oldPrice != $finalPrice) : ?>
+                            <?php echo number_format($oldPrice, 0, ",", ".") . " ₫"; ?>
+                        <?php endif; ?>
+                    </div>
+                    <?php
+                    $instockStatus = $_item->getAttributeText('instock_status');
+                    $addToCartUrl = ($_item->getTypeId() == 'simple' && $instockStatus === 'Có') ? Mage::helper('checkout/cart')->getAddUrl($_item) : $_item->getProductUrl();
+                    ?>
+                    <button type="button" class="related-action-btn related-add-to-cart-btn add-to-cart-from-list-btn"
+                            data-product-type="<?php echo $_item->getTypeId(); ?>"
+                            data-add-to-cart-url="<?php echo $addToCartUrl; ?>">
+                        Thêm vào giỏ hàng
+                        <img class="add-to-cart-from-list-icon related-add-to-cart-icon hidden-1200"
+                             src="<?php echo $this->getSkinUrl('images/icon_ShoppingCart.svg'); ?>"/>
+                        <img class="add-to-cart-from-list-ajax-loader hidden"
+                             src="<?php echo $this->getSkinUrl('images/ajax-loader-black.gif'); ?>"/>
+                    </button>
+                    <?php $relatedAttributeSetId = $_item->getAttributeSetId(); ?>
+                    <?php if ($relatedAttributeSetId == $laptopAttributeSetId ||
+                        $relatedAttributeSetId == $vgaAttributeSetId ||
+                        $relatedAttributeSetId == $mainboardAttributeSetId ||
+                        $relatedAttributeSetId == $buildpcAttributeSetId ||
+                        $relatedAttributeSetId == $cpuAttributeSetId
+                    ): ?>
+                        <span class="add-to-compare-block related-add-to-compare-block"
+                              data-product-id="<?php echo $_item->getId(); ?>"
+                              data-attribute-set-id="<?php echo $relatedAttributeSetId; ?>"
+                              data-product-name="<?php echo $this->escapeHtml($_item->getName()); ?>"
+                              data-product-url="<?php echo $_item->getProductUrl(); ?>"
+                              data-image-url="<?php echo $this->helper('catalog/image')->init($_item, 'small_image')->resize(150, 150); ?>"
+                        >
+                            So sánh
+                        </span>
+                    <?php endif; ?>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+<?php endif; ?>
+
+

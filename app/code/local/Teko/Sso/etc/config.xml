@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <modules>
+        <Teko_Sso>
+            <version>1.0.0</version>
+        </Teko_Sso>
+    </modules>
+
+    <global>
+        <models>
+            <teko_sso>
+                <class>Teko_Sso_Model</class>
+                <resourceModel>teko_sso_resource</resourceModel>
+            </teko_sso>
+            <teko_sso_resource>
+                <class>Teko_Sso_Model_Resource</class>
+                <entities>
+                    <admin_sso>
+                        <table>admin_sso</table>
+                    </admin_sso>
+                </entities>
+            </teko_sso_resource>
+        </models>
+    </global>
+</config>

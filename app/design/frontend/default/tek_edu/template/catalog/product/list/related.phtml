@@ -1,0 +1,214 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     base_default
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<?php $_helper = $this->helper('catalog/output'); ?>
+<?php if ($this->getItems()->getSize()): ?>
+    <?php
+    $productImpressions = [];
+    ?>
+
+    <div class="block block-related">
+        <div class="block-title">
+            <div class="tekshop-cat-header">
+                <div class="tekshop-cat-header-text"><?php echo $this->__('Related Products') ?></div>
+            </div>
+        </div>
+        <div class="block-content">
+            <ul class="products-grid grid-recent">
+
+                <?php foreach ($this->getItems() as $_product): ?>
+
+                    <?php
+                    $productObj = new stdClass();
+                    $productObj->name = (string)$_product->getName();
+                    $productObj->id = (string)$_product->getId();
+                    $productObj->price = (string)$_product->getFinalPrice();
+                    $productObj->list = 'Sản phẩm liên quan';
+                    $productImpressions[] = $productObj;
+                    ?>
+
+                    <!--                --><?php //if ($i++ % $_columnCount == 0): ?>
+                    <!--                --><?php //endif ?>
+                    <?php $oldPrice = $_product->getPrice();
+                    $newPrice = $_product->getFinalPrice(); ?>
+                    <li class="relate-product detail-product col-md-15 col-xs-6 newitem<?php if ($oldPrice != $newPrice) : ?> saleoff <?php endif ?>">
+                        <div class="view team-one">
+                            <div class="mask mask-cat mask-related"
+                                 data-id="<?php echo $_product->getId() ?>"
+                                 data-name="<?php echo $_product->getName() ?>"
+                                 data-url="<?php echo $_product->getProductUrl() ?>"
+                                 data-price="<?php echo $_product->getFinalPrice() ?>"
+                            >
+                                <div class="box-holder">
+                                    <h5 class="product-name-hover-mask"
+                                        title="<?php echo $this->escapeHtml($_product->getName()) ?>">
+                                        <?php echo $this->escapeHtml($_product->getName()) ?>
+                                    </h5>
+                                    <div class="product-price mb-15 mt-15">
+                                        <?php if ($oldPrice != $newPrice) : ?>
+                                            <div class="old-price old-pr-div">
+                                            <span class="price">
+                                                <?php echo number_format($oldPrice, 0, ",", ".") . " <sup>đ</sup>"; ?>
+                                            </span>
+                                            </div>
+                                        <?php else : {
+                                            echo "<div class='old-pr-div'> <span class=\"price \">&nbsp; </span></div>";
+                                        } ?>
+                                        <?php endif; ?>
+                                        <div class="regular-price">
+                                        <span class="price">
+                                            <?php echo number_format($newPrice, 0, ",", ".") . " <sup>đ</sup>"; ?>
+                                        </span>
+                                        </div>
+                                    </div>
+                                    <span class="short-description-hover-mask short-description-list"><?php echo $_helper->productAttribute($_product, nl2br($_product->getShortDescription()), 'short_description') ?></span>
+                                </div>
+                            </div>
+                            <div class="product-image">
+                                <a class="a-img" href="<?php echo $_product->getProductUrl() ?>"
+                                   title="<?php echo $this->escapeHtml($this->getImageLabel($_product, 'small_image')) ?>">
+                                    <img src="<?php echo $this->helper('catalog/image')->init($_product, 'small_image')->resize(300, 300); ?>"
+                                         alt="<?php echo $this->escapeHtml($this->getImageLabel($_product, 'small_image')) ?>"
+                                         title="<?php echo $this->escapeHtml($this->getImageLabel($_product, 'small_image')) ?>"/>
+                                </a>
+                            </div>
+                        </div>
+
+                        <?php if ($oldPrice != $newPrice) : ?>
+                            <span class="percent">
+                            <span>- <?php echo number_format(($oldPrice - $newPrice) / $oldPrice * 100, 0) . "%" ?></span>
+                        </span>
+                        <?php endif; ?>
+                    </li>
+                <?php endforeach ?>
+            </ul>
+
+            <script type="text/javascript">decorateList('block-related', 'none-recursive')</script>
+        </div>
+        <script type="text/javascript">
+
+            //<![CDATA[
+            $$('.related-checkbox').each(function (elem) {
+                Event.observe(elem, 'click', addRelatedToProduct)
+            });
+
+            var relatedProductsCheckFlag = false;
+            function selectAllRelated(txt) {
+                if (relatedProductsCheckFlag == false) {
+                    $$('.related-checkbox').each(function (elem) {
+                        elem.checked = true;
+                    });
+                    relatedProductsCheckFlag = true;
+                    txt.innerHTML = "<?php echo $this->__('unselect all') ?>";
+                } else {
+                    $$('.related-checkbox').each(function (elem) {
+                        elem.checked = false;
+                    });
+                    relatedProductsCheckFlag = false;
+                    txt.innerHTML = "<?php echo $this->__('select all') ?>";
+                }
+                addRelatedToProduct();
+            }
+
+            function addRelatedToProduct() {
+                var checkboxes = $$('.related-checkbox');
+                var values = [];
+                for (var i = 0; i < checkboxes.length; i++) {
+                    if (checkboxes[i].checked) values.push(checkboxes[i].value);
+                }
+                if ($('related-products-field')) {
+                    $('related-products-field').value = values.join(',');
+                }
+            }
+            //]]>
+        </script>
+
+        <script>
+            function gCafeAddProductToCart(url) {
+                var formkey = <?php echo json_encode(Mage::getSingleton('core/session')->getFormKey())?>;
+                var newURL = url.substring(0, url.lastIndexOf("form_key") + 9) + formkey + '/qty/1';
+                setLocation(newURL);
+            }
+        </script>
+
+        <script>
+            var productImpressions = <?php echo json_encode($productImpressions); ?>;
+
+            /**
+             * Measures product impressions and also tracks a standard
+             * pageview for the tag configuration.
+             * Product impressions are sent by pushing an impressions object
+             * containing one or more impressionFieldObjects.
+             */
+            dataLayer.push({
+                'ecommerce': {
+                    'currencyCode': 'VND',                       // Local currency is optional.
+                    'impressions': productImpressions
+                }
+            });
+        </script>
+
+        <script>
+            /**
+             * Call this function when a user clicks on a product link. This function uses the event
+             * callback datalayer variable to handle navigation after the ecommerce data has been sent
+             * to Google Analytics.
+             * @param {Object} productObj An object representing a product.
+             */
+            // Mask click
+            $j('.mask-related').bind('click', function (e) {
+                var id = $j(this).data('id');
+                var name = $j(this).data('name');
+                var url = $j(this).data('url');
+                var price = $j(this).data('price');
+
+                dataLayer.push({
+                    'event': 'productClick',
+                    'ecommerce': {
+                        'click': {
+                            'actionField': {'list': 'Sản phẩm liên quan'},
+                            'products': [{
+                                'name': name.toString(),                      // Name or ID is required.
+                                'id': id.toString(),
+                                'price': price.toString()
+                            }]
+                        }
+                    },
+                    'eventCallback': function () {
+
+                    }
+                });
+
+                if (e.ctrlKey) {
+                    window.open(url, '_blank');
+                }
+                else {
+                    window.location.href = url;
+                }
+            });
+        </script>
+    </div>
+<?php endif ?>

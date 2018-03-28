@@ -1,0 +1,508 @@
+.header-cart-detail .item-options, .mini-cart-detail .item-options {
+    margin: 0 0 0 15px;
+    font-size: 12px;
+}
+
+/*Login modal*/
+.panel-login {
+    box-shadow: none !important;
+    border: none !important;
+}
+
+.panel-login > .panel-heading {
+    color: #8D8D8D;
+    border-color: #ffffff;
+    text-align: center;
+    background: #ffffff;
+    box-shadow: 0 1px 6px 0 rgba(117, 117, 117, 0.2), 0 1px 6px 0 rgba(151, 151, 151, 0.19);
+}
+
+.panel-login > .panel-heading a {
+    text-decoration: none;
+    color: #8D8D8D;
+    font-size: 18px;
+    -webkit-transition: all 0.1s linear;
+    -moz-transition: all 0.1s linear;
+    transition: all 0.1s linear;
+    cursor: pointer;
+}
+
+.panel-login > .panel-heading > .row > .active > a {
+    color: #333;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+@media only screen and (max-device-width: 480px) {
+    .panel-login > .panel-heading > .row > .active > a {
+        font-size: 13px;
+    }
+
+    .panel-login > .panel-heading a {
+        font-size: 13px;
+    }
+}
+
+.panel-login > .panel-heading hr {
+    margin-top: 10px;
+    margin-bottom: 0px;
+    clear: both;
+    border: 0;
+    height: 1px;
+    background-image: -webkit-linear-gradient(left, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0));
+    background-image: -moz-linear-gradient(left, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0));
+    background-image: -ms-linear-gradient(left, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0));
+    background-image: -o-linear-gradient(left, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0));
+}
+
+.panel-login input[type="text"], .panel-login input[type="email"], .panel-login input[type="password"] {
+    height: 45px;
+    border: none;
+    box-shadow: none;
+    font-size: 16px;
+    background: #f9f9f9;
+    -webkit-transition: all 0.1s linear;
+    -moz-transition: all 0.1s linear;
+    transition: all 0.1s linear;
+    border-bottom: 1px solid #ececeb;
+    color: #3D3D3D !important;
+}
+
+.panel-login input:hover,
+.panel-login input:focus {
+    outline: none;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+    border-color: #ccc;
+}
+
+.btn-login {
+    margin-top: 28px;
+    background-color: #d42333;
+    outline: none;
+    color: #fff;
+    font-size: 14px;
+    height: auto;
+    font-weight: normal;
+    padding: 14px 0;
+    text-transform: uppercase;
+    border-color: #d42333;
+    border-radius: 5px !important;
+
+}
+
+.btn-login:hover,
+.btn-login:focus {
+    color: #fff;
+    background-color: #d42333;
+    border-color: #d42333;
+}
+
+.forgot-password {
+    color: #007FF0;
+}
+
+.forgot-password:hover,
+.forgot-password:focus {
+    text-decoration: underline;
+}
+
+.btn-register {
+    background-color: #d42333;
+    outline: none;
+    color: #fff;
+    font-size: 14px;
+    height: auto;
+    font-weight: normal;
+    padding: 14px 0;
+    text-transform: uppercase;
+    border-color: #d42333;
+    margin-top: 25px;
+    border-radius: 5px !important;
+}
+
+.btn-register:hover,
+.btn-register:focus {
+    color: #fff;
+    background-color: #d42333;
+    border-color: #d42333;
+}
+
+.panel-body input,
+.panel-body button,
+.panel-body select,
+.panel-body textarea {
+    border-radius: 0;
+}
+
+.strike {
+    display: block;
+    text-align: center;
+    overflow: hidden;
+    white-space: nowrap;
+    padding-bottom: 5px;
+    color: #8D8D8D;
+}
+
+.strike > span {
+    position: relative;
+    display: inline-block;
+}
+
+.strike > span:before,
+.strike > span:after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 9999px;
+    height: 1px;
+    background: #ececec;
+}
+
+.strike > span:before {
+    right: 100%;
+    margin-right: 15px;
+}
+
+.strike > span:after {
+    left: 100%;
+    margin-left: 15px;
+}
+
+.btn-facebook {
+    background-repeat: no-repeat;
+    background-position: 16px center;
+    outline: none;
+    color: #3B5CA0;
+    font-size: 14px;
+    height: auto;
+    font-weight: normal;
+    padding: 14px 0;
+    text-transform: uppercase;
+    border-color: #3B5CA0;
+    border-radius: 5px !important;
+    margin-top: 12px;
+    position: relative;
+}
+
+.btn-facebook > img {
+    width: 11px;
+    position: absolute;
+    left: 18px;
+    top: 14px;
+}
+
+.btn-facebook:hover,
+.btn-facebook:focus {
+    color: #fff;
+    background-color: #22689A;
+    border-color: #225B99;
+}
+
+.btn-facebook:hover .fb-image-white {
+    display: block !important;
+}
+
+.modal-login {
+    background: #f9f9f9;
+}
+
+.close-button {
+    height: 30px;
+    width: 30px;
+    position: absolute;
+    margin-top: 0 !important;
+    right: -25px;
+    top: -29px;
+    font-size: 0;
+    background-position: 0 0;
+    opacity: 0.7 !important;
+}
+
+button.close {
+    padding: 0;
+    cursor: pointer;
+    background: transparent;
+    border: 0;
+    -webkit-appearance: none;
+}
+
+.close-lg {
+    float: right;
+    font-size: 21px;
+    font-weight: bold;
+    line-height: 1;
+    color: #000;
+    text-shadow: 0 1px 0 #fff;
+    filter: alpha(opacity=20);
+    border: dotted !important;
+    background-color: white !important;
+    border-radius: 30px !important;
+    border-color: black !important;
+    border-style: double !important;
+    background-repeat: no-repeat !important;
+    background-image: url(../images/close24x24.png) !important;
+}
+
+.login-dropdown {
+    background: rgba(64, 64, 64, 0.8);
+    box-shadow: 0 2px 18px rgba(0, 0, 0, .2);
+    position: absolute;
+    padding: 25px 20px;
+    text-align: left;
+    z-index: 200;
+    display: none;
+    width: 25%;
+}
+
+.error-message {
+    color: #ff471a;
+}
+
+.fb-confirm-header {
+    font-size: 17px;
+    line-height: initial;
+    color: #333;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    text-align: center;
+}
+
+#fbname {
+    color: #11143a;
+    font-weight: bold;
+}
+
+#linkTele {
+    color: #11143a;
+    font-weight: bold;
+}
+
+.forget-text {
+    font-size: 16px;
+    line-height: initial;
+    color: #3D3D3D;
+    margin-top: 15px;
+    margin-bottom: 20px;
+}
+
+#forget-tele-show {
+    color: #11143a;
+    font-weight: bold;
+}
+
+.register-text {
+    font-size: 17px;
+    line-height: initial;
+    color: #333333;
+    margin-top: 15px;
+    margin-bottom: 5px;
+}
+
+#register-tele-show {
+    color: #11143a;
+    font-weight: bold;
+}
+
+#fbOtpTele {
+    color: #11143a;
+    font-weight: bold;
+}
+
+.pincode-input-container {
+    display: inline-block;
+}
+
+.pincode-input-container input.first {
+    border-top-right-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+
+.pincode-input-container input.last {
+    border-top-left-radius: 0px;
+    border-bottom-left-radius: 0px;
+    border-left-width: 0px;
+}
+
+.pincode-input-container input.mid {
+    border-radius: 0px;
+    border-left-width: 0px;
+}
+
+.pincode-input-text, .form-control.pincode-input-text {
+    width: 35px;
+    float: left;
+}
+
+.pincode-input-error {
+    clear: both;
+}
+
+.pincode-input-container.touch .touchwrapper {
+    position: relative;
+    height: 34px;
+    margin-right: 5px;
+    overflow: hidden;
+}
+
+.pincode-input-container.touch .touchwrapper .pincode-input-text {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    width: 100%;
+    display: block;
+    background-color: transparent;
+    background: transparent;
+    letter-spacing: 20px;
+}
+
+/*
+	On every digit we use the letter-spacing of the above textbox to determine the table background
+*/
+.pincode-input-container.touch .touchwrapper.touch1 {
+    width: 40px;
+}
+
+.pincode-input-container.touch .touchwrapper.touch2 {
+    width: 65px;
+}
+
+.pincode-input-container.touch .touchwrapper.touch3 {
+    width: 90px;
+}
+
+.pincode-input-container.touch .touchwrapper.touch4 {
+    width: 120px;
+}
+
+.pincode-input-container.touch .touchwrapper.touch5 {
+    width: 150px;
+}
+
+.pincode-input-container.touch .touchwrapper.touch6 {
+    width: 175px;
+}
+
+.pincode-input-container.touch .touchwrapper .touchtable {
+    width: 100%;
+    height: 100%;
+    table-layout: fixed;
+}
+
+.pincode-input-container.touch .touchwrapper .touchtable td {
+    border-right: 1px solid #ccc;
+}
+
+.pincode-input-container.touch .touchwrapper .touchtable td.last {
+    border-right: 0;
+}
+
+.track-panel-right {
+    border-right: 1px solid #e3e3e3;
+}
+
+/*End Login modal*/
+
+.panel-login-v2 {
+    margin-top: 20px;
+}
+
+.modal-body-v2 {
+    padding-top: 0;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.panel-heading-v2 {
+    padding: 0 !important;
+}
+
+.col-lg-v2 {
+    padding-left: 53px;
+    padding-right: 53px;
+}
+
+#login-form > .form-group {
+    margin-bottom: 25px;
+}
+
+/* Override yellow color */
+@-webkit-keyframes autofill {
+    to {
+        color: #666;
+        background: transparent;
+    }
+}
+
+input:-webkit-autofill {
+    -webkit-animation-name: autofill;
+    -webkit-animation-fill-mode: both;
+}
+
+input:-webkit-autofill, textarea:-webkit-autofill, select:-webkit-autofill {
+    background: #f9f9f9;
+}
+
+/** */
+
+.header-item {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.activee {
+    border-bottom: solid 2px #e54a38 !important;
+}
+
+.activee > a {
+    color: #3D3D3D !important;
+}
+
+.form-tele-login, .form-password-login {
+    position: relative;
+}
+
+#telephone-login, #password-login {
+    padding-left: 40px;
+}
+
+.form-password-login > img, .form-tele-login > img {
+    width: 24px;
+    position: absolute;
+    top: 9px;
+}
+
+#loginModal {
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+}
+
+/* Forget */
+.modal-forget {
+    width: 568px;
+}
+
+.no-padding-modal {
+    padding-top: 0px;
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.padding-t-b-20 {
+    padding-top: 20px;
+    padding-bottom: 20px;
+    box-shadow: 0 1px 6px 0 rgba(117, 117, 117, 0.2), 0 1px 6px 0 rgba(151, 151, 151, 0.19);
+}
+
+.modal-login {
+    border-bottom: none;
+}
+
+.midModalWrapper {
+    display: flex;
+    height: 100vh;
+    align-items: center;
+}

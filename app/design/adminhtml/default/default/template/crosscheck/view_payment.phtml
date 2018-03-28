@@ -1,0 +1,89 @@
+<div class="entry-edit">
+    <div class="entry-edit-head">
+        <h4 class="icon-head head-edit-form fieldset-legend">Cập nhật thanh toán</h4>
+        <div class="form-buttons"></div>
+    </div>
+    <div class="fieldset ">
+        <?php $paymentCrosscheck = $this->getPaymentCrosscheck();?>
+        <table width="100%">
+            <tr>
+                <td width="45%">
+                    <table cellspacing="0" class="form-list">
+                        <tr>
+                            <td class="label">
+                                Store
+                            </td>
+                            <td class="value">
+                                <?php echo $this->getStore()->getName() ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">
+                                Ngày thanh toán
+                            </td>
+                            <td class="value">
+                                <?php echo date("d/m/Y", strtotime($paymentCrosscheck->getPayDate())) ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">
+                                Tổng số tiền
+                            </td>
+                            <td class="value">
+                                <?php echo $paymentCrosscheck->getTotalAmount() ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">
+                                Tổng số tiền đã nhập
+                            </td>
+                            <td class="value">
+                                <?php echo $paymentCrosscheck->getTotalImportedAmount() ?>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td>
+                    <table cellspacing="0" class="form-list">
+                        <tr>
+                            <td class="label">
+                                Trạng thái
+                            </td>
+                            <td class="value">
+                                <?php echo $this->getStatus() ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">
+                                Người tạo
+                            </td>
+                            <td class="value">
+                                <?php echo $this->getFullName() ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">
+                                Ngày tạo
+                            </td>
+                            <td class="value">
+                                <?php echo date("d/m/Y H:i:s", strtotime($paymentCrosscheck->getCreatedAt())) ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="label">
+                                Ghi chú
+                            </td>
+                            <td class="value">
+                                <?php echo $paymentCrosscheck->getNote() ?>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+
+    </div>
+</div>
+<div>
+    <?php echo $this->getGridHtml() ?>
+</div>

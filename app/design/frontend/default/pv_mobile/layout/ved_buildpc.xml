@@ -1,0 +1,14 @@
+<layout>
+    <buildpc_index_index>
+        <reference name="content">
+            <block type="buildpc/buildpc" name="buildpc.index.index" template="buildpc/index.phtml">
+            </block>
+        </reference>
+    </buildpc_index_index>
+    <buildpc_saving_list>
+        <reference name="content">
+            <block type="buildpc/list" name="buildpc.saving.list" template="buildpc/list.phtml">
+            </block>
+        </reference>
+    </buildpc_saving_list>
+</layout>

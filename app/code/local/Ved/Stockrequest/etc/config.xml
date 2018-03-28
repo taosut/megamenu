@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Ved_Stockrequest>
+            <version>0.1.1</version>
+        </Ved_Stockrequest>
+    </modules>
+    <global>
+        <models>
+            <ved_stockrequest>
+                <class>Ved_Stockrequest_Model</class>
+                <resourceModel>ved_stockrequest_resource</resourceModel>
+            </ved_stockrequest>
+
+            <ved_stockrequest_resource>
+                <class>Ved_Stockrequest_Model_Resource</class>
+                <entities>
+                    <stockrequest>
+                        <table>stock_request</table>
+                    </stockrequest>
+                </entities>
+            </ved_stockrequest_resource>
+        </models>
+
+        <blocks>
+            <ved_stockrequest>
+                <class>Ved_Stockrequest_Block</class>
+            </ved_stockrequest>
+        </blocks>
+
+        <resources>
+            <ved_stockrequest_setup>
+                <setup>
+                    <module>Ved_Stockrequest</module>
+                </setup>
+                <connection>
+                    <use>core_setup</use>
+                </connection>
+            </ved_stockrequest_setup>
+            <ved_stockrequest_write>
+                <connection>
+                    <use>core_write</use>
+                </connection>
+            </ved_stockrequest_write>
+            <ved_stockrequest_read>
+                <connection>
+                    <use>core_read</use>
+                </connection>
+            </ved_stockrequest_read>
+        </resources>
+    </global>
+    <frontend>
+        <routers>
+            <stockrequest>
+                <use>standard</use>
+                <args>
+                    <module>Ved_Stockrequest</module>
+                    <frontName>stockrequest</frontName>
+                </args>
+            </stockrequest>
+        </routers>
+    </frontend>
+
+    <admin>
+        <routers>
+            <adminhtml>
+                <ved_stockrequest>
+                    <use>admin</use>
+                    <args>
+                        <module>Ved_Stockrequest</module>
+                        <frontName>ved_stockrequest</frontName>
+                    </args>
+                </ved_stockrequest>
+                <args>
+                    <modules>
+                        <Ved_Stockrequest before="Mage_Adminhtml">Ved_Stockrequest_Adminhtml</Ved_Stockrequest>
+                    </modules>
+                </args>
+            </adminhtml>
+        </routers>
+    </admin>
+    <adminhtml>
+        <acl>
+            <resources>
+                <all>
+                    <title>Allow Everything</title>
+                </all>
+                <admin>
+                    <children>
+                        <catalog>
+                            <children>
+                                <stockrequest translate="title">
+                                    <title>Danh sách yêu cầu hàng từ người dùng</title>
+                                </stockrequest>
+                            </children>
+                        </catalog>
+                    </children>
+                </admin>
+            </resources>
+        </acl>
+    </adminhtml>
+</config>

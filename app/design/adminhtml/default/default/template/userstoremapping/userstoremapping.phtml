@@ -1,0 +1,32 @@
+<style>
+    .mb{margin-bottom: 10px}
+    .ml{margin-left: 20px}
+    .w250{width: 250px !important;}
+    .w300{width: 300px !important;}
+    td p{padding-top: 7px;}
+    .import-alert{
+        margin-bottom:10px !important;padding: 10px !important;
+    }
+</style>
+
+<div class"content-header">
+    <table cellspacing="0" style="width:100%">
+        <tr>
+            <td style="width:50%;"><h3><?php echo $this->__('User Mapping') ?></h3></td>
+
+            <td class="a-right">
+                <button class="scalable add" onclick="window.location='<?php echo $this->getAddNewUrl() ?>'"><span><span><span><?php echo $this->__('Add New User') ?></span></span></span></button>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<?php echo $this->getGridHtml() ?>
+
+<div class="with-bootstrap">
+
+</div>
+
+<script type="text/javascript">
+
+</script>

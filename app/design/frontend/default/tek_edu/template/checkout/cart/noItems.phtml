@@ -1,0 +1,51 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     base_default
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<div class="container">
+    <div class="row"></div>
+    <!-- <div class="tekshop-cat-header">
+        <div class="tekshop-cat-header-text">
+            <?php echo $this->__('Shopping Cart') ?>
+
+        </div>
+    </div> -->
+    <div class="page-title">
+
+    </div>
+    <div class="cart-empty">
+        <img class="cart-empty-img" />
+        <h1 class="cart-empty-text"><?php echo $this->__('Shopping Cart is Empty') ?></h1>
+        <?php echo $this->getMessagesBlock()->getGroupedHtml() ?>
+        <?php echo $this->getChildHtml('checkout_cart_empty_widget'); ?>
+        <h1 class="cart-empty-text mb-20">
+            <a class="click-here btn btn-default btn-viewmore btn-cart-empty-more-product" href="<?php echo $this->getContinueShoppingUrl()?>">
+                Chọn thêm sản phẩm
+            </a>
+        </h1>
+        <?php echo $this->getChildHtml('shopping.cart.table.after'); ?>
+    </div>
+</div>
+</div>

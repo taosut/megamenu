@@ -1,0 +1,383 @@
+<div class="panel panel-default address-list payment-address-block">
+    <div class="panel-body pb-0">
+        <h3>Xác nhận địa chỉ giao hàng</h3>
+        <?php
+        //            echo $this->getLayout()->createBlock('ved_customer/address')->setTemplate('checkout/shipping/form.phtml')->toHtml();
+        ?>
+        <!-- DOM from checkout/shipping/form.html - prevent exception-->
+        <?php
+        $productImpressions = [];
+        $cartItems = [];
+        $quote = Mage::getSingleton('checkout/session')->getQuote();
+        $quoteItems = $quote->getAllVisibleItems();
+        foreach ($quoteItems as $item) {
+            $productObj = new stdClass();
+            $productObj->name = (string)$item->getProduct()->getName();
+            $productObj->id = (string)$item->getProduct()->getId();
+            $productObj->price = (string)$item->getProduct()->getFinalPrice();
+            $productObj->list = 'Giỏ hàng';
+            $productImpressions[] = $productObj;
+
+            $productObjCart = new stdClass();
+            $productObjCart->name = (string)$item->getProduct()->getName();
+            $productObjCart->id = (string)$item->getProduct()->getId();
+            $productObjCart->price = (string)$item->getProduct()->getFinalPrice();
+            $productObjCart->quantity = $item->getQty();
+            $cartItems[] = $productObjCart;
+        }
+        ?>
+        <div class="panel-body">
+            <form class="form-horizontal" role="form" id="address-info">
+                <div class="form-group row">
+                    <label for="full_name" class="col-lg-4 control-label visible-lg-block label-input">Họ tên <span
+                                class="label-input-red">*</span></label>
+                    <div class="col-lg-8">
+                        <input type="text" name="full_name" class="form-control address" id="full_name"
+                               placeholder="Nhập họ tên" required>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="telephone" class="col-lg-4 control-label visible-lg-block label-input">Điện thoại di
+                        động <span
+                                class="label-input-red">*</span></label>
+                    <div class="col-lg-8">
+                        <input type="number" name="telephone" class="form-control address" id="telephone"
+                               placeholder="Nhập số điện thoại"
+                               pattern="[0-9]*" inputmode="numeric"
+                               required>
+                    </div>
+                </div>
+
+                <input type="hidden" id="country_id" name="country_id" value="VN"/>
+                <div class="form-group row" hidden="hidden">
+                    <label for="country_id" class="col-lg-4 control-label visible-lg-block label-input">Quốc gia <span
+                                class="label-input-red">*</span></label>
+                    <div class="col-lg-8">
+                        <select name="country_id" class="form-control address" id="country_id" disabled="disabled">
+
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="region_id" class="col-lg-4 control-label visible-lg-block label-input">Tỉnh/Thành phố
+                        <span class="label-input-red">*</span></label>
+                    <div class="col-lg-8">
+                        <select name="region_id" class="form-control address" id="region_id" required>
+                            <option value="">Chọn Tỉnh/Thành phố</option>
+                            <?php
+                            $cities = $this->getListCities();
+                            foreach ($cities as $val => $name) {
+                                echo '<option value="' . $val . '" >' . $name . '</option>';
+                            }
+                            ?>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="city_id" class="col-lg-4 control-label visible-lg-block label-input">Quận/Huyện <span
+                                class="label-input-red">*</span></label>
+                    <div class="col-lg-8">
+                        <select name="city_id" class="form-control address" id="city_id" required>
+                            <option value="">Chọn Quận/Huyện</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="street" class="col-lg-4 control-label visible-lg-block label-input">Địa chỉ <span
+                                class="label-input-red">*</span></label>
+                    <div class="col-lg-8">
+                <textarea name="street" class="form-control address" id="street"
+                          placeholder="Nhập địa chỉ"
+                          required></textarea>
+                    </div>
+                </div>
+
+                <div class="form-group row mb-10">
+                    <label for="telephone" class="col-lg-4 control-label visible-lg-block label-input">Địa chỉ
+                        Email </label>
+                    <div class="col-lg-8">
+                        <input type="email" name="email" class="form-control address" id="email"
+                               placeholder="Nhập email" required>
+                        <span class="help-block"></span>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="street" class="col-lg-4 control-label visible-lg-block label-input">Ghi chú </label>
+                    <div class="col-lg-8">
+                <textarea name="customer_note" class="mt-0 form-control note" id="customer_note" rows="5"
+                          placeholder="Thông tin ghi chú về: thời gian, địa điểm giao hàng, người nhận"
+                          required></textarea>
+                    </div>
+                </div>
+                <div class="bottom-static-mobile">
+                    <div class="form-group row end">
+                        <div class="col-lg-8 col-lg-offset-4 text-center">
+                            <input type="hidden" name="address_id" value="<?php echo $this->address['id']; ?>"/>
+
+                            <button id="btn-address" type="button" onclick="goToPayment()"
+                                    class="btn btn-primary btn-custom3 shipping-btn-address shipping-btn"
+                                    value="create">
+                                <img class="ajax-loader-pr" title="Đang tải"
+                                     src="<?php echo $this->getSkinUrl('images/ajax-loader.gif') ?>"
+                                     width="18" height="18"/>
+                                Giao đến địa chỉ này
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <script>
+            $j('.ajax-loader-pr').hide();
+
+            $j(window).on('resize', function () {
+                if ($j(window).width() < 500) {
+                    $j('.tiki-shipping-address').css('padding-bottom', '40px');
+                    $j('#search_mini_form').hide();
+                    $j('.header-mobile-height').css('height', '50px');
+                } else {
+                    $j('.tiki-shipping-address').css('padding-bottom', '0');
+                    $j('#search_mini_form').show();
+                    $j('.header-container').removeClass('header-mobile-height');
+                }
+            }).trigger('resize');
+
+            $j('input[type="number"]').keypress(function (e) {
+                var a = [];
+                var k = e.which;
+
+                for (i = 48; i < 58; i++)
+                    a.push(i);
+
+                if (!(a.indexOf(k) >= 0))
+                    e.preventDefault();
+            });
+
+            $j('#region_id').change(function () {
+                var region_id = this.value;
+                $j("#city_id").empty();
+                $j("#city_id").load("<?php echo $this->getUrl('checkout/shipping/getDistrictsInCity')  ?>?cityId=" + region_id + "&defaultDistrict=");
+            });
+
+            $j("#default_shipping_address").change(function () {
+                if (this.checked) {
+                    $j(this).parent().addClass("checked");
+                } else {
+                    $j(this).parent().removeClass("checked");
+                }
+            });
+
+            $j(document).ready(function () {
+                var data = JSON.parse(localStorage.getItem('tekshop_address'));
+
+                if (data) {
+                    $j("#full_name").val(data.full_name);
+                    $j("#email").val(data.email);
+                    $j("#telephone").val(data.telephone);
+                    $j("#region_id").val(data.region_id);
+
+                    $j.ajax({
+                        url: "<?php echo $this->getUrl('checkout/shipping/getDistrictNameById') ?>",
+                        type: "POST",
+                        data: {
+                            cityId: data.city_id
+                        },
+                        dataType: "json"
+                    }).done(function (response) {
+                        $j("#city_id").load("<?php echo $this->getUrl('checkout/shipping/getDistrictsInCity') ?>?cityId=" + data.region_id + "&defaultDistrict=" + encodeURI(response.district_name));
+                    });
+
+                    $j("#street").val(data.street);
+                    $j("#customer_note").val(data.customer_note);
+                }
+
+            });
+
+            $j.fn.serializeObject = function () {
+                var o = {};
+                var a = this.serializeArray();
+                $j.each(a, function () {
+                    if (o[this.name] !== undefined) {
+                        if (!o[this.name].push) {
+                            o[this.name] = [o[this.name]];
+                        }
+                        o[this.name].push(this.value || '');
+                    } else {
+                        o[this.name] = this.value || '';
+                    }
+                });
+                return o;
+            };
+
+            //    $j("#btn-address").click(function (event) {
+            function goToPayment() {
+
+                url = "<?php echo $this->getUrl('checkout/shipping/saveShipping');  ?>";
+
+                // check ios private mode browser
+                try {
+                    localStorage.setItem('tekshop_address', JSON.stringify($j("#address-info").serializeObject()));
+
+                    var full_name = $j("#full_name").val().trim();
+                    var email = $j("#email").val().trim();
+                    var telephone = $j("#telephone").val().trim();
+                    var region_id = $j("#region_id").val().trim();
+                    var city_id = $j("#city_id").val().trim();
+                    var street = $j("#street").val().trim();
+                    var customer_note = $j("#customer_note").val().trim();
+
+                    if (full_name === '' || typeof(full_name) === 'undefined') {
+                        alert('Bạn chưa nhập họ tên');
+                    }
+                    else if (telephone === '' || typeof(telephone) === 'undefined') {
+                        alert('Bạn chưa nhập số điện thoại');
+                    }
+                    else if (telephone !== '' && !validateVNPhoneNumber(telephone)) {
+                        alert('Số điện thoại không đúng định dạng (phải có dạng 84xxx hoặc 0xxx, chứa 10 hoặc 11 ký tự)');
+                    }
+                    else if (region_id === '' || typeof(region_id) === 'undefined') {
+                        alert('Bạn chưa nhập Tỉnh/Thành phố');
+                    }
+                    else if (city_id === '' || typeof(city_id) === 'undefined') {
+                        alert('Bạn chưa nhập Quận/Huyện');
+                    }
+                    else if (street === '' || typeof(street) === 'undefined') {
+                        alert('Bạn chưa nhập địa chỉ');
+                    }
+
+                    else if (email !== '' && !validateEmail(email)) {
+                        alert('Địa chỉ Email không hợp lệ');
+                    }
+                    else {
+                        $j('.ajax-loader-pr').show();
+                        $j('.shipping-btn-address').prop('disabled', true);
+
+                        /* Enhanced ecommerce checkout step 2 */
+                        var cartItems = <?php echo json_encode($cartItems); ?>;
+
+                        dataLayer.push({
+                            'event': 'checkout',
+                            'ecommerce': {
+                                'checkout': {
+                                    'actionField': {'step': 2},
+                                    'products': cartItems
+                                }
+                            }
+                        });
+                        /* End enhanced ecommerce checkout step 2 */
+
+                        $j.ajax({
+                            url: url,
+                            type: "POST",
+                            data: $j("#address-info").serialize(),
+                            dataType: "json"
+                        }).done(function (data) {
+                            if (data.redirect != null) {
+                                window.location.href = data.redirect;
+                            }
+                            if (data.message != null) {
+                                alert(data.message);
+                            }
+                        });
+                    }
+
+                    localStorage.test = 2;
+                } catch (e) {
+                    alert('Trình duyệt của bạn đang ở chế độ Private, vui lòng tắt chế độ Private để tiếp tục!');
+                }
+
+            }
+
+            $j("#btn-cancel").click(function (event) {
+                $j("#newblock").html("");
+            });
+
+            function validateEmail(email) {
+                var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                return re.test(email);
+            }
+
+            function validateVNPhoneNumber(phone_number) {
+                var phoneRe = /^\+?(84|0)([1-9]\d{8,9})$/;
+                return phoneRe.test(phone_number);
+            }
+        </script>
+
+        <script>
+            var productImpressions = <?php echo json_encode($productImpressions); ?>;
+
+            /**
+             * Measures product impressions and also tracks a standard
+             * pageview for the tag configuration.
+             * Product impressions are sent by pushing an impressions object
+             * containing one or more impressionFieldObjects.
+             */
+            dataLayer.push({
+                'ecommerce': {
+                    'currencyCode': 'VND',                       // Local currency is optional.
+                    'impressions': productImpressions
+                }
+            });
+        </script>
+
+        <!-- End DOM from checkout/shipping/form.html - prevent exception-->
+
+    </div>
+</div>
+<script>
+    $j('#addNewAddress').click(function (event) {
+        $j.ajax({
+            url: "<?php echo $this->getUrl('customer/address/ajaxAddressInfo')  ?>"
+        }).done(function (data) {
+            $j("#newblock").html(data);
+        });
+    });
+    $j('.edit-address').click(function (event) {
+        id = $j(this).attr('data-id');
+        url = "<?php echo $this->getUrl('customer/address/ajaxAddressInfo');  ?>";
+        url = url + '?id=' + id;
+        $j.ajax({
+            url: url
+        }).done(function (data) {
+            $j("#newblock").html(data);
+        });
+    });
+    $j('.deleting').click(function (event) {
+        //Display dialog to confirm
+        bootbox.confirm("Bạn có muốn xóa địa chỉ này ?", function (result) {
+            if (result) {
+                id = $j('.deleting').attr('data-id');
+                url = "<?php echo $this->getUrl('customer/address/ajaxDelete');  ?>";
+                url = url + '?id=' + id;
+                $j.ajax({
+                    url: url
+                }).done(function (data) {
+                    location.reload();
+                });
+            }
+        });
+    });
+    $j('.saving-address').click(function (event) {
+        id = $j(this).attr('data-id');
+        url = "<?php echo $this->getUrl('checkout/shipping/saveAddress');  ?>";
+        $j.ajax({
+            url: url,
+            type: "POST",
+            data: {id: id},
+            dataType: "json"
+        }).done(function (data) {
+            if (data.redirect != null) {
+                window.location.href = data.redirect;
+            }
+            if (data.message != null) {
+                alert(data.message);
+            }
+
+        });
+    });
+</script>

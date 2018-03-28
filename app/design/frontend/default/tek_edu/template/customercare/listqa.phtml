@@ -1,0 +1,42 @@
+<?php
+/**
+ * @var Ved_Customercare_Block_List $this
+ */
+?>
+<?php $_faqCategory = $this->getFaqCategory(); ?>
+
+<div class="row cc-new-customer " id="list-qa">
+    <div class="col-md-12 cc-customer-title"><?php echo $this->escapeHtml($this->getHeader()) ?></div>
+
+    <div class="col-md-12 clearfix">
+        <?php if ($this->getItems()): ?>
+            <?php foreach ($this->getItems() as $item): ?>
+                <?php
+                /**
+                 * @var TV_Faq_Model_Faq $item
+                 */
+                ?>
+                <div class="qa-item" onclick="check(this);">
+                    <div class="cc-ask"><?php echo $this->escapeHtml($item->getQuestion()) ?>
+                        <i class="fa fa-angle-right"></i>
+                    </div>
+                    <div class="cc-content closed">
+                        <?php echo $item->isAllowHtml() ? $item->getAnswer() : $this->escapeHtml($item->getAnswer(), ['p']) ?>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        <?php endif; ?>
+    </div>
+    <div class="clearfix"></div>
+    <div class="text-center col-md-12">
+        <div class="cc-request text-center">
+            <div class="cc-no-answer">Nếu bạn chưa tìm thấy câu hỏi và câu trả lời như mong muốn. Vui lòng gửi gửi câu hỏi cho chúng tôi</div>
+            <a href="<?php echo $this->getUrl('customercare/request') ?>">
+                <button class="cc-request-btn">Gửi câu hỏi của bạn</button>
+            </a>
+        </div>
+    </div>
+</div>
+
+
+

@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="1526.5 1344.5 232 59">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: url(#linear-gradient);
+      }
+
+      .cls-2, .cls-5 {
+        fill: #ff4a56;
+      }
+
+      .cls-2 {
+        font-size: 18px;
+        letter-spacing: 0.02em;
+      }
+
+      .cls-2, .cls-3 {
+        font-family: OpenSans-SemiboldItalic, Open Sans;
+        font-weight: 600;
+        font-style: italic;
+      }
+
+      .cls-3 {
+        fill: #3d3d3d;
+        font-size: 14px;
+      }
+
+      .cls-4 {
+        font-family: OpenSans-Italic, Open Sans;
+        font-weight: 400;
+      }
+
+      .cls-6 {
+        filter: url(#Rectangle_1059);
+      }
+    </style>
+    <linearGradient id="linear-gradient" x1="0.5" x2="0.5" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#fff"/>
+      <stop offset="1" stop-color="#f9f9f9"/>
+    </linearGradient>
+    <filter id="Rectangle_1059" x="1526.5" y="1344.5" width="232" height="59" filterUnits="userSpaceOnUse">
+      <feOffset dy="1" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="1.5" result="blur"/>
+      <feFlood flood-opacity="0.161"/>
+      <feComposite operator="in" in2="blur"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="Group_1661" data-name="Group 1661" transform="translate(1523 772)">
+    <g class="cls-6" transform="matrix(1, 0, 0, 1, -1523, -772)">
+      <rect id="Rectangle_1059-2" data-name="Rectangle 1059" class="cls-1" width="223" height="50" rx="25" transform="translate(1531 1348)"/>
+    </g>
+    <text id="_1900_1835" data-name="1900 1835" class="cls-2" transform="translate(89 598)"><tspan x="0" y="0">1900 1835</tspan></text>
+    <text id="Gọi_mua_hàng_1.000đ_phút_" data-name="Gọi mua hàng (1.000đ/phút)" class="cls-3" transform="translate(120 618)"><tspan x="-88.597" y="0">Gọi mua hàng </tspan><tspan class="cls-4" y="0">(1.000đ/phút)</tspan></text>
+    <g id="phone-receiver" transform="matrix(0.921, 0.391, -0.391, 0.921, 71.375, 578.333)">
+      <g id="Group_1555" data-name="Group 1555" transform="translate(0 0.188)">
+        <path id="Path_988" data-name="Path 988" class="cls-5" d="M19.168,15.312a.927.927,0,0,1-.284.812l-2.7,2.68a1.52,1.52,0,0,1-.477.345,1.971,1.971,0,0,1-.578.183q-.02,0-.122.01t-.264.01a9.359,9.359,0,0,1-1.249-.132,9.482,9.482,0,0,1-2.111-.65A17.722,17.722,0,0,1,8.55,17.018a21.115,21.115,0,0,1-3.37-2.842A22.246,22.246,0,0,1,2.825,11.5a19.093,19.093,0,0,1-1.5-2.365A12.738,12.738,0,0,1,.47,7.161,10.448,10.448,0,0,1,.085,5.639a5.028,5.028,0,0,1-.081-1q.02-.365.02-.406a1.973,1.973,0,0,1,.183-.579,1.521,1.521,0,0,1,.345-.477l2.7-2.7A.894.894,0,0,1,3.9.188.757.757,0,0,1,4.368.34a1.411,1.411,0,0,1,.345.376L6.886,4.837a.988.988,0,0,1,.1.711,1.265,1.265,0,0,1-.345.65l-.995.995a.339.339,0,0,0-.071.132.5.5,0,0,0-.03.152,3.666,3.666,0,0,0,.365.974,8.945,8.945,0,0,0,.751,1.188A13.186,13.186,0,0,0,8.1,11.252,13.447,13.447,0,0,0,9.728,12.7a9.379,9.379,0,0,0,1.188.761,3.157,3.157,0,0,0,.731.294l.254.051a.484.484,0,0,0,.132-.03.339.339,0,0,0,.132-.071l1.157-1.177a1.244,1.244,0,0,1,.853-.325,1.061,1.061,0,0,1,.548.122h.02l3.918,2.314A1.021,1.021,0,0,1,19.168,15.312Z" transform="translate(0 -0.188)"/>
+      </g>
+    </g>
+  </g>
+</svg>

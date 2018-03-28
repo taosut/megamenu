@@ -1,0 +1,234 @@
+<?php
+$_currentLanding = Mage::getModel('catalog/category')
+    ->getCollection()
+    ->addAttributeToFilter('url_key', 'may-tinh-xach-tay')
+    ->getFirstItem();
+$_landingChilds = Mage::getModel('catalog/category')
+    ->getCollection()
+    ->addAttributeToSelect('*')
+    ->addIdFilter($_currentLanding->getChildren())
+    ->addIsActiveFilter()
+    ->setOrder('position', 'asc')
+    ->load();
+?>
+<?php
+$_productImpressions = [];
+$currentCategory = Mage::registry('current_category');
+?>
+<?php
+$tagProduct = Mage::getModel('tag/tag_relation')
+    ->setTagId(1)// Bao ke gia
+    ->setStoreId((Mage::app()->getStore()->getId()))
+    ->getProductIds();
+?>
+<?php
+if (isset($currentCategory)) {
+    $isCategoryList = true;
+    $currentCategoryId = $currentCategory->getId();
+    $categoryName = Mage::getModel('catalog/category')->load($currentCategoryId)->getData('name');
+    $productObjList = "Trang danh mục $categoryName";
+    $subCats = Mage::getModel('catalog/category')->load($currentCategoryId)->getChildrenCategories();
+} else {
+    $productObjList = "Kết quả tìm kiếm";
+}
+?>
+<!--Custom CSS/JS -->
+<link rel="stylesheet" type="text/css"
+      href="<?php echo $this->getSkinUrl('lib/new.css'); ?><?php echo "?v=" . $version ?>"/>
+<link rel="stylesheet" type="text/css"
+      href="<?php echo $this->getSkinUrl('lib/landing.css'); ?><?php echo "?v=" . $version ?>"/>
+<script type="text/javascript"
+        src="<?php echo $this->getSkinUrl('lib/new.js'); ?><?php echo "?v=" . $version ?>"></script>
+<script type="text/javascript"
+        src="<?php echo $this->getSkinUrl('lib/landing.js'); ?><?php echo "?v=" . $version ?>"></script>
+
+<div class="content">
+    <!-- Laptop landing slider-->
+    <div class="row">
+        <?php echo $this->getLayout()->createBlock('cms/block')->setBlockId('laptop-landing-slider')->toHtml(); ?>
+    </div>
+    <!-- End laptop landing slider-->
+
+    <!-- Show child categories content -->
+    <div class="row products-block">
+        <div class="col-xs-12 cat-products-block">
+            <!-- Laptop landing promotions-->
+            <?php echo $this->getLayout()->createBlock('cms/block')->setBlockId('laptop-landing-promo')->toHtml(); ?>
+            <!-- End Laptop landing promotions-->
+
+            <?php foreach ($_landingChilds as $_category): ?>
+                <div class="cat-products-section">
+                    <div class="cat-products-header">
+                        <div class="cat-name float-left landing-title">
+                            <a href="<?php echo $_category->getUrl(); ?>"><?php echo $_category->getName(); ?></a>
+                        </div>
+                        <div class="view-more">
+                            <a href="<?php echo $_category->getUrl(); ?>">Xem tất cả&nbsp;
+                                <i class="fa fa-caret-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <?php
+                    $_products = $_category->getProductCollection()->addAttributeToFilter('price', array('gt' => 0))
+                        ->setPageSize(8)->setCurPage(1);
+                    Mage::getModel('catalog/layer')->prepareProductCollection($_products);
+                    ?>
+                    <?php if (count($_products) > 0): ?>
+                        <div class="row cat-products-content">
+                            <?php foreach ($_products as $_product): ?>
+                                <?php
+                                $_productObj = new stdClass();
+                                $_productObj->name = $this->escapeHtml($_product->getName());
+                                $_productObj->id = intval($_product->getId());
+                                $_productObj->price = intval($_product->getFinalPrice());
+                                $_productObj->list = 'Laptop Landing Page';
+                                $_productImpressions[] = $_productObj;
+                                ?>
+                                <?php
+                                $oldPrice = $_product->getPrice();
+                                $finalPrice = $_product->getFinalPrice();
+                                ?>
+                                <a class="col-xs-4 cat-products-item"
+                                   href="<?php echo $_product->getProductFullUrl(); ?>"
+                                   onclick="trackProductClicks(this);"
+                                   data-id="<?php echo $_product->getId(); ?>"
+                                   data-name="<?php echo $this->escapeHtml($_product->getName()); ?>"
+                                   data-price="<?php echo $_product->getFinalPrice(); ?>"
+                                >
+                                    <?php if (in_array((string)$_product->getId(), $tagProduct)): ?>
+                                        <img class="list-tag"
+                                             src='<?php echo $this->getSkinUrl('images/tag.png') ?>'/>
+                                    <?php endif; ?>
+
+                                    <img class="product-img"
+                                         src="<?php echo $this->helper('catalog/image')->init($_product, 'small_image')->resize(300, 300); ?>"/>
+                                    <div class="product-name">
+                                        <?php echo $this->escapeHtml($_product->getName()); ?>
+                                    </div>
+                                    <div class="final-price">
+                                        <?php echo number_format($finalPrice, 0, ",", ".") . " ₫"; ?>
+                                    </div>
+                                    <div class="old-price">
+                                        <?php if ($oldPrice != $finalPrice) : ?>
+                                            <?php echo number_format($oldPrice, 0, ",", ".") . " ₫"; ?>
+                                        <?php endif; ?>
+                                    </div>
+                                </a>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+    <!-- End Show child categories content -->
+</div>
+
+<script type="text/javascript">
+    var $j = jQuery.noConflict();
+
+    $j(document).ready(function () {
+        var categoryName = "<?php echo $categoryName ?>";
+        $j('.state-title').html(categoryName);
+        showBackState();
+        $j('.sub-mobile-navigation-wrapper').show();
+        $j('.input-search-wrapper').addClass('active');
+    });
+    /** Randomize slick slider **/
+    $j.fn.randomize = function (selector) {
+        var $elems = selector ? $j(this).find(selector) : $j(this).children(),
+            $parents = $elems.parent();
+
+        $parents.each(function () {
+            $j(this).children(selector).sort(function (childA, childB) {
+                // * Prevent last slide from being reordered
+                if ($j(childB).index() !== $j(this).children(selector).length - 1) {
+                    return Math.round(Math.random()) - 0.5;
+                }
+            }.bind(this)).detach().appendTo(this);
+        });
+
+        return this;
+    };
+    /** End Randomize slick slider **/
+
+    /** Slick slider **/
+    $j('.top-banner-landing').slick({
+        infinite: false,
+        dots: true,
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        speed: 200,
+        autoplay: true,
+        touchThreshold: 30
+    });
+    /** End slick slider **/
+
+    /** Enhanced Ecommerce features **/
+    /** Track product impressions **/
+    var productImpressions = <?php echo json_encode($_productImpressions); ?>;
+    dataLayer.push({
+        'event': 'productImpressions',
+        'ecommerce': {
+            'currencyCode': 'VND',
+            'impressions': productImpressions
+        }
+    });
+
+    /** Track product clicks **/
+    function trackProductClicks(value) {
+        var productId = $j(value).data('id');
+        var productName = $j(value).data('name');
+        var productPrice = parseInt($j(value).data('price'));
+
+        dataLayer.push({
+            'event': 'productClick',
+            'ecommerce': {
+                'click': {
+                    'actionField': {'list': 'Laptop Landing Page'},
+                    'products': [{
+                        'id': productId,
+                        'name': productName,
+                        'price': productPrice
+                    }]
+                }
+            }
+        });
+    }
+
+    /** Track promotion views **/
+    var promotionImpressions = [];
+    $j('.slider-img').each(function () {
+        promotionImpressions.push({
+            'id': $j(this).attr('alt'),
+            'name': $j(this).attr('alt'),
+            'position': 'Laptop Landing Slider'
+        });
+    });
+    dataLayer.push({
+        'event': 'promotionImpressions',
+        'ecommerce': {
+            'promoView': {
+                'promotions': promotionImpressions
+            }
+        }
+    });
+
+    /** Track promotion clicks **/
+    /** Slider image **/
+    $j('.slider-img').click(function () {
+        dataLayer.push({
+            'event': 'promotionClick',
+            'ecommerce': {
+                'promoClick': {
+                    'promotions': [{
+                        'id': $j(this).attr('alt'),
+                        'name': $j(this).attr('alt'),
+                        'position': 'Laptop Landing Slider'
+                    }]
+                }
+            }
+        });
+    });
+    /** End Enhanced Ecommerce features **/
+</script>

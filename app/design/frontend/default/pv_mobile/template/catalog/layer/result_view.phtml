@@ -1,0 +1,177 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     base_default
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<?php
+/**
+ * Category layered navigation
+ *
+ * @see Mage_Catalog_Block_Layer_View
+ */
+?>
+<?php if ($this->canShowBlock()): ?>
+    <?php if ($this->canShowOptions()): ?>
+        <div class="filter-title">Lọc sản phẩm <span class="hidden-992">theo</span></div>
+        <?php $_filters = $this->getFilters() ?>
+        <?php foreach ($_filters as $_filter): ?>
+            <?php if ($_filter->getName() == 'Price'): ?>
+                <?php if ($_filter->getItemsCount()): ?>
+                    <?php
+                    $attributeModel = $_filter->getAttributeModel();
+                    $isAutoCollapse = 0;
+                    if ($attributeModel) {
+                        $attributeCode = $attributeModel->getAttributeCode();
+                        $isAutoCollapse = Mage::getSingleton("eav/config")->getAttribute("catalog_product", $attributeCode)->getIsAutoCollapse();
+                    }
+                    ?>
+                    <div class="filter-section">
+                        <div class="filter-section-title" onclick="toggleFilterTitle(this)">
+                            <?php echo $this->__($_filter->getName()); ?>
+                            <i class="fa <?php if ($isAutoCollapse == 1): ?>fa-caret-down<?php else: ?>fa-caret-up<?php endif; ?>"></i>
+                        </div>
+                        <div class="filter-section-content <?php if ($isAutoCollapse == 1): ?>collapse<?php endif; ?>">
+                            <div class="form-group mb-5">
+                                <label>Giá từ (₫):</label>
+                                <input type="number" class="filter-price-input filter-price-from form-control"
+                                       onkeyup="displayApplyBtn();" placeholder="Nhập giá từ (₫)">
+                            </div>
+                            <div class="form-group mb-5">
+                                <label>Giá đến (₫):</label>
+                                <input type="number" class="filter-price-input filter-price-to form-control"
+                                       onkeyup="displayApplyBtn();" placeholder="Nhập giá đến (₫)">
+                            </div>
+                            <div class="clearfix"></div>
+                            <div class="filter-section-apply-btn hidden">
+                                <button type="button" class="apply-filter-btn" onclick="applyFilterPrice();">
+                                    Áp dụng
+                                    <img class="apply-filter-ajax-loader hidden"
+                                         src="<?php echo $this->getSkinUrl('images/ajax-loader-white.gif'); ?>"/>
+                                </button>
+                                <button type="button" class="bp-apply-filter-btn hidden" onclick="bpApplyFilterPrice();">
+                                    Áp dụng
+                                    <img class="bp-apply-filter-ajax-loader hidden"
+                                         src="<?php echo $this->getSkinUrl('images/ajax-loader-white.gif'); ?>"/>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                <?php endif; ?>
+            <?php endif; ?>
+        <?php endforeach; ?>
+    <?php endif; ?>
+<?php endif; ?>
+
+<script type="text/javascript">
+    var $j = jQuery.noConflict();
+
+    var queryString = QueryStringToJSON();
+    if (queryString.price_from) {
+        $j('.filter-price-from').val(queryString.price_from);
+    }
+
+    if (queryString.price_to) {
+        $j('.filter-price-to').val(queryString.price_to);
+    }
+
+    function displayApplyBtn() {
+        var priceFrom = $j('.filter-price-from').val();
+        var priceTo = $j('.filter-price-to').val();
+
+        if (priceFrom !== '' && priceTo !== '') {
+            $j('.filter-section-apply-btn').removeClass('hidden');
+        }
+        else {
+            $j('.filter-section-apply-btn').addClass('hidden');
+        }
+    }
+
+    function applyFilterPrice() {
+        var priceFrom = $j('.filter-price-from').val();
+        var priceTo = $j('.filter-price-to').val();
+
+        if (parseInt(priceTo) <= parseInt(priceFrom)) {
+            alert('Giá đến phải lớn hơn giá từ!');
+        }
+        else {
+            $j('.apply-filter-btn').prop('disabled', true);
+            $j('.apply-filter-ajax-loader').removeClass('hidden');
+
+            var url = window.location.href;
+
+            url = updateQueryStringParameter(url, 'price_from', priceFrom);
+            url = updateQueryStringParameter(url, 'price_to', priceTo);
+            url = removeURLParameter(url, 'p');
+
+            window.location.href = url;
+        }
+    }
+
+    function updateQueryStringParameter(uri, key, value) {
+        var re = new RegExp("([?&])" + key + "=.*?(&|$)", "i");
+        var separator = uri.indexOf('?') !== -1 ? "&" : "?";
+        if (uri.match(re)) {
+            return uri.replace(re, '$1' + key + "=" + value + '$2');
+        }
+        else {
+            return uri + separator + key + "=" + value;
+        }
+    }
+
+    function removeURLParameter(url, parameter) {
+        //prefer to use l.search if you have a location/link object
+        var urlparts = url.split('?');
+        if (urlparts.length >= 2) {
+
+            var prefix = encodeURIComponent(parameter) + '=';
+            var pars = urlparts[1].split(/[&;]/g);
+
+            //reverse iteration as may be destructive
+            for (var i = pars.length; i-- > 0;) {
+                //idiom for string.startsWith
+                if (pars[i].lastIndexOf(prefix, 0) !== -1) {
+                    pars.splice(i, 1);
+                }
+            }
+
+            url = urlparts[0] + (pars.length > 0 ? '?' + pars.join('&') : "");
+            return url;
+        } else {
+            return url;
+        }
+    }
+
+    function QueryStringToJSON() {
+        var pairs = location.search.slice(1).split('&');
+
+        var result = {};
+        pairs.forEach(function (pair) {
+            pair = pair.split('=');
+            result[pair[0]] = decodeURIComponent(pair[1] || '');
+        });
+
+        return JSON.parse(JSON.stringify(result));
+    }
+</script>

@@ -1,0 +1,51 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     default_default
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<?php
+/**
+ * @see Mage_Adminhtml_Block_Catalog_Product
+ */
+$purchase = $this->getPurchase();
+?>
+
+<div class="content-header">
+    <h3 class="icon-head head-sales-order">Purchase # <?php echo $purchase->getCode(); ?>  | <?php echo $purchase->getCreatedAt(); ?></h3>
+    <p class="form-buttons">
+        <button id="id_7267308935868ab562a4ce8f5f0e19aa" title="Quay lại" type="button" class="scalable back" onclick="setLocation('http://test.shop.gcafe.vn/index.php/admin/admin/sales_order/index/order_id/331/')" style=""><span><span><span>Quay lại</span></span></span></button><button id="id_a28602d7a650d121069494e6e173596f" title="Sửa" type="button" class="scalable " onclick="deleteConfirm('Are you sure? This order will be canceled and a new one will be created instead', 'http://test.shop.gcafe.vn/index.php/admin/admin/sales_order_edit/start/order_id/331/');" style=""><span><span><span>Sửa</span></span></span></button><button id="id_6c5f72542c05cf4061411551db12fbb1" title="Hủy" type="button" class="scalable " onclick="deleteConfirm('Are you sure you want to cancel this order?', 'http://test.shop.gcafe.vn/index.php/admin/admin/sales_order/cancel/order_id/331/')" style=""><span><span><span>Hủy</span></span></span></button><button id="id_0f8cfafe242c58a627a7c9292a1c02b6" title="Gửi ngay" type="button" class="scalable " onclick="confirmSetLocation('Are you sure you want to send order email to customer?', 'http://test.shop.gcafe.vn/index.php/admin/admin/sales_order/email/order_id/331/')" style=""><span><span><span>Gửi ngay</span></span></span></button><button id="id_10944aa071330a5fb25cca8120567b49" title="Giữ đơn" type="button" class="scalable " onclick="setLocation('http://test.shop.gcafe.vn/index.php/admin/admin/sales_order/hold/order_id/331/')" style=""><span><span><span>Giữ đơn</span></span></span></button><button id="id_0e84232dc2bcfbebc2987e1fa31b59e8" title="Invoice" type="button" class="scalable go" onclick="setLocation('http://test.shop.gcafe.vn/index.php/admin/admin/sales_order_invoice/start/order_id/331/')" style=""><span><span><span>Invoice</span></span></span></button><button id="id_3d7b14530e402fb45e6f7ae44778164b" title="Gửi hàng" type="button" class="scalable go" onclick="setLocation('http://test.shop.gcafe.vn/index.php/admin/admin/sales_order_shipment/start/order_id/331/')" style=""><span><span><span>Gửi hàng</span></span></span></button><button id="id_130070cf3f4a3ed0c37e41eaa63562e3" title="Đặt hàng lại" type="button" class="scalable go" onclick="setLocation('http://test.shop.gcafe.vn/index.php/admin/admin/sales_order_create/reorder/order_id/331/')" style=""><span><span><span>Đặt hàng lại</span></span></span></button>
+    </p>
+</div>
+<div class="entry-edit">
+    <div class="entry-edit-head">
+        <h4 class="icon-head head-products">Sản phẩm đã đặt mua</h4>
+    </div>
+</div>
+<div>
+    <?php echo $this->getGridHtml() ?>
+</div>
+
+
+
+

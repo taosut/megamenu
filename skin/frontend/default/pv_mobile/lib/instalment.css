@@ -1,0 +1,484 @@
+.inm-card-container {
+    width: 100%;
+    display: flex;
+}
+
+.inm-content {
+    margin-top: 20px;
+    display: table;
+    padding: 10px;
+    border: 1px solid #f79000;
+    border-radius: 5px;
+    width: 100%;
+    text-align: left;
+    margin-bottom: 20px;
+    padding-right: 40px;
+}
+
+.inm-faqs {
+    color: #2d3877 !important;
+    border: solid 1px #CECED7;
+    border-radius: 5px;
+    line-height: 20px;
+    font-size: 15px;
+    padding: 20px 20px;
+}
+
+.inm-faqs > ol > li {
+    line-height: 20px;
+    font-weight: 600;
+}
+
+.inm-faqs > ol > li > a {
+    color: #2d3877 !important;
+    padding-top: 8px !important;
+}
+
+.inm-detail {
+    width: 100%;
+    padding-left: 20px;
+    padding-top: 10px;
+}
+
+.inm-table > tbody > tr > td {
+    padding-right: 10px !important;
+}
+
+.inm-table-detail {
+    margin-top: 20px;
+}
+
+.inm-table-detail > thead {
+    background-image: linear-gradient(-180deg, #fff 0%, #f2f2f2 100%) !important;
+}
+
+.inm-table-detail > tbody > tr:last-child > td {
+    text-align: center;
+}
+
+.inm-table-detail > tbody > tr:last-child > td:nth-child(2) {
+    text-align: left !important;
+}
+
+.btn-inm-group {
+    margin-top: 10px;
+}
+
+.btn-inm-group > div > button {
+    width: 100%;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+.btn-inm-group > div > button:hover {
+    color: white;
+    background: #F78124;
+}
+
+.btn-confirm-acs {
+    padding: 10px 15px;
+    text-transform: uppercase;
+    font-weight: bold;
+    color: #fff;
+    background: #d42333;
+    width:100%;
+    border: none;
+    border-radius: 3px !important;
+    font-size: 15px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-back-inm {
+    background: #f99d3e;
+    text-transform: uppercase;
+    color: white;
+    font-weight: bold;
+}
+
+.btn-back-inm:hover, .btn-back-inm:focus {
+    color: white !important;
+    background: #f99d3e;
+    outline: none;
+}
+
+.inm-loading {
+    text-align: center;
+    padding-top: 20px;
+}
+
+/*.inm-first-row > span{*/
+/*padding-right: 10px;*/
+/*}*/
+/*.inm-first-row > span > span{*/
+/*padding-left: 10px;*/
+/*}*/
+/*.inm-second-row > span{*/
+/*padding-right: 10px;*/
+/*}*/
+/*.inm-second-row > span > span{*/
+/*padding-left: 10px;*/
+/*}*/
+
+.inm-item {
+    cursor: pointer;
+    padding: 3px;
+}
+
+.inm-modal-loading {
+    background: white;
+    position: absolute;
+    width: 100%;
+    top: 45px;
+}
+
+.inm-item-chosen {
+    border: solid 1px #f7701e;
+    padding: 6px;
+    border-radius: 6px;
+}
+
+.modal-dialog-instalment {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+.modal-content-instalment {
+    height: 100%;
+    min-height: 100%;
+    height: auto;
+    border-radius: 0;
+}
+
+.instalment-header {
+    font-size: 16px !important;
+    position: relative;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    text-align: left !important;
+}
+
+.card-wrapper.active::after {
+    content: "";
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-top: 10px solid #f79000;
+    position: absolute;
+    bottom: -10px;
+    left: 45%;
+}
+
+.card-wrapper:hover, .card-wrapper.active {
+    border: 1px solid #f79000;
+}
+
+.card-wrapper.active::before {
+    content: "";
+    width: 0;
+    height: 0;
+    border-left: 9px solid transparent;
+    border-right: 9px solid transparent;
+    border-top: 9px solid #fff;
+    position: absolute;
+    bottom: -8px;
+    left: 45.3%;
+    z-index: 1;
+}
+
+.card-wrapper {
+    display: table;
+    border: 1px solid #ddd;
+    margin-right: 10px;
+    border-radius: 4px;
+    min-height: 70px;
+    width: 310px;
+    text-transform: uppercase;
+    cursor: pointer;
+    position: relative;
+    text-align: left;
+    float: left;
+    cursor: pointer;
+}
+
+.card-wrapper .card-left {
+    display: table-cell;
+    vertical-align: middle;
+    padding-left: 10px;
+    width: 50px;
+}
+
+.card-wrapper .card-right {
+    display: table-cell;
+    vertical-align: middle;
+    padding: 0 10px;
+    font-size: 15px !important;
+}
+
+.card-icon-money {
+    background-position: -275px 0;
+    width: 44px;
+    height: 26px;
+    background-image: url(https://cdn.tgdd.vn/dmx2016/tra-gop/Content/images/desktop/installcard@1x.png);
+    background-repeat: no-repeat;
+    display: inline-block;
+    line-height: 30px;
+    vertical-align: middle;
+    margin: 5px;
+}
+
+.card-icon-acs {
+    background: url(https://cdn.tgdd.vn/dmx2016/tra-gop/Content/images/desktop/acs.png) center center no-repeat;
+    background-size: 100% auto;
+    width: 48px;
+    height: 30px;
+    line-height: 30px;
+    vertical-align: middle;
+    margin: 5px;
+    display: inline-block;
+}
+
+.card-icon-visa {
+    display: inline-block;
+    line-height: 30px;
+    vertical-align: middle;
+    margin: 5px;
+    background-position: -249px -53px;
+    width: 44px;
+    height: 45px;
+    background-image: url(https://cdn.tgdd.vn/dmx2016/tra-gop/Content/images/spr_op.png);
+    background-repeat: no-repeat;
+}
+
+.instalment-btn-confirm {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 40px;
+}
+
+.close-lg-im {
+    top: 50px;
+    right: 2px;
+    z-index: 9999;
+    position: absolute;
+    font-weight: bold;
+    line-height: 1;
+    color: #000;
+    text-shadow: 0 1px 0 #fff;
+    padding-left: 4px;
+    padding-right: 4px;
+    padding-top: 0px;
+    font-size: 20px;
+    border-radius: 10px;
+    border: 1px solid #cfcfcf;
+    cursor: pointer;
+}
+
+#sendOrderToAlepayInstallment {
+    /*display: flex!important;*/
+    /*justify-content: center;*/
+}
+
+.iframe-wrapper {
+    height: 600px;
+    width: 305px;
+    position: relative;
+}
+
+/* Layered State Horizontal */
+.state-horizontal-wrapper {
+    margin: 15px 0;
+}
+
+.state-horizontal-wrapper span {
+    display: inline-block;
+}
+
+.filter-group {
+    cursor: default;
+    font-size: 13px;
+    border: 1px solid #82b9ff;
+    background-color: #eaf1fa;
+    margin-left: 10px;
+    padding: 5px;
+    border-radius: 2px;
+    margin-bottom: 7px;
+}
+
+.filter-group-item {
+    font-style: italic;
+    font-weight: bold;
+    color: #3c4a65;
+    word-break: break-all;
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+.filter-group-item:last-child {
+    margin-right: 5px;
+}
+
+.filter-group-item > i {
+    font-size: 11px;
+    font-weight: normal;
+}
+
+.filter-group-item:hover {
+    transition: 0.2s;
+    color: #4d5f83;
+}
+
+.filter-group-item:hover > i {
+    color: #d74e4e;
+    transition: 0.2s;
+}
+
+.filter-reset {
+    cursor: pointer;
+    font-size: 13px;
+    margin-left: 10px;
+    padding: 5px;
+    border-radius: 2px;
+    border: 1px solid #b6b6b6;
+    margin-bottom: 5px;
+}
+
+.inm-message {
+    margin-left: 26.5%;
+    font-size: 16px;
+    color: red;
+}
+
+.inm-before {
+    padding-top: 20px !important;
+    display: flex !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    padding-left: 0 !important;
+}
+
+.inm-firstback {
+    display: flex;
+    justify-content: center !important;
+    padding-top: 20px !important;
+}
+
+.inm-table {
+    color: #2d3877 !important;
+    font-size: 14px !important;
+    line-height: 20px;
+    letter-spacing: 0px;
+
+}
+
+.inm-table {
+    margin-top: 8px !important;
+    margin-bottom: 8px !important;
+}
+
+.inm-table > li {
+    padding-top: 0px !important;
+    padding-bottom: 8px !important;
+}
+
+.inm-table > li:last-child {
+    font-weight: 700 !important;
+}
+
+.inm-table-detail > thead > tr > th {
+    text-align: center;
+}
+
+.inm-table-detail > tbody > tr > td:first-child {
+    text-align: center;
+}
+
+.inm-table-detail > tbody > tr:first-child > td:nth-child(n+3) {
+    text-align: center;
+    font-weight: bold;
+    font-size: 15px;
+}
+
+.inm-table-detail > tbody > tr:nth-child(2) > td:nth-child(n+3) {
+    text-align: right;
+}
+
+.inm-table-detail > tbody > tr:nth-child(3) > td:nth-child(n+3) {
+    text-align: right;
+}
+
+.inm-table-detail > tbody > tr:nth-child(4) > td:nth-child(n+3) {
+    text-align: right;
+}
+
+.show-addition-message {
+    text-align: center;
+    color: red;
+}
+
+.instalment-content-fag {
+    text-align: left;
+    list-style-type: circle;
+    padding-left: 10px;
+    font-size: 15px
+}
+
+.instalment-content-fag > li {
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+
+.no-disc {
+    list-style: none;
+}
+
+.instalment-sole {
+    margin-right: 5px;
+    background: rgb(247, 144, 0);
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    text-transform: uppercase;
+
+}
+.btn:hover{
+    color:white!important;
+}
+
+#list_banks .panel {
+    margin-left: 31px;
+    max-width: 545px;
+}
+
+#list_banks .bank > li {
+    margin: 3px 6px 3px 6px;
+}
+
+#list_banks .bank > li.active {
+    border: solid 1px red;
+    position: relative;
+}
+
+#list_banks .bank > li.active:after {
+    content: "\e013";
+    position: absolute;
+    background: #fc0303;
+    width: 25px;
+    height: 25px;
+    right: -12px;
+    top: -12px;
+    color: #fff;
+    display: inline-block;
+    font-family: 'Glyphicons Halflings';
+    font-style: normal;
+    font-weight: 300;
+    text-align: center;
+    line-height: 25px;
+    border-radius: 50%;
+}

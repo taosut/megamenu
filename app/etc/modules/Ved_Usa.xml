@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Ved_Usa>
+            <active>true</active>
+            <codePool>local</codePool>
+            <depends>
+                <Mage_Shipping />
+                <Mage_Usa />
+            </depends>
+        </Ved_Usa>
+    </modules>
+</config>

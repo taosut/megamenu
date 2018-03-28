@@ -1,0 +1,461 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     base_default
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+/**
+ * @var Mage_Page_Block_Html_Footer $this
+ */
+$version = Teko::getSaleCenterVersion();
+?>
+<?php
+$quote = Mage::getSingleton('checkout/session')->getQuote();
+$_items = $quote->getAllVisibleItems();
+$_cartQty = Mage::helper('checkout/cart')->getSummaryCount();
+?>
+<link rel="stylesheet" type="text/css"
+      href="<?php echo $this->getSkinUrl('lib/facebook-chat.css'); ?><?php echo "?v=" . $version ?>"/>
+<link rel="stylesheet" type="text/css"
+      href="<?php echo $this->getSkinUrl('lib/fortunate-wheel.css') ?><?php echo "?v=" . $version ?>" />
+<div class="footer">
+<!--    <div class="fortunate-wheel-event">-->
+<!--        <div class="fw-img">-->
+<!--            <img src="--><?php //echo $this->getSkinUrl('images/forunateWheelClick.png') ?><!--" alt="Vòng quay may mắn"/>-->
+<!--        </div>-->
+<!--        <button class="fortunate-wheel-open">-->
+<!--            vòng quay may mắn-->
+<!--        </button>-->
+<!--    </div>-->
+    <div class="row footer-border-top"></div>
+    <div class="row footer-policies">
+        <?php
+        $policiesHyperlink = json_decode(Mage::getModel('core/variable')->loadByCode('policies_hyperlink')->getValue('plain'), true);
+        ?>
+        <div class="col-xs-6 footer-policy-section">
+            <a class="footer-link" href="<?php echo $policiesHyperlink['phieu-mua-hang']; ?>">
+                <img src="<?php echo $this->getSkinUrl('images/footer/Coupon.svg'); ?>"/>
+                Phiếu mua hàng
+            </a>
+        </div>
+        <div class="col-xs-6 footer-policy-section">
+            <a class="footer-link" href="<?php echo $policiesHyperlink['giao-hang']; ?>">
+                <img src="<?php echo $this->getSkinUrl('images/footer/Delivery.svg'); ?>"/>
+                Thanh toán và giao hàng
+            </a>
+        </div>
+        <div class="col-xs-6 footer-policy-section">
+            <a class="footer-link" href="<?php echo $policiesHyperlink['the-uu-dai']; ?>">
+                <img src="<?php echo $this->getSkinUrl('images/footer/Vipcard.svg'); ?>"/>
+                Thẻ ưu đãi
+            </a>
+        </div>
+        <div class="col-xs-6 footer-policy-section">
+            <a class="footer-link" href="<?php echo $policiesHyperlink['doi-hang']; ?>">
+                <img src="<?php echo $this->getSkinUrl('images/footer/Exchange.svg'); ?>"/>
+                Chính sách đổi hàng
+            </a>
+        </div>
+        <div class="col-xs-6 footer-policy-section">
+            <a class="footer-link" href="<?php echo $policiesHyperlink['bao-hanh']; ?>">
+                <img src="<?php echo $this->getSkinUrl('images/footer/Guarantee.svg'); ?>"/>
+                Chính sách bảo hành
+            </a>
+        </div>
+        <div class="col-xs-6 footer-policy-section">
+            <a class="footer-link" href="<?php echo $policiesHyperlink['sua-chua-bao-tri']; ?>">
+                <img src="<?php echo $this->getSkinUrl('images/footer/Guarantee.svg'); ?>"/>
+                Dịch vụ sửa chữa và bảo trì
+            </a>
+        </div>
+        <div class="col-xs-6 footer-policy-section">
+            <a class="footer-link" href="<?php echo $policiesHyperlink['bao-hanh-mo-rong']; ?>">
+                <img src="<?php echo $this->getSkinUrl('images/footer/Guarantee.svg'); ?>"/>
+                Dịch vụ bảo hành mở rộng
+            </a>
+        </div>
+    </div>
+    <div class="row footer-bottom">
+        <div class="footer-store-list"><a href="<?php echo $this->getUrl('contact'); ?>">Hệ thống cửa hàng Phong Vũ</a></div>
+        <div class="fb-page" data-href="https://www.facebook.com/phongvutechnology/" data-tabs="page"
+             data-small-header="true" data-adapt-container-width="true"
+             data-hide-cover="false" data-show-facepile="true">
+            <blockquote cite="https://www.facebook.com/phongvutechnology/" class="fb-xfbml-parse-ignore"><a
+                        href="https://www.facebook.com/phongvutechnology/">Phong Vũ</a></blockquote>
+        </div>
+        <a href="http://online.gov.vn/CustomWebsiteDisplay.aspx?DocId=4557" target="_blank">
+            <img class="register-gov-img" src="<?php echo $this->getSkinUrl('images/da-dang-ky.png'); ?>"/>
+        </a>
+        <div class="footer-company">
+            <p>Văn phòng điều hành: Tầng 7, tòa nhà số 198 Nguyễn Thị Minh Khai, Phường 6, Quận 3, TP. Hồ Chí
+                Minh</p>
+            <p>Mail: <a href="mailto:contact@phongvu.vn">contact@phongvu.vn</a></p>
+            <p>Tổng đài hỗ trợ: <a href="tel:19001835">1900 1835</a></p>
+            <span class="footer-sign">© 2007 - 2018 Công Ty Cổ Phần Thương Mại Phong Vũ / GPĐKKD số 0304998358 do Sở KHĐT TP.HCM cấp.</span>
+        </div>
+    </div>
+    <!--    <div class="fortunate-wheel-event">-->
+    <!--        <div class="fw-img">-->
+    <!--            <img src="-->
+    <?php //echo $this->getSkinUrl('images/forunateWheelClick.png') ?><!--" alt="Vòng quay may mắn"/>-->
+    <!--        </div>-->
+    <!--        <button class="fortunate-wheel-open">-->
+    <!--            vòng quay may mắn-->
+    <!--        </button>-->
+    <!--    </div>-->
+
+    <div class="floating-bar-menu">
+        <a class="floating-bar-menu-item go-to-build-pc" href="<?php echo $this->getUrl('buildpc'); ?>">
+            <img src="<?php echo $this->getSkinUrl('images/icon_Setting.svg'); ?>" title="Xây dựng cấu hình PC"/>
+        </a>
+        <a class="floating-bar-menu-item scroll-to-top">
+            <img src="<?php echo $this->getSkinUrl('images/icon_BacktoTop.svg'); ?>" title="Lên đầu trang"/>
+        </a>
+    </div>
+</div>
+<!--<div id="fortunateHint" class="modal fade" role="dialog">-->
+<!--    <div class="fortunateDialogWrapper">-->
+<!--        <div class="fortunateHintDialog">-->
+<!--            <h3>Quy định vòng quay may mắn</h3>-->
+<!--            <ul>-->
+<!--                <li>-->
+<!--                    Mỗi tài khoản chỉ được giới hạn <span> 1 lượt quay</span>-->
+<!--                </li>-->
+<!--                <li>-->
+<!--                    Mỗi mã chỉ được sử dụng 1 lần duy nhất-->
+<!--                </li>-->
+<!--                <li>-->
+<!--                    Thời gian sử dụng mã trước ngày <span>31/01/2018</span>-->
+<!--                </li>-->
+<!--            </ul>-->
+<!--            <div>-->
+<!--                <button class="confirm-hint">OK</button>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+<!--<div id="fortunateModal" class="modal fade" role="dialog">-->
+<!--    <div style="position: relative">-->
+<!--        <div class="close-wheel" data-dismiss="modal">✕</div>-->
+<!--        <img class="mileStone" src="--><?php //echo $this->getSkinUrl("images/mileStone.png") ?><!--"/>-->
+<!--        <canvas id='canvas' width='100%' height='400'>-->
+<!--            Trình duyệt hiện tại của bạn không hỗ trợ Vòng Quay Phong Vũ-->
+<!--        </canvas>-->
+<!--        <div class="spin-button-wrapper">-->
+<!--            <button class="btn-spin hidden">Bấm để quay --><?php //$this->getSkinUrl('images') ?><!--</button>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+<!--<div id="fortunateResultModal" class="modal fade" role="dialog">-->
+<!--    <div class="fortunateDialogWrapper">-->
+<!--        <div class="fortunateDialog">-->
+<!--            <div class="fortunateModalClose" data-dismiss="modal">✕</div>-->
+<!--            <div class="fortunateWin" style="display: none">-->
+<!--                <div class="fortunateTop">-->
+<!--                    <span class="mess-gift">Chúc mừng bạn đã trúng Voucher trị giá </span><span class="FWgift"></span>-->
+<!--                </div>-->
+<!--                <div class="fortunateBottom">-->
+<!--                    Mã giảm giá: <span class="FWcoupon"></span>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="fortunateLose" style="display: none">-->
+<!--                Chúc bạn may mắn lần sau !!-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+<!--<script type="text/javascript" src="--><?php //echo $this->getSkinUrl('lib/Winwheel.js'); ?><!--"></script>-->
+<!--<script type="text/javascript" src="--><?php //echo $this->getSkinUrl('lib/TweenMax.min.js'); ?><!--"></script>-->
+<!--<script>-->
+<!--    var $j = jQuery.noConflict();-->
+<!--    var countAlert = 0;-->
+<!--    var coupon = "";-->
+<!--    var gift = "";-->
+<!--    --><?php //$session = Mage::getSingleton('customer/session'); ?>
+<!--
+//    $j('.fortunate-wheel-event').on('click', function (e) {
+//        resetWheel();
+//        var isLogin = false;
+//        <?php //if ($session->isLoggedIn()):?>
+//        isLogin = true;
+//        <?php //endif;?>
+//        if (isLogin) {
+//            $j('#fortunateHint').modal();
+//        } else {
+//            $j('#loginMobileView').show();
+//            toBackArrow("", null, '#loginMobileView', true, "", null, 0);
+//            var message = "Vui lòng đăng nhập để quay thưởng!";
+//            $j('#error-login').html(message);
+//        }
+//        e.stopPropagation();
+//    });
+//    $j('.confirm-hint').on('click',function(e){
+//        $j('#fortunateHint').modal('toggle');
+//        $j('#fortunateModal').modal();
+//        $j.ajax({
+//            url: "<?php //echo $this->getUrl('wheel/index/isRoll') ?>//",
+//            data: {'customer_id': '<?php //echo $session->getCustomer()->getId()?>//'},
+//            type: 'GET',
+//            success: function (data) {
+//                data = JSON.parse(data);
+//                if (data.status == 'is_roll') {
+//                    if (data.data.rule_id == 0) {
+//                        gift = "do_den";
+//                    } else {
+//                        gift = addCommas(data.data.rule_name.replace("VQPV_", ""));
+//                        coupon = data.data.coupon;
+//                    }
+//                    var mess = "Bạn đã quay thưởng trúng voucher trị giá ";
+//                    appendPrice(mess, gift, coupon);
+//                }
+//                else {
+//                    $j('.btn-spin').removeClass('hidden');
+//                }
+//            },
+//            error: function (XMLHttpRequest, textStatus, errorThrown) {
+//                console.log("Status: " + textStatus);
+//                console.log("Error: " + errorThrown);
+//            }
+//        });
+//    });
+//
+//    $j('#canvas').attr('width', $j(window).width());
+//    var theWheel = new Winwheel({
+//        'canvasID': 'myCanvas',
+//        'numSegments': 24,
+//        'rotationAngle': -22.5,
+//        'drawMode': 'image',
+//        'segments':
+//            [
+//                {'text': '1'},
+//                {'text': '2'},
+//                {'text': '3'},
+//                {'text': '4'},
+//                {'text': '5'},
+//                {'text': '6'},
+//                {'text': '7'},
+//                {'text': '8'},
+//                {'text': '9'},
+//                {'text': '10'},
+//                {'text': '11'},
+//                {'text': '12'},
+//                {'text': '13'},
+//                {'text': '14'},
+//                {'text': '15'},
+//                {'text': '16'},
+//                {'text': '17'},
+//                {'text': '18'},
+//                {'text': '19'},
+//                {'text': '20'},
+//                {'text': '21'},
+//                {'text': '22'},
+//                {'text': '23'},
+//                {'text': '24'}
+//            ],
+//        'pointerAngle': 270,
+//        'lineWidth': 1,
+//        'outerRadius': 160,
+//        'innerRadius': 50,
+//        'lineWidth': 3,
+//        'pointerGuide':
+//            {
+//                'display': false,
+//                'strokeStyle': 'red',
+//                'lineWidth': 3
+//            },
+//        'animation':
+//            {
+//                'type': 'spinToStop',
+//                'duration': 12,
+//                'spins': 6,
+//                'callbackFinished': 'alertPrize()',
+//                'easing': 'Power4.easeOut'
+//            }
+//    });
+//    loadedImg = new Image();
+//    loadedImg.onload = function () {
+//        theWheel.wheelImage = loadedImg;
+//        theWheel.draw();
+//    };
+//
+//    loadedImg.src = "<?php //echo $this->getSkinUrl('images/keogo.png') ?>//";
+//
+//    $j('.btn-spin').on('click', function (e) {
+//        // $j('.btn-spin').attr('disabled', 'disabled');
+//        $j('.btn-spin').addClass('hidden');
+//        theWheel.startAnimation();
+//        $j.ajax({
+//            url: "<?php //echo $this->getUrl('wheel') ?>//",
+//            data: {'customer_id': '<?php //echo $session->getCustomer()->getId()?>//'},
+//            type: 'POST',
+//            success: function (data) {
+//                data = JSON.parse(data);
+//                if (data.status == 'processing') {
+//                    swal("Hệ thống đang xử lý, vui lòng đợi trong giây lát!");
+//                }
+//                else if (data.status) {
+//                    gift = data.data.rule_name;
+//                    var min = 0;
+//                    var max = 0;
+//                    switch (gift) {
+//                        case 'VQPV_100000':
+//                            min = 1;
+//                            max = 22;
+//                            break;
+//                        case 'VQPV_200000':
+//                            min = 23;
+//                            max = 67;
+//                            break;
+//                        case 'VQPV_300000':
+//                            min = 68;
+//                            max = 112;
+//                            break;
+//                        case 'VQPV_500000':
+//                            min = 158;
+//                            max = 203;
+//                            break;
+//                        case 'VQPV_2000000':
+//                            min = 293;
+//                            max = 337;
+//                            break;
+//                        case 'VQPV_20000':
+//                            min = 203;
+//                            max = 247;
+//                            break;
+//                        case 'VQPV_50000':
+//                            min = 113;
+//                            max = 157;
+//                            break;
+//                        default:
+//                            min = 248;
+//                            max = 292;
+//                    }
+//                    var stopAt = Math.random() * (max - min) + min + 22.5;
+//                    if (data.data.rule_id == 0) {
+//                        gift = "do_den";
+//                    } else {
+//                        gift = addCommas(gift.replace("VQPV_", ""));
+//                    }
+//                    coupon = data.data.coupon;
+//                    theWheel.stopAnimation();
+//                    theWheel.rotationAngle = -22.5;
+//                    theWheel.draw();
+//                    theWheel.animation.stopAngle = stopAt;
+//                    theWheel.startAnimation();
+//                } else {
+//                    swal("Có lỗi xảy ra, vui lòng thử lại !");
+//                }
+//            },
+//            error: function (XMLHttpRequest, textStatus, errorThrown) {
+//                console.log("Status: " + textStatus);
+//                console.log("Error: " + errorThrown);
+//            }
+//        });
+//
+//        e.stopPropagation();
+//        e.preventDefault();
+//    });
+//
+//    function resetWheel() {
+//        theWheel.rotationAngle = -22.5;
+//        theWheel.draw();
+//    }
+//
+//    function alertPrize() {
+//        countAlert++;
+//        if ((countAlert) % 2 == 0) {
+//            var mess = "";
+//            appendPrice(mess, gift, coupon);
+//        }
+//    }
+//
+//    function appendPrice(_mess, _gift, _coupon) {
+//        $j('.fortunateWin').hide();
+//        $j('.fortunateLose').hide();
+//        if (_gift == "do_den") {
+//            $j('.fortunateLose').show();
+//            $j('#fortunateModal').modal('toggle');
+//            $j('#fortunateResultModal').modal();
+//            $j('.btn-spin').removeAttr('disabled');
+//        } else {
+//            _gift = addCommas(_gift.replace("VQPV_", ""));
+//            if (_mess !== "") {
+//                $j('.mess-gift').html(_mess);
+//            }
+//            $j('#fortunateModal').modal('toggle');
+//            $j('.FWgift').html(_gift);
+//            $j('.FWcoupon').html(_coupon);
+//            $j('.fortunateWin').show();
+//            $j('#fortunateResultModal').modal();
+//            $j('.btn-spin').removeAttr('disabled');
+//        }
+//    }
+//
+//    function addCommas(str) {
+//        var parts = (str + "").split("."),
+//            main = parts[0],
+//            len = main.length,
+//            output = "",
+//            first = main.charAt(0),
+//            i;
+//
+//        if (first === '-') {
+//            main = main.slice(1);
+//            len = main.length;
+//        } else {
+//            first = "";
+//        }
+//        i = len - 1;
+//        while (i >= 0) {
+//            output = main.charAt(i) + output;
+//            if ((len - i) % 3 === 0 && i > 0) {
+//                output = "." + output;
+//            }
+//            --i;
+//        }
+//        // put sign back
+//        output = first + output;
+//        // put decimal part back
+//        if (parts.length > 1) {
+//            output += "." + parts[1];
+//        }
+//        return output;
+//    }
+//
+//</script>
+-->
+
+<!-- Matomo -->
+<script type="text/javascript">
+    var _paq = _paq || [];
+    /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+    _paq.push(['trackPageView']);
+    _paq.push(['enableLinkTracking']);
+    (function() {
+        var u="//analytics.teko.vn/";
+        _paq.push(['setTrackerUrl', u+'piwik.php']);
+        _paq.push(['setSiteId', '5']);
+        var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+        g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+    })();
+</script>
+<!-- End Matomo Code -->

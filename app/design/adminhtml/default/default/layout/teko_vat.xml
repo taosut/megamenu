@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+    <adminhtml_sales_order_vat>
+        <reference name="content">
+            <block type="teko_vat/adminhtml_sales_order_vat" name="teko.vat.adminhtml.sales.order.vat"></block>
+        </reference>
+    </adminhtml_sales_order_vat>
+</layout>

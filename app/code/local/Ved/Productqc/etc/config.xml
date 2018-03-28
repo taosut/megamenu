@@ -1,0 +1,126 @@
+<?xml version="1.0"?>
+
+<config>
+    <modules>
+        <Ved_Productqc>
+            <version>1.0.0</version>
+        </Ved_Productqc>
+    </modules>
+
+    <global>
+        <resources>
+            <ved_productqc_setup>
+                <setup>
+                    <module>Ved_Productqc</module>
+                </setup>
+            </ved_productqc_setup>
+        </resources>
+
+        <blocks>
+            <ved_productqc>
+                <class>Ved_Productqc_Block</class>
+            </ved_productqc>
+            <adminhtml>
+                <rewrite>
+                    <catalog_product_grid>Ved_Productqc_Block_Adminhtml_Catalog_Product_Grid</catalog_product_grid>
+                    <catalog_product>Ved_Productqc_Block_Adminhtml_Catalog_Product</catalog_product>
+                    <catalog_product_edit>Ved_Productqc_Block_Adminhtml_Catalog_Product_Edit</catalog_product_edit>
+                </rewrite>
+            </adminhtml>
+        </blocks>
+        <models>
+            <ved_productqc>
+                <class>Ved_Productqc_Model</class>
+                <resourceModel>ved_productqc_resource</resourceModel>
+            </ved_productqc>
+            <ved_productqc_resource>
+                <class>Ved_Productqc_Model_Resource</class>
+                <entities>
+                    <logaction>
+                        <table>log_action</table>
+                    </logaction>
+                    <mapping>
+                        <table>user_mapping</table>
+                    </mapping>
+                </entities>
+            </ved_productqc_resource>
+        </models>
+
+        <helpers>
+            <ved_productqc>
+                <class>Ved_Productqc_Helper</class>
+            </ved_productqc>
+        </helpers>
+    </global>
+
+    <admin>
+        <routers>
+            <adminhtml>
+                <ved_productqc>
+                    <use>admin</use>
+                    <args>
+                        <module>Ved_Productqc</module>
+                        <frontName>ved_productqc</frontName>
+                    </args>
+                </ved_productqc>
+                <args>
+                    <modules>
+                        <Ved_Productqc before="Mage_Adminhtml">Ved_Productqc_Adminhtml</Ved_Productqc>
+                    </modules>
+                </args>
+            </adminhtml>
+        </routers>
+    </admin>
+    <adminhtml>
+        <acl>
+            <resources>
+                <all>
+                    <title>Allow Everything</title>
+                </all>
+                <admin>
+                    <children>
+                        <catalog>
+                            <children>
+                                <qc_product translate="title">
+                                    <title>QC Product</title>
+                                </qc_product>
+                            </children>
+                            <children>
+                                <delete_product translate="title">
+                                    <title>Delete Product</title>
+                                </delete_product>
+                            </children>
+                            <children>
+                                <products translate="title">
+                                    <title>Manage Products</title>
+                                    <children>
+                                        <new translate="title">
+                                            <title>Manage Create Products</title>
+                                        </new>
+                                    </children>
+                                </products>
+                            </children>
+                            <children>
+                                <update_attribute_set translate="title">
+                                    <title>Update Attribute Set</title>
+                                </update_attribute_set>
+                            </children>
+                            <children>
+                                <asia_product translate="title">
+                                    <title>Cập nhật Sản phẩm từ Phong Vũ</title>
+                                </asia_product>
+                            </children>
+                        </catalog>
+                    </children>
+                </admin>
+            </resources>
+        </acl>
+        <layout>
+            <updates>
+                <ved_productqcs>
+                    <file>ved_productqc.xml</file>
+                </ved_productqcs>
+            </updates>
+        </layout>
+    </adminhtml>
+</config>

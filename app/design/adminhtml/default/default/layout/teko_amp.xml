@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+    <adminhtml_amp_config_index>
+        <reference name="content">
+            <block type="teko_amp/adminhtml_amp_config" name="teko.vat.adminhtml.sales.order.vat"
+                   template="teko_amp/config.phtml"></block>
+        </reference>
+    </adminhtml_amp_config_index>
+</layout>

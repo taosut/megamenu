@@ -1,0 +1,248 @@
+<?php
+$_cartItems = Mage::getSingleton('checkout/session')->getQuote()->getAllVisibleItems();
+$total_free_item_price = 0;
+$sub_total = Mage::helper('checkout/cart')->getQuote()->getSubtotal();
+$grand_total = Mage::helper('checkout/cart')->getQuote()->getGrandTotal();
+$discount_value = $sub_total - $grand_total;
+$coupon_code = Mage::getSingleton('checkout/session')->getQuote()->getCouponCode();
+?>
+<?php $_cartItemsTrack = []; ?>
+<?php if (count($_cartItems) > 0): ?>
+    <div class="cart-products">
+        <form id="cart-qty-form"
+              action="<?php echo $this->getUrl('checkout/cart/updatePostAjax') ?>"
+              method="post">
+            <?php foreach ($_cartItems as $_item): ?>
+                <?php
+                $_productCartObj = new stdClass();
+                $_productCartObj->name = $this->escapeHtml($_item->getName());
+                $_productCartObj->id = intval($_item->getProduct()->getId());
+                $_productCartObj->price = intval($_item->getPrice());
+                $_productCartObj->quantity = intval($_item->getQty());
+                $_cartItemsTrack[] = $_productCartObj;
+                ?>
+                <?php
+                $total = $_item->getPrice() * $_item->getQty();
+                $freeItem = unserialize($_item->getAdditionalData());
+                ?>
+                <div class="row cart-products-item">
+                    <div class="col-md-3 col-sm-3 pl-0">
+                        <img class="cart-product-img"
+                             src="<?php echo Mage::helper('catalog/image')->init($_item->getProduct(), 'small_image')->resize(70); ?>"/>
+                    </div>
+                    <div class="col-md-9 col-sm-9 pl-0 pr-0">
+                        <a class="cart-product-name"
+                           onclick="trackProductClicks(this);"
+                           data-id="<?php echo $_item->getProduct()->getId(); ?>"
+                           data-name="<?php echo $this->escapeHtml($_item->getName()); ?>"
+                           data-price="<?php echo $_item->getPrice(); ?>"
+                           href="<?php echo $_item->getProduct()->getProductFullUrl(); ?>"
+                           title="<?php echo $this->escapeHtml($_item->getName()); ?>">
+                            <?php echo $this->escapeHtml($_item->getName()); ?>
+                        </a>
+                        <div class="cart-product-price-qty">
+                            <span class="cart-product-price"><?php echo number_format($_item->getPrice(), 0, ",", ".") . " ₫"; ?></span>
+                            <span class="cart-product-qty">
+                                <span>x</span>
+                                <input name="form_key" type="hidden" value="<?php echo $this->getFormKey() ?>"/>
+                                <input name="cart[<?php echo $_item->getId() ?>][qty]"
+                                       id="cart-product-qty-input-<?php echo $_item->getId() ?>"
+                                       data-id="<?php echo $_item->getId() ?>"
+                                       data-product-id="<?php echo $_item->getProduct()->getId(); ?>"
+                                       data-name="<?php echo $this->escapeHtml($_item->getName()); ?>"
+                                       data-price="<?php echo $_item->getPrice(); ?>"
+                                       data-qty="<?php echo $_item->getQty(); ?>"
+                                       onkeyup="doUpdateCart(this)"
+                                       type="number"
+                                       value="<?php echo (isset($freeItem) && isset($freeItem['quantity'])) ? $_item->getQty() - $freeItem['quantity'] : $_item->getQty(); ?>"
+                                       class="cart-product-qty-input"
+                                       maxlength="12"
+                                    <?php echo (isset($freeItem['parent']) || $_item->getPrice() == 0) ? 'disabled' : '' ?>
+                                />
+                                <input name="cart[<?php echo $_item->getId() ?>][product_id]"
+                                       value="<?php echo $_item->getProduct()->getId() ?>"
+                                       type="hidden"/>
+                                <input name="cart[<?php echo $_item->getId() ?>][previous_qty]"
+                                       value="<?php echo $_item->getQty(); ?>"
+                                       type="hidden"/>
+                                <input type="hidden" name="cart[<?php echo $_item->getId() ?>][is_free_item]"
+                                       value="<?php echo (isset($freeItem['parent'])) ? 1 : 0 ?>"/>
+                            </span>
+                        </div>
+                        <div class="cart-product-total-price-block">
+                            <?php if (isset($freeItem) && isset($freeItem['quantity']) && isset($freeItem['price'])): ?>
+                                <?php $total = $total - $freeItem['quantity'] * $freeItem['price']; ?>
+                                <?php $total_free_item_price += $freeItem['quantity'] * $freeItem['price']; ?>
+                            <?php endif; ?>
+                            =<span class="cart-product-total-price"><?php echo number_format($total, 0, ",", ".") . " ₫"; ?></span>
+                        </div>
+                        <?php if (!isset($freeItem['parent'])): ?>
+                            <div class="cart-product-remove">
+                                <i id="cart-remove-icon-<?php echo $_item->getId(); ?>"
+                                   class="fa fa-trash cart-remove-icon"
+                                   onclick="deleteItem(this)"
+                                   data-id="<?php echo $_item->getId(); ?>"
+                                   data-product-id="<?php echo $_item->getProduct()->getId(); ?>"
+                                   data-name="<?php echo $this->escapeHtml($_item->getName()); ?>"
+                                   data-price="<?php echo $_item->getPrice(); ?>"
+                                   data-qty="<?php echo $_item->getQty(); ?>"
+                                   data-url="<?php echo Mage::getUrl('checkout/cart/deleteAjax', array('id' => $_item->getId(), 'delete_qty' => $_item->getQty())); ?>">
+                                </i>
+                                <img id="cart-remove-ajax-loader-<?php echo $_item->getId(); ?>"
+                                     class="cart-remove-ajax-loader hidden"
+                                     src="<?php echo $this->getSkinUrl('images/ajax-loader-gray.gif'); ?>"/>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                    <?php if (!isset($freeItem['parent']) && $_item->getPrice() == 0): ?>
+                        <span class="cart-promo-text">(Quà tặng)</span>
+                    <?php endif; ?>
+                    <?php if ($_item->getProduct()->getTypeID() == 'bundle' && $_options = Mage::helper('bundle/catalog_product_configuration')->getOptions($_item)): ?>
+                        <dl class="item-options">
+                            <?php foreach ($_options as $_option) : ?>
+                                <?php $_formatedOptionValue = Mage::helper('catalog/product_configuration')->getFormattedOptionValue($_option); ?>
+                                <dt><?php echo Mage::helper('core')->escapeHtml($_option['label'], null) ?></dt>
+                                <dd<?php if (isset($_formatedOptionValue['full_view'])): ?> class="truncated"<?php endif; ?>>
+                                    <?php echo $_formatedOptionValue['value'] ?>
+                                    <?php if (isset($_formatedOptionValue['full_view'])): ?>
+                                        <div class="truncated_full_value">
+                                            <dl class="item-options">
+                                                <dt><?php echo Mage::helper('core')->escapeHtml($_option['label'], null) ?></dt>
+                                                <dd><?php echo $_formatedOptionValue['full_view'] ?></dd>
+                                            </dl>
+                                        </div>
+                                    <?php endif; ?>
+                                </dd>
+                            <?php endforeach; ?>
+                        </dl>
+                    <?php elseif ($_item->getProduct()->getTypeID() != 'bundle' && $_options = Mage::helper('catalog/product_configuration')->getOptions($_item)): ?>
+                        <dl class="item-options">
+                            <?php foreach ($_options as $_option) : ?>
+                                <?php $_formatedOptionValue = Mage::helper('catalog/product_configuration')->getFormattedOptionValue($_option); ?>
+                                <dt><?php echo Mage::helper('core')->escapeHtml($_option['label'], null) ?></dt>
+                                <dd<?php if (isset($_formatedOptionValue['full_view'])): ?> class="truncated"<?php endif; ?>>
+                                    <?php echo $_formatedOptionValue['value'] ?>
+                                    <?php if (isset($_formatedOptionValue['full_view'])): ?>
+                                        <div class="truncated_full_value">
+                                            <dl class="item-options">
+                                                <dt><?php echo Mage::helper('core')->escapeHtml($_option['label'], null) ?></dt>
+                                                <dd><?php echo $_formatedOptionValue['full_view'] ?></dd>
+                                            </dl>
+                                        </div>
+                                    <?php endif; ?>
+                                </dd>
+                            <?php endforeach; ?>
+                        </dl>
+                    <?php endif; ?>
+                </div>
+            <?php endforeach; ?>
+        </form>
+    </div>
+    <input type="hidden" id="discount-value" value="<?php echo $discount_value ?>">
+    <input type="hidden" id="total-free-item-price"
+           value="<?php echo $total_free_item_price ?>">
+
+    <div class="cart-subtotal-block">
+        Tạm tính:
+        <span class="cart-subtotal-price"><?php echo number_format($sub_total - $total_free_item_price, 0, ",", ".") . " ₫"; ?></span>
+    </div>
+
+    <div class="cart-discount-block">
+        Giảm giá:
+        <span class="cart-discount-value">- <?php echo number_format($discount_value - $total_free_item_price, 0, ",", ".") . " ₫"; ?></span>
+    </div>
+
+    <div class="cart-coupon-block">
+        <form id="discount-coupon-form"
+              action="<?php echo $this->getUrl('checkout/cart/couponPostAjax') ?>"
+              method="post">
+            <input type="hidden" name="remove" id="remove-coupon" value="0"/>
+            <input type="text" class="cart-coupon-input" placeholder="Nhập mã giảm giá tại đây"
+                   name="coupon_code"
+                   value="<?php echo $this->escapeHtml($coupon_code) ?>"
+                   onkeyup="doCouponPost();"/>
+            <img class="cart-coupon-ajax-loader hidden"
+                 src="<?php echo $this->getSkinUrl('images/ajax-loader-gray.gif'); ?>"/>
+            <a class="remove-coupon-btn hidden"
+               onclick="applyCouponCode(true)"
+               title="Nhập lại mã giảm giá"><span class="fa fa-times"></span></a>
+            <div class="invalid-coupon text-right red"></div>
+        </form>
+    </div>
+
+    <div class="cart-shipping-fee-block">
+        Phong Vũ miễn phí vận chuyển cho các đơn hàng trị giá trên 500.000 đ <a
+                href="https://phongvu.vn/landing/bieu-phi.html" target="_blank">(Tham khảo biểu phí dịch vụ)</a>
+    </div>
+
+    <div class="cart-total-block">
+        Thành tiền:
+        <span class="cart-total-price"><?php echo number_format($grand_total, 0, ",", ".") . " ₫"; ?></span>
+    </div>
+
+    <div class="cart-shipping-block">
+        Phí vận chuyển tạm tính:
+        <span class="cart-shipping-price">
+            0 ₫
+        </span>
+    </div>
+
+    <div class="cart-grandtotal-block">
+        Tổng tiền:
+        <span class="cart-grandtotal-price"><?php echo number_format($grand_total, 0, ",", ".") . " ₫"; ?></span>
+    </div>
+
+    <button type="button" class="cart-checkout-btn"
+            onclick="goToCheckout();">
+        Thanh toán
+        <img class="cart-checkout-ajax-loader hidden"
+             src="<?php echo $this->getSkinUrl('images/ajax-loader-white.gif'); ?>"/>
+    </button>
+
+    <script type="text/javascript">
+        checkShippingFee(<?php echo $grand_total; ?>);
+        function checkShippingFee(price) {
+            if (price < 500000) {
+                shipping_fee = 11000;
+                $j('.cart-grandtotal-price').empty().html(formatCurrency(price + 11000) + " ₫");
+                $j('.cart-shipping-price').empty().html(formatCurrency(shipping_fee) + " ₫");
+            } else {
+                shipping_fee = 0;
+                $j('.cart-grandtotal-price').empty().html(formatCurrency(price) + " ₫");
+                $j('.cart-shipping-price').empty().html(formatCurrency(shipping_fee) + " ₫");
+            }
+        }
+        /** Go to checkout **/
+        var cartItems = <?php echo json_encode($_cartItemsTrack); ?>;
+        function goToCheckout() {
+            $j('.cart-checkout-btn').prop('disabled', true);
+            $j('.cart-checkout-ajax-loader').removeClass('hidden');
+
+            /** Track checkout step 1 **/
+            dataLayer.push({
+                'event': 'checkout',
+                'ecommerce': {
+                    'checkout': {
+                        'actionField': {'step': 1},
+                        'products': cartItems
+                    }
+                },
+                'eventCallback': function () {
+                    window.location.href = '<?php echo $this->getUrl('checkout/shipping'); ?>';
+                }
+            });
+        }
+        /** End go to checkout **/
+        function formatCurrency(n) {
+            return n.toFixed(0).replace(/./g, function (c, i, a) {
+                return i > 0 && c !== "." && (a.length - i) % 3 === 0 ? "." + c : c;
+            });
+        }
+    </script>
+<?php else: ?>
+    <div class="cart-products">
+        <img class="cart-empty-img"
+             src="<?php echo $this->getSkinUrl('images/empty_cart.png'); ?>"/>
+        <div class="cart-empty-text">Giỏ hàng trống</div>
+    </div>
+<?php endif; ?>

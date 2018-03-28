@@ -1,0 +1,24 @@
+<?php //echo "confirm";
+$order_id = $this->getRequest()->getParam('order_id');
+$order_no = $this->getRequest()->getParam('order_no');
+$pl       = $this->getRequest()->getParam('pl');
+$base_url = $this->getSaveUrl($order_id) ;
+$back_url = $this->getBackUrl($order_id) ;
+
+?>
+<div class="content-header">
+    <table cellspacing="0">
+        <tbody><tr>
+            <td style="width:50%;"><h3 class="icon-head head-adminhtml-sales-order">Thông tin vận đơn</h3></td>
+            
+        </tr>
+    </tbody></table>
+</div>
+<form id="confirm_vandon" method="GET" action="<?php echo $base_url;?>" >
+    Vận đơn chuyển phát qua <b style="color: red"><?php echo base64_decode($pl);?></b> đã được tạo ra cho đơn hàng <b style="color: red"><?php echo $order_no;?></b><br />
+    Bạn có xác nhận gửi hàng không?   <br /> <br /> 
+
+    <button name="ok" type="submit">Đồng ý</button> 
+    <button id="id_07c78bfc4c596bcf4e6e65ad7fdb38d3" title="Quay lại" type="button" class="scalable back" onclick="setLocation('<?php echo $back_url;?>')" style="">
+    <span><span><span>Quay lại</span></span></span></button>
+</form>

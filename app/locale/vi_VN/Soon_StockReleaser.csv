@@ -1,0 +1,25 @@
+Automatically Canceled Orders,Đơn hàng bị hủy tự động
+Canceled On,Bị hủy ngày
+Days,Ngày
+Minutes,Phút
+Delete Leadtime,Delete Leadtime
+Edit Leadtime '%s',Edit Leadtime '%s'
+Hours,Giờ
+In minutes,In minutes
+Leadtime,Leadtime
+Leadtime (in min.),Leadtime (in min.)
+Leadtime information,Leadtime information
+Leadtimes Manager,Cấu hình thời gian hủy đơn hàng
+New Leadtime,Nouveau délai
+Order Statuses,Trạng thái đơn hàng
+Order statuses that must be automatically cancelled,Trạng thái đơn hàng cho phép tự động hủy
+Save Leadtime,Cập nhật cấu hình
+Stock Release,Tự động thu hồi về kho
+Stock Release Leadtime,Khoảng thời gian trước khi hủy đơn hàng
+Stock Release Leadtimes,Khoảng thời gian trước khi hủy đơn hàng
+The leadtime has been deleted.,The leadtime has been deleted.
+The leadtime has been saved.,Cấu hình đã được lưu lại
+This leadtime no longer exists.,Cấu hình không tồn tại
+This order has been automatically cancelled.,Đơn hàng bị hủy do chưa thanh toán.
+This payment method already has a leadtime set.,Phương thức thanh toán đã có sẵn cấu hình.
+Unable to find a leadtime to delete.,Không tìm thấy cấu hình để xóa

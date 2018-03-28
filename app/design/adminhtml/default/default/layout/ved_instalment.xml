@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+    <default>
+        <reference name="head">
+            <action method="addCss">
+                <name>ved_agent/css/font-awesome.min.css</name>
+            </action>
+        </reference>
+    </default>
+    <adminhtml_instalment_order_create>
+        <reference name="head">
+            <action method="addJs">
+                <script>jquery.mask.js</script>
+            </action>
+            <action method="addJs">
+                <script>ved_instalment/instalment.js</script>
+            </action>
+        </reference>
+        <reference name="content">
+            <block type="ved_instalment/adminhtml_instalment_order_create"
+                   name="adminhtml.instalment.order.create"/>
+        </reference>
+    </adminhtml_instalment_order_create>
+</layout>

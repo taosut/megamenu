@@ -1,0 +1,228 @@
+<?php
+$currentUser = Mage::getSingleton('customer/session')->getCustomer();
+$agentInfo = json_decode($currentUser->getAgentInfo());
+
+$actionName = $this->getRequest()->getActionName();
+?>
+
+<div class="col-md-2 col-sm-2 agent-sidebar no-display-768">
+    <div class="agent-welcome-block">
+        <h2 class="mb-10">Xin chào đặc vụ <b><?php echo $currentUser->getFirstname() ?></b></h2>
+        <h2>Mã đặc vụ <b><?php echo $currentUser->getAgentCode() ?></b></h2>
+    </div>
+
+    <div class="agent-nav-item <?php echo $actionName == 'index' ? 'active' : false ?>">
+        <a href="<?php echo $this->getUrl('agent') ?>"><i class="fa fa-home"></i>&emsp;Trang chính</a>
+    </div>
+
+    <div class="agent-nav-item <?php echo $actionName == 'accountManagement' ? 'active' : false ?>">
+        <a href="<?php echo $this->getUrl('agent/index/accountManagement') ?>"><i
+                    class="fa fa-user"></i>&emsp;Quản
+            lý tài khoản</a>
+    </div>
+
+    <div class="agent-nav-item <?php echo $actionName == 'redemption' ? 'active' : false ?>">
+        <a href="<?php echo $this->getUrl('agent/index/redemption') ?>"><i class="fa fa-exchange"></i>&emsp;Quy
+            đổi thành tích</a>
+    </div>
+
+    <div class="agent-nav-item <?php echo $actionName == 'redemptionHistory' ? 'active' : false ?>">
+        <a href="<?php echo $this->getUrl('agent/index/redemptionHistory') ?>"><i
+                    class="fa fa-history"></i>&emsp;Lịch
+            sử quy đổi</a>
+    </div>
+
+    <div class="agent-nav-item <?php echo $actionName == 'agentList' ? 'active' : false ?>">
+        <a href="<?php echo $this->getUrl('agent/index/agentList') ?>"><i class="fa fa-users "></i>&emsp;Danh
+            sách đặc vụ giới thiệu</a>
+    </div>
+
+    <div class="agent-nav-item <?php echo $actionName == 'pointHistory' ? 'active' : false ?>">
+        <a href="<?php echo $this->getUrl('agent/index/pointHistory') ?>"><i
+                    class="fa fa-bar-chart"></i>&emsp;Lịch
+            sử tích lũy điểm</a>
+    </div>
+
+    <div class="agent-nav-item">
+        <a data-toggle="modal" data-target="#openNotification" style="cursor: pointer"><i class="fa fa-warning"></i>&emsp;Thông
+            báo</a>
+    </div>
+
+    <div class="agent-nav-item">
+        <a data-toggle="modal" data-target="#agentGuide"><i class="fa fa-question-circle"></i>&emsp;Hướng dẫn sử
+            dụng</a>
+    </div>
+</div>
+
+<div class="col-xs-12 agent-sidebar display-768 pl-0">
+    <div class="agent-nav-item <?php echo $actionName == 'index' ? 'active' : false ?>">
+        <a href="<?php echo $this->getUrl('agent') ?>"><i class="fa fa-home"></i><br>
+            Trang chính
+        </a>
+    </div>
+
+    <div class="agent-nav-item <?php echo $actionName == 'accountManagement' ? 'active' : false ?>">
+        <a href="<?php echo $this->getUrl('agent/index/accountManagement') ?>"><i
+                    class="fa fa-user"></i><br>
+            Quản lý tài khoản
+        </a>
+    </div>
+
+    <div class="agent-nav-item <?php echo $actionName == 'redemption' ? 'active' : false ?>">
+        <a href="<?php echo $this->getUrl('agent/index/redemption') ?>"><i
+                    class="fa fa-exchange"></i><br>
+            Quy đổi thành tích
+        </a>
+    </div>
+
+    <div class="agent-nav-item <?php echo $actionName == 'redemptionHistory' ? 'active' : false ?>">
+        <a href="<?php echo $this->getUrl('agent/index/redemptionHistory') ?>"><i
+                    class="fa fa-history"></i><br>
+            Lịch sử quy đổi
+        </a>
+    </div>
+
+    <div class="agent-nav-item <?php echo $actionName == 'agentList' ? 'active' : false ?>">
+        <a href="<?php echo $this->getUrl('agent/index/agentList') ?>"><i
+                    class="fa fa-users "></i><br>
+            Danh sách đặc vụ giới thiệu
+        </a>
+    </div>
+
+    <div class="agent-nav-item <?php echo $actionName == 'pointHistory' ? 'active' : false ?>">
+        <a href="<?php echo $this->getUrl('agent/index/pointHistory') ?>"><i
+                    class="fa fa-bar-chart"></i><br>
+            Lịch sử tích lũy điểm
+        </a>
+    </div>
+</div>
+<div class="col-xs-12 display-768 pl-30 pr-30">
+    <div class="agent-box agent-notice-768">
+        <a data-toggle="modal" data-target="#agentGuide"><i class="fa fa-question-circle"></i>&nbsp;
+            Hướng dẫn sử dụng (click để xem)
+        </a>
+    </div>
+    <div class="agent-box agent-notice-768">
+        <a data-toggle="modal" data-target="#openNotification"><i class="fa fa-warning"></i>&nbsp;
+            Thông báo của bạn (click để xem)
+        </a>
+    </div>
+</div>
+
+<div id="openNotification" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg" style="margin-top: 25vh">
+        <!-- Modal content-->
+        <div class="modal-content agent-modal-content">
+            <div class="modal-header agent-modal-header a-center">
+                <div class="agent-modal-title">Thông báo của bạn</div>
+                <div class="agent-close-modal" data-dismiss="modal">&times;</div>
+            </div>
+            <div class="modal-body agent-modal-body agent-redeem-content">
+                <?php
+                $waitingAchievementCount = Mage::getModel('Ved_Agent/agentachievement')->getCollection()
+                    ->addFieldToFilter('user_id', $currentUser->getId())
+                    ->addFieldToFilter('status', Ved_Agent_Model_Agentachievement::WAITING_TO_VERIFY)
+                    ->addFieldToFilter('is_deleted', 0)
+                    ->count();
+                $approvedAchievementCount = Mage::getModel('Ved_Agent/agentachievement')->getCollection()
+                    ->addFieldToFilter('user_id', $currentUser->getId())
+                    ->addFieldToFilter('status', Ved_Agent_Model_Agentachievement::VERIFIED)
+                    ->addFieldToFilter('is_deleted', 0)
+                    ->count();
+                $rejectedAchievementCount = Mage::getModel('Ved_Agent/agentachievement')->getCollection()
+                    ->addFieldToFilter('user_id', $currentUser->getId())
+                    ->addFieldToFilter('status', Ved_Agent_Model_Agentachievement::DECLINED)
+                    ->addFieldToFilter('is_deleted', 0)
+                    ->count();
+                $ntuAchievementCollection = Mage::getModel('Ved_Agent/agentachievement')->getCollection()
+                    ->addFieldToFilter('user_id', $currentUser->getId())
+                    ->addFieldToFilter('status', Ved_Agent_Model_Agentachievement::REQUIRE_TO_UPDATE)
+                    ->addFieldToFilter('is_deleted', 0)
+                    ->count();
+                ?>
+                <ul class="agent-news-content">
+                    <li <?php if ($waitingAchievementCount > 0): ?>style="cursor: pointer"
+                        onclick="filteredByWaiting()"<?php endif; ?>>Bạn có <span
+                                class="achieve-waiting-count"><?php echo $waitingAchievementCount ?></span>
+                        bài đang <span class="achieve-waiting-text">chờ xác nhận thành tích</span></li>
+                    <li <?php if ($approvedAchievementCount > 0): ?>style="cursor: pointer"
+                        onclick="filteredByApproved()"<?php endif; ?>>Bạn có <span
+                                class="achieve-approved-count"><?php echo $approvedAchievementCount ?></span>
+                        bài
+                        xác nhận thành tích <span
+                                class="achieve-approved-text">đã duyệt</span></li>
+                    <li <?php if ($rejectedAchievementCount > 0): ?>style="cursor: pointer"
+                        onclick="filteredByRejected()"<?php endif; ?>>Bạn có <span
+                                class="achieve-rejected-count"><?php echo $rejectedAchievementCount ?></span>
+                        bài
+                        xác nhận thành tích <span
+                                class="achieve-rejected-text">bị từ chối</span></li>
+                    <li <?php if ($ntuAchievementCollection > 0): ?>style="cursor: pointer"
+                        onclick="filteredByNeedToUpdate()"<?php endif; ?>>Bạn có <span
+                                class="achieve-ntu-count"><?php echo $ntuAchievementCollection ?></span>
+                        bài
+                        xác
+                        nhận thành tích <span
+                                class="achieve-ntu-text">cần cập nhật</span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Agent guide-->
+<?php
+echo $this->getLayout()->createBlock('cms/block')->setBlockId('agent_guide')->toHtml();
+?>
+
+<script>
+    var actionName = '<?php echo $actionName ?>';
+
+    function filteredByWaiting() {
+        localStorage.setItem("agent_achievement_waiting", true);
+        if (actionName === 'index') {
+            $j('#select-4').val('Chờ duyệt').change();
+            localStorage.removeItem('agent_achievement_waiting');
+            $j('#openNotification').modal('hide');
+        }
+        else {
+            window.location = '<?php echo $this->getUrl('agent') ?>';
+        }
+    }
+
+    function filteredByApproved() {
+        localStorage.setItem("agent_achievement_approved", true);
+        if (actionName === 'index') {
+            $j('#select-4').val('Phê duyệt').change();
+            localStorage.removeItem('agent_achievement_approved');
+            $j('#openNotification').modal('hide');
+        }
+        else {
+            window.location = '<?php echo $this->getUrl('agent') ?>';
+        }
+    }
+
+    function filteredByRejected() {
+        localStorage.setItem("agent_achievement_rejected", true);
+        if (actionName === 'index') {
+            $j('#select-4').val('Từ chối').change();
+            localStorage.removeItem('agent_achievement_rejected');
+            $j('#openNotification').modal('hide');
+        }
+        else {
+            window.location = '<?php echo $this->getUrl('agent') ?>';
+        }
+    }
+
+    function filteredByNeedToUpdate() {
+        localStorage.setItem("agent_achievement_needtoupdate", true);
+        if (actionName === 'index') {
+            $j('#select-4').val('Cần cập nhật').change();
+            localStorage.removeItem('agent_achievement_needtoupdate');
+            $j('#openNotification').modal('hide');
+        }
+        else {
+            window.location = '<?php echo $this->getUrl('agent') ?>';
+        }
+    }
+</script>

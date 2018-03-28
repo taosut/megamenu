@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Ved_Tracking>
+            <version>1.0.0</version>
+        </Ved_Tracking>
+    </modules>
+    <frontend>
+        <routers>
+            <tracking>
+                <use>standard</use>
+                <args>
+                    <module>Ved_Tracking</module>
+                    <frontName>tracking</frontName>
+                </args>
+            </tracking>
+        </routers>
+        <layout>
+            <updates>
+                <tracking>
+                    <file>ved_tracking.xml</file>
+                </tracking>
+            </updates>
+        </layout>
+    </frontend>
+    <global>
+        <blocks>
+            <tracking>
+                <class>Ved_Tracking_Block</class>
+            </tracking>
+        </blocks>
+    </global>
+</config>

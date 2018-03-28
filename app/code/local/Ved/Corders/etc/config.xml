@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+ 
+<config>
+    <modules>
+        <Ved_Corders>
+            <version>0.0.0.1</version>
+        </Ved_Corders>
+    </modules>
+ 
+    <global>
+        <models>
+            <Ved_Corders>
+                <class>Ved_Corders_Model</class>
+                <resourceModel>ved_corders_resource</resourceModel>
+            </Ved_Corders>
+        </models>
+ 
+        <resources>
+            <ved_corders_setup>
+                <setup>
+                    <module>Ved_Corders</module>
+                </setup>
+            </ved_corders_setup>
+        </resources>
+ 
+        <blocks>
+            <ved_corders>
+                <class>Ved_Corders_Block</class>
+            </ved_corders>
+        </blocks>
+ 
+        <helpers>
+            <ved_corders>
+                <class>Ved_Corders_Helper</class>
+            </ved_corders>
+        </helpers>
+    </global>
+ 
+    <admin>
+        <routers>
+            <adminhtml>
+                <args>
+                    <modules>
+                        <ved_corders before="Mage_Adminhtml">Ved_Corders_Adminhtml</ved_corders>
+                    </modules>
+                </args>
+            </adminhtml>
+        </routers>
+    </admin>
+</config>

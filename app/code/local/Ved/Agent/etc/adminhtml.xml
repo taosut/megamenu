@@ -1,0 +1,99 @@
+<config>
+    <menu>
+        <agent translate="title" module="agent">
+            <title>Tekshop Agent</title>
+            <sort_order>120</sort_order>
+            <children>
+                <!-- <agent_achievement_verify_achievement translate="title" module="agent">
+                    <title>Verify Achievements</title>
+                    <sort_order>1</sort_order>
+                    <action>adminhtml/agent_achievement/index/verify_achievement/true</action>
+                </agent_achievement_verify_achievement> -->
+                <agent_achievement translate="title" module="agent">
+                    <title>Manage Achievements</title>
+                    <sort_order>5</sort_order>
+                    <action>adminhtml/agent_achievement/</action>
+                </agent_achievement>
+                <agent_info translate="title" module="agent">
+                    <title>Manage Agent Info</title>
+                    <sort_order>10</sort_order>
+                    <action>adminhtml/agent_info</action>
+                </agent_info>
+                <agent_account translate="title" module="agent">
+                    <title>Manage Account</title>
+                    <sort_order>15</sort_order>
+                    <action>adminhtml/agent_account</action>
+                </agent_account>
+                <agent_redemption translate="title" module="agent">
+                    <title>Manage Redemption Histories</title>
+                    <sort_order>30</sort_order>
+                    <action>adminhtml/agent_redemption</action>
+                </agent_redemption>
+                <agent_channel translate="title" module="agent">
+                    <title>Manage Channels</title>
+                    <sort_order>40</sort_order>
+                    <action>adminhtml/agent_channel</action>
+                </agent_channel>
+                <agent_achievement_type translate="title" module="agent">
+                    <title>Manage Achievement Types</title>
+                    <sort_order>50</sort_order>
+                    <action>adminhtml/agent_achievementtype</action>
+                </agent_achievement_type>
+                <agent_gift translate="title" module="agent">
+                    <title>Manage Redemption Gifts</title>
+                    <sort_order>50</sort_order>
+                    <action>adminhtml/agent_gift</action>
+                </agent_gift>
+            </children>
+        </agent>
+    </menu>
+    <acl>
+        <resources>
+            <all>
+                <title>Allow Everything</title>
+            </all>
+            <admin>
+                <children>
+                    <agent>
+                        <title>Tekshop Agent</title>
+                        <sort_order>120</sort_order>
+                        <children>
+                            <agent_achievement_verify_achievement translate="title" module="agent">
+                                <title>Verify Achievements</title>
+                                <sort_order>10</sort_order>
+                            </agent_achievement_verify_achievement>
+                            <agent_info translate="title" module="agent">
+                                <title>Manage Agent Info</title>
+                                <sort_order>10</sort_order>
+                            </agent_info>
+                            <agent_account translate="title" module="agent">
+                                <title>Manage Account</title>
+                                <sort_order>15</sort_order>
+                            </agent_account>
+                            <agent_achievement translate="title" module="agent">
+                                <title>Manage Achievements</title>
+                                <sort_order>5</sort_order>
+                            </agent_achievement>
+                            <agent_redemption translate="title" module="agent">
+                                <title>Manage Redemption Histories</title>
+                                <sort_order>30</sort_order>
+                            </agent_redemption>
+                            <agent_channel translate="title" module="agent">
+                                <title>Manage Channels</title>
+                                <sort_order>40</sort_order>
+                            </agent_channel>
+                            <agent_achievement_type translate="title" module="agent">
+                                <title>Manage Achievement Types</title>
+                                <sort_order>50</sort_order>
+                            </agent_achievement_type>
+                            <agent_gift translate="title" module="agent">
+                                <title>Manage Redemption Gifts</title>
+                                <sort_order>50</sort_order>
+                            </agent_gift>
+                        </children>
+                    </agent>
+                </children>
+            </admin>
+        </resources>
+    </acl>
+</config>

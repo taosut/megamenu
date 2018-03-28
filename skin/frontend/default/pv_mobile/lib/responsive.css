@@ -1,0 +1,94 @@
+/* Iphone 6/7/8/X */
+@media screen and (max-width: 375px) {
+    .product-img.lazy {
+        width: 90px;
+        height: 120px;
+    }
+
+    .input-search-wrapper.active {
+        width: 69%;
+    }
+
+    .tag-online-payment {
+        font-size: 9px;
+    }
+
+    .tag-online-payment img {
+        height: 12px;
+        margin-right: 2px;
+    }
+
+    .tag-online-payment-detail {
+        font-size: 10px;
+    }
+
+    .product-gift-icon {
+        height: 30px;
+    }
+
+    .promo-product-gift-icon, .list-product-gift-icon {
+        right: 30px;
+    }
+
+    .cart-button-group-btn {
+        font-size: 13px !important;
+    }
+}
+
+/*Iphone 5*/
+@media screen and (max-width: 320px) {
+    .product-img.lazy {
+        width: 70px;
+        height: 100px;
+    }
+
+    .promo-ribbon {
+        width: 35px;
+        height: 35px;
+        background-size: 35px;
+        padding-top: 4px;
+        font-size: 13px;
+    }
+
+    .mobile-navigation-wrapper {
+        margin-right: 12px;
+    }
+
+    .sub-mobile-navigation-wrapper {
+        margin-right: 12px;
+    }
+
+    .bp-button-group-btn {
+        padding: 6px 22px !important;
+    }
+
+    .sweet-alert button {
+        padding: 12px 15px;
+        font-size: 14px;
+    }
+
+    .sweet-alert h2 {
+        font-size: 15px;
+    }
+
+    .mobile-search-input {
+        font-size: 11px;
+    }
+
+    .final-price {
+        font-size: 15px;
+    }
+
+    .product-gift-icon {
+        height: 25px;
+        top: -5px;
+    }
+
+    .promo-product-gift-icon, .list-product-gift-icon {
+        right: 20px;
+    }
+
+    .cart-button-group-btn {
+        font-size: 12px !important;
+    }
+}

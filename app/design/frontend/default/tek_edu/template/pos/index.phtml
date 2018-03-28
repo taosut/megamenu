@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Bán hàng tại showroom</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+    <!--Bootstrap CSS 3.3.7-->
+    <link rel="stylesheet" type="text/css" href="<?php echo $this->getSkinUrl('css/bootstrap.min.css'); ?>"/>
+    <!-- Jquery UI CSS-->
+    <link rel="stylesheet" type="text/css" href="<?php echo $this->getSkinUrl('css/jquery-ui.css'); ?>"/>
+    <!-- Font awesome-->
+    <link rel="stylesheet" type="text/css" href="<?php echo $this->getSkinUrl('css/font-awesome.min.css'); ?>"/>
+    <!-- Custom pos css-->
+    <link rel="stylesheet" type="text/css" href="<?php echo $this->getSkinUrl('css/pos.css'); ?>"/>
+    <!-- Jquery 3.2.0-->
+    <script type="text/javascript" src="<?php echo $this->getSkinUrl('js/jquery.min.js'); ?>"></script>
+    <!-- Jquery UI JS-->
+    <script type="text/javascript" src="<?php echo $this->getSkinUrl('js/jquery-ui.js'); ?>"></script>
+    <!--Bootstrap JS 3.3.7-->
+    <script type="text/javascript" src="<?php echo $this->getSkinUrl('js/bootstrap.min.js'); ?>"></script>
+</head>
+<body>
+
+<?php
+function getListCities()
+{
+    $cities = array();
+    $collection = Mage::getModel('directory/region')->getResourceCollection()->addCountryFilter('VN')->load();
+    if (count($collection) > 0) {
+        foreach ($collection as $item) {
+            $data = $item->getData();
+            $cities = $cities + array($data['region_id'] => $data['default_name']);
+        }
+    }
+    return $cities;
+}
+
+?>
+
+<div class="pos-container">
+    <div class="header">
+        <div class="header-right">
+            <span class="welcome-text">
+                Xin chào Văn Hữu Linh
+            </span>
+            <div class="menu-bar" onclick="toggleMenuBar()">
+                <i class="fa fa-bars"></i>
+            </div>
+            <div class="menu-bar-content">
+                <div class="menu-bar-section">
+                    Bạn có:<br>
+                    <ul class="menu-bar-notification">
+                        <li>1 đơn hàng đã xác nhận lại</li>
+                        <li>2 đơn hàng cần confirm lại</li>
+                    </ul>
+                </div>
+                <div class="menu-bar-section"><i class="fa fa-external-link"></i><span>Đăng xuất</span></div>
+            </div>
+        </div>
+
+        <div class="search-wrapper">
+            <i class="fa fa-search"></i>
+            <input type="text" placeholder="Tìm sản phẩm" class="form-control search-input" id="productSearchInput">
+            <div class="output-complete no-display">
+                <ul></ul>
+                <div class="not-found no-display">
+                    Không tìm thấy kết quả nào phù hợp
+                </div>
+            </div>
+        </div>
+
+        <div class="header-tab">
+            <a id="scrollLeftBtn" class="scroll-bill-btn"><i class="fa fa-chevron-left"></i></a>
+            <ul id="billTabs" class="nav nav-tabs bill-tabs"></ul>
+            <a id="scrollRightBtn" class="scroll-bill-btn"><i class="fa fa-chevron-right"></i></a>
+            <a class="add-bill-btn" title="Thêm đơn hàng" onclick="addBill()"><i class="fa fa-plus"></i></a>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="row content-block">
+            <!-- Product block-->
+            <div class="col-md-9 col-xs-8 product-block">
+                <!-- Product cart-->
+                <div class="product-cart"></div>
+
+                <!-- Product list-->
+                <a class="chevron-btn" title="Thu gọn" onclick="toggleChevron()"><i
+                            class="chevron-icon fa fa-chevron-down"></i></a>
+                <div class="product-list">
+                    <div class="action-toolbar">
+                        <div class="action-left">
+                            <a class="filter-btn" data-toggle="modal" data-target="#openFilterModal"><i
+                                        class="fa fa-list"></i></a>
+                        </div>
+                        <div class="filter-info">
+
+                        </div>
+                        <div class="action-right">
+                            <span class="number-pages">1/2</span>
+                            <a class="paginate-btn previous-btn" title="Trang trước">
+                                <i class="fa fa-chevron-left"></i>
+                            </a>
+                            <a class="paginate-btn next-btn" title="Trang sau">
+                                <i class="fa fa-chevron-right"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="product-list-container">
+                        <div class="product-list-wrapper">
+                            <div class="product-list-slide">
+                                <ul>
+                                    <li>
+                                        <a title="Bàn ủi Philips GC2960">
+                                            <div class="product-img">
+                                                <img src="https://cdn-static.kiotviet.vn/kiotvietwebapp/sample/machine/1.png">
+                                                <span class="product-price">1,590,000</span>
+                                            </div>
+                                            <div class="product-info">
+                                                <span class="product-name">Bàn ủi Philips GC2960</span>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a title="Bàn ủi B&amp;W SI3288">
+                                            <div class="product-img">
+                                                <img src="https://cdn-static.kiotviet.vn/kiotvietwebapp/sample/machine/2.png">
+                                                <span class="product-price">650,000</span></div>
+                                            <div class="product-info">
+                                                <span class="product-name">Bàn ủi B&amp;W SI3288</span>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a title="Giá ủi đồ Blue House 390IB">
+                                            <div class="product-img">
+                                                <img src="https://cdn-static.kiotviet.vn/kiotvietwebapp/sample/machine/3.png">
+                                                <span class="product-price">1,790,000</span></div>
+                                            <div class="product-info">
+                                                <span class="product-name">Giá ủi đồ Blue House 390IB</span>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a title="Quạt bàn Asia B12004">
+                                            <div class="product-img">
+                                                <img src="https://cdn-static.kiotviet.vn/kiotvietwebapp/sample/machine/4.png">
+                                                <span class="product-price">349,000</span></div>
+                                            <div class="product-info">
+                                                <span class="product-name">Quạt bàn Asia B12004</span>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a title="Quạt hộp Asia F16002">
+                                            <div class="product-img">
+                                                <img src="https://cdn-static.kiotviet.vn/kiotvietwebapp/sample/machine/5.png">
+                                                <span class="product-price">430,000</span></div>
+                                            <div class="product-info">
+                                                <span class="product-name">Quạt hộp Asia F16002</span>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a title="Quạt treo tường Senko">
+                                            <div class="product-img">
+                                                <img src="https://cdn-static.kiotviet.vn/kiotvietwebapp/sample/machine/6.png">
+                                                <span class="product-price">200,000</span></div>
+                                            <div class="product-info">
+                                                <span class="product-name">Quạt treo tường Senko</span>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a title="Quạt đứng Asia A16009">
+                                            <div class="product-img">
+                                                <img src="https://cdn-static.kiotviet.vn/kiotvietwebapp/sample/machine/7.png">
+                                                <span class="product-price">500,000</span></div>
+                                            <div class="product-info">
+                                                <span class="product-name">Quạt đứng Asia A16009</span>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a title="Quạt trần Panasonic F-56MZG-GO">
+                                            <div class="product-img">
+                                                <img src="https://cdn-static.kiotviet.vn/kiotvietwebapp/sample/machine/8.png">
+                                                <span class="product-price">2,490,000</span></div>
+                                            <div class="product-info">
+                                                <span class="product-name">Quạt trần Panasonic F-56MZG-GO</span>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a title="Bình thủy điện CD-JUQ30-FS">
+                                            <div class="product-img">
+                                                <img src="https://cdn-static.kiotviet.vn/kiotvietwebapp/sample/machine/9.png">
+                                                <span class="product-price">4,200,000</span></div>
+                                            <div class="product-info">
+                                                <span class="product-name">Bình thủy điện CD-JUQ30-FS</span>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a title="Ấm đun Sunhan 1818">
+                                            <div class="product-img">
+                                                <img src="https://cdn-static.kiotviet.vn/kiotvietwebapp/sample/machine/10.png">
+                                                <span class="product-price">890,000</span></div>
+                                            <div class="product-info">
+                                                <span class="product-name">Ấm đun Sunhan 1818</span>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a title="Ấm đun KBO2001">
+                                            <div class="product-img">
+                                                <img src="https://cdn-static.kiotviet.vn/kiotvietwebapp/sample/machine/11.png">
+                                                <span class="product-price">1,650,000</span></div>
+                                            <div class="product-info">
+                                                <span class="product-name">Ấm đun KBO2001</span>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a title="Nồi cơm điện Cuckoo 0331">
+                                            <div class="product-img">
+                                                <img src="https://cdn-static.kiotviet.vn/kiotvietwebapp/sample/machine/12.png">
+                                                <span class="product-price">1,290,000</span></div>
+                                            <div class="product-info">
+                                                <span class="product-name">Nồi cơm điện Cuckoo 0331</span>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a title="Nồi cơm điện Tiger JCC-2700">
+                                            <div class="product-img">
+                                                <img src="https://cdn-static.kiotviet.vn/kiotvietwebapp/sample/machine/13.png">
+                                                <span class="product-price">4,539,000</span></div>
+                                            <div class="product-info">
+                                                <span class="product-name">Nồi cơm điện Tiger JCC-2700</span>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a title="Nồi cơm điện Sharp KSH-322V">
+                                            <div class="product-img">
+                                                <img src="https://cdn-static.kiotviet.vn/kiotvietwebapp/sample/machine/14.png">
+                                                <span class="product-price">750,000</span></div>
+                                            <div class="product-info">
+                                                <span class="product-name">Nồi cơm điện Sharp KSH-322V</span>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a title="Nồi thủy tinh Visions 1.25l">
+                                            <div class="product-img">
+                                                <img src="https://cdn-static.kiotviet.vn/kiotvietwebapp/sample/machine/15.png">
+                                                <span class="product-price">750,000</span></div>
+                                            <div class="product-info">
+                                                <span class="product-name">Nồi thủy tinh Visions 1.25l</span>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a title="Nồi hấp đa năng Sunhouse 4402">
+                                            <div class="product-img">
+                                                <img src="https://cdn-static.kiotviet.vn/kiotvietwebapp/sample/machine/16.png">
+                                                <span class="product-price">1,350,000</span></div>
+                                            <div class="product-info">
+                                                <span class="product-name">Nồi hấp đa năng Sunhouse 4402</span>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a title="Máy phát điện KAMA">
+                                            <div class="product-img">
+                                                <img src="https://cdn-static.kiotviet.vn/kiotvietwebapp/sample/machine/17.png">
+                                                <span class="product-price">19,500,000</span></div>
+                                            <div class="product-info">
+                                                <span class="product-name">Máy phát điện KAMA</span>
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a title="Máy phát điện Hyundai DHY9KSEM">
+                                            <div class="product-img">
+                                                <img src="https://cdn-static.kiotviet.vn/kiotvietwebapp/sample/machine/19.png">
+                                                <span class="product-price">170,800,000</span></div>
+                                            <div class="product-info">
+                                                <span class="product-name">Máy phát điện Hyundai DHY9KSEM</span>
+                                            </div>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order block-->
+            <div class="col-md-3 col-xs-4 order-block">
+                <div class="order-info-block">
+                    <div class="search-wrapper customer-search-wrapper">
+                        <i class="fa fa-search"></i>
+                        <input type="text" placeholder="Tìm khách hàng"
+                               class="form-control search-input customer-search-input"
+                               id="customerSearchInput">
+                        <i class="fa fa-plus" data-toggle="modal" data-target="#addCustomerModal"></i>
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="order-info">
+                        <div class="order-info-section">
+                            <span class="section-title">Tổng tiền hàng</span>
+                            <span class="section-price"><span class="sub-total">0</span></span>
+                        </div>
+                        <div class="order-info-section">
+                            <span class="section-title">Mã voucher</span>
+                            <input type="text" class="order-info-input" placeholder="Mã voucher"/>
+                        </div>
+                        <div class="order-info-section">
+                            <span class="section-title">Giảm giá</span>
+                            <span class="section-price"><span class="discount-amount">0</span></span>
+                        </div>
+                        <div class="order-info-section">
+                            <span class="section-title"><b>Khách cần trả</b></span>
+                            <span class="section-price need-to-pay-price"><span
+                                        class="grand-total">0</span></span>
+                        </div>
+                        <div class="order-info-section">
+                            <span class="section-title">Khách thanh toán</span>
+                            <input id="paidTotal" type="text" class="order-info-input" placeholder="Số tiền"/>
+                        </div>
+                        <div class="order-info-section">
+                            <span class="section-title">Tiền thừa trả khách</span>
+                            <span class="section-price"><span class="balance-total">0</span></span>
+                        </div>
+                        <div class="order-info-section">
+                            <span class="section-title"></span>
+                            <a class="open-shipping-btn" data-toggle="modal" data-target="#addShippingInfoModal">Giao
+                                hàng</a>
+                        </div>
+                        <div class="order-info-section">
+                            <span class="section-title">Ngày nhận hàng</span>
+                            <input type="text" class="order-info-input" id="datepicker"
+                                   placeholder="dd/mm/yyyy" readonly>
+                        </div>
+                    </div>
+
+                    <div class="search-wrapper customer-search-wrapper">
+                        <i class="fa fa-pencil"></i>
+                        <textarea class="form-control search-input customer-search-input order-note" rows="1"
+                                  id="orderNote" placeholder="Ghi chú" data-autoresize></textarea>
+                    </div>
+                </div>
+
+                <button type="button" class="btn btn-success order-btn">
+                    Đặt hàng
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal open filter-->
+<div class="modal left fade" id="openFilterModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="myModalLabel">Bộ lọc</h4>
+            </div>
+            <div class="modal-body">
+                <p>Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3
+                    wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum
+                    eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla
+                    assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt
+                    sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer
+                    farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus
+                    labore sustainable VHS.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal add customer -->
+<div id="addCustomerModal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Thêm khách hàng</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="customerName">Tên khách hàng <span
+                                    class="red">*</span></label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="customerName" placeholder="Tên khách hàng">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="customerPhone">Số điện thoại <span
+                                    class="red">*</span></label>
+                        <div class="col-sm-10">
+                            <input type="number" class="form-control" id="customerPhone" placeholder="Số điện thoại">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="customerAddress">Địa chỉ</label>
+                        <div class="col-sm-10">
+                            <textarea class="form-control" rows="3" id="customerAddress"
+                                      placeholder="Địa chỉ"></textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="customerEmail">Email</label>
+                        <div class="col-sm-10">
+                            <input type="email" class="form-control" id="customerEmail" placeholder="Email">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="customerNote">Ghi chú</label>
+                        <div class="col-sm-10">
+                            <textarea class="form-control" rows="3" id="customerNote" placeholder="Ghi chú"></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success">Xác nhận</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal add shipping info -->
+<div id="addShippingInfoModal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-lg">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Thông tin giao hàng</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal">
+                    <div class="form-group">
+                        <label class="control-label col-sm-3" for="shippingName">Họ và tên <span
+                                    class="red">*</span></label>
+                        <div class="col-sm-9">
+                            <input type="text" class="form-control" id="shippingName" placeholder="Họ và tên">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-3" for="shippingPhone">Số điện thoại <span
+                                    class="red">*</span></label>
+                        <div class="col-sm-9">
+                            <input type="number" class="form-control" id="shippingPhone" placeholder="Số điện thoại">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-3" for="shippingCheckbox">Nhận tại showroom? </label>
+                        <div class="col-sm-9 pt-7">
+                            <input type="checkbox" id="shippingCheckbox" onclick="toggleAddressBlock()">
+                        </div>
+                    </div>
+                    <div class="address-block">
+                        <div class="form-group">
+                            <label class="control-label col-sm-3" for="shippingProvince">Tỉnh/Thành phố <span
+                                        class="red">*</span></label>
+                            <div class="col-sm-9">
+                                <select class="form-control" id="shippingProvince">
+                                    <option value="">Chọn tỉnh thành</option>
+                                    <?php
+                                    $cities = getListCities();
+                                    foreach ($cities as $val => $name) {
+                                        echo '<option value="' . $val . '" >' . $name . '</option>';
+                                    }
+                                    ?>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-3" for="shippingDistrict">Quận/Huyện <span
+                                        class="red">*</span></label>
+                            <div class="col-sm-9">
+                                <select class="form-control" id="shippingDistrict">
+                                    <option value="">Chọn quận huyện</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-3" for="customerAddress">Địa chỉ <span
+                                        class="red">*</span></label>
+                            <div class="col-sm-9">
+                            <textarea class="form-control" rows="3" id="customerAddress"
+                                      placeholder="Địa chỉ"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-3" for="customerEmail">Email </label>
+                        <div class="col-sm-9">
+                            <input type="email" class="form-control" id="customerEmail" placeholder="Email">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-sm-3" for="customerNote">Ghi chú</label>
+                        <div class="col-sm-9">
+                            <textarea class="form-control" rows="3" id="customerNote"
+                                      placeholder="Thông tin ghi chú về: thời gian, địa điểm giao hàng, người nhận"></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success">Giao đến địa chỉ này</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#datepicker").datepicker({
+            dateFormat: 'dd/mm/yy',
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "1950:2017"
+        });
+
+        // Hide when click outsite output-complete
+        $(window).click(function () {
+            $('.output-complete').addClass('no-display');
+        });
+
+        $('#productSearchInput').click(function (event) {
+            event.stopPropagation();
+        });
+
+        $('.output-complete').click(function (event) {
+            event.stopPropagation();
+        });
+
+        var timeout = null;
+
+        // Search product
+        $('#productSearchInput').keyup(function () {
+            if (timeout) {
+                clearTimeout(timeout);
+            }
+            timeout = setTimeout(function () {
+                searchProductPos();
+            }, 500);
+        });
+
+        // Change province
+        $('#shippingProvince').change(function () {
+            var shippingDistrict = this.value;
+            $('#shippingDistrict').empty();
+            $('#shippingDistrict').load("<?php echo $this->getUrl('checkout/shipping/getDistrictsInCity')  ?>?cityId=" + shippingDistrict + "&defaultDistrict=");
+        });
+
+        // Update paid total
+        $('#paidTotal').change(function () {
+            var paidTotal = parseInt(this.value);
+            var grandTotal = parseInt($('.grand-total').text().replace(/\./g, ''));
+            var balanceTotal = paidTotal - grandTotal;
+            $('.balance-total').empty().append(addCommas(balanceTotal));
+        });
+
+        $('#scrollRightBtn').click(function (event) {
+            event.preventDefault();
+            $('.bill-tabs').animate({
+                scrollLeft: "+=200px"
+            }, 300);
+        });
+
+        $('#scrollLeftBtn').click(function (event) {
+            event.preventDefault();
+            $('.bill-tabs').animate({
+                scrollLeft: "-=200px"
+            }, 300);
+        });
+    });
+
+    var posBillTabs = JSON.parse(localStorage.getItem('pos_bill_tabs'));
+    if (!posBillTabs) {
+        localStorage.setItem('pos_bill_tabs', JSON.stringify([1]));
+    }
+
+    renderBillTab();
+
+    var activeBillIndex = parseInt($(".bill-tabs li.active .bill-number").text());
+    renderBill(activeBillIndex);
+
+    checkOverflowWidth();
+
+    $.each($('textarea[data-autoresize]'), function () {
+        var offset = this.offsetHeight - this.clientHeight;
+
+        var resizeTextarea = function (el) {
+            $(el).css('height', 'auto').css('height', el.scrollHeight + offset);
+        };
+        $(this).on('keyup input', function () {
+            resizeTextarea(this);
+        }).removeAttr('data-autoresize');
+    });
+
+    function searchProductPos() {
+        var keySearch = $('#productSearchInput').val().trim();
+        if (keySearch === '') {
+            $('.output-complete').addClass('no-display');
+            $('.output-complete ul').empty();
+        }
+        else {
+            var url = '<?php echo $this->getUrl('search/index/searchPos') ?>?q=' + keySearch;
+
+            $.ajax({
+                url: url,
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    var result_pos = response.result_pos.trim();
+
+                    $('.not-found').addClass('no-display');
+
+                    // Update search result
+                    $('.output-complete').removeClass('no-display');
+                    $('.output-complete ul').empty();
+
+                    if (result_pos.length > 0) { // Tim thay ket qua
+                        $('.output-complete ul').append(result_pos);
+                    }
+                    else { // Khong tim thay ket qua
+                        $('.not-found').removeClass('no-display');
+                    }
+                }
+            });
+        }
+    }
+
+    function addBill() {
+        $('.bill-tabs li').removeClass('active');
+        var activeTabIndex = parseInt($('.bill-tabs li').last().find('.bill-number').text()) + 1;
+
+        var newTab = '<li class="active">' +
+            '<a data-toggle="tab" onclick="renderBill(' + activeTabIndex + ')">Đơn hàng <span class="bill-number">' + activeTabIndex + '</span>' +
+            '<i class="delete-bill-btn fa fa-times" onclick="removeBill(event, ' + activeTabIndex + ')"></i>' +
+            '</a>' +
+            '</li>';
+        $('.bill-tabs').append(newTab);
+
+        renderBill(activeTabIndex);
+
+        $('.bill-tabs').animate({
+            scrollLeft: "+=5000px"
+        }, 300);
+
+        var posBillTabs = JSON.parse(localStorage.getItem('pos_bill_tabs'));
+        if (!posBillTabs) {
+            localStorage.setItem('pos_bill_tabs', JSON.stringify([activeTabIndex]));
+        }
+        else {
+            posBillTabs.push(activeTabIndex);
+            localStorage.setItem('pos_bill_tabs', JSON.stringify(posBillTabs));
+        }
+
+        checkOverflowWidth();
+    }
+
+    function renderBillTab() {
+        var posBillTabs = JSON.parse(localStorage.getItem('pos_bill_tabs'));
+        if (posBillTabs) {
+            $('.bill-tabs').empty();
+            for (var i = 0; i < posBillTabs.length; i++) {
+                var isActive = (i === 0) ? 'active' : '';
+                var newTab = '<li class="' + isActive + '">' +
+                    '<a data-toggle="tab" onclick="renderBill(' + posBillTabs[i] + ')">Đơn hàng <span class="bill-number">' + posBillTabs[i] + '</span>' +
+                    '<i class="delete-bill-btn fa fa-times" onclick="removeBill(event, ' + posBillTabs[i] + ')"></i>' +
+                    '</a>' +
+                    '</li>';
+                $('.bill-tabs').append(newTab);
+            }
+        }
+    }
+
+    function renderBillTabDifferentIndex(currentActiveBillIndex) {
+        var posBillTabs = JSON.parse(localStorage.getItem('pos_bill_tabs'));
+        if (posBillTabs) {
+            $('.bill-tabs').empty();
+            for (var i = 0; i < posBillTabs.length; i++) {
+                var isActive = (currentActiveBillIndex === posBillTabs[i]) ? 'active' : '';
+                var newTab = '<li class="' + isActive + '">' +
+                    '<a data-toggle="tab" onclick="renderBill(' + posBillTabs[i] + ')">Đơn hàng <span class="bill-number">' + posBillTabs[i] + '</span>' +
+                    '<i class="delete-bill-btn fa fa-times" onclick="removeBill(event, ' + posBillTabs[i] + ')"></i>' +
+                    '</a>' +
+                    '</li>';
+                $('.bill-tabs').append(newTab);
+            }
+        }
+    }
+
+    function removeBill(event, tabIndex) {
+        event.stopPropagation();
+
+        var posBillTabs = JSON.parse(localStorage.getItem('pos_bill_tabs'));
+        if (posBillTabs) {
+            // Remove from pos_bill_tabs
+            if (posBillTabs.length === 1) { // If there is only a tab, reset to tab 1
+                posBillTabs = [1];
+            }
+            else {
+                posBillTabs.splice(posBillTabs.indexOf(tabIndex), 1);
+            }
+
+            localStorage.setItem('pos_bill_tabs', JSON.stringify(posBillTabs));
+
+            var currentActiveBillIndex = parseInt($(".bill-tabs li.active .bill-number").text());
+
+            if (currentActiveBillIndex === tabIndex) {
+                renderBillTab();
+
+                $('.bill-tabs').animate({
+                    scrollLeft: "-=5000px"
+                }, 300);
+            }
+            else {
+                renderBillTabDifferentIndex(currentActiveBillIndex);
+            }
+
+            // Remove from pos_bill_items
+            var posBillItems = JSON.parse(localStorage.getItem('pos_bill_items'));
+            if (posBillItems) {
+                delete posBillItems[tabIndex];
+                localStorage.setItem('pos_bill_items', JSON.stringify(posBillItems));
+            }
+
+            var activeBillIndex = parseInt($(".bill-tabs li.active .bill-number").text());
+            renderBill(activeBillIndex);
+        }
+
+        checkOverflowWidth();
+    }
+
+    function checkOverflowWidth() {
+        var container = document.getElementById('billTabs');
+        var scrollWidth = container.scrollWidth;
+
+        if (scrollWidth > container.offsetWidth) {
+            $('.scroll-bill-btn').show();
+        }
+        else {
+            $('.scroll-bill-btn').hide();
+        }
+    }
+
+    function addProductToBill(value) {
+        var id = $(value).data('id');
+        var name = $(value).data('name');
+        var sku = $(value).data('sku');
+        var price = parseInt($(value).data('price'));
+
+        var activeBillIndex = parseInt($(".bill-tabs li.active .bill-number").text());
+
+        var newProduct = {
+            product_id: id,
+            product_name: name,
+            product_sku: sku,
+            product_price: price,
+            quantity: 1
+        };
+
+        var posBillItems = JSON.parse(localStorage.getItem('pos_bill_items'));
+
+        var newBill = {};
+
+        if (!posBillItems) { // Neu add lan dau
+            newBill[activeBillIndex] = [newProduct];
+        }
+        else { // Neu add lan sau
+            var itemArray = posBillItems[activeBillIndex];
+            newBill = posBillItems;
+            if (itemArray) {
+                var productIds = getProductIds(itemArray);
+                var index = productIds.indexOf(id);
+                if (index !== -1) {
+                    itemArray[index]['quantity'] += 1;
+                }
+                else {
+                    itemArray.push(newProduct);
+                }
+                newBill[activeBillIndex] = itemArray;
+            }
+            else {
+                newBill[activeBillIndex] = [newProduct];
+            }
+        }
+
+        localStorage.setItem('pos_bill_items', JSON.stringify(newBill));
+
+        renderBill(activeBillIndex);
+        $('.output-complete').addClass('no-display');
+    }
+
+    function getProductIds(itemArray) {
+        var productIds = [];
+        for (var i = 0; i < itemArray.length; i++) {
+            productIds.push(itemArray[i].product_id);
+        }
+        return productIds;
+    }
+
+    function removeProductFromBill(value) {
+        var index = $(value).data('index');
+        var posBillItems = JSON.parse(localStorage.getItem('pos_bill_items'));
+
+        var activeBillIndex = parseInt($(".bill-tabs li.active .bill-number").text());
+
+        if (posBillItems) {
+            var itemArray = posBillItems[activeBillIndex];
+            if (itemArray) {
+                itemArray.splice(index, 1);
+
+                var newBill = posBillItems;
+                newBill[activeBillIndex] = itemArray;
+
+                localStorage.setItem('pos_bill_items', JSON.stringify(newBill));
+                renderBill(activeBillIndex);
+            }
+        }
+    }
+
+    function decreaseQuantity(value) {
+        var index = $(value).data('index');
+        var posBillItems = JSON.parse(localStorage.getItem('pos_bill_items'));
+
+        var activeBillIndex = parseInt($(".bill-tabs li.active .bill-number").text());
+
+        if (posBillItems) {
+            var itemArray = posBillItems[activeBillIndex];
+
+            if (itemArray) {
+                if (itemArray[index]['quantity'] > 1) {
+                    itemArray[index]['quantity'] -= 1;
+
+                    var newBill = posBillItems;
+                    newBill[activeBillIndex] = itemArray;
+
+                    localStorage.setItem('pos_bill_items', JSON.stringify(newBill));
+                    renderBill(activeBillIndex);
+                }
+            }
+        }
+    }
+
+    function increaseQuantity(value) {
+        var index = $(value).data('index');
+        var posBillItems = JSON.parse(localStorage.getItem('pos_bill_items'));
+
+        var activeBillIndex = parseInt($(".bill-tabs li.active .bill-number").text());
+
+        if (posBillItems) {
+            var itemArray = posBillItems[activeBillIndex];
+            if (itemArray) {
+                itemArray[index]['quantity'] += 1;
+
+                var newBill = posBillItems;
+                newBill[activeBillIndex] = itemArray;
+
+                localStorage.setItem('pos_bill_items', JSON.stringify(newBill));
+                renderBill(activeBillIndex);
+            }
+        }
+    }
+
+    function changeQuantity(value) {
+        var index = $(value).data('index');
+        var posBillItems = JSON.parse(localStorage.getItem('pos_bill_items'));
+
+        var activeBillIndex = parseInt($(".bill-tabs li.active .bill-number").text());
+
+        if (posBillItems) {
+            var itemArray = posBillItems[activeBillIndex];
+            if (itemArray) {
+                itemArray[index]['quantity'] = parseInt($(value).val());
+
+                var newBill = posBillItems;
+                newBill[activeBillIndex] = itemArray;
+
+                localStorage.setItem('pos_bill_items', JSON.stringify(newBill));
+                renderBill(activeBillIndex);
+            }
+        }
+    }
+
+    function renderBill(activeBillIndex) {
+        var posBillItems = JSON.parse(localStorage.getItem('pos_bill_items'));
+        if (posBillItems) {
+
+            var itemArray = posBillItems[activeBillIndex];
+
+            $('.product-cart').empty();
+
+            if (itemArray) {
+                for (var i = 0; i < itemArray.length; i++) {
+                    var newRow = '<div class="row-list">' +
+                        '<div class="cell-order">' + (i + 1) + '</div>' +
+                        '<div class="cell-action">' +
+                        '<a href="javascript:void(0);" class="btn-icon btn-delete" title="Xóa hàng hóa" onclick="removeProductFromBill(this)" data-index="' + i + '">' +
+                        '<i class="fa fa-times"></i>' +
+                        '</a>' +
+                        '</div>' +
+                        '<div class="row-product">' +
+                        '<div class="cell-name">' +
+                        '<h4>' + itemArray[i].product_name + '</h4>' +
+                        '<div class="cell-code">' + itemArray[i].product_sku + '</div>' +
+                        '</div>' +
+                        '<div class="cell-quatity">' +
+                        '<button type="button" class="btn-icon down" onclick="decreaseQuantity(this)" data-index="' + i + '"><i class="fa fa-angle-down"></i></button>' +
+                        '<input type="text" class="form-control in-table" onchange="changeQuantity(this)" data-index="' + i + '" value="' + itemArray[i].quantity + '">' +
+                        '<button type="button" class="btn-icon up" onclick="increaseQuantity(this)" data-index="' + i + '"><i class="fa fa-angle-up"></i></button>' +
+                        '</div>' +
+                        '<div class="cell-change-price">' + addCommas(itemArray[i].product_price) + '</div>' +
+                        '<div class="cell-price">' + addCommas(itemArray[i].product_price * itemArray[i].quantity) + '</div>' +
+                        '</div>' +
+                        '</div>';
+
+                    $('.product-cart').append(newRow);
+                }
+
+                renderOrderInfo(itemArray);
+            }
+            else {
+                renderOrderInfo([]);
+            }
+
+        }
+    }
+
+    function renderOrderInfo(itemArray) {
+        var subTotal = 0;
+        var discountAmount = parseInt($('.discount-amount').text());
+        for (var i = 0; i < itemArray.length; i++) {
+            subTotal += itemArray[i].product_price * itemArray[i].quantity;
+        }
+        var grandTotal = subTotal - discountAmount;
+        $('.sub-total').empty().append(addCommas(subTotal));
+        $('.grand-total').empty().append(addCommas(grandTotal));
+    }
+
+    function toggleMenuBar() {
+        $('.menu-bar').toggleClass('active');
+        $('.menu-bar-content').toggleClass('is-display');
+    }
+
+    function toggleAddressBlock() {
+        $('.address-block').toggleClass('no-display');
+    }
+
+    function toggleChevron() {
+        $('.chevron-icon').toggleClass('fa-chevron-down fa-chevron-up');
+        $('.product-cart').toggleClass('product-cart-expand');
+        $('.product-list').toggleClass('product-list-hidden');
+
+        var chevronBtn = $('.chevron-btn');
+        chevronBtn.toggleClass('active');
+        if (chevronBtn.hasClass('active')) {
+            chevronBtn.attr('title', 'Mở rộng');
+        } else {
+            chevronBtn.attr('title', 'Thu gọn');
+        }
+    }
+
+    function addCommas(str) {
+        var parts = (str + "").split("."),
+            main = parts[0],
+            len = main.length,
+            output = "",
+            first = main.charAt(0),
+            i;
+
+        if (first === '-') {
+            main = main.slice(1);
+            len = main.length;
+        } else {
+            first = "";
+        }
+        i = len - 1;
+        while (i >= 0) {
+            output = main.charAt(i) + output;
+            if ((len - i) % 3 === 0 && i > 0) {
+                output = "." + output;
+            }
+            --i;
+        }
+        // put sign back
+        output = first + output;
+        // put decimal part back
+        if (parts.length > 1) {
+            output += "." + parts[1];
+        }
+        return output;
+    }
+</script>
+
+</body>
+</html>

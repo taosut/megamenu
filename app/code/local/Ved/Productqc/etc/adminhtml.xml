@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+
+<config>
+    <menu>
+        <catalog>
+            <children>
+                <qc_product>
+                    <title>QC Product</title>
+                    <sort_order>2</sort_order>
+                    <action>adminhtml/Productqc</action>
+                </qc_product>
+                <asia_product>
+                    <title>Cập nhật giá</title>
+                    <sort_order>3</sort_order>
+                    <action>adminhtml/asia_product</action>
+                </asia_product>
+            </children>
+        </catalog>
+    </menu>
+</config>

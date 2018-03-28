@@ -1,0 +1,37 @@
+<?php
+/**
+ * @category    TheExtensionLab
+ * @package     TheExtensionLab_MegaMenu
+ * @copyright   Copyright (c) 2015 TheExtensionLab (http://www.theextensionlab.com)
+ * @license     Open Software License (OSL 3.0)
+ * @author      James Anelay @ TheExtensionLab <james@theextensionlab.com>
+ */
+?>
+
+<?php $featuredProductsCollection = $this->getFeaturedProductsCollection(); ?>
+<?php $_helper = $this->helper('catalog/image'); ?>
+
+<div class="megamenu-featured-products <?php echo $this->getDisplayClass(); ?>">
+
+    <?php if($this->hasTitle()):?>
+        <p class="section-title"><?php echo $this->getTitle();?></p>
+    <?php endif;?>
+
+    <?php foreach ($featuredProductsCollection as $featuredProduct): ?>
+        <div class="featured-product">
+            <a href="<?php echo $featuredProduct->getProductUrl(); ?>">
+                <span>
+                    <?php if ($featuredProduct->hasMenuImage()): ?>
+                        <?php $imageUrl = $_helper->init($featuredProduct, 'menu_image') ?>
+                        <img src="<?php echo $imageUrl ?>"/>
+                    <?php endif; ?>
+                    <?php echo $featuredProduct->getName(); ?>
+                </span>
+            </a>
+            <p><?php echo Mage::helper('core')->currency($featuredProduct->getFinalPrice(),true,true);?></p>
+            <a class="button" href="<?php echo $featuredProduct->getProductUrl(); ?>">
+                <span><span><?php echo $this->__('View More'); ?></span></span>
+            </a>
+        </div>
+    <?php endforeach; ?>
+</div>

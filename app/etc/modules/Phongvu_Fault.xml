@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!--
+@author: hoangpt
+@package Phongvu_Fault
+-->
+<config>
+    <modules>
+        <Phongvu_Fault>
+            <active>true</active>
+            <codePool>local</codePool>
+        </Phongvu_Fault>
+    </modules>
+</config>

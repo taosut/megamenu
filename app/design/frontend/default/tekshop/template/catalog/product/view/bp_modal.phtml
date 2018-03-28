@@ -1,0 +1,728 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: Teko
+ * Date: 7/17/2017
+ * Time: 10:03 AM
+ */
+
+?>
+<?php
+$category = Mage::getModel('catalog/category')->load(Mage::registry('catId'));
+$catUrl = $category->getUrl();
+$productImpressions = [];
+?>
+
+<div class="modal-dialog bp-modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content bp-modal-content">
+        <div class="modal-header bp-modal-header">
+            <div class="row hidden-mobile">
+                <div class="col-md-4 col-sm-4 col-xs-3 bp-modal-title">
+                    Chọn linh kiện
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-6 no-padding">
+                    <input id="bp-search-input" type="text" class="bp-search-input"
+                           onkeyup="doSearchProductModal('<?php echo $catUrl ?>')"
+                           placeholder="Tìm kiếm sản phẩm"/>
+                    <i class="fa fa-search bp-search-icon"></i>
+                </div>
+                <div class="col-md-2 col-sm-2 col-xs-3 a-right">
+                    <i class="fa fa-close bp-close-icon" data-dismiss="modal"></i>
+                </div>
+            </div>
+
+            <div class="row display-mobile">
+                <div class="col-xs-12 bp-modal-title">
+                    Chọn linh kiện
+                    <i class="fa fa-close bp-close-icon" data-dismiss="modal"></i>
+                </div>
+                <div class="col-xs-12">
+                    <input id="bp-search-input-mobile" type="text" class="bp-search-input"
+                           onkeyup="doSearchProductModal('<?php echo $catUrl ?>')"
+                           placeholder="Tìm kiếm sản phẩm"/>
+                    <i class="fa fa-search bp-search-icon"></i>
+                    <i class="tek-Filter bp-filter-icon" data-toggle="modal" data-target="#filterBlockModal"></i>
+                </div>
+
+                <!-- Modal -->
+                <div id="filterBlockModal" class="modal right fade filter-block-modal" role="dialog">
+                    <div class="modal-dialog filter-modal-dialog">
+                        <div class="modal-header bp-modal-header bp-filter-modal-header">
+                            <div class="bp-modal-title">
+                                Bộ lọc
+                                <i class="fa fa-close bp-close-icon"
+                                   onclick="jQuery('#filterBlockModal').modal('hide')"></i>
+                            </div>
+                        </div>
+                        <!-- Modal content-->
+                        <div class="modal-content filter-modal-content">
+                            <div class="error-filter-text no-display">
+                                Hiện tại tính năng lọc chưa tích hợp với tìm kiếm sản phẩm
+                            </div>
+                            <div class="modal-body filter-modal-body">
+                                <div class="toolbar sort-block">
+
+                                </div>
+                                <div class="block-layered-nav">
+                                    <script type="text/javascript">decorateDataList('narrow-by-list')</script>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <div class="modal-body bp-modal-body">
+            <span class="bp-loading no-display" title="Đang tải">
+                <img src="<?php echo $this->getSkinUrl('images/loading.gif') ?>"
+                     width="150" height="150"
+                />
+            </span>
+            <div class="row bp-modal-products">
+                <div class="col-md-4 col-sm-4 col-xs-4 bp-filter-block hidden-mobile">
+                    <h1 class="mb-10"><i class="fa fa-filter bp-filter-icon"></i>&nbsp;&nbsp;Bộ lọc</h1>
+                    <div class="error-filter-text no-display">
+                        Hiện tại tính năng lọc chưa tích hợp với tìm kiếm sản phẩm
+                    </div>
+                    <div class="toolbar sort-block">
+
+                    </div>
+                    <div class="block-layered-nav">
+                        <script type="text/javascript">decorateDataList('narrow-by-list')</script>
+                    </div>
+                </div>
+                <div class="col-md-8 col-sm-8 col-xs-12 bp-list-products no-padding">
+                    <div class="col-md-12 col-xs-12 bp-products-content no-padding">
+                    </div>
+                    <div class="text-center load-more-products-text">
+                        <button type="button" class="btn btn-default btn-viewmore btn-loadmore"
+                                onclick="loadMoreProducts()">XEM THÊM
+                            SẢN PHẨM
+                        </button>
+                    </div>
+                    <div class="text-center load-more-products" title="Đang tải">
+                        <img class="mt-13" src="<?php echo $this->getSkinUrl('images/loading.gif') ?>"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    /**
+     * Call this function when a user clicks on a product link. This function uses the event
+     * callback datalayer variable to handle navigation after the ecommerce data has been sent
+     * to Google Analytics.
+     * @param {Object} productObj An object representing a product.
+     */
+    /* Xu ly EE product click */
+    function bindMaskClickModal() {
+        $j('.bp-product-name > a').click(function (event) {
+            var id = $j(this).data('id');
+            var name = $j(this).data('name');
+            var price = $j(this).data('price');
+            var url = $j(this).attr('href');
+
+            dataLayer.push({
+                'event': 'productClick',
+                'ecommerce': {
+                    'click': {
+                        'actionField': {'list': 'Popup chọn linh kiện'},
+                        'products': [{
+                            'name': name.toString(),                      // Name or ID is required.
+                            'id': id.toString(),
+                            'price': price.toString()
+                        }]
+                    }
+                },
+                'eventCallback': function () {
+                    window.open(url, '_blank');
+                }
+            });
+        });
+    }
+
+    /* End xu ly enhanced ecommerce product click */
+</script>
+
+<script>
+    $j('.load-more-products').hide(); // Hide loading icon
+    $j('.bp-ajax-loader-customize').hide(); // Hide loading icon
+
+    $j('.sort-block').hide();
+    $j('.block-layered-nav').hide();
+    $j('.bp-list-products').hide();
+    $j('.bp-messages').empty();
+    $j('.bp-loading').removeClass('no-display');
+    $j('.bp-search-input').prop('disabled', true);
+
+    // Check if not mobile -> remove filter + sort block in modal
+    if (win.width() > 500) {
+        $j('#filterBlockModal').remove();
+    }
+
+    var catUrlOrigin = <?php echo json_encode($catUrl) ?>;
+
+    getDataInModal();
+
+    function getDataInModal() {
+        new Ajax.Request(catUrlOrigin, {
+            onSuccess: function (response) {
+                $j('.sort-block').show();
+                $j('.block-layered-nav').show();
+                $j('.bp-list-products').show();
+                $j('.bp-loading').addClass('no-display');
+                $j('.bp-products-content').show();
+                $j('.bp-search-input').prop('disabled', false);
+
+                var div = document.createElement('div');
+                div.innerHTML = response.responseText;
+//                console.log(div.innerHTML);
+
+                // Append product to product list
+                $$('.bp-products-content')[0].innerHTML = '';
+                $$('.bp-products-content')[0].innerHTML += $(div).select('.bp-products-content')[0].innerHTML;
+                bindMaskClickModal();
+                $j('.load-more-products').hide();
+                $j('.bp-ajax-loader-customize').hide(); // Hide loading icon
+
+                // Append sort block
+                $$('.sort-block')[0].innerHTML = '';
+                $$('.sort-block')[0].innerHTML += $(div).select('.sort-block')[0].innerHTML;
+                $j('.sort-block').addClass('bp-sort-block');
+                $j('.sorter').css('margin-bottom', '0');
+                $j('.sort-by').css('min-width', '112%');
+                $j('.sort-dropdown').addClass('no-display');
+                $j('.bp-sort-dropdown').removeClass('no-display');
+                $j('.direction-btn').addClass('no-display');
+                $j('.bp-direction-btn').removeClass('no-display');
+
+                // Append filter block
+                $$('.block-layered-nav')[0].innerHTML = '';
+                if ($(div).select('.block-layered-nav')[0]) {
+                    $$('.block-layered-nav')[0].innerHTML += $(div).select('.block-layered-nav')[0].innerHTML;
+                }
+
+                $j('.block-layered-nav').css('width', '102%');
+                $j('.currently').css('margin-left', '-10px');
+                if (win.width() > 500) {
+                    $j('.filter-list').css('width', 'auto').css('margin-left', '-10px').css('height', '657px');
+                }
+                $j('.filter-btn-rm').addClass('no-display');
+                $j('.bp-filter-btn-rm').removeClass('no-display');
+                $j('.filter-item').addClass('no-display');
+                $j('.bp-filter-item').removeClass('no-display');
+                $j('.filter-clear-all').addClass('no-display');
+                $j('.bp-filter-clear-all').removeClass('no-display');
+
+                // Refresh page element
+                if ($(div).select('.pages')[0]) {
+                    $$('.pages')[0].innerHTML = $(div).select('.pages')[0].innerHTML;
+                }
+
+                // Kiem tra neu da load den trang cuoi cung
+                if (!$(div).select('.next.i-next')[0]) { // Last page
+                    console.log('is last page');
+                    $j('.load-more-products-text').hide();
+                } else { // Not last page
+                    console.log('not last page');
+                    $j('.load-more-products-text').show();
+                }
+
+                /* Xu ly EE product impression */
+                var productImpressions = [];
+                var productImpressionsLS = JSON.parse(localStorage.getItem("productImpressionsModal"));
+
+                if (!productImpressionsLS) {
+                    // Add productLoadmore to productImpressions
+                    var productLoadmore = JSON.parse($(div).select('.products-load-more')[0].innerHTML);
+                    productImpressions = productImpressions.concat(productLoadmore);
+                }
+                else {
+                    productImpressions = productImpressionsLS;
+                }
+
+                /**
+                 * Measures product impressions and also tracks a standard
+                 * pageview for the tag configuration.
+                 * Product impressions are sent by pushing an impressions object
+                 * containing one or more impressionFieldObjects.
+                 */
+                dataLayer.push({
+                    'ecommerce': {
+                        'currencyCode': 'VND',                       // Local currency is optional.
+                        'impressions': productImpressions
+                    }
+                });
+                /* End xu ly enhanced ecommerce product impressions */
+
+                // Save productImpressions to local storage
+                localStorage.setItem("productImpressionsModal", JSON.stringify(productImpressions));
+            }
+        });
+    }
+
+    var timeout = null;
+
+    function doSearchProductModal(catUrl) {
+        $j('.bp-products-content').hide();
+        $j('.load-more-products-text').hide();
+        $j('.bp-loading').removeClass('no-display');
+
+        if (timeout) {
+            clearTimeout(timeout);
+        }
+        timeout = setTimeout(function () {
+            searchProductModal(catUrl);
+        }, 1000);
+    }
+
+    var currentPage = 1;
+
+    function searchProductModal(catUrl) {
+        var keySearch = $j('#bp-search-input').val().trim();
+
+        if (win.width() < 500) {
+            keySearch = $j('#bp-search-input-mobile').val().trim();
+        }
+
+        currentPage = 1;
+
+        var url = '<?php echo $this->getUrl('search/index/indexModal/') ?>?cat=<?php echo Mage::registry('catId')?>&q=' + keySearch + '&currentPage=' + currentPage;
+        if (keySearch === '') {
+            url = catUrl;
+        }
+
+//        console.log(url);
+
+        new Ajax.Request(url, {
+            onSuccess: function (response) {
+                $j('.bp-loading').addClass('no-display');
+                $j('.bp-products-content').show();
+
+                var div = document.createElement('div');
+                div.innerHTML = response.responseText;
+//                console.log(div.innerHTML);
+
+                $$('.bp-products-content')[0].innerHTML = '';
+                $$('.block-layered-nav')[0].innerHTML = '';
+                $$('.sort-block')[0].innerHTML = '';
+
+                if (!$(div).select('.bp-products-content')[0]) { // Khong tim thay san pham nao
+                    $$('.bp-products-content')[0].innerHTML = "<div class='bp-no-product'>Không tìm thấy sản phẩm nào phù hợp.</div>";
+                }
+                else { // Co tim thay san pham
+//
+                    if (!$(div).select('.bp-selected-item')[0]) {
+                        $$('.bp-products-content')[0].innerHTML = "<div class='bp-no-product'>Không tìm thấy sản phẩm nào phù hợp.</div>";
+                        return;
+                    }
+
+                    // Append product to product list
+                    $$('.bp-products-content')[0].innerHTML += $(div).select('.bp-products-content')[0].innerHTML;
+                    bindMaskClickModal();
+                    $j('.load-more-products').hide();
+                    $j('.bp-ajax-loader-customize').hide(); // Hide loading icon
+
+                    if (keySearch === '') {
+                        $j('.error-filter-text').addClass('no-display');
+
+                        // Append sort block
+                        $$('.sort-block')[0].innerHTML += $(div).select('.sort-block')[0].innerHTML;
+                        $j('.sort-block').addClass('bp-sort-block');
+                        $j('.sorter').css('margin-bottom', '0');
+                        $j('.sort-by').css('min-width', '112%');
+                        $j('.sort-dropdown').addClass('no-display');
+                        $j('.bp-sort-dropdown').removeClass('no-display');
+                        $j('.direction-btn').addClass('no-display');
+                        $j('.bp-direction-btn').removeClass('no-display');
+
+                        // Append filter block
+                        if (keySearch === '') { // If keysearch !== '' -> disable filter block
+                            $$('.block-layered-nav')[0].innerHTML += $(div).select('.block-layered-nav')[0].innerHTML;
+                            $j('.block-layered-nav').css('width', '102%');
+                            $j('.currently').css('margin-left', '-10px');
+                            $j('.filter-list').css('width', 'auto').css('margin-left', '-10px').css('height', '657px');
+                            $j('.filter-btn-rm').addClass('no-display');
+                            $j('.bp-filter-btn-rm').removeClass('no-display');
+                            $j('.filter-item').addClass('no-display');
+                            $j('.bp-filter-item').removeClass('no-display');
+                            $j('.filter-clear-all').addClass('no-display');
+                            $j('.bp-filter-clear-all').removeClass('no-display');
+                        }
+
+                        // Refresh page element
+                        $$('.pages')[0].innerHTML = $(div).select('.pages')[0].innerHTML;
+
+                        // Kiem tra neu da load den trang cuoi cung
+                        if (!$(div).select('.next.i-next')[0]) { // Last page
+                            $j('.load-more-products-text').hide();
+
+                        } else { // Not last page
+                            $j('.load-more-products-text').show();
+                        }
+                    }
+                    else {
+                        $j('.error-filter-text').removeClass('no-display');
+                        var is_last_page = $(div).select('.is-last-page')[0].innerHTML;
+                        if (is_last_page == 'false') {
+                            $j('.load-more-products-text').show();
+                        }
+                        else {
+                            $j('.load-more-products-text').hide();
+                        }
+                    }
+                }
+
+            }
+        });
+    }
+
+    //    function searchProductModal(catUrl) {
+    //        var keySearch = $j('#bp-search-input').val().trim();
+    //        var url = '<?php //echo $this->getUrl('catalogsearch/result') ?>//?cat=<?php //echo Mage::registry('catId')?>//&q=' + keySearch;
+    //        if (keySearch === '') {
+    //            url = catUrl;
+    //        }
+    //
+    ////        console.log(url);
+    //
+    //        new Ajax.Request(url, {
+    //            onSuccess: function (response) {
+    //                $j('.bp-loading').addClass('no-display');
+    //                $j('.bp-products-content').show();
+    //
+    //                var div = document.createElement('div');
+    //                div.innerHTML = response.responseText;
+    ////                console.log(div.innerHTML);
+    //
+    //                $$('.bp-products-content')[0].innerHTML = '';
+    //                $$('.block-layered-nav')[0].innerHTML = '';
+    //                $$('.sort-block')[0].innerHTML = '';
+    //
+    //                if (!$(div).select('.bp-products-content')[0]) { // Khong tim thay san pham nao
+    //                    $$('.bp-products-content')[0].innerHTML = "<div class='bp-no-product'>Không tìm thấy sản phẩm nào phù hợp.</div>";
+    //                }
+    //                else { // Co tim thay san pham
+    //
+    //                    // Append product to product list
+    //                    $$('.bp-products-content')[0].innerHTML += $(div).select('.bp-products-content')[0].innerHTML;
+    //                    bindMaskClickModal();
+    //                    $j('.load-more-products').hide();
+    //                    $j('.bp-ajax-loader-customize').hide(); // Hide loading icon
+    //
+    //                    // Append sort block
+    //                    $$('.sort-block')[0].innerHTML += $(div).select('.sort-block')[0].innerHTML;
+    //                    $j('.sort-block').addClass('bp-sort-block');
+    //                    $j('.sorter').css('margin-bottom', '0');
+    //                    $j('.sort-by').css('min-width', '112%');
+    //                    $j('.sort-dropdown').addClass('no-display');
+    //                    $j('.bp-sort-dropdown').removeClass('no-display');
+    //                    $j('.direction-btn').addClass('no-display');
+    //                    $j('.bp-direction-btn').removeClass('no-display');
+    //
+    //                    // Append filter block
+    //                    if (keySearch === '') { // If keysearch !== '' -> disable filter block
+    //                        $$('.block-layered-nav')[0].innerHTML += $(div).select('.block-layered-nav')[0].innerHTML;
+    //                        $j('.block-layered-nav').css('width', '102%');
+    //                        $j('.currently').css('margin-left', '-10px');
+    //                        $j('.filter-list').css('width', '23%').css('margin-left', '-10px').css('height', '657px');
+    //                        $j('.filter-btn-rm').addClass('no-display');
+    //                        $j('.bp-filter-btn-rm').removeClass('no-display');
+    //                        $j('.filter-item').addClass('no-display');
+    //                        $j('.bp-filter-item').removeClass('no-display');
+    //                        $j('.filter-clear-all').addClass('no-display');
+    //                        $j('.bp-filter-clear-all').removeClass('no-display');
+    //                    }
+    //
+    //                    // Refresh page element
+    //                    $$('.pages')[0].innerHTML = $(div).select('.pages')[0].innerHTML;
+    //
+    //                    // Kiem tra neu da load den trang cuoi cung
+    //                    if (!$(div).select('.next.i-next')[0]) { // Last page
+    //                        $j('.load-more-products-text').hide();
+    //
+    //                    } else { // Not last page
+    //                        $j('.load-more-products-text').show();
+    //                    }
+    //
+    //                }
+    //
+    //            }
+    //        });
+    //    }
+
+    function filterProductModal(filterUrl) {
+        $j('.bp-products-content').hide();
+        $j('.load-more-products-text').hide();
+        $j('.bp-loading').removeClass('no-display');
+        $j('#filterBlockModal').modal('hide');
+
+//        console.log(filterUrl);
+
+        new Ajax.Request(filterUrl, {
+            onSuccess: function (response) {
+                $j('.bp-loading').addClass('no-display');
+                $j('.bp-products-content').show();
+
+                var div = document.createElement('div');
+                div.innerHTML = response.responseText;
+//                console.log(div.innerHTML);
+
+                // Append product to product list
+                $$('.bp-products-content')[0].innerHTML = '';
+                $$('.bp-products-content')[0].innerHTML += $(div).select('.bp-products-content')[0].innerHTML;
+                bindMaskClickModal();
+                $j('.load-more-products').hide();
+                $j('.bp-ajax-loader-customize').hide(); // Hide loading icon
+
+                // Append sort block
+                $$('.sort-block')[0].innerHTML = '';
+                $$('.sort-block')[0].innerHTML += $(div).select('.sort-block')[0].innerHTML;
+                $j('.sort-block').addClass('bp-sort-block');
+                $j('.sorter').css('margin-bottom', '0');
+                $j('.sort-by').css('min-width', '112%');
+                $j('.sort-dropdown').addClass('no-display');
+                $j('.bp-sort-dropdown').removeClass('no-display');
+                $j('.direction-btn').addClass('no-display');
+                $j('.bp-direction-btn').removeClass('no-display');
+
+                // Append filter block
+                $$('.block-layered-nav')[0].innerHTML = '';
+                $$('.block-layered-nav')[0].innerHTML += $(div).select('.block-layered-nav')[0].innerHTML;
+                $j('.block-layered-nav').css('width', '102%');
+                $j('.currently').css('margin-left', '-10px');
+                $j('.filter-list').css('width', 'auto').css('margin-left', '-10px');
+                $j('.filter-btn-rm').addClass('no-display');
+                $j('.bp-filter-btn-rm').removeClass('no-display');
+                $j('.filter-item').addClass('no-display');
+                $j('.bp-filter-item').removeClass('no-display');
+                $j('.filter-clear-all').addClass('no-display');
+                $j('.bp-filter-clear-all').removeClass('no-display');
+
+                if (win.width() > 500) {
+                    var height_currently = (typeof $j('.currently').height() !== 'undefined') ? $j('.currently').height() + 60 : 0;
+                    var newHeight = $j('.bp-filter-block').height() - (height_currently + 120);
+                    $j('.filter-list').css('height', newHeight + 'px');
+                }
+
+                // Refresh page element
+                $$('.pages')[0].innerHTML = $(div).select('.pages')[0].innerHTML;
+
+                // Kiem tra neu da load den trang cuoi cung
+                if (!$(div).select('.next.i-next')[0]) { // Last page
+                    $j('.load-more-products-text').hide();
+                } else { // Not last page
+                    $j('.load-more-products-text').show();
+                }
+
+            }
+        });
+
+    }
+
+    function sortProductModal(sortUrl) {
+        var keySearch = $j('#bp-search-input').val().trim();
+        $j('.bp-products-content').hide();
+        $j('.load-more-products-text').hide();
+        $j('.bp-loading').removeClass('no-display');
+        $j('#filterBlockModal').modal('hide');
+
+//        console.log(sortUrl);
+
+        new Ajax.Request(sortUrl, {
+            onSuccess: function (response) {
+                $j('.bp-loading').addClass('no-display');
+                $j('.bp-products-content').show();
+
+                var div = document.createElement('div');
+                div.innerHTML = response.responseText;
+//                console.log(div.innerHTML);
+
+                // Append product to product list
+                $$('.bp-products-content')[0].innerHTML = '';
+                $$('.bp-products-content')[0].innerHTML += $(div).select('.bp-products-content')[0].innerHTML;
+                bindMaskClickModal();
+                $j('.load-more-products').hide();
+                $j('.bp-ajax-loader-customize').hide(); // Hide loading icon
+
+                // Append sort block
+                $$('.sort-block')[0].innerHTML = '';
+                $$('.sort-block')[0].innerHTML += $(div).select('.sort-block')[0].innerHTML;
+                $j('.sort-block').addClass('bp-sort-block');
+                $j('.sorter').css('margin-bottom', '0');
+                $j('.sort-by').css('min-width', '112%');
+                $j('.sort-dropdown').addClass('no-display');
+                $j('.bp-sort-dropdown').removeClass('no-display');
+                $j('.direction-btn').addClass('no-display');
+                $j('.bp-direction-btn').removeClass('no-display');
+
+                // Append filter block
+                $$('.block-layered-nav')[0].innerHTML = '';
+                if (keySearch === '') { // If keysearch !== '' -> disable filter block
+                    $$('.block-layered-nav')[0].innerHTML += $(div).select('.block-layered-nav')[0].innerHTML;
+                    $j('.block-layered-nav').css('width', '102%');
+                    $j('.currently').css('margin-left', '-10px');
+                    $j('.filter-list').css('width', 'auto').css('margin-left', '-10px');
+                    $j('.filter-btn-rm').addClass('no-display');
+                    $j('.bp-filter-btn-rm').removeClass('no-display');
+                    $j('.filter-item').addClass('no-display');
+                    $j('.bp-filter-item').removeClass('no-display');
+                    $j('.filter-clear-all').addClass('no-display');
+                    $j('.bp-filter-clear-all').removeClass('no-display');
+                }
+
+                if (win.width() > 500) {
+                    var height_currently = (typeof $j('.currently').height() !== 'undefined') ? $j('.currently').height() + 60 : 0;
+                    var newHeight = $j('.bp-filter-block').height() - (height_currently + 120);
+                    $j('.filter-list').css('height', newHeight + 'px');
+                }
+
+                // Refresh page element
+                $$('.pages')[0].innerHTML = $(div).select('.pages')[0].innerHTML;
+
+                // Kiem tra neu da load den trang cuoi cung
+                if (!$(div).select('.next.i-next')[0]) { // Last page
+                    $j('.load-more-products-text').hide();
+                } else { // Not last page
+                    $j('.load-more-products-text').show();
+                }
+
+            }
+        });
+    }
+
+    function loadMoreProducts() {
+        $j('.load-more-products-text').hide();
+        $j('.load-more-products').show();
+
+        var keySearch = $j('#bp-search-input').val().trim();
+
+        if (win.width() < 500) {
+            keySearch = $j('#bp-search-input-mobile').val().trim();
+        }
+
+        if (keySearch === '') {
+            var catUrl = '<?php echo $catUrl ?>';
+
+            if ($$('.next.i-next')[0]) {
+                var next_page_url = $$('.next.i-next')[0].readAttribute('href');
+                if (next_page_url.indexOf('openModal/') !== -1) {
+                    next_page_url = catUrl + next_page_url.split('openModal/')[1];
+                }
+                getAjaxPaginateData(next_page_url);
+            }
+        }
+        else {
+
+            currentPage += 1;
+
+            var url = '<?php echo $this->getUrl('search/index/indexModal/') ?>?cat=<?php echo Mage::registry('catId')?>&q=' + keySearch + '&currentPage=' + currentPage;
+
+            new Ajax.Request(url, {
+                onSuccess: function (response) {
+                    $j('.bp-loading').addClass('no-display');
+                    $j('.bp-products-content').show();
+
+                    var div = document.createElement('div');
+                    div.innerHTML = response.responseText;
+//                    console.log(div.innerHTML);
+                    var is_last_page = $(div).select('.is-last-page')[0].innerHTML;
+
+                    // Append product to product list
+                    $$('.bp-products-content')[0].innerHTML += $(div).select('.bp-products-content')[0].innerHTML;
+                    bindMaskClickModal();
+                    $j('.load-more-products').hide();
+                    $j('.bp-ajax-loader-customize').hide(); // Hide loading icon
+
+                    if (is_last_page == 'false') {
+                        $j('.load-more-products-text').show();
+                    }
+                    else {
+                        $j('.load-more-products-text').hide();
+                    }
+                }
+            });
+
+        }
+    }
+
+    function getAjaxPaginateData(url) {
+        new Ajax.Request(url, {
+            onSuccess: function (response) {
+                var div = document.createElement('div');
+                div.innerHTML = response.responseText;
+//                console.log(div.innerHTML);
+
+                // Refresh page element
+                $$('.pages')[0].innerHTML = $(div).select('.pages')[0].innerHTML;
+                // Append product to product list
+                $$('.bp-products-content')[0].innerHTML += $(div).select('.bp-products-content')[0].innerHTML;
+
+                // Kiem tra neu da load den trang cuoi cung
+                if (!$(div).select('.next.i-next')[0]) { // Last page
+                    $j('.load-more-products-text').hide();
+                } else { // Not last page
+                    $j('.load-more-products-text').show();
+                }
+
+                $j('.load-more-products').hide();
+                $j('.bp-ajax-loader-customize').hide(); // Hide loading icon
+
+                // Get productImpressions from local storage
+                var productImpressions = JSON.parse(localStorage.getItem("productImpressionsModal"));
+
+                // Add productLoadmore to productImpressions
+                var productLoadmore = JSON.parse($(div).select('.products-load-more')[0].innerHTML);
+                productImpressions = productImpressions.concat(productLoadmore);
+
+                /**
+                 * Measures product impressions and also tracks a standard
+                 * pageview for the tag configuration.
+                 * Product impressions are sent by pushing an impressions object
+                 * containing one or more impressionFieldObjects.
+                 */
+                dataLayer.push({
+                    'ecommerce': {
+                        'currencyCode': 'VND',                       // Local currency is optional.
+                        'impressions': productImpressions
+                    }
+                });
+
+                // Save productImpressions to local storage
+                localStorage.setItem("productImpressionsModal", JSON.stringify(productImpressions));
+
+                bindMaskClickModal();
+            }
+        });
+    }
+
+    $j('.block-layered-nav dd li').click(function () {
+        $j(this).addClass('check-filter');
+    });
+
+    function toggleItem(id) {
+        $j("#" + id).toggle(200, function () {
+            if ($j("#" + id).is(':hidden')) {
+                $j("#dt-" + id).find("i").toggleClass('fa-caret-up fa-caret-down');
+            } else {
+                $j("#dt-" + id).find("i").toggleClass('fa-caret-down fa-caret-up');
+            }
+        });
+    }
+
+    function toggleItemMobile(id) {
+        if ($j(".dd-" + id).hasClass("no-display")) {
+            $j(".dd-" + id).removeClass("no-display");
+            $j(".dt-" + id).find("i").toggleClass('fa-caret-up fa-caret-down');
+        } else {
+            $j(".dd-" + id).addClass("no-display");
+            $j(".dt-" + id).find("i").toggleClass('fa-caret-down fa-caret-up');
+        }
+    }
+</script>

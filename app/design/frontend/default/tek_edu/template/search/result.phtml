@@ -1,0 +1,249 @@
+<?php
+$_helper = $this->helper('catalog/output');
+$_products = Mage::registry('$_products');
+$productObjList = "Tekshop Edu - Kết quả tìm kiếm";
+$currentPage = 1;
+$searchType = Mage::registry('searchType');
+$totalPage = Mage::registry('totalPage');
+$keyWord = Mage::registry('keyWord');
+if (is_null($_products)):?>
+    <div class="cart-empty">
+        <img class="cart-empty-img">
+        <h1 class="cart-empty-text">Chúng tôi không tìm thấy sản phẩm theo từ khóa của bạn</h1>
+        <h1 class="cart-empty-text mb-20">
+            <!--<a class="click-here btn btn-tekshop btn-cart-empty-more-product" href="http://tekshop.local/tek/">
+                Chọn thêm sản phẩm
+            </a>-->
+        </h1>
+        <?php die; ?>
+    </div>
+<?php endif ?>
+<script>
+    dataLayer = [];
+</script>
+<?php if (!is_null($_products)): ?>
+    <input type="hidden" id="totalPage" value="<?php echo $totalPage ?>">
+    <input type="hidden" id="currentPage" value="<?php echo $currentPage ?>">
+    <input type="hidden" id="keyWord" value="<?php echo $keyWord ?>">
+    <input type="hidden" id="searchType" value="<?php echo $searchType ?>">
+    <div class="category-name-mobile display-mobile">
+        <?php
+        $search_keyword = $_GET['q'];
+        echo "Kết quả tìm kiếm theo '$search_keyword'";
+        ?>
+    </div>
+    <div class="category-products col-md-12" style="margin-left: 0px;">
+        <div class="paginate-product">
+            <ul class="products-grid grid-recent">
+                <?php foreach ($_products as $_product): ?>
+
+                    <?php
+                    $productObj = new stdClass();
+                    $productObj->name = (string)$_product->getName();
+                    $productObj->id = (string)$_product->getId();
+                    $productObj->price = (string)$_product->getFinalPrice();
+                    $productObj->list = $productObjList;
+                    $productImpressions[] = $productObj;
+                    ?>
+
+                    <?php $oldPrice = $_product->getPrice();
+                    $newPrice = $_product->getFinalPrice(); ?>
+                    <li class="detail-product col-md-3 col-xs-6 newitem <?php if ($oldPrice != $newPrice) : ?> saleoff <?php endif ?>"
+                        style="float:left!important;width:20%!important;">
+                        <div class="view team-one">
+                            <div class="mask mask-cat"
+                                 data-id="<?php echo $_product->getId() ?>"
+                                 data-name="<?php echo $_product->getName() ?>"
+                                 data-url="<?php echo $_product->getProductUrl() ?>"
+                                 data-price="<?php echo $_product->getFinalPrice() ?>"
+                            >
+                                <div class="box-holder">
+                                    <h5 class="product-name-hover-mask"
+                                        title="<?php echo $this->escapeHtml($_product->getName()) ?>">
+                                        <?php echo $this->escapeHtml($_product->getName()) ?>
+                                    </h5>
+                                    <div class="product-price mb-15 mt-15">
+                                        <?php if ($oldPrice != $newPrice) : ?>
+                                            <div class="old-price old-pr-div">
+                                        <span class="price price-cat">
+                                            <?php echo number_format($oldPrice, 0, ",", ".") . " <sup>đ</sup>"; ?>
+                                        </span>
+                                            </div>
+                                        <?php else : {
+                                            echo "<div class='old-pr-div'> <span class=\"price \">&nbsp; </span></div>";
+                                        } ?>
+                                        <?php endif; ?>
+                                        <div class="regular-price">
+                                    <span class="price price-cat">
+                                        <?php echo number_format($newPrice, 0, ",", ".") . " <sup>đ</sup>"; ?>
+                                    </span>
+                                        </div>
+                                    </div>
+                                    <div class="short-description-hover-mask short-description-list"><?php echo $_helper->productAttribute($_product, nl2br($_product->getShortDescription()), 'short_description') ?></div>
+                                </div>
+                            </div>
+                            <div class="product-image">
+                                <a class="a-img" href="<?php echo $_product->getProductUrl() ?>"
+                                   title="<?php echo $this->escapeHtml($this->getImageLabel($_product, 'small_image')) ?>">
+                                    <img src="<?php echo $this->helper('catalog/image')->init($_product, 'small_image')->resize(300, 300); ?>"
+                                         alt="<?php echo $this->escapeHtml($this->getImageLabel($_product, 'small_image')) ?>"
+                                         title="<?php echo $this->escapeHtml($this->getImageLabel($_product, 'small_image')) ?>"/>
+                                </a>
+                            </div>
+                        </div>
+
+                        <?php if ($oldPrice != $newPrice) : ?>
+                            <span class="percent">
+                        <span>- <?php echo number_format(($oldPrice - $newPrice) / $oldPrice * 100, 0) . "%" ?></span>
+                    </span>
+                        <?php endif ?>
+
+                    </li>
+                <?php endforeach ?>
+
+            </ul>
+
+
+            <script type="text/javascript">decorateGeneric($$('ul.products-grid'), ['odd', 'even', 'first', 'last'])</script>
+
+        </div>
+
+        <div class="load-more"></div>
+        <div class="text-center load-more-products-text">
+            <button type="button" class="btn btn-default btn-viewmore btn-loadmore">
+                Xem thêm
+            </button>
+        </div>
+
+        <div class="text-center load-more-products" title="Đang tải">
+            <img class="mt-0" src="<?php echo $this->getSkinUrl('images/loading_bar.gif') ?>"/>
+        </div>
+    </div>
+<?php endif; ?>
+<script>
+    var $j = jQuery.noConflict(); // Use $j for jquery
+</script>
+<script>
+    //5 Columns:
+    var changed = 0;
+    $j(document).ready(function () {
+        var windowsize = $j(window).width()
+        if (windowsize < 768) {
+            $j('.detail-product').removeAttr('style');
+        }
+    });
+    $j(window).resize(function () {
+        var windowsize = $j(window).width();
+        if (windowsize < 768) {
+            $j('.detail-product').removeAttr('style');
+            changed = 1;
+        } else{
+            if(changed){
+                $j('.detail-product').attr('style', function(i,s) {
+                    return 'width: 20% !important;' + 'float:left !important';
+                });
+                changed = 0;
+            }
+        }
+    });
+    //
+    $j('.load-more-products').hide();
+    var totalPage = Number($j('#totalPage').val());
+    var currentPage = Number($j('#currentPage').val());
+    if (totalPage === currentPage) {
+        $j('.btn-loadmore').hide();
+    }
+    /**
+     * Call this function when a user clicks on a product link. This function uses the event
+     * callback datalayer variable to handle navigation after the ecommerce data has been sent
+     * to Google Analytics.
+     * @param {Object} productObj An object representing a product.
+     */
+    // Mask click
+    bindMaskClick();
+    function bindMaskClick() {
+        $j('.mask').bind('click', function (e) {
+            var id = $j(this).data('id');
+            var name = $j(this).data('name');
+            var url = $j(this).data('url');
+            var price = $j(this).data('price');
+
+            dataLayer.push({
+                'event': 'productClick',
+                'ecommerce': {
+                    'click': {
+                        'actionField': {'list': '<?php echo $productObjList ?>'},
+                        'products': [{
+                            'name': name.toString(),                      // Name or ID is required.
+                            'id': id.toString(),
+                            'price': price.toString()
+                        }]
+                    }
+                },
+                'eventCallback': function () {
+
+                }
+            });
+
+            if (e.ctrlKey) {
+                window.open(url, '_blank');
+            }
+            else {
+                window.location.href = url;
+            }
+
+        });
+    }
+    $j('.btn-loadmore').on('click', function (e) {
+        $j('.btn-loadmore').hide();
+        var totalPage = Number($j('#totalPage').val());
+        var currentPage = Number($j('#currentPage').val());
+        var keyWord = $j('#keyWord').val();
+        var searchType = $j('#searchType').val();
+        if (currentPage < totalPage) {
+            $j('.load-more-products').show();
+            $j.ajax({
+                url: '/tek_edu/search/index/loadMore',
+                type: 'POST',
+                data: {
+                    'totalPage': Number(totalPage),
+                    'currentPage': Number(currentPage),
+                    'keyWord': keyWord,
+                    'searchType': searchType
+                },
+                success: function (data) {
+                    var windowsize = $j(window).width();
+                    currentPage = currentPage + 1;
+                    if (currentPage === totalPage) {
+                        $j('#currentPage').val(currentPage);
+                        $j('.btn-loadmore').hide();
+                        $j('.load-more-products').hide();
+                        $j('.load-more').append(data);
+                        bindMaskClick();
+                        if (windowsize < 768) {
+                            $j('.detail-product').removeAttr('style');
+                        }
+                        return;
+                    } else {
+
+                        $j('#currentPage').val(currentPage);
+                    }
+                    $j('.load-more-products').hide();
+                    $j('.load-more').append(data);
+                    $j('.btn-loadmore').show();
+                    if (windowsize < 768) {
+                        $j('.detail-product').removeAttr('style');
+                    }
+                    bindMaskClick();
+
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    console.log("Status: " + textStatus);
+                    alert("Error: " + errorThrown);
+                }
+            })
+        }
+        e.preventDefault();
+        e.stopPropagation();
+    });
+</script>

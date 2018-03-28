@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <!--Version Gcafe Login-->
+        <Ved_Gcafe>
+            <version>0.1.0</version>
+        </Ved_Gcafe>
+    </modules>
+
+    <!-- Khai báo để rewrite controller -->
+    <global>
+        <resources>
+            <gcafe_read>
+                <connection>
+                    <use>gcafe_database</use>
+                </connection>
+            </gcafe_read>
+            <gcafe_setup>
+                <connection>
+                    <use>core_setup</use>
+                </connection>
+            </gcafe_setup>
+            <gcafe_database>
+                <connection>
+                    <host><![CDATA[103.239.121.118]]></host>
+                    <username><![CDATA[cuonggt]]></username>
+                    <password><![CDATA[secret]]></password>
+                    <dbname><![CDATA[gcafe_gcms]]></dbname>
+                    <initStatements><![CDATA[SET NAMES utf8]]></initStatements>
+                    <model>mysql4</model>
+                    <type>pdo_mysql</type>
+                    <active>1</active>
+                </connection>
+            </gcafe_database>
+						<test_database>
+                <connection>
+                    <host><![CDATA[103.239.121.118]]></host>
+                    <username><![CDATA[gcafeshop]]></username>
+                    <password><![CDATA[123456]]></password>
+                    <dbname><![CDATA[zomartdb]]></dbname>
+                    <initStatements><![CDATA[SET NAMES utf8]]></initStatements>
+                    <model>mysql4</model>
+                    <type>pdo_mysql</type>
+                    <active>1</active>
+                </connection>
+            </test_database>
+        </resources>
+    </global>
+    <frontend>
+        <routers>
+            <Ved_Gcafe>
+                <use>standard</use>
+                <args>
+                    <module>Ved_Gcafe</module>
+                    <frontName>gcafelogin</frontName>
+                </args>
+            </Ved_Gcafe>
+        </routers>
+        <layout>
+            <updates>
+                <gcafelogin>
+                    <file>gcafelogin.xml</file>
+                </gcafelogin>
+            </updates>
+        </layout>
+    </frontend>
+
+
+</config>

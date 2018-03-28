@@ -1,0 +1,1131 @@
+<?php
+$quote = Mage::getSingleton('checkout/session')->getQuote();
+$address = $quote->getShippingAddress();
+$quoteItems = $quote->getAllVisibleItems();
+$info = $this->getCartInfo();
+
+/**
+ * @var TEKShop_PaymentOnline_Block_Checkout_Payment $this
+ */
+?>
+
+<?php
+$_cartItems = [];
+foreach ($quoteItems as $_item) {
+    $_productCartObj = new stdClass();
+    $_productCartObj->name = $this->escapeHtml($_item->getName());
+    $_productCartObj->id = intval($_item->getProduct()->getId());
+    $_productCartObj->price = intval($_item->getPrice());
+    $_productCartObj->quantity = intval($_item->getQty());
+    $_cartItems[] = $_productCartObj;
+}
+?>
+<div class="payment-heading">
+    Hình thức thanh toán
+</div>
+<div class="panel panel-payment">
+    <!-- Panel block-->
+    <div class=" pb-0 confirm-payment-hide">
+        <form class="form-horizontal hide-block" role="form" id="form-payment" method="post">
+            <input type="hidden" name="region_name" value="<?php echo $this->info['region_name']; ?>">
+            <input type="hidden" name="city_name" value="<?php echo $this->info['city_name']; ?>">
+            <input type="hidden" name="current_plan" value="<?php echo $this->info['current_plan']; ?>">
+            <input type="hidden" name="email"
+                   value="<?php echo ($address->getEmail() != '') ? $address->getEmail() : ''; ?>">
+            <input type="hidden" name="checkout_method" value="METHOD_GUEST">
+            <div class="row">
+                <div class="pd-10-15 bd-bottom">
+                    <input type="radio" id="payment_type_1"
+                           style="position: relative;top: 2px;"
+                                  class="mt-0"
+                                  checked="checked"
+                                  value="offline"
+                                  name="payment_type"> Thanh toán tiền mặt khi nhận hàng
+                </div>
+<!--                --><?php //if ($this->isEnable()): ?>
+<!--                    <div class="form-control payment-method-item">-->
+<!--                        <label>-->
+<!--                            <input type="radio" value="online"-->
+<!--                                   class="mt-0"-->
+<!--                                   name="payment_type">-->
+<!--                            Thanh toán trực tuyến (Internet Banking | Visa, Master, JCB)-->
+<!--                        </label>-->
+<!--                    </div>-->
+<!--                    <div class="form-control payment-method-item" id="instalment-choose">-->
+<!--                        <label>-->
+<!--                            <input type="radio" value="instalment"-->
+<!--                                   class="mt-0"-->
+<!--                                   name="payment_type">-->
+<!--                            Thanh toán trả góp (ACS | Alepay)-->
+<!--                        </label>-->
+<!--                    </div>-->
+<!--                --><?php //endif; ?>
+            </div>
+
+            <input type="hidden" name="access_key" value="<?php echo $this->token['access_key']; ?>">
+            <input type="hidden" name="profile_id" value="<?php echo $this->token['profile_id']; ?>">
+            <input type="hidden" name="transaction_uuid" value="<?php echo $this->token['transaction_uuid']; ?>">
+            <input type="hidden" name="reference_number" value="<?php echo $this->token['reference_number']; ?>">
+            <input type="hidden" name="device_fingerprint_id"
+                   value="<?php echo $this->token['device_fingerprint_id']; ?>">
+            <input type="hidden" name="customer_ip_address" value="<?php echo $this->token['customer_ip_address']; ?>">
+            <input type="hidden" name="signed_date_time" value="<?php echo $this->token['signed_date_time']; ?>">
+            <input type="hidden" name="locale" value="<?php echo $this->token['locale']; ?>">
+            <input type="hidden" name="currency" value="<?php echo $this->token['currency']; ?>">
+            <input type="hidden" name="amount" value="<?php echo $this->token['amount']; ?>">
+            <input type="hidden" name="signature" value="<?php echo $this->token['signature']; ?>">
+            <!-- Khai bao cong thanh toan ma khach hang se dung, dua vao customer id-->
+            <input type="hidden" name="is_use_gateway_trial" value="1">
+            <div class="row payment-note-text btn-bottom-fixed">
+                <div class="pd-10-15">
+                    <button type="button" id="btn-placeorder"
+                            class="btn-checkout confirm-payment-btn">
+                        Xác nhận thanh toán
+                        <img class="confirm-payment-ajax-loader hidden"
+                             src="<?php echo $this->getSkinUrl('images/ajax-loader-white.gif'); ?>"/>
+                    </button>
+                </div>
+            </div>
+            <input type="hidden" name="customer_note" value="<?php echo Mage::registry('customer_note'); ?>">
+        </form>
+    </div>
+    <!-- End Panel block-->
+
+    <!-- Instalment block-->
+    <div class="instalment-block" style="display: none">
+        <div class="instalment-header">
+            Chọn đơn vị hỗ trợ trả góp :
+        </div>
+        <div class="inm-card-container">
+            <div class="card-wrapper active acs-card">
+                <span class="card-left">
+                    <i class="card-icon-money"></i>
+                </span>
+                <span class="card-right">
+                    Công ty tài chính
+                    <i class="card-icon-acs"></i>
+                </span>
+            </div>
+            <div class="card-wrapper alepay-card btn-instalment-confirm">
+                <span class="card-left">
+                    <i class="card-icon-visa"></i>
+                </span>
+                <span class="card-right">
+                    Bằng thẻ <b>VISA, MASTER</b>
+                </span>
+            </div>
+        </div>
+        <div class="inm-content">
+            <div class="inm-selection">
+                <div class="col-md-12">
+                    <div class="row form-acs">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="customerType">Chọn nhóm khách hàng:</label>
+                                <select name="customerType" class="form-control" id="requireDoc" style="margin-left: 0">
+                                    <option value="6">Sinh viên</option>
+                                    <option value="7">Công chức, giáo viên</option>
+                                    <option value="8">Có thẻ thành viên ACS</option>
+                                    <option value="4">Khác</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="prePaidMoney">Chọn số tiền trả trước:</label>
+                                <select name="prePaidMoney" class="form-control" id="prePaid" style="margin-left: 0">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6 form-other">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="prePaidOther">Nhập số tiền trả trước:</label>
+                                    <input name="prePaidOther" id="prePaid-input" class="form-control"
+                                           placeholder="Nhập số tiền trả trước"
+                                           onkeypress='return event.charCode >= 48 && event.charCode <= 57'
+                                           style="margin-left: 0"/>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <button style="margin-top: 23px" class="btn btn-other-inm btn-back-inm" type="button">
+                                    Xác nhận
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="inm-message"></div>
+            <div class="inm-loading" style="display: none">
+                <img src="<?php echo $this->getSkinUrl('images/ajax-loader-new.gif') ?>"/>
+            </div>
+            <div class="col-md-12" style="padding-left: 0">
+                <div class="col-md-6" style="padding-left: 0">
+                    <div class="inm-detail" style="display: none;padding-left:15px!important;">
+                        <ul class="inm-table">
+                            <li>(1) Giá bán tổng sản phẩm: <span style="float:right" class="show-grandTotal"></span>
+                            </li>
+                            <li>(2) Số tiền trả trước: <span style="float:right" class="prePaid-value"></span></li>
+                            <li>(3) Phí hồ sơ: <span class="filePaid" style="float:right">400.000</span></li>
+                            <hr style="margin-bottom: 8px;margin-top: 0px">
+                            <li>Số tiền thanh toán trước cho Tekshop (2)+(3): <span class="prePaid-Tekshop"
+                                                                                    style="float:right">400.000</span>
+                            </li>
+                            <li>Số tiền còn lại (1)-(3): <span style="float:right" class="remain-value"></span></li>
+                            <li>(%)Phí trả chậm mỗi tháng: <span style="float:right"
+                                                                 class="amountPerMonth-value">1.39%</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="inm-table-detail" style="display:none;">
+                <table class="table table-bordered tb-inm inm-table-detail" style="margin-left: 15px;">
+                    <thead>
+                    <tr>
+                        <th>TT</th>
+                        <th>Diễn giải</th>
+                        <th colspan="6">Loại kỳ hạn thanh toán</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td>Số kỳ hạn thanh toán(tháng)</td>
+                        <td>6</td>
+                        <td>9</td>
+                        <td>12</td>
+                        <td>15</td>
+                        <td>18</td>
+                        <td>24</td>
+                    </tr>
+                    <tr class="totalAmountRow">
+                        <td>2</td>
+                        <td>Tổng số tiền phải thanh toán (chưa tính phí hồ sơ)</td>
+                        <td>N/A</td>
+                        <td>N/A</td>
+                        <td>N/A</td>
+                        <td>N/A</td>
+                        <td>N/A</td>
+                        <td>N/A</td>
+                    </tr>
+                    <tr class="amountPerMonthRow">
+                        <td>3</td>
+                        <td>Thanh toán hàng tháng</td>
+                        <td>N/A</td>
+                        <td>N/A</td>
+                        <td>N/A</td>
+                        <td>N/A</td>
+                        <td>N/A</td>
+                        <td>N/A</td>
+                    </tr>
+                    <tr class="firstMonthAmountRow">
+                        <td>4</td>
+                        <td>Thanh toán tháng đầu</td>
+                        <td>N/A</td>
+                        <td>N/A</td>
+                        <td>N/A</td>
+                        <td>N/A</td>
+                        <td>N/A</td>
+                        <td>N/A</td>
+                    </tr>
+                    <tr class="radioRow">
+                        <td></td>
+                        <td>Lựa chọn</td>
+                        <td class="radioActive"></td>
+                        <td class="radioActive"></td>
+                        <td class="radioActive"></td>
+                        <td class="radioActive"></td>
+                        <td class="radioActive"></td>
+                        <td class="radioActive"></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="inm-addtion-info">
+                <div class="container">
+                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-6 show-addition-inm" style="display: none">
+                                <h3>Thông tin bổ sung</h3>
+                                <div class="show-addition-message">
+
+                                </div>
+                                <div style="margin-top: 10px;margin-bottom: 10px">
+                                    <label class="radio-inline"><input type="radio" name="sex" value="male">Anh</label>
+                                    <label class="radio-inline"><input type="radio" name="sex"
+                                                                       value="female">Chị</label>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control" id="inm-name"
+                                                   value="<?php echo $address->getName(); ?>" placeholder="Họ và tên">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control" id="inm-telephone"
+                                                   value="<?php echo $address->getTelephone(); ?>"
+                                                   placeholder=" Số điện thoại"
+                                                   onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="cmnd">Số CMND:</label>
+                                            <input type="text" class="form-control" id="inm-cmnd"
+                                                   placeholder=" Nhập số CMND"
+                                                   onkeypress='return event.charCode >= 48 && event.charCode <= 57'>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="birthday">Năm sinh:</label>
+                                            <input type="text" name="birthday" class="form-control inm-birthday"
+                                                   id="datepicker">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="birthday">Địa chỉ hộ khẩu:</label>
+                                            <select class="form-control" id="region_id">
+                                                <option value="<?php echo $address->getRegionId(); ?>"><?php echo $address->getRegion(); ?></option>
+                                                <option>Chọn tỉnh thành</option>
+                                                <?php
+                                                $cities = array();
+                                                $collection = Mage::getModel('directory/region')->getResourceCollection()->addCountryFilter('VN')->load();
+                                                if (count($collection) > 0) {
+                                                    foreach ($collection as $item) {
+                                                        $data = $item->getData();
+                                                        $cities = $cities + array($data['region_id'] => $data['default_name']);
+                                                    }
+                                                }
+                                                foreach ($cities as $val => $name) {
+                                                    echo '<option value="' . $val . '" >' . $name . '</option>';
+                                                }
+                                                ?>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6" style="margin-top: 25px;">
+                                        <div class="form-group">
+                                            <select class="form-control" id="city_id">
+                                                <option id="init-city"><?php echo $address->getCity(); ?></option>
+                                                <option value="">Chọn quận huyện</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <input type="text" class="form-control" id="inm-address"
+                                                   value="<?php echo $address->getStreetFull() . ', ' . ucfirst(mb_strtolower($address->getCity(), 'UTF-8')) . ', ' . $address->getRegion(); ?>"
+                                                   placeholder="Số nhà, tên đường, phường, xã"
+                                            >
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12" style="padding-left: 0px;padding-right: 0px;">
+                                        <div class="btn-inm-group">
+                                            <div class="col-md-4">
+                                                <button class="btn btn-back-inm instalment-back"> Quay lại</button>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <button class="btn btn-confirm-acs">
+                                                    Xác nhận thanh toán
+                                                    <img class="confirm-acs-ajax-loader hidden"
+                                                         src="<?php echo $this->getSkinUrl('images/ajax-loader-white.gif'); ?>"/>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 inm-before">
+                                <span class="faq-wrap">
+    <!--                                    <h1 style="text-transform: uppercase"> 7 điều cần biết khi mua trả góp </h1>-->
+                                    <div class="inm-faqs">
+                                        <ol>
+    <!--                                            <li style="padding-bottom: 8px"><a style="cursor: pointer" data-toggle="modal" data-target="#fag1">1. Điều kiện và giấy tờ gốc cần có</a></li>-->
+                                            <!--                                            <li style="padding-bottom: 8px"><a style="cursor: pointer" data-toggle="modal" data-target="#fag2">2. Làm sao để có lãi xuất tốt nhất</a></li>-->
+                                            <!--                                            <li style="padding-bottom: 8px"><a style="cursor: pointer" data-toggle="modal" data-target="#fag3">3. Bí kíp để duyệt trả góp đến 90%</a></li>-->
+                                            <li style="padding-bottom: 8px">Số tiền trả góp qua ACS phải lớn hơn 3.600.000₫</li>
+                                            <li style="padding-bottom: 8px">Số tiền trả trước phải từ 20% - 80%</li>
+                                            <li style="padding-bottom: 8px">Số tiền thanh toán hàng tháng phải lớn hơn 300.000 ₫</li>
+                                            <li style="padding-bottom: 8px">Phí làm hồ sơ ACS, với thành viên và nhóm sinh viên, công chức là 300.000 ₫ còn lại là 400.000 ₫  </li>
+                                        </ol>
+                                    </div>
+                                     <div class="col-md-12 inm-firstback">
+                                         <button type="button" class="btn btn-instalment-confirm instalment-sole"
+                                                 style="display: none"> Thanh toán qua Alepay</button>
+                                        <button type="button"
+                                                class="btn btn-back-inm instalment-back"> Quay lại</button>
+                                     </div>
+                                </span>
+                                <hr>
+                                <span class="prepareDoc" style="display:none">
+                                    <h3>Giấy tờ cần chuẩn bị</h3>
+                                    <ul style="margin-top: 10px">
+                                        <li style="padding-bottom: 8px">CMND</li>
+                                        <li style="padding-bottom: 8px">Hộ khẩu</li>
+                                        <li style="padding-bottom: 8px">Một trong các loại giấy tờ sau(bản chính dễ đối chiếu)</li>
+                                        <li style="padding-bottom: 8px">Hợp đồng lao động tối thiểu 1 năm</li>
+                                        <li style="padding-bottom: 8px">Bảo hiểm y tế còn hiệu lực</li>
+                                    </ul>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- End Instalment block-->
+</div>
+
+<!-- Modal Start here-->
+<div class="modal fade bs-example-modal-sm" id="myPleaseWait" tabindex="-1"
+     role="dialog" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">
+                    <span class="glyphicon glyphicon-time">
+                    </span> &nbsp;<?php echo $this->__('Loading next step...') ?>
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="progress">
+                    <div class="progress-bar progress-bar-info
+                    progress-bar-striped active"
+                         style="width: 100%">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="fag1" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" style="position:absolute;top:0;right:0">
+                    &times;
+                </button>
+                <h1 class="modal-title">ĐIỀU KIỆN VÀ GIẤY TỜ CẦN CÓ</h1>
+            </div>
+            <div class="modal-body">
+                <ul class="instalment-content-fag">
+                    <li>Tuổi từ 20 - 60 (tính theo ngày tháng năm sinh trên chứng minh nhân dân).</li>
+                    <li>Chứng minh nhân dân còn hạn sử dụng (15 năm tính từ ngày cấp).</li>
+                    <li>
+                        Hộ khẩu (người mua hàng phải có tên trong hộ khẩu). Nếu khoản vay dưới 10 triệu có thể thay hộ
+                        khẩu bằng bằng lái xe
+                    </li>
+                    <li class="no-disc"><b>Nếu bạn là SINH VIÊN thì phải:</b></li>
+                    <li>Từ 18 tuổi.</li>
+                    <li>Có chứng minh nhân dân.</li>
+                    <li>Thẻ sinh viên và biên lai đóng học phí học kỳ gần nhất.</li>
+                    <li>Hộ khẩu có tên bạn.</li>
+                    <li>
+                        Bản sao chứng minh nhân dân của Bố hoặc Mẹ có công chứng 6 tháng.
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 2 -->
+<div class="modal fade" id="fag2" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" style="position:absolute;top:0;right:0">
+                    &times;
+                </button>
+                <h1 class="modal-title">LÀM SAO ĐỂ CÓ LÃI SUẤT TỐT NHẤT?</h1>
+            </div>
+            <div class="modal-body">
+                <ul class="instalment-content-fag">
+                    <li class="no-disc">Lãi suất có thể giảm thêm 5 - 7%/năm nếu bạn có thêm các giấy tờ sau:</li>
+                    <li>Hoá đơn tiền điện / nước / Internet /TH cáp / điện thoại: do bạn đứng tên hoặc có địa chỉ trùng
+                        với nơi bạn ở.
+                    </li>
+                    <li class="no-disc">Nếu vay trên 10 triệu thì có thêm:</li>
+                    <li>Nếu đang đi làm: có sao kê tài khoản 3 tháng gần nhất / hoặc Hợp đồng lao động / hoặc Bảo hiểm y
+                        tế.
+                    </li>
+                    <li>
+                        Nếu là chủ Doanh Nghiệp: Giấy phép kinh doanh + Biên lai thuế 3 tháng gần nhất.
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 3 -->
+<div class="modal fade" id="fag3" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" style="position:absolute;top:0;right:0">
+                    &times;
+                </button>
+                <h1 class="modal-title">BÍ KÍP ĐỂ DUYỆT TRẢ GÓP TỚI 90%</h1>
+            </div>
+            <div class="modal-body">
+                <ul class="instalment-content-fag">
+                    <li>Số tiền góp mỗi tháng nên bằng một nửa số tiền bạn còn dư sau khi chi tiêu. VD: thu nhập của bạn
+                        là 8tr, bạn chi tiêu bình quân 5tr còn dư 3tr thì tốt nhất bạn nên góp 1,5tr/tháng.
+                    </li>
+                    <li>Số điện thoại người tham chiếu nên là người thân của mình như vợ/chồng, anh/chị/em trong gia
+                        đình, bạn thân và phải biết việc mình chuẩn bị mua trả góp.
+                    </li>
+                    <li>Lịch sử vay trả góp tốt: trả hết, trả đúng hạn</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal ends Here -->
+
+<script type="text/javascript">
+    var cartItems = <?php echo json_encode($_cartItems); ?>;
+
+    $j(document).ready(function () {
+        //
+        $j('.show-grandTotal').html(addCommas($j('#in_grandtotal').val()));
+        var grandTotal = $j('#in_grandtotal').val();
+        var percent = [20, 30, 40, 50, 60, 70, 80];
+        var result = "";
+        $j('#prePaid').append($j('<option>',
+            {
+                value: -2,
+                text: 'Khác'
+            }
+        ));
+        percent.forEach(function (item) {
+//            if (Math.floor((grandTotal * (100 - item) / 100) / 1000) * 1000 > 3000000) {
+            result = result + '<option value="' + item / 10 + '">' + '(' + item + '%) ' + addCommas(Math.floor((grandTotal * item / 100) / 1000) * 1000) + '</option>';
+            $j('#prePaid').append($j('<option>',
+                {
+                    value: item / 10,
+                    text: '(' + item + '%) ' + addCommas(Math.floor((grandTotal * item / 100) / 1000) * 1000)
+                }
+            ));
+//            }
+        });
+        //
+//        if (grandTotal < 3600000) {
+//            $j('#instalment-choose').hide();
+//        }
+        // initialize the select box
+        var address = JSON.parse(localStorage.getItem('tekshop_address'));
+        $j('#init-city').attr('value', address.city_id);
+    });
+    $j('.inm-table-detail').on('click', 'input:radio[name="inputTerm"]', function (e) {
+        e.stopPropagation();
+        var id = e.target.id;
+        $j('.inm-before').removeClass('inm-before');
+        $j('.show-addition-inm').show();
+        $j('.inm-firstback').hide();
+        $j('#' + id).attr('checked', true);
+
+    });
+
+    $j('.inm-table-detail').on('click', '.radioActive', function (e) {
+        e.stopPropagation();
+        return false;
+    });
+
+    $j('.btn-confirm-acs').on('click', function (e) {
+        //if(validateInmInput()){
+        var cmnd = $j('#inm-cmnd').val().trim(); //
+        var name = $j('#inm-name').val().trim(); //
+        if (Number($j('#prePaid').val()) == -2) {
+            var prePaid = $j('#prePaid-input').val() * 10 / $j('#in_grandtotal').val();
+        } else {
+            var prePaid = $j('#prePaid').val();
+        }
+        var address = $j('#inm-address').val().trim();
+        var doc = $j('#requireDoc').val().trim();//
+        var telephone = $j('#inm-telephone').val().trim(); //
+        var sex = $j('input[name=sex]:checked').val();
+        var term = $j('input[name=inputTerm]:checked').val();
+        var region = $j('#region_id').val();
+        var city = $j('#city_id').val();
+        var birthday = $j('.inm-birthday').val();
+        if (Number(prePaid) < 0) {
+            $j('.inm-message').html('Vui lòng chọn số tiền trả trước');
+            return false;
+        } else {
+            var grandtotal = $j('#in_grandtotal').val();
+            var prePaidAmount = Math.floor(Number(prePaid) * Number(grandtotal) / 10);
+        }
+        if (Number(document) < 0) {
+            $j('.inm-message').html('Vui lòng chọn giấy tờ bắt buộc');
+            return false;
+        }
+        if (!term) {
+            $j('.inm-message').html('Vui lòng chọn kỳ hạn');
+            return false;
+        }
+        if (!sex) {
+            $j('.show-addition-message').html('Vui lòng chọn giới tính');
+            return false;
+        }
+        if (name.length < 6) {
+            $j('.show-addition-message').html('Vui lòng nhập đầy đủ họ và tên');
+            return false;
+        }
+        if (!/^(84|0)(1\d{9}|9\d{8}|8\d{8})$/.test(telephone)) {
+            $j('.show-addition-message').html('Số điện thoại không hợp lệ');
+            return false;
+        }
+        if (!/^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])[\/\-]\d{4}$/.test(birthday)) {
+            $j('.show-addition-message').html('Vui lòng nhập ngày/tháng/năm sinh hợp lệ');
+            return false;
+        }
+        if (!address) {
+            $j('.show-addition-message').html('Vui lòng nhập địa chỉ');
+            return false;
+        }
+        if (cmnd.length != 12) {
+            if (cmnd.length > 9 || cmnd.length < 8) {
+                $j('.show-addition-message').html('Vui lòng nhập số CMND chính xác');
+                return false;
+            }
+        }
+        if (!/^[0-9]+$/.test(cmnd)) {
+            $j('.show-addition-message').html('Vui lòng nhập số CMND chính xác');
+            return false;
+        }
+        if (!region) {
+            $j('.show-addition-message').html('Vui lòng chọn tỉnh thành');
+            return false;
+        }
+        if (!city) {
+            $j('.show-addition-message').html('Vui lòng chọn quận huyện');
+            return false;
+        }
+        var data = {
+            sex: sex,
+            term: term,
+            city: city,
+            name: name,
+            cmnd: cmnd,
+            doc: doc,
+            region: region,
+            prePaid: prePaid,
+            address: address,
+            telephone: telephone,
+            birthday: birthday,
+            email: $j('#instalemail').val(),
+            grandtotal: $j('#in_grandtotal').val(),
+            customer_note: $j('#customer_note').val()
+        };
+        $j('.btn-confirm-acs').prop('disabled', true);
+        $j('.confirm-acs-ajax-loader').removeClass('hidden');
+
+        /** Track checkout step 3 (option: Instalment) **/
+        dataLayer.push({
+            'event': 'checkout',
+            'ecommerce': {
+                'checkout': {
+                    'actionField': {'step': 3, 'option': 'Instalment'},
+                    'products': cartItems
+                }
+            }
+        });
+
+        $j.ajax({
+            url: '<?php echo $this->getUrl('checkout/payment/acsInstalment');  ?>',
+            data: {
+                data: btoa((encodeURIComponent(JSON.stringify(data))))
+            },
+            success: function (data) {
+                data = JSON.parse(data);
+                if (data.error) {
+                    swal("Không thành công", data.error);
+                    setTimeout(function () {
+                        $j('.btn-confirm-acs').prop('disabled', false);
+                        $j('.confirm-acs-ajax-loader').addClass('hidden');
+                        window.location.href = '<?php echo $this->getUrl('checkout/payment/index')?>';
+                    }, 3000);
+                }
+                if (data.redirect) {
+                    swal("Thành công", "Giao dịch trả góp của bạn sẽ được Tekshop duyệt và thông báo với bạn sớm nhất!");
+                    setTimeout(function () {
+                        window.location.href = data.redirect;
+                    }, 3000);
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert("Status: " + textStatus + "\n" + "Error: " + errorThrown);
+            }
+        });
+        e.preventDefault();
+        e.stopPropagation();
+    });
+
+    function calculateAmountPerMonth() {
+        var type = Number($j('#requireDoc').val());
+        var grandTotal = Number($j('#in_grandtotal').val());
+        var amountPerMonth = 0.0166 * 100;
+        if (type == 6) {
+            amountPerMonth = 0.0139 * 100;
+        }
+        if (type == 7) {
+            amountPerMonth = 0.0139 * 100;
+        }
+        if (type == 8) {
+            amountPerMonth = 0.0139 * 100;
+        }
+        if (type == 4 && (Number($j('#prePaid').val()) >= 4 || Number($j('#prePaid-input').val()) / grandTotal >= 0.4)) {
+            amountPerMonth = 0.0159 * 100;
+        }
+        $j('.filePaid').html(addCommas(300000));
+        if (type == 4) {
+            $j('.filePaid').html(addCommas(400000));
+        }
+        amountPerMonth = amountPerMonth + '%';
+        $j('.amountPerMonth-value').html(amountPerMonth);
+    }
+
+    $j('#requireDoc').on('change', function () {
+        var type = Number($j('#requireDoc').val());
+        var grandTotal = Number($j('#in_grandtotal').val());
+        var inputCheck = false;
+        calculateAmountPerMonth();
+        $j('.inm-faqs').show();
+        //
+        $j('.inm-before').css({
+            'justify-content': 'space-around'
+        });
+        //$j('.prepareDoc').show();
+        var prePaid = Number($j('#prePaid-input').val());
+        calculateRemainingAmount();
+        var min = Math.floor(grandTotal * 0.2 / 1000) * 1000;
+        var max = Math.floor(grandTotal * 0.8 / 1000) * 1000;
+        if (prePaid < min || prePaid > max) {
+            $j('.inm-message').html('Số tiền trả trước phải từ ' + addCommas(min) + '(20%) - ' + addCommas(max) + '(80%) tổng tiền ');
+        } else {
+            inputCheck = true;
+        }
+        if ((type > 0 && Number($j('#prePaid').val()) > 0) || (type > 0 && inputCheck)) {
+            calculateInstalment();
+        }
+    });
+
+    $j('#prePaid').on('change', function () {
+        calculateAmountPerMonth();
+        if (Number($j(this).val()) == -2) {
+            $j('.form-other').show();
+            calculateRemainingAmount();
+        }
+        if (Number($j(this).val()) > 0) {
+            $j('.form-other').hide();
+            var prePaid = Math.floor(Number($j(this).val()) * $j('#in_grandtotal').val() / 10000) * 1000;
+            var type = Number($j('#requireDoc').val());
+            if (type == 4) {
+                $j('.prePaid-Tekshop').html(addCommas(prePaid + 400000));
+            } else {
+                $j('.prePaid-Tekshop').html(addCommas(prePaid + 300000));
+            }
+            $j('.prePaid-value').html(addCommas(prePaid));
+            calculateRemainingAmount();
+        }
+        if (Number($j(this).val()) > 0 && Number($j('#requireDoc').val()) > 0) {
+            calculateInstalment();
+        }
+    });
+
+    $j('.btn-other-inm').on('click', function (e) {
+        calculateAmountPerMonth();
+        var grandTotal = Number($j('#in_grandtotal').val());
+        var prePaid = Number($j('#prePaid-input').val());
+        var requireDoc = Number($j('#requireDoc').val());
+        if (requireDoc > 0) {
+            var min = Math.floor(grandTotal * 0.2 / 1000) * 1000;
+            var max = Math.floor(grandTotal * 0.8 / 1000) * 1000;
+            if (prePaid < min || prePaid > max) {
+                $j('.inm-message').html('Số tiền trả trước phải từ ' + addCommas(min) + '(20%) - ' + addCommas(max) + '(80%) tổng tiền ');
+            } else {
+                $j('.inm-message').html("");
+                calculateRemainingAmount();
+                calculateInstalment();
+            }
+        } else {
+            $j('.inm-message').html("Vui lòng chọn nhóm khách hàng!");
+            $j('.inm-message').show();
+        }
+        e.stopPropagation();
+        e.preventDefault();
+    });
+
+    function calculateRemainingAmount() {
+        var prePaid = Number($j('#prePaid').val());
+        if (prePaid == -2) {
+            var prePaidValue = Number($j('#prePaid-input').val());
+        } else {
+            var prePaidValue = Math.floor(Number($j('#prePaid').val()) * $j('#in_grandtotal').val() / 10000) * 1000;
+        }
+        var type = Number($j('#requireDoc').val());
+        if (type == 4) {
+            $j('.prePaid-Tekshop').html(addCommas(prePaidValue + 400000));
+        } else {
+            $j('.prePaid-Tekshop').html(addCommas(prePaidValue + 300000));
+        }
+        $j('.prePaid-value').html(addCommas(prePaidValue));
+        var remainValue = $j('#in_grandtotal').val() - prePaidValue;
+        $j('.remain-value').html(addCommas(Math.floor(remainValue / 1000) * 1000));
+    }
+
+    function calculateInstalment() {
+        var grandTotal = $j('#in_grandtotal').val();
+        var requireDocType = $j('#requireDoc').val();
+        if (Number($j('#prePaid').val()) == -2) {
+            var prePaid = $j('#prePaid-input').val() * 10 / Number(grandTotal);
+        } else {
+            var prePaid = $j('#prePaid').val();
+        }
+        //loading effect
+        $j('.inm-loading').show();
+        $j.ajax({
+            url: '<?php echo $this->getUrl('checkout/payment/calculateInstalment');  ?>',
+            data: {
+                grandTotal: grandTotal,
+                requireDocType: requireDocType,
+                prePaid: prePaid
+            },
+            success: function (data) {
+                var data = JSON.parse(data);
+                if (data.error) {
+                    swal('Giỏ hàng cần được kiểm tra lại');
+                    setTimeout(function () {
+                        window.location.href = data.redirect;
+                    }, 3000);
+                    return false;
+                }
+                $j('.totalAmountRow > td').each(function () {
+                    if ($j(this).index() > 1) {
+                        $j(this).html(addCommas(data.totalAmount[$j(this).index() - 2]));
+                    }
+                });
+                $j('.amountPerMonthRow > td').each(function () {
+                    if ($j(this).index() > 1) {
+                        if (data.amountPerMonth[$j(this).index() - 2] == "Không hỗ trợ") {
+                            $j(this).html((data.amountPerMonth[$j(this).index() - 2]));
+                            $j(this).attr("style", 'text-align:center!important');
+                        } else {
+                            $j(this).html(addCommas(data.amountPerMonth[$j(this).index() - 2]));
+                            $j(this).attr("style", 'text-align:right!important');
+                        }
+                    }
+                });
+                $j('.firstMonthAmountRow > td').each(function () {
+                    if ($j(this).index() > 1) {
+                        if (data.firstMonthAmount[$j(this).index() - 2] == "Không hỗ trợ") {
+                            $j(this).html((data.firstMonthAmount[$j(this).index() - 2]));
+                            $j(this).attr("style", 'text-align:center!important');
+                        } else {
+                            $j(this).html(addCommas(data.firstMonthAmount[$j(this).index() - 2]));
+                            $j(this).attr("style", 'text-align:right!important');
+                        }
+                    }
+                });
+                $j('.radioRow > td').each(function () {
+                    if ($j(this).index() > 1) {
+                        $j(this).html((data.radioArray[$j(this).index() - 2]));
+                    }
+                });
+                // turn off loading effect
+                $j('.inm-table-detail').show();
+                $j('.inm-loading').hide();
+                $j('.inm-detail').show();
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert("Status: " + textStatus + "\n" + "Error: " + errorThrown);
+            }
+        });
+    }
+
+    $j(function () {
+        $j("#datepicker").datepicker({
+            dateFormat: 'dd/mm/yy'
+        });
+    });
+
+    $j('#region_id').change(function () {
+        var region_id = this.value;
+        $j("#city_id").empty();
+        $j("#city_id").load("<?php echo $this->getUrl('checkout/shipping/getDistrictsInCity')  ?>?cityId=" + region_id + "&defaultDistrict=");
+    });
+
+    $j('.btn-instalment-confirm').on('click', function (e) {
+        var data = {
+            'name': $j('#instalname').val(),
+            'phone': $j('#instalphone').val(),
+            'city': $j('#instalcity').val(),
+            'address': $j('#instaladdress').val(),
+            'email': $j('#instalemail').val(),
+            'customer_note': $j('#customer_note').val()
+        };
+        $j('.inm-modal-loading').show();
+        $j.ajax({
+            url: "<?php echo $this->getUrl('checkout/payment/AlePay');  ?>",
+            type: "POST",
+            data: data,
+            success: function (data) {
+                var response = JSON.parse(data);
+                if (response.error == "OK") {
+                    var url = response.data;
+                    window.location.href = url;
+                } else {
+                    swal({
+                        title: "Không thành công",
+                        text: response.message,
+                        type: "error",
+                        showCancelButton: true,
+                        confirmButtonText: "Nhập lại thông tin",
+                        cancelButtonText: "Quay lại",
+                        closeOnConfirm: false
+                    }, function (isConfirm) {
+                        window.location.href = "<?php echo $this->getUrl('checkout/shipping/index/');?>";
+                    });
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert("Status: " + textStatus + "\n" + "Error: " + errorThrown);
+            }
+        });
+        e.preventDefault();
+        e.stopPropagation();
+    });
+
+    $j('.instalment-back').on('click', function (e) {
+        $j('.panel-cart').show();
+        $j('.confirm-payment-hide').show();
+        $j('.instalment-block').hide();
+        e.preventDefault();
+        e.stopPropagation();
+    });
+
+    $j("#icheck-1").change(function () {
+        if (this.checked) {
+            $j(this).parent().addClass("checked");
+            $j('#change_shipping_address').hide();
+        } else {
+            $j(this).parent().removeClass("checked");
+            $j('#change_shipping_address').show();
+        }
+    });
+
+    $j("#icheck-2").change(function () {
+        if (this.checked) {
+            $j(this).parent().addClass("checked");
+            $j(this).val(1);
+            $j('#vat').show();
+        } else {
+            $j(this).parent().removeClass("checked");
+            $j(this).val(0);
+            $j('#vat').hide();
+        }
+    });
+
+    /** Click confirm payment btn **/
+    $j(".btn-checkout").click(function (event) {
+        $j('.confirm-payment-btn').prop('disabled', true);
+        $j('.confirm-payment-ajax-loader').removeClass('hidden');
+        $j.ajax({
+            url: "<?php echo $this->getUrl('checkout/payment/validateQuote');  ?>",
+            type: "GET",
+            success: function (data) {
+                data = JSON.parse(data);
+                if (data.message === "success") {
+                    /** Thanh toan tra gop (ACS/Alepay) **/
+                    if ($j('input[name=payment_type]:checked').val() == 'instalment') {
+                        $j('.confirm-payment-btn').prop('disabled', false);
+                        $j('.confirm-payment-ajax-loader').addClass('hidden');
+                        $j('.panel-cart').hide();
+                        $j('.confirm-payment-hide').hide();
+                        $j('.instalment-block').show();
+                        var checkAcs = $j('.instalment-serve').html().trim().replace("₫", "").split(".").join("");
+                        checkAcs = Number(checkAcs);
+                        if (checkAcs < 3600000) {
+                            $j('.acs-card').hide();
+                            $j('.inm-faqs').hide();
+                            $j('.alepay-card').addClass('active');
+                            $j('.form-acs').hide();
+                            $j('.instalment-sole').show();
+
+                        } else {
+                            $j('.acs-card').show();
+                            $j('.alepay-card').removeClass('active');
+                            $j('.form-acs').show();
+                            $j('.instalment-sole').hide();
+                        }
+                        return;
+                    }
+
+                    /** Thanh toan truc tuyen (Internet banking) **/
+                    if ($j('input[name=payment_type]:checked').val() == 'online') {
+                        /** Track checkout step 3 (option: Online Banking) **/
+                        dataLayer.push({
+                            'event': 'checkout',
+                            'ecommerce': {
+                                'checkout': {
+                                    'actionField': {'step': 3, 'option': 'Online Banking'},
+                                    'products': cartItems
+                                }
+                            }
+                        });
+
+                        $j("#form-payment").attr('action', '<?= $this->getUrl('payment_online/online/save'); ?>');
+                        $j("#form-payment").submit();
+                        return;
+                    }
+
+                    /** Thanh toan COD **/
+                    /** Track checkout step 3 (option: COD) **/
+                    dataLayer.push({
+                        'event': 'checkout',
+                        'ecommerce': {
+                            'checkout': {
+                                'actionField': {'step': 3, 'option': 'COD'},
+                                'products': cartItems
+                            }
+                        }
+                    });
+
+                    var url = "<?php echo $this->getUrl('checkout/payment/savePayment');  ?>";
+                    $j.ajax({
+                        url: url,
+                        type: "POST",
+                        data: $j("#form-payment").serialize(),
+                        dataType: "json",
+                        error: function () {
+                            $j('.confirm-payment-btn').prop('disabled', false);
+                            $j('.confirm-payment-ajax-loader').addClass('hidden');
+                            swal({
+                                title: 'Hệ thống chưa thể tạo đơn hàng cho bạn',
+                                text: 'Thông tin giỏ hàng bị thay đổi hoặc phiên làm việc của bạn đã kết, vui lòng kiểm tra và thử lại',
+                                type: 'error'
+                            })
+                        }
+                    }).done(function (data) {
+                        if (data.redirect != null) {
+                            window.location.href = data.redirect;
+                        }
+                        else {
+                            $j('.confirm-payment-btn').prop('disabled', false);
+                            $j('.confirm-payment-ajax-loader').addClass('hidden');
+
+                            if (data.message != null) {
+                                alert(data.message);
+                            }
+                            if (data.full_name) {
+                                if ($j("#full_name").siblings(".help-block").length == 0) {
+                                    $j("#full_name").parent().append('<span class="help-block" >' + data.full_name + '</span>');
+                                }
+                                if (!$j('[for="full_name"]').parent().hasClass('has-error')) {
+                                    $j('[for="full_name"]').parent().addClass('has-error');
+                                }
+                            }
+                            if (data.telephone) {
+                                if ($j("#telephone").siblings(".help-block").length == 0) {
+                                    $j("#telephone").parent().append('<span class="help-block" >' + data.telephone + '</span>');
+                                }
+                                if (!$j('[for="telephone"]').parent().hasClass('has-error')) {
+                                    $j('[for="telephone"]').parent().addClass('has-error');
+                                }
+                            }
+                            if (data.company) {
+                                if ($j("#company").siblings(".help-block").length == 0) {
+                                    $j("#company").parent().append('<span class="help-block" >' + data.company + '</span>');
+                                }
+                                if (!$j('[for="company"]').parent().hasClass('has-error')) {
+                                    $j('[for="company"]').parent().addClass('has-error');
+                                }
+                            }
+                            if (data.tax) {
+                                if ($j("#tax").siblings(".help-block").length == 0) {
+                                    $j("#tax").parent().append('<span class="help-block" >' + data.tax + '</span>');
+                                }
+                                if (!$j('[for="tax"]').parent().hasClass('has-error')) {
+                                    $j('[for="tax"]').parent().addClass('has-error');
+                                }
+                            }
+                            if (data.street) {
+                                if ($j("#street").siblings(".help-block").length == 0) {
+                                    $j("#street").parent().append('<span class="help-block" >' + data.street + '</span>');
+                                }
+                                if (!$j('[for="street"]').parent().hasClass('has-error')) {
+                                    $j('[for="street"]').parent().addClass('has-error');
+                                }
+                            }
+                            if (data.reset) {
+                                alert("Reset");
+                            }
+                        }
+
+                    });
+                }
+                else {
+                    swal({
+                        title: 'Vui lòng kiểm tra lại giỏ hàng',
+                        text: data.message,
+                        type: 'error'
+                    });
+                    setTimeout(function () {
+                        swal.close();
+                        window.location.href = "<?php echo $this->getUrl('checkout/cart/index');  ?>";
+                    }, 2000);
+                }
+            },
+            error: function () {
+                window.location.href = "<?php echo $this->getUrl('checkout/cart/index');  ?>";
+            }
+        });
+    });
+
+    /** End click confirm payment btn **/
+
+    /** Common functions **/
+    function addCommas(str) {
+        var parts = (str + "").split("."),
+            main = parts[0],
+            len = main.length,
+            output = "",
+            first = main.charAt(0),
+            i;
+
+        if (first === '-') {
+            main = main.slice(1);
+            len = main.length;
+        } else {
+            first = "";
+        }
+        i = len - 1;
+        while (i >= 0) {
+            output = main.charAt(i) + output;
+            if ((len - i) % 3 === 0 && i > 0) {
+                output = "." + output;
+            }
+            --i;
+        }
+        // put sign back
+        output = first + output;
+        // put decimal part back
+        if (parts.length > 1) {
+            output += "." + parts[1];
+        }
+        return output + " ₫";
+    }
+
+    /** End common functions **/
+</script>
+

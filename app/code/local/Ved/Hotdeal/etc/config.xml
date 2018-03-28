@@ -1,0 +1,103 @@
+<?xml version="1.0"?>
+
+<config>
+    <modules>
+        <Ved_Hotdeal>
+            <version>1.0.1</version>
+        </Ved_Hotdeal>
+    </modules>
+
+    <global>
+        <resources>
+            <ved_hotdeal_setup>
+                <setup>
+                    <module>Ved_Hotdeal</module>
+                </setup>
+                <connection>
+                    <use>core_setup</use>
+                </connection>
+            </ved_hotdeal_setup>
+            <ved_hotdeal_write>
+                <connection>
+                    <use>core_write</use>
+                </connection>
+            </ved_hotdeal_write>
+            <ved_hotdeal_read>
+                <connection>
+                    <use>core_read</use>
+                </connection>
+            </ved_hotdeal_read>
+        </resources>
+
+        <blocks>
+            <ved_hotdeal>
+                <class>Ved_Hotdeal_Block</class>
+            </ved_hotdeal>
+        </blocks>
+        <models>
+            <ved_hotdeal>
+                <class>Ved_Hotdeal_Model</class>
+                <resourceModel>ved_hotdeal_resource</resourceModel>
+            </ved_hotdeal>
+            <ved_hotdeal_resource>
+                <class>Ved_Hotdeal_Model_Resource</class>
+                <entities>
+                    <hotdeal>
+                        <table>hot_deal</table>
+                    </hotdeal>
+                    <category>
+                        <table>hot_deal_categories</table>
+                    </category>
+                    <category_store>
+                        <table>faq_category_store</table>
+                    </category_store>
+                </entities>
+            </ved_hotdeal_resource>
+        </models>
+
+        <helpers>
+            <ved_hotdeal>
+                <class>Ved_Hotdeal_Helper</class>
+            </ved_hotdeal>
+        </helpers>
+    </global>
+
+    <admin>
+        <routers>
+            <adminhtml>
+                <ved_hotdeal>
+                    <use>admin</use>
+                    <args>
+                        <module>Ved_Hotdeal</module>
+                        <frontName>ved_hotdeal</frontName>
+                    </args>
+                </ved_hotdeal>
+                <args>
+                    <modules>
+                        <Ved_Hotdeal before="Mage_Adminhtml">Ved_Hotdeal_Adminhtml</Ved_Hotdeal>
+                    </modules>
+                </args>
+            </adminhtml>
+        </routers>
+    </admin>
+    <adminhtml>
+        <acl>
+            <resources>
+                <all>
+                    <title>Allow Everything</title>
+                </all>
+                <admin>
+                    <children>
+                        <catalog>
+                            <children>
+                                <hotdeal translate="title">
+                                    <title>Hot Deal</title>
+                                </hotdeal>
+                            </children>
+                        </catalog>
+                    </children>
+                </admin>
+            </resources>
+        </acl>
+    </adminhtml>
+</config>

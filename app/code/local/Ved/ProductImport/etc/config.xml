@@ -1,0 +1,116 @@
+<?xml version="1.0"?>
+<config>
+  <modules>
+    <Ved_ProductImport>
+      <version>1.0.0</version>
+    </Ved_ProductImport>
+  </modules>
+  <global>
+    <helpers>
+      <productimport>
+        <class>Ved_ProductImport_Helper</class>
+      </productimport>
+    </helpers>
+	<blocks>
+	  <productimport>
+		<class>Ved_ProductImport_Block</class>
+	  </productimport>
+	</blocks>
+	<models>
+	  <productimport>
+		<class>Ved_ProductImport_Model</class>
+		<resourceModel>productimport_mysql4</resourceModel>
+	  </productimport>
+	  <productimport_mysql4>
+		<class>Ved_ProductImport_Model_Mysql4</class>
+		<entities>
+			  <importlog>
+				<table>import_log</table>
+			  </importlog>
+        </entities>
+	  </productimport_mysql4>
+	</models>
+	<resources>
+	  <productimport_setup>
+		<setup>
+		  <module>Ved_ProductImport</module>
+		</setup>
+		<connection>
+		  <use>core_setup</use>
+		</connection>
+	  </productimport_setup>
+	  <productimport_write>
+		<connection>
+		  <use>core_write</use>
+		</connection>
+	  </productimport_write>
+	  <productimport_read>
+		<connection>
+		  <use>core_read</use>
+		</connection>
+	  </productimport_read>
+	</resources>
+  </global>
+  <admin>
+	<routers>
+	  <productimport>
+	    <use>admin</use>
+		<args>
+		  <module>Ved_ProductImport_Adminhtml</module>
+		  <frontName>productimport</frontName>
+		</args>
+	  </productimport>
+	</routers>
+  </admin>
+  <adminhtml>
+	<menu>
+		<productimport module="productimport">
+			<title>Product Import</title>
+			<sort_order>100</sort_order>
+			<children>
+				<productimportbackend module="productimport">
+					<title>Import</title>
+					<sort_order>0</sort_order>
+					<action>productimport/productimport</action>
+				</productimportbackend>
+				<importlog module="productimport">
+					<title>Manage Importlog</title>
+					<sort_order>10</sort_order>
+					<action>productimport/importlog</action>
+				</importlog>
+			</children>
+		</productimport>
+	</menu>
+	<acl>
+		<resources>
+			<all>
+				<title>Allow Everything</title>
+			</all>
+			<admin>
+				<children>
+					<productimport translate="title" module="productimport">
+						<title>ProductImport</title>
+						<sort_order>1000</sort_order>
+						<children>
+							<productimportbackend translate="title">
+								<title>Backend Page Title</title>
+							</productimportbackend>
+							<importlog translate="title">
+								<title>Manage Importlog</title>
+								<sort_order>0</sort_order>
+							</importlog>
+						</children>
+					</productimport>
+				</children>
+			</admin>
+		</resources>
+	</acl>
+	<layout>
+		<updates>
+			<productimport>
+				<file>productimport.xml</file>
+			</productimport>
+		</updates>
+	</layout>
+</adminhtml>
+</config>

@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Ved_Agentinfo>
+            <version>0.1.0</version>
+        </Ved_Agentinfo>
+    </modules>
+    <global>
+        <resources>
+            <Ved_Agentinfo_setup>
+                <setup>
+                    <module>Ved_Agentinfo</module>
+                    <class>Mage_Customer_Model_Entity_Setup</class>
+                </setup>
+                <connection>
+                    <use>core_setup</use>
+                </connection>
+            </Ved_Agentinfo_setup>
+            <Ved_Agentinfo_write>
+                <connection>
+                    <use>core_write</use>
+                </connection>
+            </Ved_Agentinfo_write>
+            <Ved_Agentinfo_read>
+                <connection>
+                    <use>core_read</use>
+                </connection>
+            </Ved_Agentinfo_read>
+        </resources>
+    </global>
+
+</config>

@@ -1,0 +1,316 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     base_default
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<?php
+$_order = $this->getOrder();
+$order_id = $_order->getId();
+$grand_total = $_order->getGrandTotal();
+?>
+<?php
+$_productImpressions = [];
+$_orderedItems = [];
+$_purchaseContents = [];
+?>
+
+<div class="panel panel-cart">
+    <div class="panel-body pb-0">
+        <div class="panel-title">Thông tin giỏ hàng</div>
+
+        <!-- Product info-->
+        <div class="row panel-product-info">
+            <?php
+            $_items = $_order->getItemsCollection();
+            $total_free_item_price = 0;
+            ?>
+            <?php foreach ($_items as $_item): ?>
+                <?php
+                $_productObj = new stdClass();
+                $_productObj->name = $this->escapeHtml($_item->getName());
+                $_productObj->id = intval($_item->getProduct()->getId());
+                $_productObj->price = intval($_item->getPrice());
+                $_productObj->list = 'Thank You Page';
+
+                $_productCartObj = new stdClass();
+                $_productCartObj->name = $this->escapeHtml($_item->getName());
+                $_productCartObj->id = intval($_item->getProduct()->getId());
+                $_productCartObj->price = intval($_item->getPrice());
+                $_productCartObj->quantity = intval($_item->getQtyOrdered());
+
+                $_purchaseContentObj = new stdClass();
+                $_purchaseContentObj->id = (string)$_item->getProduct()->getId();
+                $_purchaseContentObj->quantity = intval($_item->getQtyOrdered());
+                $_purchaseContentObj->item_price = intval($_item->getPrice());
+
+                //if a product has parents (simple product of configurable/bundled/grouped product) load its Parent product type
+                if ($_item->getParentItemId()) {
+                    $parent_product_type = Mage::getModel('sales/order_item')->load($_item->getParentItemId())->getProductType();
+                    //if Parent product type is not Bundle and Configurable
+                    if ($parent_product_type != Mage_Catalog_Model_Product_Type::TYPE_BUNDLE && $parent_product_type != Mage_Catalog_Model_Product_Type::TYPE_CONFIGURABLE) {
+                        $_productImpressions[] = $_productObj;
+                        $_orderedItems[] = $_productCartObj;
+                        $_purchaseContents[] = $_purchaseContentObj;
+                    }
+                } else {
+                    $_productImpressions[] = $_productObj;
+                    $_orderedItems[] = $_productCartObj;
+                    $_purchaseContents[] = $_purchaseContentObj;
+                }
+                ?>
+                <?php $total = $_item->getPrice() * $_item->getQtyOrdered(); ?>
+                <?php $freeItem = unserialize($_item->getAdditionalData()); ?>
+                <?php if ($_item->getParentItem()) continue; ?>
+                <div class="col-md-12 payment-cart-product-row">
+                    <div class="row">
+                        <div class="col-md-2 col-sm-2">
+                            <img class="payment-cart-product-img"
+                                 src="<?php echo Mage::helper('catalog/image')->init($_item->getProduct(), 'small_image')->resize(80, 80); ?>">
+                        </div>
+                        <div class="col-md-10 col-sm-10 pl-0">
+                            <div class="row">
+                                <div class="col-sm-12 pt-5">
+                                    <a onclick="trackProductClicks(this);"
+                                       data-id="<?php echo $_item->getProduct()->getId(); ?>"
+                                       data-name="<?php echo $this->escapeHtml($_item->getName()); ?>"
+                                       data-price="<?php echo $_item->getPrice(); ?>"
+                                       href="<?php echo $_item->getProduct()->getProductFullUrl(); ?>"
+                                       title="<?php echo $this->escapeHtml($_item->getName()); ?>"
+                                       class="payment-cart-product-name">
+                                        <?php echo $this->escapeHtml($_item->getName()); ?>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="row mt-5">
+                                <div class="col-sm-4">
+                                    <span class="product-unit-price"><?php echo number_format($_item->getPrice(), 0, ",", ".") . " ₫"; ?></span>
+                                </div>
+                                <div class="col-sm-3 text-right">
+                                    <span class="product-quantity">x<?php echo ($freeItem && isset($freeItem['quantity'])) ? round($_item->getQtyOrdered()) - $freeItem['quantity'] : round($_item->getQtyOrdered()); ?></span>
+                                </div>
+                                <div class="col-sm-5 text-right">
+                                    <?php if ($freeItem && isset($freeItem['quantity']) && isset($freeItem['price'])): ?>
+                                        <?php $total = $total - $freeItem['quantity'] * $freeItem['price'] ?>
+                                        <?php $total_free_item_price += $freeItem['quantity'] * $freeItem['price']; ?>
+                                    <?php endif; ?>
+                                    <span class="product-total-price"><?php echo number_format($total, 0, ",", ".") . " ₫"; ?></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <?php if (!isset($freeItem['parent']) && $_item->getPrice() == 0): ?>
+                        <span class="cart-promo-text">(Quà tặng)</span>
+                    <?php endif; ?>
+                    <?php if ($_item->getProductOptions()): ?>
+                        <?php if (isset($_item->getProductOptions()['bundle_options'])): ?>
+                            <?php $_options = $_item->getProductOptions()['bundle_options']; ?>
+                            <dl class="item-options">
+                                <?php foreach ($_options as $_option) : ?>
+                                    <dt><?php echo Mage::helper('core')->escapeHtml($_option['label'], null) ?></dt>
+                                    <dd>
+                                        <?php foreach ($_option['value'] as $_option_value): ?>
+                                            <?php echo $_option_value['title']; ?>
+                                        <?php endforeach; ?>
+                                    </dd>
+                                <?php endforeach; ?>
+                            </dl>
+                        <?php elseif (isset($_item->getProductOptions()['attributes_info'])): ?>
+                            <?php $_options = $_item->getProductOptions()['attributes_info']; ?>
+                            <dl class="item-options">
+                                <?php foreach ($_options as $_option) : ?>
+                                    <?php $_formatedOptionValue = Mage::helper('catalog/product_configuration')->getFormattedOptionValue($_option); ?>
+                                    <dt><?php echo Mage::helper('core')->escapeHtml($_option['label'], null) ?></dt>
+                                    <dd<?php if (isset($_formatedOptionValue['full_view'])): ?> class="truncated"<?php endif; ?>>
+                                        <?php echo $_formatedOptionValue['value'] ?>
+                                        <?php if (isset($_formatedOptionValue['full_view'])): ?>
+                                            <div class="truncated_full_value">
+                                                <dl class="item-options">
+                                                    <dt><?php echo Mage::helper('core')->escapeHtml($_option['label'], null) ?></dt>
+                                                    <dd><?php echo $_formatedOptionValue['full_view'] ?></dd>
+                                                </dl>
+                                            </div>
+                                        <?php endif; ?>
+                                    </dd>
+                                <?php endforeach; ?>
+                            </dl>
+                        <?php elseif (isset($_item->getProductOptions()['options'])): ?>
+                            <?php $_options = $_item->getProductOptions()['options']; ?>
+                            <dl class="item-options">
+                                <?php foreach ($_options as $_option) : ?>
+                                    <?php $_formatedOptionValue = Mage::helper('catalog/product_configuration')->getFormattedOptionValue($_option); ?>
+                                    <dt><?php echo Mage::helper('core')->escapeHtml($_option['label'], null) ?></dt>
+                                    <dd<?php if (isset($_formatedOptionValue['full_view'])): ?> class="truncated"<?php endif; ?>>
+                                        <?php echo $_formatedOptionValue['value'] ?>
+                                        <?php if (isset($_formatedOptionValue['full_view'])): ?>
+                                            <div class="truncated_full_value">
+                                                <dl class="item-options">
+                                                    <dt><?php echo Mage::helper('core')->escapeHtml($_option['label'], null) ?></dt>
+                                                    <dd><?php echo $_formatedOptionValue['full_view'] ?></dd>
+                                                </dl>
+                                            </div>
+                                        <?php endif; ?>
+                                    </dd>
+                                <?php endforeach; ?>
+                            </dl>
+                        <?php endif; ?>
+                    <?php endif; ?>
+                </div>
+            <?php endforeach; ?>
+        </div>
+
+        <!-- Cart total-->
+        <div class="payment-cart-total row">
+            <?php
+            $sub_total = $_order->getSubtotal();
+            $discount_value = $sub_total - $grand_total;
+            $grand_discount = $discount_value - $total_free_item_price;
+            ?>
+            <div class="payment-cart-total-section">
+                <div class="payment-cart-total-title">Tạm tính:</div>
+                <div class="payment-cart-subtotal">
+                    <?php echo number_format($sub_total - $total_free_item_price, 0, ",", ".") . " ₫"; ?>
+                </div>
+            </div>
+            <?php if ($grand_discount > 0): ?>
+                <div class="payment-cart-total-section payment-cart-discount">
+                    <div class="payment-cart-discount-title">Giảm giá:</div>
+                    <div class="payment-cart-discount-value">
+                        - <?php echo number_format($grand_discount, 0, ",", ".") . " ₫"; ?>
+                    </div>
+                </div>
+            <?php endif; ?>
+            <div class="payment-cart-total-section mb-3">
+                <div class="payment-cart-total-title">Thành tiền:</div>
+                <div class="payment-cart-grandtotal">
+                    <?php echo number_format($grand_total, 0, ",", ".") . " ₫"; ?>
+                </div>
+            </div>
+            <div class="text-right vat-included-text">(Đã bao gồm VAT)</div>
+            <?php if ($_order->getPaymentOnline()): ?>
+                <div class="payment-cart-total-section">
+                    <div class="payment-cart-total-title">Đã thanh toán:</div>
+                    <div class="payment-cart-subtotal">
+                        <?php echo number_format($_order->getPaymentOnline(), 0, ",", ".") . " ₫"; ?>
+                    </div>
+                </div>
+            <?php endif; ?>
+        </div>
+        <!-- End Cart total-->
+
+        <button type="button" class="continue-shopping-btn mt-20"
+                title="Tiếp tục mua hàng"
+                onclick="continueShopping();">
+            Tiếp tục mua hàng
+            <img class="continue-shopping-ajax-loader hidden"
+                 src="<?php echo $this->getSkinUrl('images/ajax-loader-white.gif'); ?>"/>
+        </button>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var $j = jQuery.noConflict();
+
+    /** Get grand total info (incl. shipping fee) **/
+    var grandTotal = <?php echo intval($grand_total); ?>;
+    var shippingFee = (grandTotal < 500000) ? 11000 : 0;
+    grandTotal += shippingFee;
+
+    /** Track facebook pixel Purchase **/
+    var purchaseContents = <?php echo json_encode($_purchaseContents); ?>;
+    dataLayer.push({
+        'contents': purchaseContents,
+        'value': grandTotal
+    });
+    /** End track facebook pixel Purchase **/
+
+    /** Enhanced Ecommerce features **/
+    /** Track product impressions **/
+    var productImpressions = <?php echo json_encode($_productImpressions); ?>;
+    dataLayer.push({
+        'event': 'productImpressions',
+        'ecommerce': {
+            'currencyCode': 'VND',
+            'impressions': productImpressions
+        }
+    });
+
+    /** Get affiliation data from cookie **/
+    var utmSource = getCookie('utm_source');
+    var utmMedium = getCookie('utm_medium');
+    var utmCampaign = getCookie('utm_campaign');
+    var affiliation = 'Phong Vũ Online';
+    if (utmCampaign !== '' || utmSource !== '' || utmMedium || '') {
+        affiliation = utmCampaign + ' / ' + utmSource + ' / ' + utmMedium;
+    }
+
+    /** Track purchases **/
+    var orderedItems = <?php echo json_encode($_orderedItems); ?>;
+    dataLayer.push({
+        'event': 'transaction',
+        'ecommerce': {
+            'purchase': {
+                'actionField': {
+                    'id': '<?php echo $order_id ?>',
+                    'affiliation': affiliation,
+                    'revenue': grandTotal,                     // Total transaction value (incl. tax and shipping)
+                    'tax': '0',
+                    'shipping': shippingFee,
+                    'coupon': '<?php echo strtoupper($_order->coupon_code); ?>'
+                },
+                'products': orderedItems
+            }
+        }
+    });
+    deleteCookie('utm_source');
+    deleteCookie('utm_medium');
+    deleteCookie('utm_campaign');
+
+    /** Track product clicks **/
+    function trackProductClicks(value) {
+        var productId = $j(value).data('id');
+        var productName = $j(value).data('name');
+        var productPrice = parseInt($j(value).data('price'));
+
+        dataLayer.push({
+            'event': 'productClick',
+            'ecommerce': {
+                'click': {
+                    'actionField': {'list': 'Thank You Page'},
+                    'products': [{
+                        'id': productId,
+                        'name': productName,
+                        'price': productPrice
+                    }]
+                }
+            }
+        });
+    }
+    /** End Enhanced Ecommerce features **/
+
+    function continueShopping() {
+        $j('.continue-shopping-btn').prop('disabled', true);
+        $j('.continue-shopping-ajax-loader').removeClass('hidden');
+        window.location.href = '<?php echo $this->getUrl(); ?>';
+    }
+</script>

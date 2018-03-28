@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Ved_Purchase>
+            <active>true</active>
+            <codePool>local</codePool>
+          </Ved_Purchase>
+    </modules>
+</config> 

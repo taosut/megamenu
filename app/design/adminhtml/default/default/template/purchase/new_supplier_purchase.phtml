@@ -1,0 +1,624 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     default_default
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<?php
+/**
+ * @see Mage_Adminhtml_Block_Catalog_Product
+ */
+?>
+<div ng-app="purchase" ng-controller="requestCtrl as ctrl">
+    <div class="content-header">
+        <table cellspacing="0">
+            <tr>
+                <td style="width:50%;"><h3
+                            class="icon-head head-products"><?php echo Mage::helper('purchase')->__('Request Item') ?></h3>
+                </td>
+                <td class="a-right">
+                    <button ng-click="ctrl.createPurchaseRequest()" type="button" class="scalable add">Đặt Hàng</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="purchase-request">
+        <div class="grid">
+            <div class="hor-scroll">
+                <table width="100%">
+                    <tr>
+                        <td width="30%">
+                            <table cellspacing="0" class="actions">
+                                <tbody>
+                                <tr>
+
+                                </tr>
+                                <tr>
+                                    <td class="pager">
+                                        Page
+                                        <a style="text-decoration: none" title="Previous page"
+                                           ng-click="ctrl.gotoPage('previous')" ng-if="ctrl.page > 1">
+                                            <img src="<?php echo $this->getSkinUrl('images/pager_arrow_left.gif') ?>"
+                                                 alt="Go to Previous page" class="arrow">
+                                        </a>
+                                        <img src="<?php echo $this->getSkinUrl('images/pager_arrow_left_off.gif') ?>"
+                                             ng-if="ctrl.page == 1" alt="Go to Previous page" class="arrow">
+
+                                        <input type="text" name="page" ng-model="ctrl.page" class="input-text page"
+                                               enter-click="ctrl.gotoPage()">
+
+                                        <a style="text-decoration: none" title="Next page"
+                                           ng-click="ctrl.gotoPage('next')">
+                                            <img src="<?php echo $this->getSkinUrl('images/pager_arrow_right.gif') ?>"
+                                                 alt="Go to Next page" class="arrow">
+                                        </a>
+
+                                        of {{ctrl.total_item / 10 | roundup }} pages
+                                        <span class="separator">|</span>
+                                        Total {{ctrl.total_item}} records found
+                                        <span id="ved_gorders_grid-total-count"
+                                              class="no-display">{{ctrl.total_item}}</span>
+                                    </td>
+                                </tr>
+                                </tbody>
+                                <span style="padding-right: 10px;">Chọn kho&nbsp;</span>
+                                <select class="col-sm-4 chosen-select form-control" ng-model="ctrl.warehouse"
+                                        data-placeholder="Chọn kho"
+                                        ng-options="warehouse.name for warehouse in ctrl.warehouses"
+                                        ng-change="ctrl.searchItem()"
+                                        ng-init="ctrl.warehouse = ctrl.warehouses[0]"
+                                        style="width: 182px;"
+                                </select>
+                            </table>
+                            <table cellspacing="0" class="data order-tables" style="min-height: 300px;">
+                                <colgroup>
+                                    <col width="120px">
+                                    <col width="350px">
+                                    <col>
+                                </colgroup>
+                                <thead>
+                                <tr class="headings">
+                                    <th>Warehouse SKU</th>
+                                    <th>Tên sản phẩm</th>
+                                    <th></th>
+                                </tr>
+                                <tr class="filter">
+                                    <th>
+                                        <div class="field-80">
+                                            <input type="text" name="sku" ng-model="ctrl.sku" value=""
+                                                   enter-click="ctrl.searchItem()" class="input-text no-changes">
+                                        </div>
+                                    </th>
+                                    <th>
+                                        <div class="field-250">
+                                            <input type="text" name="name" ng-model="ctrl.name"
+                                                   enter-click="ctrl.searchItem()" value=""
+                                                   class="input-text no-changes">
+                                        </div>
+                                    </th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody style="max-height: ">
+                                <tr class='odd pointer'
+                                    ng-repeat="item in ctrl.items track by $index">
+                                    <td>
+                                        {{item.sku}}
+                                    </td>
+                                    <td>
+                                        {{item.name}}
+                                    </td>
+                                    <td>
+                                        <a ng-click="ctrl.addItem(item, $index)" style="cursor: pointer;"
+                                           ng-if="item.typeArr.length"><i class="fa fa-plus-square"
+                                                                          aria-hidden="true"></i></a>
+                                    </td>
+                                </tr>
+                                <tr ng-if="ctrl.items.length == 0">
+                                    <td colspan="3">No data</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                        <td width="65%">
+                            <div style="color: red" ng-if="ctrl.error">{{ctrl.error}}</div>
+                            <!--<div style="color: red" >
+
+                            </div>-->
+                            <div style="text-align: left;padding-left: 15px;padding-top: 10px;padding-right: 20px;">
+                                <span class="label">Ngày nhận dự kiến:</span>
+                                <img style="cursor: pointer"
+                                     src="<?php echo Mage::getDesign()->getSkinBaseUrl(array('_area' => 'adminhtml')) . '/images/grid-cal.gif' ?>"
+                                     alt="" class="v-middle"
+                                     id="receive_date_data_trig" title="Date selector">
+                                <input type="text" ng-model="ctrl.receiveDate" name="purchased_on[from]"
+                                       id="receive_date_data" value="" class="input-text no-changes"
+                                       style="width:100px; margin: 2px;">
+                                <span>Ghi chú</span>
+                                <input type="text" ng-model="ctrl.description"/>
+                            </div>
+                            <table cellspacing="0" class="data order-tables">
+                                <colgroup>
+                                    <col width="60px">
+                                    <col width="120px">
+                                    <col width="200px">
+                                    <col width="90px">
+                                    <col width="100px">
+                                    <col width="120px">
+                                    <col width="90px">
+                                    <col width="120px">
+                                    <col width="100px">
+                                    <col width="100px">
+                                    <col width="120px">
+                                    <col width="120px">
+                                    <col width="120px">
+                                    <col>
+                                </colgroup>
+                                <thead>
+                                <tr class="headings">
+                                    <th>STT</th>
+                                    <th><span class="nobr">SKU</span></th>
+                                    <th>Tên sản phẩm</th>
+                                    <th>Số lượng</th>
+                                    <th>Đơn vị</th>
+                                    <th>Giá (sau VAT)</th>
+                                    <th>Thành tiền</th>
+                                    <th>Loại hàng</th>
+                                    <th>NCC</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr class='odd pointer'
+                                    ng-repeat="item in ctrl.purchaseItems track by $index">
+                                    <td style="padding-top: 10px;">{{$index + 1}}</td>
+                                    <td style="padding-top: 10px;">{{ctrl.input[$index].sku}}</td>
+                                    <td style="padding-top: 10px;">{{ctrl.input[$index].name}}</td>
+                                    <td class="a-center" style="padding-top: 10px;">
+                                        <input type="text" ng-model="ctrl.input[$index].quantity"
+                                               ng-init="ctrl.input[$index].quantity = 1"
+                                               style="{{ctrl.input[$index].quantity < 1000 ? 'text-align: center; width: 80px;' : 'color: red; text-align: center; width: 80px;' }}" format="number">
+                                    </td>
+                                    <td class="a-center" style="padding-top: 10px;">
+                                        <select class="chosen-select form-control" ng-model="ctrl.input[$index].unit"
+                                                ng-init="ctrl.input[$index].unit = 'Chiếc'">
+                                            <option value="Chiếc">Chiếc</option>
+                                        </select>
+                                    </td>
+                                    <td style="padding-top: 10px;">
+                                        <input type="text" ng-model="ctrl.input[$index].price"
+                                               ng-init="ctrl.input[$index].price = item.price"
+                                               style="text-align: center; width: 100px;" format="number">
+                                    </td>
+                                    <td class="a-center" style="padding-top: 10px;"><span class="price">{{ctrl.input[$index].price * ctrl.input[$index].quantity | number:0 }} đ</span>
+                                    </td>
+                                    <td class="a-center" style="padding-top: 10px;">
+                                        <select class="chosen-select form-control" ng-model="ctrl.input[$index].type"
+                                                ng-change="ctrl.updateType(item, $index, {{ctrl.input[$index].type}})">
+                                            <option value="0">Hàng hoá</option>
+                                            <option value="3">Hàng Demo</option>
+                                            <option value="2">Khuyến mãi</option>
+                                        </select>
+                                    </td>
+                                    <td class="a-center" style="padding-top: 10px;">
+                                        <select class="chosen-select form-control" ng-model="ctrl.input[$index].supplier"
+                                                style="width: 100px;"
+                                                ng-options="supplier.name for supplier in ctrl.input[$index].suppliers"
+                                                ng-init="ctrl.input[$index].supplier = item.suppliers[0] ? item.suppliers[0] : ''"
+                                                ng-change="ctrl.updatePrice($index)">
+                                        </select>
+                                    </td>
+                                    <td class="a-center" style="padding-top: 10px;">
+                                        <a ng-click="ctrl.removeItem($index)" style="cursor: pointer;color:red"><i
+                                                    class="fa fa-minus-square" aria-hidden="true"></i></a>
+                                    </td>
+                                </tr>
+                                <tr ng-if="item.length == 0">
+                                    <td colspan="3">No data</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+
+            </div>
+        </div>
+    </div>
+    <div id="modalFadeScreen" class="modal fade" data-backdrop="static" data-keyboard="false"></div>
+</div>
+
+<script type="text/javascript">
+    Calendar.setup({
+        inputField: "receive_date_data",
+        ifFormat: "%Y-%m-%d %H:%M:%S",
+        button: "receive_date_data_trig",
+        showsTime: true,
+        align: "Bl",
+        singleClick: true
+    });
+
+    (function () {
+        var app = angular.module('purchase', []);
+
+        app.directive('format',  format);
+
+        format.$inject = ['$filter'];
+
+        function format($filter) {
+            return {
+                require: '?ngModel',
+                link: function (scope, elem, attrs, ctrl) {
+                    if (! ctrl) return;
+
+                    ctrl.$formatters.unshift(function (a) {
+                        return $filter(attrs.format)(ctrl.$modelValue)
+                    });
+
+                    ctrl.$parsers.unshift(function (viewValue) {
+                        var plainNumber = viewValue.replace(/[^\d|\-+|\.+]/g, '');
+                        elem.val($filter(attrs.format)(plainNumber));
+                        return plainNumber;
+                    });
+                }
+            };
+        }
+
+        app.controller('requestCtrl', function ($http, $window) {
+            var vm = this;
+            vm.loading = false;
+            vm.receiveDate = '';
+            vm.description = '';
+            vm.stores = [];
+            vm.sku = '';
+            vm.name = '';
+            vm.items = [];
+            vm.purchaseItems = [];
+            vm.total_item = 0;
+            vm.storeId = 0;
+            vm.page = 1;
+            vm.stores = <?php echo $this->getStores();?>;
+            vm.input = [];
+
+            getWarehouse();
+
+            jQuery(document).ready(function () {
+                jQuery(".chosen-select").chosen();
+                jQuery(".chosen-container.chosen-container-single").on('click', function () {
+                    jQuery('.chosen-select').trigger("chosen:updated");
+                });
+            });
+
+            function getWarehouse() {
+                $http.get('<?= Mage::getConfig()->getNode('global/warehouse_api_url') . 'stores/list'?>')
+                    .then(successCallback, errorCallback);
+
+                function successCallback(response) {
+                    vm.warehouses = response.data.data;
+                    vm.warehouse = vm.warehouses[0];
+                    for (var i = 0; i < vm.warehouses.length; i++) {
+                        if (vm.warehouses[i]['id'] == 6) {
+                            vm.warehouses.splice(i, 1);
+                            break;
+                        }
+                    }
+                    getItems();
+                }
+                function errorCallback(response) {
+                    vm.error = "Có lỗi trong quá trình cập nhật dữ liệu, vui lòng thử lại sau";
+                    return false;
+                }
+            }
+
+            vm.gotoPage = function (direction) {
+                vm.page = isNaN(parseInt(vm.page)) ? 1 : parseInt(vm.page);
+                if (direction == 'next') {
+                    if (vm.page * 10 < vm.total_item) {
+                        vm.page += 1;
+                        getItems();
+                    }
+                } else if (direction == 'previous') {
+                    if (vm.page > 1) {
+                        vm.page -= 1;
+                        getItems();
+                    }
+                } else {
+                    getItems();
+                }
+            };
+
+            function getItems() {
+
+                var param = {
+                    province_ids: [vm.warehouse.province_code],
+                    length: 10,
+                    start: 10 * (vm.page - 1),
+                    sku: vm.sku,
+                    name: vm.name,
+                    channels: [1, 2]
+                };
+                $http.get('<?= Mage::getConfig()->getNode('global/supplier_api_url') . 'products'?>?' + decodeURIComponent(jQuery.param(param)))
+                    .then(getProductCompleted, getProductError);
+
+                function getProductCompleted(response) {
+                    vm.loading = false;
+                    vm.items = response.data.data;
+                    for (var i = 0; i < vm.items.length; i++) {
+                        vm.items[i].typeArr = ['0', '3', '2'];
+                    }
+                    vm.total_item = response.data.recordsFiltered;
+
+                    for (var i = 0; i < vm.items.length; i++) {
+                        for (var j = 0; j < vm.input.length; j++) {
+                            if (vm.items[i].id == vm.input[j].id) {
+//                                vm.items[i].nonClick = true;
+                                vm.items[i].typeArr.splice(vm.items[i].typeArr.indexOf(vm.input[j].type), 1);
+                            }
+                        }
+                    }
+                }
+
+                function getProductError(response) {
+                    vm.error = "Có lỗi trong quá trình cập nhật dữ liệu, vui lòng thử lại sau";
+                    return false;
+                }
+            }
+
+            vm.updatePrice = function (index) {
+                vm.input[index].price = parseInt(vm.input[index].supplier.import_price);
+                vm.input[index].type = '0';
+            };
+
+            vm.updateType = function (item, index, oldValue) {
+                var newValue = vm.input[index].type;
+                if (item.typeArr.length === 0 || item.typeArr.indexOf(newValue) < 0) {
+                    for (var i = 0; i < vm.input.length; i++) {
+                        if (i !== index && vm.input[i].entity_id === item.entity_id && vm.input[i].type === newValue) {
+                            vm.input[i].type = oldValue.toString();
+                            break;
+                        }
+                    }
+                }
+                else {
+                    item.typeArr.splice(item.typeArr.indexOf(newValue), 1);
+                    item.typeArr.push(oldValue.toString());
+                }
+            };
+
+            vm.searchItem = function () {
+                vm.page = 1;
+                getItems();
+            };
+
+            vm.addItem = function (item, index) {
+                var param = {product_ids: [item.id], region_code: vm.warehouse.province_code};
+                $http.get('<?= Mage::getConfig()->getNode('global/supplier_api_url') . 'listSupplierByProductId'?>?' + decodeURIComponent(jQuery.param(param)))
+                    .then(successCallback, errorCallback);
+
+                function successCallback(response) {
+                    item.entity_id = item.id;
+                    item.suppliers = response.data[item.id];
+                    var type_default = '0';
+                    item.price = parseInt(item.suppliers[0].import_price);
+//                    if (typeof item.suppliers != "undefined" && item.suppliers.length > 0) {
+//                        type_default = item.suppliers[0].sup_type !== null ? (item.suppliers[0].sup_type - 1).toString() : '0';
+//                    } else {
+//                        type_default = '0';
+//                    }
+                    item.type = type_default;
+                    if (item.typeArr.indexOf(type_default) < 0) {
+                        type_default = item.typeArr[0];
+                        item.typeArr.splice(0, 1);
+                    }
+                    else {
+                        item.typeArr.splice(item.typeArr.indexOf(type_default), 1);
+                    }
+                    vm.purchaseItems.push(item);
+                    var newItem = jQuery.extend({}, item);
+                    vm.input.push(newItem);
+                    vm.input[vm.input.length - 1].type = type_default;
+                }
+
+                function errorCallback(response) {
+                    vm.error = "Có lỗi trong quá trình cập nhật dữ liệu, vui lòng thử lại sau";
+                    return false;
+                }
+            };
+
+            vm.removeItem = function (index) {
+                var pur_item = vm.input[index];
+                for (var i = 0; i < vm.items.length; i++) {
+                    if (vm.items[i].entity_id == pur_item.entity_id) {
+                        vm.items[i].typeArr.push(pur_item.type);
+                    }
+                }
+                vm.purchaseItems.splice(index, 1);
+                vm.input.splice(index, 1);
+            };
+
+            vm.createPurchaseRequest = function () {
+                if (vm.input.length == 0) {
+                    vm.error = "Vui lòng nhập đủ dữ liệu";
+                    return false;
+                }
+                for (var index = 0; index < vm.input.length; index++) {
+                    if (!(typeof vm.input[index].sku !== 'undefined'
+                            && vm.input[index].quantity > 0
+                            && vm.input[index].type != '-1' && vm.input[index].supplier != '')) {
+                        vm.error = "Vui lòng nhập đủ dữ liệu";
+                        return false;
+                    }
+                }
+
+                if (vm.stores.length == 0) {
+                    vm.error = "Bạn không quản lý store nào.";
+                    return false;
+                }
+
+                vm.websiteId = vm.stores[0].website_id;
+
+                if (vm.isUpdating) {
+                    return false;
+                } else {
+                    vm.error = '';
+                    vm.success = '';
+                    vm.isUpdating = true;
+                }
+                vm.error = null;
+                var data = [];
+
+                if (!vm.warehouse || !vm.warehouse.id) {
+                    vm.isUpdating = false;
+                    vm.error = 'Vui lòng nhập kho nhận';
+                    return false;
+                }
+
+                jQuery("#modalFadeScreen").modal('show');
+                jQuery('#loading-mask').show();
+
+                for (var index = 0; index < vm.input.length; index++) {
+                    if (vm.input[index].quantity > 2000) {
+                        vm.isUpdating = false;
+                        vm.error = 'Số lượng mua cho sản phẩm "' + vm.input[index].name + '" vượt quá số lượng cho phép';
+                        jQuery("#modalFadeScreen").modal('hide');
+                        jQuery('#loading-mask').hide();
+                        return false;
+                    }
+                    if (typeof data[vm.input[index].supplier.id] == 'undefined') {
+                        data[vm.input[index].supplier.id] = {
+                            supplier_id: vm.input[index].supplier.id,
+                            supplier_name: vm.input[index].supplier.name,
+                            supplier_info: vm.input[index].supplier,
+                            items: [
+                                {
+                                    sku: vm.input[index].sku,
+                                    product_name: vm.input[index].name,
+                                    entity_id: vm.input[index].entity_id,
+                                    quantity: vm.input[index].quantity,
+                                    price: vm.input[index].price,
+                                    unit: vm.input[index].unit,
+                                    type: vm.input[index].type,
+                                    vat: 10
+                                }
+                            ]
+                        }
+                    } else {
+                        data[vm.input[index].supplier.id].items.push(
+                            {
+                                sku: vm.input[index].sku,
+                                product_name: vm.input[index].name,
+                                entity_id: vm.input[index].entity_id,
+                                quantity: vm.input[index].quantity,
+                                price: vm.input[index].price,
+                                unit: vm.input[index].unit,
+                                type: vm.input[index].type,
+                                vat: 10
+                            }
+                        )
+                    }
+                }
+
+                var receiveDate = vm.receiveDate.split("/").reverse().join("-");
+                if (receiveDate === '') {
+                    jQuery("#popupConfirm").modal('hide');
+                    jQuery("#modalFadeScreen").modal('hide');
+                    jQuery('#loading-mask').hide();
+                    vm.error = "Bạn cần lựa chọn ngày nhận dự kiến";
+                    vm.isUpdating = false;
+                    return false;
+                }
+                var param = {
+                    "website_id": vm.websiteId,
+                    "store_id": vm.warehouse.id,
+                    "store_name": vm.warehouse.name,
+                    "purchase_requests": cleanArray(data),
+                    "receive_date": receiveDate,
+                    "description": vm.description
+                };
+
+                var url = <?php echo json_encode(Mage::getUrl("*/*/addPurchaseNonOrder", array('form_key' => Mage::getSingleton('core/session')->getFormKey())))?>;
+                return $http.post(url, param).then(successCallback, errorCallback);
+
+                function successCallback(response) {
+                    if (response.data.result === 'ok') {
+
+                        vm.isUpdating = false;
+                        $window.location.href = '../index';
+                        return true;
+                    } else {
+
+                        jQuery("#modalFadeScreen").modal('hide');
+                        jQuery('#loading-mask').hide();
+                        vm.error = "Có lỗi trong quá trình cập nhật dữ liệu, vui lòng thử lại sau";
+                        vm.isUpdating = false;
+                        return false;
+                    }
+                }
+
+                function errorCallback(response) {
+                    jQuery("#modalFadeScreen").modal('hide');
+                    jQuery('#loading-mask').hide();
+                    vm.error = "Có lỗi trong quá trình cập nhật dữ liệu, vui lòng thử lại sau";
+                    vm.isUpdating = false;
+                    return false;
+                }
+
+                function cleanArray(actual) {
+                    var newArray = new Array();
+                    for (var i = 0; i < actual.length; i++) {
+                        if (actual[i]) {
+                            newArray.push(actual[i]);
+                        }
+                    }
+                    return newArray;
+                }
+
+            };
+
+        });
+
+        app.directive('enterClick', enterClick);
+
+        function enterClick() {
+            return function (scope, element, attrs) {
+                element.bind("keydown keypress", function (event) {
+                    var keyCode = event.which || event.keyCode;
+                    if (keyCode === 13) {
+                        scope.$apply(function () {
+                            scope.$eval(attrs.enterClick);
+                        });
+
+                        event.preventDefault();
+                    }
+                });
+            };
+        }
+
+        app.filter('roundup', function () {
+            return function (input) {
+                return Math.ceil(input);
+            };
+        });
+
+    })();
+</script>

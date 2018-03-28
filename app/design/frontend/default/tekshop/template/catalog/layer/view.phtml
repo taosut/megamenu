@@ -1,0 +1,137 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     base_default
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<?php
+/**
+ * Category layered navigation
+ *
+ * @see Mage_Catalog_Block_Layer_View
+ */
+?>
+<?php if ($this->canShowBlock()): ?>
+    <div id="filter" class="block block-layered-nav filter-block">
+        <div class="block-content filter-block-content">
+            <?php echo $this->getStateHtml() ?>
+            <?php if ($this->getLayer()->getState()->getFilters()): ?>
+                <div class="actions display-mobile">
+                    <a class="filter-clear-all clickable" onclick="ajaxFilter('<?php echo $this->getClearUrl() ?>')">Xóa hết bộ lọc</a>
+                    <a class="filter-clear-all bp-filter-clear-all no-display"
+                    onclick="filterProductModal('<?php echo $this->getClearUrl() ?>')" title="Xóa hết bộ lọc">
+                        Xóa hết bộ lọc
+                    </a>
+                </div>
+            <?php endif; ?>
+            <?php if ($this->canShowOptions()): ?>
+                <dl id="narrow-by-list" class="filter-list filter-list-normal">
+                    <p class="block-subtitle"><?php echo $this->__('Shopping Options') ?></p>
+                    <?php
+                    $_filters = $this->getFilters();
+                    $i = 0;
+                    ?>
+                    <?php foreach ($_filters as $_filter): ?>
+                        <?php if ($_filter->getItemsCount()): ?>
+                            <?php
+                            $_items = $_filter->getItems();
+                            $shouldShowChildren = false;
+                            if ($_filter->getAttributeModel()) {
+                                $shouldShowChildren = $_filter->getAttributeModel()->getIsAutoCollapse();
+                            }
+
+                            foreach ($_items as $_item) {
+                                if ($_item->getMShowSelected()) {
+                                    $shouldShowChildren = true;
+                                    break;
+                                }
+                            }
+                            $i += 1;
+                            if ($shouldShowChildren || $i == 1): ?>
+                                <dt style="cursor:pointer;" id="dt-<?php echo $i; ?>"
+                                    onclick="toggleItem('<?php echo $i ?>')"><?php echo $this->__($_filter->getName()) ?>
+                                    <i style="float:right;" class="fa fa-caret-up" aria-hidden="true"></i>
+                                </dt>
+                                <dd id="<?php echo $i; ?>"><?php echo $_filter->getHtml() ?></dd>
+                            <?php else : ?>
+                                <dt style="cursor:pointer;" id="dt-<?php echo $i; ?>"
+                                    onclick="toggleItem('<?php echo $i; ?>')"><?php echo $this->__($_filter->getName()) ?>
+                                    <i style="float:right;" class="fa fa-caret-down" aria-hidden="true"></i>
+                                </dt>
+                                <dd style="display:none" id="<?php echo $i; ?>"><?php echo $_filter->getHtml() ?></dd>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                </dl>
+                <dl class="filter-list filter-list-mobile display-mobile">
+                    <?php $_filters = $this->getFilters();
+                    $i = 0;
+                    ?>
+                    <?php foreach ($_filters as $_filter): ?>
+                        <?php if ($_filter->getItemsCount()): ?>
+                            <?php
+                            $_items = $_filter->getItems();
+                            $shouldShowChildren = false;
+                            if ($_filter->getAttributeModel()) {
+                                $shouldShowChildren = $_filter->getAttributeModel()->getIsAutoCollapse();
+                            }
+
+                            foreach ($_items as $_item) {
+                                if ($_item->getMShowSelected()) {
+                                    $shouldShowChildren = true;
+                                    break;
+                                }
+                            }
+                            $i += 1;
+                            if ($shouldShowChildren || $i == 1): ?>
+                                <dt class="dt-<?php echo $i; ?>"
+                                    onclick="toggleItemMobile('<?php echo $i ?>')"><?php echo $this->__($_filter->getName()) ?>
+                                    <i style="float:right;" class="fa fa-caret-up" aria-hidden="true"></i>
+                                </dt>
+                                <dd class="dd-<?php echo $i; ?>"><?php echo $_filter->getHtml() ?></dd>
+                            <?php else : ?>
+                                <dt class="dt-<?php echo $i; ?>"
+                                    onclick="toggleItemMobile('<?php echo $i; ?>')"><?php echo $this->__($_filter->getName()) ?>
+                                    <i style="float:right;" class="fa fa-caret-down" aria-hidden="true"></i>
+                                </dt>
+                                <dd class="no-display dd-<?php echo $i; ?>"><?php echo $_filter->getHtml() ?></dd>
+                            <?php endif; ?>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                </dl>
+            <?php endif; ?>
+        </div>
+    </div>
+    <div id="filter-touch-device" hidden>
+        <button class="btn-title" data-toggle="modal" data-target="#filterBlockModal">
+            <i class="tek-Filter"></i>
+            <span>Bộ lọc</span>
+        </button>
+    </div>
+<?php endif; ?>
+
+<script>
+    $j('.block-layered-nav dd li').click(function () {
+        $j(this).addClass('check-filter');
+    })
+</script>

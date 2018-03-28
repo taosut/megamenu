@@ -1,0 +1,365 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     base_default
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<?php $_helper = $this->helper('catalog/output'); ?>
+<?php
+
+function tokenTruncate($string, $your_desired_width)
+{
+    $parts = preg_split('/([\s\n\r]+)/', $string, null, PREG_SPLIT_DELIM_CAPTURE);
+    $parts_count = count($parts);
+    $length = 0;
+    $last_part = 0;
+    for (; $last_part < $parts_count; ++$last_part) {
+        $length += strlen($parts[$last_part]);
+        if ($length > $your_desired_width) {
+            break;
+        }
+    }
+    if ($last_part < $parts_count)
+        return implode(array_slice($parts, 0, $last_part)) . "...";
+    else
+        return implode(array_slice($parts, 0, $last_part));
+}
+
+$categories = array('Laptop', 'PC Gaming', 'Chuột chơi game', 'Bàn phím', 'Tai nghe', 'Màn hình', 'Bo mạch chủ', 'Khác');
+$category_ids = array(10, 9);
+?>
+<script type="text/javascript" src="<?php echo $this->getSkinUrl('js/jquery.lazy.min.js'); ?>"></script>
+
+<script>
+    dataLayer = [];
+</script>
+
+<?php
+$productImpressions = [];
+?>
+
+<?php
+foreach ($categories as $categoryName) {
+    $storeId = Mage::app()->getStore()->getId();
+    $rootCategoryId = Mage::app()->getStore()->getRootCategoryId();
+    $category = Mage::getResourceModel('catalog/category_collection')
+        ->addFieldToFilter('name', $categoryName)
+        ->addFieldToFilter('is_active', 1)
+        ->addAttributeToFilter('path', array('like' => "1/{$rootCategoryId}/%"))
+        ->getFirstItem();
+    if (!$category->getId()) {
+        continue;
+    }
+
+    $todayStartOfDayDate = Mage::app()->getLocale()->date()
+        ->setTime('00:00:00')
+        ->toString(Varien_Date::DATETIME_INTERNAL_FORMAT);
+
+    $todayEndOfDayDate = Mage::app()->getLocale()->date()
+        ->setTime('23:59:59')
+        ->toString(Varien_Date::DATETIME_INTERNAL_FORMAT);
+
+    $collection = Mage::getResourceModel('catalog/product_collection');
+    $collection
+        ->setVisibility(Mage::getSingleton('catalog/product_visibility')
+        ->getVisibleInCatalogIds())
+        ->addAttributeToSelect('sku');
+/*    $collection
+        ->addMinimalPrice()
+        ->addFinalPrice()
+        ->addTaxPercents()
+        ->addAttributeToSelect(Mage::getSingleton('catalog/config')->getProductAttributes())
+        ->addUrlRewrite();*/
+    $collection = $this->_addProductAttributesAndPrices($collection)
+        ->addStoreFilter()
+        ->addAttributeToFilter('news_from_date', array('or' => array(
+            0 => array('date' => true, 'to' => $todayEndOfDayDate),
+            1 => array('is' => new Zend_Db_Expr('null')))
+        ), 'left')
+        ->addAttributeToFilter('news_to_date', array('or' => array(
+            0 => array('date' => true, 'from' => $todayStartOfDayDate),
+            1 => array('is' => new Zend_Db_Expr('null')))
+        ), 'left')
+        ->addAttributeToFilter(
+            array(
+                array('attribute' => 'news_from_date', 'is' => new Zend_Db_Expr('not null')),
+                array('attribute' => 'news_to_date', 'is' => new Zend_Db_Expr('not null'))
+            )
+        )
+        ->addAttributeToSort('news_from_date', 'desc')
+        ->setPageSize(10)
+        ->setCurPage(1);
+
+    $_products = $collection
+		->addCategoryFilter($category);
+
+    if ($_products->getSize()):?>
+
+        <div class="cat-product-area">
+            <div class="container">
+                <div class="row">
+                    <a href="<?php echo $category->getUrl($category) ?>">
+                        <div class="tekshop-cat-header cat-header-normal">
+                            <div class="tekshop-cat-header-img">
+                                <img src="<?php echo $this->getSkinUrl('images/header-icon.png') ?>"/>
+                            </div>
+                            <div class="tekshop-cat-header-text"><?php echo $category->getData('name') ?></div>
+                        </div>
+                        <div class="tekshop-cat-header cat-header-mobile">
+                            <div class="tekshop-cat-header-text">
+                                <img src="<?php echo $this->getSkinUrl('images/cat-header-icon-mobile.png') ?>"/>
+                                <?php echo $category->getData('name') ?>
+                            </div>
+                        </div>
+                    </a>
+                    <?php
+                    $tagProduct = Mage::getModel('tag/tag_relation')
+                        ->setTagId(1) // Bao ke gia
+                        ->setStoreId((Mage::app()->getStore()->getId()))
+                        ->getProductIds();
+
+                    $eventTagProducts = Mage::getModel('tag/tag_relation')
+                        ->setTagId(2) // Event Tags
+                        ->setStoreId((Mage::app()->getStore()->getId()))
+                        ->getProductIds();
+                    ?>
+                    <ul class="products-grid grid-recent">
+                        <?php foreach ($_products->getItems() as $_product): ?>
+                            <?php
+                            $productObj = new stdClass();
+                            $productObj->name = (string)$_product->getName();
+                            $productObj->id = (string)$_product->getId();
+                            $productObj->price = (string)$_product->getFinalPrice();
+                            $productObj->list = 'Trang chủ';
+                            $productImpressions[] = $productObj;
+                            ?>
+
+                            <?php $oldPrice = $_product->getPrice();
+                            $newPrice = $_product->getFinalPrice(); ?>
+                            <li class="detail-product col-md-15 col-xs-6 newitem <?php if ($oldPrice != $newPrice) : ?>saleoff<?php endif ?>">
+                                <div class="view team-one">
+                                    <?php if(in_array((string)$_product->getId(),$tagProduct)): ?>
+                                        <img class="list-tag"
+                                             src='<?php echo $this->getSkinUrl('images/tag.png') ?>'/>
+                                    <?php endif; ?>
+                                    <div class="mask"
+                                         data-id="<?php echo $_product->getId() ?>"
+                                         data-name="<?php echo $_product->getName() ?>"
+                                         data-url="<?php echo $_product->getProductUrl() ?>"
+                                         data-price="<?php echo $_product->getFinalPrice() ?>"
+                                    >
+                                        <div class="box-holder">
+                                            <h5 class="product-name-hover-mask"
+                                                title="<?php echo $_product->getName() ?>"><?php echo $this->escapeHtml($_product->getName()) ?>
+                                            </h5>
+                                            <div class="product-price mb-15 mt-15">
+                                                <?php if ($oldPrice != $newPrice) : ?>
+                                                    <div class="old-price old-pr-div">
+                                                    <span class="price">
+                                                        <?php echo number_format($oldPrice, 0, ",", ".") . " <sup>đ</sup>"; ?>
+                                                    </span>
+                                                    </div>
+                                                <?php else : {
+                                                    echo "<div class='old-pr-div'> <span class=\"price \">&nbsp; </span></div>";
+                                                } ?>
+                                                <?php endif; ?>
+                                                <div class="regular-price">
+                                                <span class="price">
+                                                    <?php echo number_format($newPrice, 0, ",", ".") . " <sup>đ</sup>"; ?>
+                                                </span>
+                                                </div>
+                                            </div>
+                                            <span class="short-description-hover-mask mt-30"><?php echo $_helper->productAttribute($_product, nl2br($_product->getShortDescription()), 'short_description') ?></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="product-image" style="position: relative;">
+                                        <a class="a-img" href="<?php echo $_product->getProductUrl() ?>"
+                                           title="<?php echo $this->escapeHtml($this->getImageLabel($_product, 'small_image')) ?>">
+                                            <img class="lazy"
+                                                 data-src="<?php echo $this->helper('catalog/image')->init($_product, 'small_image')->resize(300, 300); ?>"
+                                                 alt="<?php echo $this->escapeHtml($this->getImageLabel($_product, 'small_image')) ?>"
+                                                 title="<?php echo $this->escapeHtml($this->getImageLabel($_product, 'small_image')) ?>"/>
+                                        </a>
+
+                                        <?php if(in_array((string)$_product->getId(),$eventTagProducts)): ?>
+                                            <?php
+                                            $sku = $_product->getSku();
+                                            $saleRule = Mage::getModel('salesrule/rule')
+                                                ->getCollection()
+                                                ->addFieldToFilter('name',$sku)
+                                                ->getData();
+                                            if(count($saleRule)){
+                                                $readConnection = Mage::getSingleton('core/resource')->getConnection('core_read');
+                                                $coupon = $readConnection->query('SELECT * FROM salesrule_coupon WHERE rule_id = '. end($saleRule)['rule_id'])->fetch();
+                                                ?>
+                                                <div class="discount-detail" style="position: absolute; bottom: 0; width: 100%;">
+                                                    <div class="coupon-code"><?php echo $sku; //$coupon['code'];?></div>
+                                                    <div class="coupon-percent" style="background: white;">
+                                                        <span><i class="fa fa-arrow-down" aria-hidden="true"></i> <?php echo number_format(end($saleRule)['discount_amount'], 0, ",", ".") . "đ"; ?></span>
+
+                                                    </div>
+                                                </div>
+                                            <?php }?>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+
+                                <div class="hidden-mobile">
+                                    <h5 class="product-name product-name-border">
+                                        <a href="<?php echo $_product->getProductUrl() ?>"
+                                           title="<?php echo $this->escapeHtml($_product->getName()) ?>"><?php echo $this->escapeHtml($_product->getName()) ?></a>
+                                    </h5>
+
+                                    <div class="product-price">
+                                        <?php if ($oldPrice != $newPrice) : ?>
+                                            <div class="old-price old-pr-div">
+						            <span class="price">
+							            <?php echo number_format($oldPrice, 0, ",", ".") . " <sup>đ</sup>"; ?>
+						            </span>
+                                            </div>
+                                        <?php else : {
+                                            echo "<div class='old-pr-div'> <span class=\"price \">&nbsp; </span></div>";
+                                        } ?>
+
+                                        <?php endif ?>
+                                        <div class="regular-price">
+					            <span class="price">
+						            <?php echo number_format($newPrice, 0, ",", ".") . " <sup>đ</sup>"; ?>
+					            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <?php if ($oldPrice != $newPrice) : ?>
+                                    <span class="percent">
+                                    <span>- <?php echo number_format(($oldPrice - $newPrice) / $oldPrice * 100, 0) . "%" ?></span>
+					            </span>
+                                <?php endif ?>
+
+                            </li>
+                        <?php endforeach; ?>
+
+                    </ul>
+
+                    <?php echo '<div class="text-center hidden-mobile mt40"><a href="' . $category->getUrl($category) . '"><button type="button" class="btn btn-default btn-viewmore">XEM THÊM SẢN PHẨM</button></a></div><br>'; ?>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript">decorateGeneric($$('ul.products-grid'), ['odd', 'even', 'first', 'last'])</script>
+    <?php endif;
+}
+?>
+
+<script>
+    var $j = jQuery.noConflict();
+</script>
+
+<script>
+    $j(document).ready(function () {
+        localStorage.removeItem("page");
+        localStorage.removeItem("paginate_product");
+        localStorage.removeItem("previous_filter");
+        localStorage.removeItem("previous_category");
+        localStorage.removeItem("is_last_page");
+        localStorage.removeItem("previous_category_id");
+        localStorage.removeItem("productImpressions");
+    });
+
+    $j('.lazy').Lazy({
+        afterLoad: function (element) {
+            element.css('background-image', 'none').css('height', 'auto');
+        }
+    });
+</script>
+
+<script>
+    var productImpressions = <?php echo json_encode($productImpressions); ?>;
+
+    /**
+     * Measures product impressions and also tracks a standard
+     * pageview for the tag configuration.
+     * Product impressions are sent by pushing an impressions object
+     * containing one or more impressionFieldObjects.
+     */
+    dataLayer.push({
+        'ecommerce': {
+            'currencyCode': 'VND',                       // Local currency is optional.
+            'impressions': productImpressions
+        }
+    });
+</script>
+
+<script>
+    /**
+     * Call this function when a user clicks on a product link. This function uses the event
+     * callback datalayer variable to handle navigation after the ecommerce data has been sent
+     * to Google Analytics.
+     * @param {Object} productObj An object representing a product.
+     */
+
+    // Mask click
+    $j('.mask').bind('click', function (e) {
+        var id = $j(this).data('id');
+        var name = $j(this).data('name');
+        var url = $j(this).data('url');
+        var price = $j(this).data('price');
+
+        dataLayer.push({
+            'event': 'productClick',
+            'ecommerce': {
+                'click': {
+                    'actionField': {'list': 'Trang chủ'},
+                    'products': [{
+                        'name': name.toString(),                      // Name or ID is required.
+                        'id': id.toString(),
+                        'price': price.toString()
+                    }]
+                }
+            },
+            'eventCallback': function () {
+
+            }
+        });
+
+        if (e.ctrlKey) {
+            window.open(url, '_blank');
+        }
+        else {
+            window.location.href = url;
+        }
+    });
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "WebSite",
+  "url": "https://tekshop.vn/",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://tekshop.vn/tek/search/index/?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>

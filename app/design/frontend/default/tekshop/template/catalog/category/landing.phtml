@@ -1,0 +1,111 @@
+<?php
+$currentCategory = Mage::getModel('catalog/category')->load($this->getCurrentCategory()->getId());
+
+$childCategories = Mage::getModel('catalog/category')
+    ->getCollection()
+    ->addAttributeToSelect('*')
+    ->addIdFilter($currentCategory->getChildren())
+    ->addIsActiveFilter()
+    ->setOrder('position', 'asc')
+    ->load();
+?>
+
+<!-- CMS block content -->
+<?php if ($currentCategory->getId()): ?>
+    <?php echo $this->getLayout()->createBlock('cms/block')->setBlockId('cat_top_'.$currentCategory->getId())->toHtml(); ?>
+<?php endif; ?>
+
+<!-- Show child categories content -->
+<div class="col-sm-10 col-xs-12 no-padding-xs">
+<?php foreach($childCategories as $childCat): ?>
+    <?php
+        $childCatCount = $childCat->getProductCount();
+        $isGrid = $childCatCount >= 10;
+    ?>
+    <?php if ($childCatCount): ?>
+        <div class="landing-child-category">
+            <div class="tekshop-cat-header cat-header-normal">
+                <div class="tekshop-cat-header-img">
+                    <img src="<?php echo $this->getSkinUrl('images/header-icon.png') ?>" />
+                </div>
+                <div class="tekshop-cat-header-text">
+                    <?php echo $childCat->getName() ?>
+                </div>
+                <a class="landing-more pull-right" href="<?php echo $childCat->getUrl() ?>">
+                   <span>Xem tất cả
+                       <img src="<?php echo $this->getSkinUrl('images/landing-viewmore-arrow.png') ?>" /></i>
+                   </span>
+                </a>
+            </div>
+            <a class="tekshop-cat-header cat-header-mobile" href="<?php echo $childCat->getUrl() ?>">
+                <div class="tekshop-cat-header-text">
+                    <img src="<?php echo $this->getSkinUrl('images/cat-header-icon-mobile.png') ?>" />
+                    <?php echo $childCat->getName() ?>
+                </div>
+            </a>
+            <div class="landing-product-<?php echo $isGrid ? 'grid' : 'slick' ?> row">
+                <?php $productCollection = $childCat->getProductCollection()
+                    ->addStoreFilter()
+                    ->addAttributeToSelect('*')
+                    ->addAttributeToFilter('status', 1)
+                    ->addAttributeToFilter('visibility', 4)
+                    ->addUrlRewrite();
+                ?>
+                <?php $count = 0 ?>
+                <?php foreach ($productCollection as $product): ?>
+                    <?php
+                        if ($count > 20) break;
+                        $count++;
+                    ?>
+                    <div class="landing-product <?php echo $isGrid ? 'col-sm-4 col-xs-6' : false ?>">
+                        <a href="<?php echo $product->getProductUrl() ?>" title="<?php echo $product->getName() ?>" class="product-link">
+                            <img src="<?php echo $this->helper('catalog/image')->init($product, 'small_image')->resize(300, 300) ?>" />
+                            <div class="product-name">
+                                <?php echo $product->getName() ?>
+                            </div>
+                        </a>
+                        <div class="row product-price">
+                            <?php $oldPrice = $product->getPrice() ?>
+                            <?php $newPrice = $product->getFinalPrice() ?>
+                            <?php if ($oldPrice != $newPrice): ?>
+                                <div class="col-xs-6 landing-old-price hidden-mobile no-padding">
+                                    <?php echo number_format($oldPrice, 0) ?> <u>đ</u>
+                                </div>
+                            <?php endif; ?>
+                            <div class="col-xs-6 pull-right">
+                                <span class="landing-price pull-right"><?php echo $product->getFormatedPrice() ?></span>
+                            </div>
+                        </div>
+                        <?php if ($oldPrice != $newPrice): ?>
+                            <span class="percent">
+                                <span class="pull-right">-<?php echo number_format(($oldPrice - $newPrice) / $oldPrice * 100, 0)."%" ?></span>
+                            </span>
+                        <?php endif; ?>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+            <?php if ($isGrid): ?>
+                <div class="landing-btn-viewmore">
+                    <a class="text-center" href="<?php echo $childCat->getUrl() ?>">
+                        <button type="button" class="btn btn-default btn-viewmore">XEM THÊM SẢN PHẨM</button>
+                    </a>
+                </div>
+            <?php endif; ?>
+        </div>
+    <?php endif; ?>
+<?php endforeach; ?>
+</div>
+
+<script>
+    $j('.landing-product-slick').slick({
+        slidesToShow: 3,
+        slidesToScroll: 1,
+        responsive: [{
+            breakpoint: 500,
+            settings: {
+                slidesToShow: 2,
+                slidesToScroll: 1,
+            }
+        }]
+    })
+</script>

@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <Ved_Isagentdeleted>
+            <version>0.1.0</version>
+        </Ved_Isagentdeleted>
+    </modules>
+    <global>
+        <resources>
+            <Ved_Isagentdeleted_setup>
+                <setup>
+                    <module>Ved_Isagentdeleted</module>
+                    <class>Mage_Customer_Model_Entity_Setup</class>
+                </setup>
+                <connection>
+                    <use>core_setup</use>
+                </connection>
+            </Ved_Isagentdeleted_setup>
+            <Ved_Isagentdeleted_write>
+                <connection>
+                    <use>core_write</use>
+                </connection>
+            </Ved_Isagentdeleted_write>
+            <Ved_Isagentdeleted_read>
+                <connection>
+                    <use>core_read</use>
+                </connection>
+            </Ved_Isagentdeleted_read>
+        </resources>
+    </global>
+
+</config>

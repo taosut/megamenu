@@ -1,0 +1,261 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     default_default
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<?php
+/**
+ * @see Mage_Adminhtml_Block_Catalog_Product
+ */
+?>
+<div ng-app="purchase" ng-controller="transferCtrl as ctrl">
+    <div class="alert alert-danger" ng-if="ctrl.error">
+        <span>{{ctrl.error}}</span>
+    </div>
+    <div class="alert alert-success" ng-if="ctrl.success">
+        <span>{{ctrl.success}}</span>
+    </div>
+    <div class="content-header">
+        <h3 class="icon-head head-sales-order">Stock Transfer # {{ctrl.transfer.code}}  | 22-11-2016 15:28:10</h3>
+        <p class="form-buttons">
+            <button title="Quay lại" type="button" class="scalable back"
+                    onclick="setLocation('<?php echo Mage::getUrl("*/*/index") ?>')" style=""><span><span><span>Quay lại</span></span></span></button>
+            <button title="Sửa" type="button" class="scalable " ng-click="ctrl.openConfirm();"><span><span><span>Cập nhật</span></span></span>
+            </button>
+        </p>
+    </div>
+    <div class="entry-edit">
+        <div class="entry-edit-head">
+            <h4 class="icon-head head-products">Thông tin chung</h4>
+        </div>
+
+        <div class="fieldset">
+            <table cellspacing="0" class="form-list" style="width:100%">
+                <tbody>
+                <tr>
+                    <td class="label" style="width:10%"><label>Kho xuất</label></td>
+                    <td class="value" style="width:40%"><strong>{{ctrl.transfer.request_store_name}}</strong></td>
+                    <td class="label" style="width:50px;"></td>
+                    <td class="label" style="width:10%;"><label>Kho nhập</label></td>
+                    <td class="value" style="width:40%"><strong>{{ctrl.transfer.store_name}}</strong></td>
+                </tr>
+                <tr>
+                    <td class="label" style="width:10%;"><label>Chuyển thẳng cho người nhận</label></td>
+                    <td class="value" style="width:40%"><strong>{{ctrl.fromWarehouse.is_send_customer ? "Có" : "Không" }}</strong></td>
+                    <td class="label" style="width:50px;"></td>
+                    <td class="label" style="width:10%;"><label><?php echo $this->__('Status') ?></label></td>
+                    <td class="value" style="width:40%"><strong>{{ctrl.statusText[ctrl.transfer.status]}}</strong></td>
+                </tr>
+                <tr>
+                    <td class="label" style="width:10%"><label>Người tạo</label></td>
+                    <td class="value" style="width:40%"><strong>{{ctrl.createdBy.lastname}} {{ctrl.createdBy.firstname}}</strong></td>
+                    <td class="label" style="width:50px;"></td>
+                    <td class="label" style="width:10%;"></td>
+                    <td class="label" style="width:40%"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="entry-edit">
+        <div class="entry-edit-head">
+            <h4 class="icon-head head-products">Sản phẩm đã tạo yêu cầu chuyển kho</h4>
+        </div>
+    </div>
+<!--    <div>-->
+<!--        --><?php //echo $this->getGridHtml() ?>
+<!--    </div>-->
+    <div class="grid np">
+        <div class="hor-scroll">
+            <table cellspacing="0" class="data order-tables">
+                <colgroup>
+                    <col width="600">
+                    <col width="150">
+                    <col width="100">
+                    <col width="120">
+                    <col width="100">
+                    <col width="80">
+                </colgroup>
+                <thead>
+                <tr class="headings">
+                    <th><span class="nobr">Tên sản phẩm</span></th>
+                    <th class="a-center">Mã sản phẩm</th>
+                    <th class="a-center">Số lượng mua</th>
+                    <th class="a-center"> Đơn vị tính</th>
+                    <th class="a-center">Số lượng đã nhập kho</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody ng-repeat="item in ctrl.transferItem track by $index" class="{{$index % 2 ? 'odd' : 'even'}}">
+                <tr class="border">
+                    <td>
+                        <div id="order_item_565" class="item-container">
+                            <div class="item-text">
+                                <h5 class="title"><span id="{{item.id}}">{{item.product_name}}</span></h5>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="a-center">{{item.product_sku}}</td>
+                    <td class="a-center">
+                        <span class="price" ng-if="!item.isEdit">{{item.request_qty}}</span>
+                        <input type="number" ng-model="item.request_qty" style="text-align: center; width: 80px;" ng-if="item.isEdit == true">
+                    </td>
+                    <td class="a-center">
+                        <span ng-if="!item.isEdit">{{item.unit}}</span>
+                        <select class="chosen-select form-control" ng-model="item.unit" ng-if="item.isEdit == true">
+                            <option value="Chiếc">Chiếc</option>
+                            <option value="Thùng">Thùng</option>
+                            <option value="Mét">Mét</option>
+                            <option value="Mét">Bộ</option>
+                        </select>
+                    </td>
+                    <td class="a-center"><span class="price">{{item.import_qty}}</span></td>
+                    <td class="a-center last" ng-if="item.status == 1">
+                        <a ng-click="item.isEdit = !item.isEdit"><span class="price"> {{item.isEdit? "Cancel":"Edit"}} </span></a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div id="popupConfirm" class="modal fade" tabindex="-1">
+        <div class="modal-dialog  modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="modalLabel">Xác nhận</h4>
+                </div>
+                <div class="modal-body" style="text-align: center">
+                    <h3>Bạn có chắc chắn cập nhật dữ liệu?</h3>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="scalable back" data-dismiss="modal">Huỷ</button>
+                    <button type="button" class="btn btn-warning btn-mini" ng-click="ctrl.updateTransferRequest();">Xác nhận</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script type="text/javascript">
+    var app = angular.module('purchase', []);
+
+    app.controller('transferCtrl', function ($http) {
+        var vm = this;
+        vm.statusText = ["Đã hủy", "Đã yêu cầu","Đã nhận hàng"];
+        vm.isEdit = false;
+        vm.isUpdating = false;
+        vm.error = '';
+        vm.success = '';
+
+        getData();
+
+        function getData(){
+            vm.transfer = <?php echo $this->getStockTransfer();?>;
+            vm.transferItem =  <?php echo $this->getStockTransferItems();?>;
+            vm.createdBy =  <?php echo $this->getCreatedBy();?>;
+            vm.fromWarehouse =  <?php echo $this->getFromWarehouse();?>;
+
+            //vm.purchase.supplier_info = JSON.parse(vm.purchase.supplier_info);
+
+        }
+
+        vm.openConfirm = function(){
+            for (var index = 0; index < vm.transferItem.length; index++) {
+                if (!(typeof vm.transferItem[index].product_id !== 'undefined'
+                    && vm.transferItem[index].request_qty > 0)) {
+                    vm.error = "Vui lòng nhập đủ dữ liệu";
+                    return false;
+                }
+            }
+            jQuery("#popupConfirm").modal('show');
+        };
+
+        vm.updateTransferRequest = function(){
+            if(vm.isUpdating){
+                return false;
+            }else{
+                vm.error = '';
+                vm.success = '';
+                vm.isUpdating = true;
+            }
+            var data = [];
+            for (var index = 0; index < vm.transferItem.length; index++) {
+                //console.log(vm.requestItem[index]);
+                if (typeof vm.transferItem[index].product_id !== 'undefined'
+                    && vm.transferItem[index].request_qty > 0) {
+                    var edit = {
+                        "id": vm.transferItem[index].id,
+                        "sku": vm.transferItem[index].sku,
+                        "quantity": vm.transferItem[index].request_qty,
+                        "unit": vm.transferItem[index].unit,
+                        "product_id": vm.transferItem[index].product_id,
+                        "product_name": vm.transferItem[index].product_name
+                    };
+                    data.push(edit);
+                }else{
+                    vm.isUpdating = false;
+                    vm.error = "Vui lòng nhập đủ dữ liệu";
+                    return false;
+                }
+            }
+
+            if(data.length > 0){
+                //update
+                var param = {request_items: data, stock_transfer_id: vm.transfer.id};
+                var url = <?php echo json_encode(Mage::getUrl("*/*/updateTransferItem",array('form_key'=>Mage::getSingleton('core/session')->getFormKey())))?>;
+                return $http.put(url, param).then(successCallback, errorCallback);
+
+                function successCallback(response) {
+                    if(response.data.result == 'ok'){
+                        vm.isUpdating = false;
+                        jQuery("#popupConfirm").modal('hide');
+                        vm.success = "Cập nhật dữ liệu thành công!";
+                        return true;
+                    }else{
+                        vm.isUpdating = false;
+                        vm.error = "Có lỗi trong quá trình cập nhật dữ liệu, vui lòng thử lại sau!";
+                        return false;
+                    }
+                }
+
+                function errorCallback(response) {
+                    vm.isUpdating = false;
+                    vm.error = "Có lỗi trong quá trình cập nhật dữ liệu, vui lòng thử lại sau!";
+                    return false;
+                }
+            }else{
+                vm.isUpdating = false;
+                vm.error = "Không có dữ liệu nào được thay đổi!";
+                return false;
+            }
+        };
+
+
+
+    });
+</script>

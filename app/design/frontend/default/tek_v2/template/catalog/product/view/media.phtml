@@ -1,0 +1,117 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     base_default
+ * @copyright   Copyright (c) 2013 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+
+/**
+ * Product media data template
+ *
+ * @see Mage_Catalog_Block_Product_View_Media
+ */
+?>
+<?php
+$_product = $this->getProduct();
+$_helper = $this->helper('catalog/output');
+$model = Mage::getModel('tag/tag');
+$TagCollection = $model->getResourceCollection()
+    ->addPopularity()
+    ->addStatusFilter($model->getApprovedStatus())
+    ->addProductFilter($_product->getId())
+    ->setFlag('relation', true)
+    ->addFieldToSelect('tag_id')
+    ->addStoreFilter(Mage::app()->getStore()->getId())
+    ->setActiveFilter()
+    ->load()
+    ->getData();
+$insurePrice = false;
+$blackFriday = false;
+if (count($TagCollection)) {
+    foreach ($TagCollection as $tag) {
+        if ($tag["tag_id"] == 1) {
+            $insurePrice = true;
+        }
+        if ($tag['tag_id'] == 2) {
+            //
+            $sku = $_product->getSku();
+            $saleRule = Mage::getModel('salesrule/rule')
+                ->getCollection()
+                ->addFieldToFilter('name', $sku)
+                ->getData();
+            if (count($saleRule)) {
+                $blackFriday = true;
+                $readConnection = Mage::getSingleton('core/resource')->getConnection('core_read');
+                $coupon = $readConnection->query('SELECT * FROM salesrule_coupon WHERE rule_id = ' . $saleRule[0]['rule_id'])->fetch();
+                $remainCoupon = $coupon['usage_limit'] - $coupon['times_used'];
+            }
+        }
+    }
+}
+?>
+<?php if ($_product->getImage() != 'no_selection' && $_product->getImage()): ?>
+    <div class="detail-main-img">
+        <a class="magnifier-thumb-wrapper" style="position: relative">
+            <?php if ($insurePrice): ?>
+                <img class="detail-tag" src='<?php echo $this->getSkinUrl('images/tag.png') ?>'/>
+            <?php endif; ?>
+            <img id="thumb"
+                 src="<?php echo $this->helper('catalog/image')->init($_product, 'image')->resize(380); ?>"
+                 data-large-img-url="<?php echo $this->helper('catalog/image')->init($_product, 'image'); ?>"
+                 data-large-img-wrapper="preview"
+                 title="<?php echo $this->escapeHtml($this->getImageLabel()); ?>">
+        </a>
+        <div class="magnifier-preview" id="preview"></div>
+    </div>
+    <?php if ($blackFriday): ?>
+        <div class="discount-wrapper">
+            <div class="discount-detail">
+                <div class="coupon-code">
+                    Nhập mã : <?php echo $coupon['code'] ?>
+                </div>
+                <div class="coupon-percent">
+                    <span>TIẾT KIỆM <span><?php echo number_format($saleRule[0]['discount_amount'], 0, ",", ".") . "đ"; ?></span></span>
+                </div>
+            </div>
+            <div class="coupon-quantity" style="padding-left: 8px;padding-right: 8px">
+                <?php if ($remainCoupon): ?>
+                    Còn lại <?php echo($remainCoupon) ?>
+                <?php else: ?>
+                    Hết coupon
+                <?php endif; ?>
+            </div>
+        </div>
+    <?php endif; ?>
+    <?php if (count($this->getGalleryImages()) > 0): ?>
+        <div class="detail-gallery-img-block">
+            <div class="detail-gallery-images">
+                <?php foreach ($this->getGalleryImages() as $_image): ?>
+                    <img class="detail-gallery-img-item"
+                         src="<?php echo $this->helper('catalog/image')->init($_product, 'thumbnail', $_image->getFile())->resize(70); ?>"
+                         data-src="<?php echo $this->helper('catalog/image')->init($_product, 'thumbnail', $_image->getFile())->resize(380); ?>"
+                         data-large-img-url="<?php echo $this->helper('catalog/image')->init($_product, 'thumbnail', $_image->getFile()) ?>"
+                    />
+                <?php endforeach; ?>
+            </div>
+        </div>
+    <?php endif; ?>
+<?php endif; ?>

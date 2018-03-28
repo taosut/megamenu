@@ -1,0 +1,87 @@
+<?php
+/**
+ * @var Mage_Checkout_Block_Cart_Sidebar $this
+ */
+?>
+<?php
+$_items = $this->getItems();
+$_cartQty = $this->getSummaryCount();
+?>
+<?php if ($_cartQty > 0): ?>(<?php echo $_cartQty; ?>) <?php else: ?>(0)<?php endif; ?> Sản phẩm
+<?php if (count($_items)): ?>
+    <div class="header-cart-detail">
+        <div class="header-cart-products">
+            <?php foreach ($_items as $_item): ?>
+                <div class="row header-cart-item">
+                    <div class="col-md-2 col-sm-2 mini-cart-item-img">
+                        <img src="<?php echo $this->helper('catalog/image')->init($_item->getProduct(), 'small_image')->resize(70, 70); ?>"/>
+                    </div>
+                    <div class="col-md-10 col-sm-10 mini-cart-item-section">
+                        <div class="row">
+                            <a class="col-md-12 mini-cart-item-name" title="<?php echo $_item->getName(); ?>"
+                               href="<?php echo $_item->getProduct()->getProductFullUrl(); ?>">
+                                <?php echo $_item->getName(); ?>
+                            </a>
+                            <?php
+                            $total = $_item->getPrice() * $_item->getQty();
+                            $freeItem = unserialize($_item->getAdditionalData());
+                            ?>
+                            <?php if ($_item->getProduct()->getTypeID() == 'bundle' && $_options = Mage::helper('bundle/catalog_product_configuration')->getOptions($_item)): ?>
+                                <dl class="item-options">
+                                    <?php foreach ($_options as $_option) : ?>
+                                        <?php $_formatedOptionValue = Mage::helper('catalog/product_configuration')->getFormattedOptionValue($_option); ?>
+                                        <dt><?php echo Mage::helper('core')->escapeHtml($_option['label'], null) ?></dt>
+                                        <dd<?php if (isset($_formatedOptionValue['full_view'])): ?> class="truncated"<?php endif; ?>>
+                                            <?php echo $_formatedOptionValue['value'] ?>
+                                            <?php if (isset($_formatedOptionValue['full_view'])): ?>
+                                                <div class="truncated_full_value">
+                                                    <dl class="item-options">
+                                                        <dt><?php echo Mage::helper('core')->escapeHtml($_option['label'], null) ?></dt>
+                                                        <dd><?php echo $_formatedOptionValue['full_view'] ?></dd>
+                                                    </dl>
+                                                </div>
+                                            <?php endif; ?>
+                                        </dd>
+                                    <?php endforeach; ?>
+                                </dl>
+                            <?php elseif ($_item->getProduct()->getTypeID() != 'bundle' && $_options = Mage::helper('catalog/product_configuration')->getOptions($_item)): ?>
+                                <dl class="item-options">
+                                    <?php foreach ($_options as $_option) : ?>
+                                        <?php $_formatedOptionValue = Mage::helper('catalog/product_configuration')->getFormattedOptionValue($_option); ?>
+                                        <dt><?php echo Mage::helper('core')->escapeHtml($_option['label'], null) ?></dt>
+                                        <dd<?php if (isset($_formatedOptionValue['full_view'])): ?> class="truncated"<?php endif; ?>>
+                                            <?php echo $_formatedOptionValue['value'] ?>
+                                            <?php if (isset($_formatedOptionValue['full_view'])): ?>
+                                                <div class="truncated_full_value">
+                                                    <dl class="item-options">
+                                                        <dt><?php echo Mage::helper('core')->escapeHtml($_option['label'], null) ?></dt>
+                                                        <dd><?php echo $_formatedOptionValue['full_view'] ?></dd>
+                                                    </dl>
+                                                </div>
+                                            <?php endif; ?>
+                                        </dd>
+                                    <?php endforeach; ?>
+                                </dl>
+                            <?php endif; ?>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 col-sm-4 text-left">
+                                x<?php echo (isset($freeItem) && isset($freeItem['quantity'])) ? $_item->getQty() - $freeItem['quantity'] : $_item->getQty(); ?>
+                            </div>
+                            <div class="col-md-8 col-sm-8 text-right">
+                                <?php if (isset($freeItem) && isset($freeItem['quantity']) && isset($freeItem['price'])): ?>
+                                    <?php $total = $total - $freeItem['quantity'] * $freeItem['price']; ?>
+                                <?php endif; ?>
+                                <?php echo number_format($total, 0, ",", ".") . " ₫"; ?>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+        <a class="header-cart-checkout-btn"
+           href="<?php echo $this->getUrl('checkout/cart'); ?>">
+            Xem chi tiết giỏ hàng
+        </a>
+    </div>
+<?php endif; ?>

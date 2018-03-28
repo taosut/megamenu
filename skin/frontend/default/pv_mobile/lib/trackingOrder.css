@@ -1,0 +1,259 @@
+/* Tracking Order */
+
+.tracking-order-detail-wrapper {
+    background: #f1f1f1;
+    z-index: 1000;
+    position: fixed;
+    width: 100%;
+    height: 100vh;
+    top: 57px;
+    display: none;
+    overflow-y: auto;
+    padding-bottom: 60px;
+}
+
+.tracking-order-detail-wrapper::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px #d8d8d8;
+    background-color: #F5F5F5;
+}
+
+.tracking-order-detail-wrapper::-webkit-scrollbar {
+    width: 6px;
+    background-color: #F5F5F5;
+}
+
+.tracking-order-detail-wrapper::-webkit-scrollbar-thumb {
+    background-color: #555555;
+    border: 4px solid #adadae;
+}
+
+.tracking-order-detail-1st-block {
+    padding: 20px 15px 15px 15px;
+    width: 100%;
+    background: white;
+}
+
+.tracking-order-detail-simple-block {
+    border-bottom: 1px solid #E0E0E0;
+    background: white;
+    width: 100%;
+}
+
+.mgt-7 {
+    margin-top: 7px;
+}
+
+.vat {
+    padding-right: 15px;
+    padding-bottom: 10px
+}
+
+.tracking-order-left-right {
+    width: 100%;
+    display: inline-flex;
+    padding: 15px 15px 10px 15px;
+}
+
+.tracking-order-left-right > div {
+    width: 50%;
+}
+
+.tracking-order-grandtotal {
+    font-size: 18px;
+    color: #FF613C;
+    font-weight: 600;
+}
+
+.font-16 {
+    font-size: 16px;
+}
+
+.to-left {
+    text-align: left;
+}
+
+.to-right {
+    text-align: right;
+}
+
+.no-padding-bottom {
+    padding-bottom: 0 !important;
+}
+
+.tracking-order-discount {
+    font-weight: 600;
+}
+
+.order-detail-code {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.order-detail-date {
+    margin-bottom: 10px;
+}
+
+.order-detail-status > span {
+    color: #068f01;
+}
+
+.tracking-order-total {
+    font-size: 15px;
+}
+
+.tracking-order-cart-info {
+    text-transform: uppercase;
+    color: #414141;
+    font-size: 18px;
+    font-weight: 600;
+    padding: 10px 15px;
+}
+
+.mobile-tracking-order-wrapper {
+    background: white;
+    z-index: 1000;
+    position: fixed;
+    height: 100vh;
+    width: 100%;
+    top: 57px;
+}
+
+.tracking-order-product {
+    width: 100%;
+    background: white;
+    border-bottom: solid 1px #E0E0E0;
+}
+
+.mobile-tracking > li {
+    width: 50%;
+    text-align: center;
+}
+
+.mobile-tracking > li > a {
+    color: #3D3D3D !important;
+    font-weight: 600 !important;
+}
+
+.mobile-tracking-content {
+    background: #f1f1f1;
+    height: 100vh;
+    padding: 15px;
+    overflow-y: auto;
+    padding-bottom: 150px;
+}
+
+.nav-tabs.mobile-tracking {
+    box-shadow: 0 2px 6px 0 rgba(117, 117, 117, 0.2), 0 1px 6px 0 rgba(151, 151, 151, 0.19);
+    margin-bottom: 3px;
+}
+
+.tracking-order-item {
+    position: relative;
+    border-radius: 10px;
+    background: #FFFFFF;
+    padding: 15px;
+    box-shadow: 0 1px 6px 0 rgba(117, 117, 117, 0.2), 0 1px 6px 0 rgba(151, 151, 151, 0.19);
+    margin-bottom: 15px;
+}
+
+.tracking-order-item > div {
+    margin-bottom: 10px;
+}
+
+.tracking-order-code {
+    font-size: 16px;
+    font-weight: 600;
+    color: #3D3D3D;
+}
+
+.order-pending {
+    color: #5399a8;
+}
+
+.order-success {
+    color: #068f01;
+}
+
+.tracking-order-detail > img {
+    height: 15px;
+    width: 10.43px;
+    position: absolute;
+    top: 18px;
+    right: 15px;
+}
+
+.tracking-order-products > span {
+    font-weight: 600;
+}
+
+.tracking-order-image > img {
+    width: 106px;
+    height: 90px;
+}
+
+.tracking-order-side-info {
+    width: 188px;
+    margin-left: 15px;
+}
+
+.tracking-order-name {
+    font-size: 12px;
+}
+
+.tracking-order-price {
+    font-weight: 600;
+    margin-top: 2px;
+}
+
+.tracking-order-old-price {
+    font-size: 10px;
+    text-decoration: line-through;
+    color: #c2c2c2
+}
+
+.tracking-order-product {
+    display: inline-flex;
+}
+
+.mid-modal {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.mid-modal > .modal-content {
+    width: 80%;
+    height: 150px;
+    text-align: center;
+    padding-top: 25px;
+}
+
+.order-detail-loading > p {
+    margin-top: 8px;
+}
+
+@media (max-width: 500px) {
+    .tracking-order-side-info {
+        width: 280px;
+    }
+}
+
+@media (max-width: 425px) {
+    .tracking-order-product {
+        padding: 15px 52px 15px 15px;
+    }
+
+    .tracking-order-side-info {
+        width: 188px;
+    }
+}
+
+@media (max-width: 320px) {
+    .tracking-order-product {
+        padding-right: 2px;
+    }
+}
+
+/* */

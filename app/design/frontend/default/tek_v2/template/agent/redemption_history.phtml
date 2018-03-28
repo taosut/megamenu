@@ -1,0 +1,326 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: Teko
+ * Date: 9/6/2017
+ * Time: 11:10 AM
+ */
+
+// Lay code tu rule trong backend
+//$rule = Mage::getModel('salesrule/rule')->load(101);
+//
+//$collection = Mage::getResourceModel('salesrule/coupon_collection')
+//    ->addFieldToFilter('rule_id', 101)
+//    ->addFieldToFilter('times_used', 0)
+//    ->getFirstItem()
+//    ->getData('code');
+?>
+
+<?php
+$currentUser = Mage::getSingleton('customer/session')->getCustomer();
+$agentInfo = json_decode($currentUser->getAgentInfo());
+$agentChannels = array(
+    1 => 'Mạng xã hội',
+    2 => 'Diễn đàn/Website'
+);
+?>
+
+<style>
+    /*basic reset*/
+    * {
+        margin: 0;
+        padding: 0;
+    }
+
+    /*adding a black bg to the body to make things clearer*/
+    body {
+        background: black;
+    }
+
+</style>
+
+<script>
+    dataLayer = [];
+</script>
+
+<?php
+$session = Mage::getSingleton('customer/session');
+?>
+
+<?php if ($session->isLoggedIn()): ?>
+    <?php if ($currentUser->getIsAgentDeleted() == 1): ?>
+        <?php echo $this->getChildHtml('agent.warning') ?>
+    <?php else: ?>
+        <div class="agent-content">
+            <div class="row row-eq-height">
+
+                <?php echo $this->getChildHtml('agent.navigation') ?>
+
+                <div class="col-md-10 col-sm-10 col-xs-12">
+                    <div class="row mr-0">
+                        <div class="col-md-12 col-sm-12 col-xs-12 pl-30-xs">
+                            <div class="row">
+                                <div class="col-md-6 col-sm-6 col-xs-6 pr-7">
+                                    <div class="agent-box agent-achievements">
+                                        <div class="agent-box-title h-40">Điểm thành tích hiệu lực</div>
+                                        <div class="agent-available-point">
+                                            <span><?php echo $agentInfo->available_point ?></span>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="col-md-6 col-sm-6 col-xs-6 pl-7">
+                                    <div class="agent-box agent-achievements">
+                                        <div class="agent-box-title h-40">Điểm thành tích đã sử dụng</div>
+                                        <div class="agent-used-point">
+                                            <span><?php echo $agentInfo->used_point ?></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="agent-box agent-post-history mb-15">
+                                <div class="agent-box-title h-40">
+                                    Lịch sử quy đổi thành tích
+                                    <div class="agent-btn clear-filter-btn pull-right">
+                                        Bỏ lọc
+                                    </div>
+                                </div>
+
+                                <div class="agent-recommendation-total">Số bản ghi đang lọc/Tổng số bản ghi: <span class="agent-filtered-count"></span>/<span class="agent-total-count"></span></div>
+
+                                <div class="table-responsive">
+                                    <table id="datatable" class="table table-striped agent-table">
+                                        <thead>
+                                        <tr>
+                                            <th>Thời gian quy đổi</th>
+                                            <th>Tên quyền lợi</th>
+                                            <th>Giá trị điểm quy đổi</th>
+                                            <th>Tình trạng</th>
+                                        </tr>
+                                        </thead>
+                                        <tfoot>
+                                        <tr>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                            <th></th>
+                                        </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="redeemSucceed" class="modal fade" role="dialog">
+            <div class="modal-dialog" style="margin-top: 25vh">
+                <!-- Modal content-->
+                <div class="modal-content agent-modal-content">
+                    <div class="modal-header agent-modal-header">
+                        <div class="agent-close-modal" data-dismiss="modal">&times;</div>
+                    </div>
+                    <div class="modal-body agent-modal-body">
+                        <div class="a-center">
+                            <img class="agent-modal-body-logo"
+                                 src="<?php echo $this->getSkinUrl('images/agent-logo-green.png') ?>">
+                            <div class="agent-modal-body-text">
+                                Yêu cầu của Đặc vụ đã được gửi tới Tekshop. Kết quả sẽ gửi vào SMS trong vòng 6h. Xin
+                                cảm
+                                ơn!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
+<?php else: ?>
+    <?php echo $this->getChildHtml('agent.warning_login') ?>
+<?php endif; ?>
+
+<script>
+    var $j = jQuery.noConflict();
+    var win = $j(window);
+
+    $j('.main-container').find('.container').addClass('ml-0');
+
+    $j('input[type="number"]').keypress(function (e) {
+        var a = [];
+        var k = e.which;
+
+        for (i = 48; i < 58; i++)
+            a.push(i);
+
+        if (!(a.indexOf(k) >= 0))
+            e.preventDefault();
+    });
+
+    $j(document).ready(function () {
+        $j('.main-container').find('.container').addClass('w-100');
+        $j('.build-pc-btn').addClass('no-display');
+        $j('.facebook-message').addClass('no-display');
+
+        $j("#datepicker").datepicker({
+            dateFormat: 'dd/mm/yy',
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "1950:2017"
+        });
+
+        $j('#datatable tfoot th').eq(0).each(function () {
+            $j(this).html('<input id="min" class="mb-5" type="text" placeholder="Từ ngày"><input id="max" type="text" placeholder="Đến ngày">');
+        });
+
+        // Render datatable
+        var table = $j('#datatable').DataTable({
+            "ajax": '<?php echo $this->getUrl('agent/index/getRedemptionHistory')?>?user_id=<?php echo $currentUser->getId() ?>',
+            "pagingType": "full_numbers",
+            "language": {
+                "lengthMenu": "Hiển thị _MENU_ bản ghi mỗi trang",
+                "zeroRecords": "Không tìm thấy dữ liệu phù hợp",
+                "info": "Trang _PAGE_ / _PAGES_",
+                "infoEmpty": "",
+                "infoFiltered": "",
+                "search": "Tìm kiếm:",
+                "paginate": {
+                    "previous": "Trước",
+                    "next": "Sau",
+                    "first": "Đầu",
+                    "last": "Cuối"
+                }
+            },
+            "order": [[0, "desc"]],
+            "initComplete": function (settings, json) {
+                $j('div.datatable-loading').remove();
+
+                this.api().columns({search: 'applied'}).every(function () {
+                    var column = this;
+                    var index = column.index();
+                    if (index === 1 || index === 3) {
+
+                        var select = $j('<select id="select-' + index + '" style="color: #727175"><option value="">-- Chọn --</option></select>')
+                            .appendTo($j(column.footer()).empty())
+                            .on('change', function () {
+                                var val = $j.fn.dataTable.util.escapeRegex(
+                                    $j(this).val()
+                                );
+
+                                if (val !== '') {
+                                    $j('#select-' + index).css('color', '#333');
+                                } else {
+                                    $j('#select-' + index).css('color', '#727175');
+                                }
+
+                                column
+                                    .search(val ? '^' + val + '$' : '', true, false)
+                                    .draw();
+                            });
+//
+                        column.data().unique().sort().each(function (d, j) {
+                            select.append('<option value="' + d + '">' + d + '</option>')
+                        });
+                    }
+
+                });
+            },
+            "footerCallback": function (row, data, start, end, display) {
+                getTotalRows();
+                getFilteredRows();
+            }
+        });
+
+        function getTotalRows() {
+            $j('.agent-total-count').empty().append($j('#datatable').DataTable().rows().count());
+        }
+
+        function getFilteredRows(){
+            var info = $j('#datatable').DataTable().page.info();
+            $j('.agent-filtered-count').empty().append(info.recordsDisplay);
+        }
+
+        table.on('draw', function () {
+            table.columns().indexes().each(function (idx) {
+                var select = $j(table.column(idx).footer()).find('select');
+
+                if (select.val() === '') {
+                    select
+                        .empty()
+                        .append('<option value="">-- Chọn --</option>');
+
+                    table.column(idx, {search: 'applied'}).data().unique().sort().each(function (d, j) {
+                        select.append('<option value="' + d + '">' + d + '</option>');
+                    });
+                }
+            });
+        });
+
+        // Filter date range
+        $j.fn.dataTable.ext.search.push(
+            function (settings, data, dataIndex) {
+                var min = $j('#min').datepicker("getDate");
+                var max = $j('#max').datepicker("getDate");
+                if (max) {
+                    max.setHours(23, 59, 59, 999);
+                }
+
+                var startDate = new Date(data[0].split("|")[0]);
+
+                if (min == null && max == null) {
+                    return true;
+                }
+                if (min == null && startDate <= max) {
+                    return true;
+                }
+                if (max == null && startDate >= min) {
+                    return true;
+                }
+                if (startDate <= max && startDate >= min) {
+                    return true;
+                }
+                return false;
+            }
+        );
+
+        $j("#min").datepicker({
+            onSelect: function () {
+                table.draw();
+            },
+            dateFormat: 'dd/mm/yy',
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "1950:2017"
+        });
+
+        $j("#max").datepicker({
+            onSelect: function () {
+                table.draw();
+            },
+            dateFormat: 'dd/mm/yy',
+            changeMonth: true,
+            changeYear: true,
+            yearRange: "1950:2017"
+        });
+
+        $j('#min, #max').change(function () {
+            table.draw();
+        });
+        // End filter date range
+
+        // Add loading text when call ajax
+        $j('tbody').empty();
+        $j('<div class="datatable-loading" style="padding: 15px 0; text-align: center;">Đang tải dữ liệu...</div>').appendTo('tbody');
+        $j('.datatable-loading').css('width', $j('#datatable').width() + 'px');
+    });
+
+    // Clear all filters
+    $j('.clear-filter-btn').click(function () {
+        $j('#datatable tfoot input').val('').change();
+        $j('#datatable tfoot select').val('').change();
+        $j('#min').datepicker('setDate', '');
+        $j('#max').datepicker('setDate', '');
+    });
+</script>

@@ -1,0 +1,323 @@
+<?php
+/**
+ * @var Ved_Productqc_Helper_Data $helper
+ */
+$helper = Mage::helper('ved_productqc');
+
+?>
+<link rel="stylesheet" type="text/css"
+      href="<?php echo Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_SKIN) . 'adminhtml/default/default/Datatable/datatables.min.css' ?>">
+<script type="text/javascript" src="<?php echo $this->getJsUrl('productimport/jquery-1.11.3.min.js') ?>"></script>
+<script type="text/javascript" src="<?php echo $this->getJsUrl('Datatables/datatables.min.js') ?>"></script>
+<script type="text/javascript" src="<?php echo $this->getJsUrl('Datatables/noconflict.js') ?>"></script>
+<script type="text/javascript">
+    //<![CDATA[
+    <?php if($helper->getType() == 'simple'):?>
+
+    // Tao dialog
+    Window.keepMultiModalWindow = true;
+    var warehouseEditor = {
+        overlayShowEffectOptions: null,
+        overlayHideEffectOptions: null,
+        open: function (editorUrl, elementId) {
+            if (editorUrl && elementId) {
+                new Ajax.Request(editorUrl, {
+                    parameters: {
+                        element_id: elementId + '_editor',
+                    },
+                    onSuccess: function (transport) {
+                        try {
+                            this.openDialogWindow(transport.responseText, elementId);
+                        } catch (e) {
+                            alert(e.message);
+                        }
+                    }.bind(this)
+                });
+            }
+        },
+        openDialogWindow: function (content, elementId) {
+            this.overlayShowEffectOptions = Windows.overlayShowEffectOptions;
+            this.overlayHideEffectOptions = Windows.overlayHideEffectOptions;
+            Windows.overlayShowEffectOptions = {duration: 0};
+            Windows.overlayHideEffectOptions = {duration: 0};
+
+            Dialog.confirm(content, {
+                draggable: true,
+                resizable: true,
+                closable: true,
+                className: "magento",
+                windowClassName: "popup-window",
+                title: 'Warehouse SKU Editor',
+                width: 650,
+                height: 625,
+                zIndex: 1000,
+                recenterAuto: false,
+                hideEffect: Element.hide,
+                showEffect: Element.show,
+                id: "warehouse-editor",
+                buttonClass: "form-button",
+                okLabel: "Submit",
+                ok: this.okDialogWindow.bind(this),
+                cancel: this.closeDialogWindow.bind(this),
+                onClose: this.closeDialogWindow.bind(this),
+                firedElementId: elementId
+            });
+
+            $j(document).keypress(function (e) {
+                if (e.keyCode == 13) {
+                    e.preventDefault();
+                    getSKU();
+                    return false;
+                }
+            });
+
+            // Tao placeholder text
+            $('content').placeholder = "Nhập tên sản phẩm";
+
+            var form = $('warehouse_edit_form');
+            var table = document.createElement("TABLE");
+            table.className = "display";
+            table.id = "warehouse_table";
+            table.style.width = "100%";
+            table.innerHTML = "<thead><th>Select</th><th>name</th><th>sku</th></tr></thead>";
+            form.appendChild(table);
+            var datatable = $j('#warehouse_table').DataTable({
+                lengthMenu: [25, 50],
+                searching: false,
+                serverSide: true,
+                ajax: {
+                    url: '<?php echo Mage::helper("ved_gorders")->getApiUrlSupplier('listProductSku')?>',
+                    data: function (d) {
+                        d.name = $('content').value;
+                        d.category_id = $('category_id').value;
+                        d.manufacturer_id = $('manufacturer_id').value;
+                        d.channels = [1,2];
+                    }
+                },
+                columns: [
+                    {
+                        'className': 'details-control',
+                        'orderable': false,
+                        'searchable': false,
+                        'data': null,
+                        'defaultContent': ''
+                    },
+                    {data: 'name', name: 'name'},
+                    {data: 'sku', name: 'sku'},
+                ],
+                columnDefs: [
+                    {
+                        'searchable': false,
+                        'orderable': false,
+                        'className': 'dt-body-center',
+                        targets: 0,
+                        'render': function (data, type, full, meta) {
+                            return '<input type="radio" name="warehouse_sku_editor" value="' + data.sku + '" productid="' + data.id + '">';
+                        }
+                    }],
+                order: [[1, 'asc']]
+            });
+        },
+        okDialogWindow: function (dialogWindow) {
+            if (dialogWindow.options.firedElementId) {
+                if (document.querySelector('input[name="warehouse_sku_editor"]:checked')) {
+                    $(dialogWindow.options.firedElementId).value = document.querySelector('input[name="warehouse_sku_editor"]:checked').value;
+                    $j("#backup_wh_sku").val(document.querySelector('input[name="warehouse_sku_editor"]:checked').value);
+                    $j("#standard_product_id").val(document.querySelector("input[name='warehouse_sku_editor']:checked").getAttribute('productid'));
+                    this.closeDialogWindow(dialogWindow);
+                }
+                else {
+                    alert('Vui lòng chọn sản phẩm');
+                }
+            }
+        },
+        closeDialogWindow: function (dialogWindow) {
+            dialogWindow.close();
+            Windows.overlayShowEffectOptions = this.overlayShowEffectOptions;
+            Windows.overlayHideEffectOptions = this.overlayHideEffectOptions;
+        }
+    };
+
+    // Tao button input warehouse
+    var element = document.createElement("button");
+    element.value = "Warehouse SKU";
+    element.className = "scalable btn-wysiwyg";
+    element.type = "button";
+    element.innerHTML = "Warehouse SKU";
+    element.onclick = function () {
+        warehouseEditor.open('<?php echo $this->getUrl('adminhtml/Productqc/WarehouseSkuEditor') ?>?', 'warehouse_sku')
+    };
+
+    //Insert button
+    $('warehouse_sku').className += " validate-warehouse-code";
+    var txtArea = $('warehouse_sku').parentElement;
+    txtArea.appendChild(element);
+
+    function getSKU() {
+        var datatable = jQuery('#warehouse_table').DataTable();
+        datatable.draw();
+        return false;
+    }
+    <?php else:?>
+    // Tao dialog
+    Window.keepMultiModalWindow = true;
+    var warehouseEditor = {
+        overlayShowEffectOptions: null,
+        overlayHideEffectOptions: null,
+        open: function (editorUrl, elementId) {
+            if (editorUrl && elementId) {
+                new Ajax.Request(editorUrl, {
+                    parameters: {
+                        element_id: elementId + '_editor',
+                    },
+                    onSuccess: function (transport) {
+                        try {
+                            this.openDialogWindow(transport.responseText, elementId);
+                        } catch (e) {
+                            alert(e.message);
+                        }
+                    }.bind(this)
+                });
+            }
+        },
+        openDialogWindow: function (content, elementId) {
+            this.overlayShowEffectOptions = Windows.overlayShowEffectOptions;
+            this.overlayHideEffectOptions = Windows.overlayHideEffectOptions;
+            Windows.overlayShowEffectOptions = {duration: 0};
+            Windows.overlayHideEffectOptions = {duration: 0};
+
+            Dialog.confirm(content, {
+                draggable: true,
+                resizable: true,
+                closable: true,
+                className: "magento",
+                windowClassName: "popup-window",
+                title: 'Supplier SKU Editor',
+                width: 650,
+                height: 625,
+                zIndex: 1000,
+                recenterAuto: false,
+                hideEffect: Element.hide,
+                showEffect: Element.show,
+                id: "supplier-editor",
+                buttonClass: "form-button",
+                okLabel: "Submit",
+                ok: this.okDialogWindow.bind(this),
+                cancel: this.closeDialogWindow.bind(this),
+                onClose: this.closeDialogWindow.bind(this),
+                firedElementId: elementId
+            });
+
+            $j(document).keypress(function (e) {
+                if (e.keyCode == 13) {
+                    e.preventDefault();
+                    getSupplierSKU();
+                    return false;
+                }
+            });
+
+            // Tao placeholder text
+            $('content').placeholder = "Nhập tên sản phẩm";
+            $('code').placeholder = "Nhập code sản phẩm";
+
+            var form = $('combo_supplier_edit_form');
+            var table = document.createElement("TABLE");
+            table.className = "display";
+            table.id = "supplier_table";
+            table.style.width = "100%";
+            table.innerHTML = "<thead><th>Select</th><th>name</th><th>sku</th></tr></thead>";
+            form.appendChild(table);
+            var datatable = $j('#supplier_table').DataTable({
+                lengthMenu: [25, 50],
+                searching: false,
+                serverSide: true,
+                ajax: {
+                    url: '<?php echo Mage::helper("ved_gorders")->getApiUrlSupplier('combos')?>',
+                    data: function (d) {
+                        d.name = $('content').value;
+                        d.code = $('code').value;
+                    }
+                },
+                columns: [
+                    {
+                        'className': 'details-control',
+                        'orderable': false,
+                        'searchable': false,
+
+                        'data': null,
+                        'defaultContent': ''
+                    },
+                    {data: 'name', name: 'name'},
+                    {data: 'id', name: 'id'},
+                ],
+                columnDefs: [
+                    {
+                        'searchable': false,
+                        'orderable': false,
+                        'className': 'dt-body-center',
+                        targets: 0,
+                        'render': function (data, type, full, meta) {
+                            return '<input type="radio" name="supplier_sku_editor" value="' + data.id  + '">';
+                        }
+                    }],
+                order: [[1, 'asc']]
+            });
+        },
+        okDialogWindow: function (dialogWindow) {
+            if (dialogWindow.options.firedElementId) {
+                if (document.querySelector('input[name="supplier_sku_editor"]:checked')) {
+                    var combo_id = document.querySelector('input[name="supplier_sku_editor"]:checked').value;
+                    var combo_detail = 'Combo bạn chọn bao gồm những sản phẩm: \n';
+                    new Ajax.Request('<?php echo Mage::helper("ved_gorders")->getApiUrlSupplier('combos')?>/' + combo_id + '/detail', {
+                        method:'get',
+                        onSuccess: function (transport) {
+                           var products = JSON.parse(transport.responseText);
+                           products.forEach(function (product) {
+                              combo_detail += 'Tên: ' + product.name + ' ; SL: ' + product.pivot.quantity + '\n';
+                           });
+                            if (confirm(combo_detail)) {
+                                $(dialogWindow.options.firedElementId).value = combo_id;
+                                dialogWindow.close();
+                            }
+                        }
+                    });
+                }
+                else {
+                    alert('Vui lòng chọn sản phẩm');
+                }
+            }
+        },
+        closeDialogWindow: function (dialogWindow) {
+            dialogWindow.close();
+            Windows.overlayShowEffectOptions = this.overlayShowEffectOptions;
+            Windows.overlayHideEffectOptions = this.overlayHideEffectOptions;
+        }
+    };
+
+    // Tao button input warehouse
+    var element = document.createElement("button");
+    element.value = "Supplier SKU";
+    element.className = "scalable btn-wysiwyg";
+    element.type = "button";
+    element.innerHTML = "Supplier SKU";
+    element.onclick = function () {
+        warehouseEditor.open('<?php echo $this->getUrl('adminhtml/Productqc/ComboSupplierSkuEditor') ?>?', 'supplier_sku')
+    };
+
+    //Insert button
+    $('warehouse_sku').className += " validate-warehouse-code";
+    var txtArea = $('supplier_sku').parentElement;
+    txtArea.appendChild(element);
+
+    function getSupplierSKU() {
+        var datatable = jQuery('#supplier_table').DataTable();
+        datatable.draw();
+        return false;
+    }
+
+    <?php endif;?>
+    // Add hidden standard_product_id
+    $j('#standard_product_id').closest('tr').hide();
+    // $j('#backup_wh_sku').closest('tr').hide();
+    //]]>
+</script>
